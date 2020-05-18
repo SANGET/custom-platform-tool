@@ -1,35 +1,22 @@
 {
   "name": "custom-platform-tool",
   "version": "1.0.0",
+  "private": true,
   "workspaces": [
-    "packages/*"
+    "packages/visual-tool/*",
+    "packages/application-platform",
+    "packages/web-server"
   ],
   "scripts": {
-    "start": "minictl start",
-    "build": "minictl build",
+    "start:tool": "cd ./packages/visual-tool/app; npm start",
+    "start:server": "minictl build",
     "prettier:base": "prettier --parser typescript",
-    "format": "npm run prettier:base -- --write \"src/**/*.{ts,tsx}\"",
-    "test": "minictl test"
+    "format": "npm run prettier:base -- --write \"src/**/*.{ts,tsx}\""
   },
   "devDependencies": {
-    "@mini-code/scripts": "^1.0.0-alpha1.2",
     "prettier": "^2.0.5"
   },
   "dependencies": {
-    "@babel/polyfill": "^7.8.7",
-    "@babel/preset-typescript": "^7.9.0",
-    "@types/react": "^16.9.35",
-    "@types/react-dom": "^16.9.8",
-    "@types/react-router-dom": "^5.1.5",
-    "@mini-code/base-func": "^1.1.0",
-    "@mini-code/request": "^1.0.0-rc1.1",
-    "@deer-ui/core": "^4.0.0-rc5.9",
-    "react": "^16.13.1",
-    "react-dom": "^16.13.1",
-    "react-hot-loader": "^4.12.21",
-    "react-router-dom": "^5.2.0",
-    "react-transition-group": "^4.4.1",
-    "unistore": "^3.5.1"
   },
   "author": "SANGET",
   "license": "MIT",

@@ -1,9 +1,6 @@
 {
-  "name": "@app/web-server",
+  "name": "@infra/ui-interface",
   "version": "0.0.1",
-  "scripts": {
-    "start": "start"
-  },
   "devDependencies": {
   },
   "dependencies": {
