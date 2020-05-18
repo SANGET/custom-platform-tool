@@ -1,0 +1,3 @@
+interface PageDSL {
+  name: string;
+}

@@ -1,0 +1,13 @@
+{
+  "name": "@app/auth",
+  "version": "0.0.0",
+  "scripts": {
+    "start": "start"
+  },
+  "devDependencies": {
+  },
+  "dependencies": {
+  },
+  "author": "SANGET",
+  "license": "MIT"
+}

@@ -1,0 +1,10 @@
+{
+  "name": "@infra/ui-interface",
+  "version": "0.0.0",
+  "devDependencies": {
+  },
+  "dependencies": {
+  },
+  "author": "SANGET",
+  "license": "MIT"
+}
