@@ -6,7 +6,7 @@
     "packages/visual-tool/*",
     "packages/application-platform",
     "packages/web-server",
-    "packages/dsl-core"
+    "packages/dsl/*"
   ],
   "scripts": {
     "start:tool": "cd ./packages/visual-tool/app; npm start",

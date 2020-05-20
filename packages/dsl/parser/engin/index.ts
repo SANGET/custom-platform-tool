@@ -1,6 +1,6 @@
 import {
   CreateUserPage
-} from '@core/dsl/test/create-user-page';
+} from '@dsl/core/test/create-user-page';
 
 import Input from "";
 
