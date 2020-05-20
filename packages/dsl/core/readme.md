@@ -6,15 +6,21 @@ Interaction Business DSL（IBDSL）：业务交互式 DSL
 
 实际上指的是由 JS 语法来描述的、抽象于「业务」和「元素布局」的 AST。所以 IBDSL 在本质上是业务 AST。
 
+-----
+
 ## 职责（Responsibilities）
 
 IBDSL 的主要职责：规范编辑器的 IBDSL 输出，规范解析器的解析渲染。是桥接「编辑器」和「解析器」的接口规范，也是描述大部分业务场景的核心准则规范。
+
+-----
 
 ## 实现（Implement）
 
 type definition：查看 [`./types/page.ts`][typeOfDSL]
 
 场景「录入用户」案例：查看 [`./test/create-user-page.ts`][entityOfDSL]
+
+-----
 
 ## IBDSL 设计（Design of IBDSL）
 
@@ -53,6 +59,8 @@ IBDSL 遵循 AST 规则：
             - onUnmount
           - expression
 
+-----
+
 ## 交互
 
 ### 与编辑器（editor）的交互
@@ -62,6 +70,8 @@ IBDSL 遵循 AST 规则：
 ### 与解析器（parser）的交互
 
 解析器的最主要职能是：根据已有的 IBDSL 实例进行运行时解析，包括其中的动作（action）和表达式（expression）的执行，用户的交互等。
+
+-----
 
 ## 总结
 

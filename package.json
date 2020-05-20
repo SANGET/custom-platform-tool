@@ -4,6 +4,7 @@
   "private": true,
   "workspaces": [
     "packages/visual-tool/*",
+    "packages/infrastructure/*",
     "packages/application-platform",
     "packages/web-server",
     "packages/dsl/*"

@@ -1,22 +1,11 @@
 import {
   CreateUserPage
 } from '@dsl/core/test/create-user-page';
-
-import Input from "";
-
-const createElement = (component) => {
-  const { type } = component;
-  switch (type) {
-    case 'Input':
-      return <Input />;
-    default:
-      break;
-  }
-};
+import componentParser from './component-parser';
 
 const parser = (pageDSL) => {
   const res = pageDSL.body.map(({ component }) => {
-    return createElement(component);
+    return componentParser(component);
   });
   return res;
 };
