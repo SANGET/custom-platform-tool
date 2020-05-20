@@ -1,5 +1,5 @@
 {
-  "name": "@engin/dsl-parser",
+  "name": "@dsl/parser",
   "version": "0.0.1",
   "scripts": {
     "start": "start"
