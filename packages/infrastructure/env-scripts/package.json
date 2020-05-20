@@ -1,5 +1,5 @@
 {
-  "name": "@utils/env-scripts",
+  "name": "@infra/env-scripts",
   "version": "0.0.1",
   "description": "工程化基础",
   "main": "index.js",

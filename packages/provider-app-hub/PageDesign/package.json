@@ -1,0 +1,25 @@
+{
+  "name": "@provider-app/page-designer",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "start": "minictl start"
+  },
+  "devDependencies": {
+    "@infra/env-scripts": "^0.0.1"
+  },
+  "author": "SANGET",
+  "license": "MIT",
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  }
+}

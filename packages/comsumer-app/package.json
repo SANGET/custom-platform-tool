@@ -1,7 +1,6 @@
 {
-  "name": "@app/auth",
+  "name": "@comsumer-app/entity",
   "version": "0.0.1",
-  "description": "对接统一认证平台",
   "scripts": {
     "start": "start"
   },

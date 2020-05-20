@@ -1,6 +1,5 @@
 {
-  "name": "@app-hub/web-server",
-  "description": "生产者与消费者的中转中心",
+  "name": "@editor/engin",
   "version": "0.0.1",
   "scripts": {
     "start": "start"

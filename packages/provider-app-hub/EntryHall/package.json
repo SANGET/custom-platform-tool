@@ -1,12 +1,12 @@
 {
-  "name": "@app/tool",
+  "name": "@provider-app/entry-hall",
   "version": "0.0.1",
   "private": true,
   "scripts": {
     "start": "minictl start"
   },
   "devDependencies": {
-    "@utils/env-scripts": "^0.0.1"
+    "@infra/env-scripts": "^0.0.1"
   },
   "author": "SANGET",
   "license": "MIT",

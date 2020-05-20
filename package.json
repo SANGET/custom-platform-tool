@@ -3,14 +3,15 @@
   "version": "1.0.0",
   "private": true,
   "workspaces": [
-    "packages/visual-tool/*",
+    "packages/provider-app-hub/*",
+    "packages/dsl/*",
+    "packages/visual-editor/*",
     "packages/infrastructure/*",
-    "packages/application-platform",
-    "packages/web-server",
-    "packages/dsl/*"
+    "packages/comsumer-app",
+    "packages/web-server"
   ],
   "scripts": {
-    "start:tool": "cd ./packages/visual-tool/app; npm start",
+    "start:tool": "cd ./packages/provider-app-hub/EntryHall; npm start",
     "start:server": "minictl build",
     "prettier:base": "prettier --parser typescript",
     "format": "npm run prettier:base -- --write \"src/**/*.{ts,tsx}\""

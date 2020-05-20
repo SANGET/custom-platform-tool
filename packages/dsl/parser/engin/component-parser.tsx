@@ -1,16 +1,17 @@
 import React from 'react';
 
-import {
-  Input
-} from "@infra/ui-interface";
+// import {
+//   Input
+// } from "@infra/ui-interface";
 
 /**
  * 解析 DSL 描述的 component
  */
-const componentParser = (component) => {
+const componentParser = async (component) => {
   const { type } = component;
   switch (type) {
     case 'Input':
+      const { Input } = await import("@infra/ui-interface");
       return <Input />;
     default:
       break;

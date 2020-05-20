@@ -1,6 +1,10 @@
 {
-  "name": "@infra/utils",
+  "name": "@editor/auth",
   "version": "0.0.1",
+  "description": "对接统一认证平台",
+  "scripts": {
+    "start": "start"
+  },
   "devDependencies": {
   },
   "dependencies": {
