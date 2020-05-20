@@ -12,9 +12,9 @@ IBDSL 的主要职责：规范编辑器的 IBDSL 输出，规范解析器的解�
 
 ## 实现（Implement）
 
-type definition：查看 [`./dsl-core/types/page.ts`][typeOfDSL]
+type definition：查看 [`./types/page.ts`][typeOfDSL]
 
-场景「录入用户」案例：查看 [`./dsl-core/test/create-user-page.ts`][entityOfDSL]
+场景「录入用户」案例：查看 [`./test/create-user-page.ts`][entityOfDSL]
 
 ## IBDSL 设计（Design of IBDSL）
 
@@ -27,7 +27,7 @@ IBDSL 遵循 AST 规则：
 
 ### 功能节点设计
 
-> 具体定义在 [`./dsl-core/types/page.ts`][typeOfDSL] 中
+> 具体定义在 [`./types/page.ts`][typeOfDSL] 中
 
 - 页面 page
   - id
@@ -67,5 +67,5 @@ IBDSL 遵循 AST 规则：
 
 IBDSL 本质上是 js 语法根据 AST 规则来描述的业务的抽象，编辑器负责生产（provide） IBDSL，解析器负责消费（consume） IBDSL，是桥接（bridge）provider 和 consumer 的规范，也是自定义工具的核心。
 
-[typeOfDSL]: ./dsl-core/types/page.ts
-[entityOfDSL]: ./dsl-core/test/create-user-page.ts
+[typeOfDSL]: ./types/page.ts
+[entityOfDSL]: ./test/create-user-page.ts
