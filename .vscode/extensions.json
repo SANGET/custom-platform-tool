@@ -1,5 +1,16 @@
 {
   "recommendations": [
-    "dbaeumer.vscode-eslint"
+    "dbaeumer.vscode-eslint",
+    "wayou.vscode-todo-highlight",
+    "formulahendry.auto-close-tag",
+    "hookyqr.beautify",
+    "dsznajder.es7-react-js-snippets",
+    "dbaeumer.vscode-eslint",
+    "zignd.html-css-class-completion",
+    "yzhang.markdown-all-in-one",
+    "shd101wyy.markdown-preview-enhanced",
+    "davidanson.vscode-markdownlint",
+    "esbenp.prettier-vscode",
+    "jpoissonnier.vscode-styled-components",
   ]
 }
