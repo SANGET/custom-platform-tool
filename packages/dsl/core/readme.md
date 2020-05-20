@@ -34,24 +34,24 @@ IBDSL 遵循 AST 规则：
   - name
   - type
   - dataSource
-    - content
-      - type
-      - child[]
-        - ElementType
-          - container
-            - layout
-              - type
-              - props -> layout info
-          - component
+  - content
+    - type
+    - child[]
+      - ElementType
+        - container
+          - layout
             - type
-            - userBehavior
-              - onClick
-              - onChange
-              - onTap
-            - lifecycle
-              - onMount
-              - onUnmount
-            - expression
+            - props -> layout info
+        - component
+          - type
+          - userBehavior
+            - onClick
+            - onChange
+            - onTap
+          - lifecycle
+            - onMount
+            - onUnmount
+          - expression
 
 ## 交互
 
