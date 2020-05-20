@@ -67,5 +67,5 @@ IBDSL 遵循 AST 规则：
 
 IBDSL 本质上是 js 语法根据 AST 规则来描述的业务的抽象，编辑器负责生产（provide） IBDSL，解析器负责消费（consume） IBDSL，是桥接（bridge）provider 和 consumer 的规范，也是自定义工具的核心。
 
-[typeOfDSL]: ./types/page.ts
-[entityOfDSL]: ./test/create-user-page.ts
+[typeOfDSL]: https://github.com/SANGET/custom-platform-tool/blob/master/packages/dsl/core/types/page.ts
+[entityOfDSL]: https://github.com/SANGET/custom-platform-tool/blob/master/packages/dsl/core/test/create-user-page.ts
