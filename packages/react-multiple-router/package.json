@@ -1,0 +1,12 @@
+{
+  "name": "react-multiple-router",
+  "version": "0.1.0",
+  "devDependencies": {},
+  "peerDependencies": {
+    "react": "^16.13.1"
+  },
+  "dependencies": {
+    "history": "^4.9.0"
+  },
+  "author": "Alex"
+}

@@ -3,10 +3,15 @@
   "version": "0.0.1",
   "private": true,
   "scripts": {
-    "start": "minictl start"
+    "start": "PORT=6679 minictl start"
   },
   "devDependencies": {
     "@infra/env-scripts": "^0.0.1"
+  },
+  "dependencies": {
+    "react": "16.13.1",
+    "react-dom": "16.13.1",
+    "react-router-dom": "5.2.0"
   },
   "author": "SANGET",
   "license": "MIT",
