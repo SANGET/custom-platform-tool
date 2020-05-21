@@ -16,14 +16,6 @@ IUB-DSL 的主要职责：规范编辑器的 IUB-DSL 输出，规范解析器的
 
 -----
 
-## 实现（Implement）
-
-type definition：查看 [`./types/page.ts`][typeOfDSL]
-
-场景「录入用户」案例：查看 [`./test/create-user-page.ts`][entityOfDSL]
-
------
-
 ## IUB-DSL 设计（Design of IBDSL）
 
 ### 设计原则（Principle）
@@ -34,8 +26,6 @@ IUB-DSL 遵循 AST 规则：
 2. 每个节点需要由 `type` 说明节点类型
 
 ### 功能节点设计
-
-> 具体定义在 [`./types/page.ts`][typeOfDSL] 中
 
 - 页面 page
   - id
@@ -72,6 +62,14 @@ IUB-DSL 遵循 AST 规则：
 ### 与解析器（parser）的交互
 
 解析器的最主要职能是：根据已有的 IUB-DSL 实例进行运行时解析，包括其中的动作（action）和表达式（expression）的执行，用户的交互等。
+
+-----
+
+## 实现（Implement）
+
+type definition：查看 [`./types/page.ts`](https://github.com/SANGET/custom-platform-tool/blob/master/packages/dsl/core/types/page.ts)
+
+场景「录入用户」案例：查看 [`./test/create-user-page.ts`](https://github.com/SANGET/custom-platform-tool/blob/master/packages/dsl/core/test/create-user-page.ts)
 
 -----
 
