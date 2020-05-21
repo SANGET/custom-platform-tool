@@ -4,7 +4,9 @@
 
 Interaction between User and Business DSL（IUB-DSL）：用户与业务的交互 DSL
 
-主要用于描述记录用户如何与业务交互。实际上指的是由 JS 语法来描述的、抽象于「业务」和「元素布局」的 AST。所以 IUB-DSL 在本质上是业务 AST。
+主要用于描述用户如何与业务交互，以及 UI 布局。
+
+> 实际上，指的是由 JS 语法来描述的、抽象于「业务」和「元素布局」的 AST。所以 IUB-DSL 在本质上是业务 AST。
 
 -----
 
