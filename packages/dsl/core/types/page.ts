@@ -65,11 +65,15 @@ interface ComponentElement extends ElementAST {
    * 用户操作触发的事件
    * TODO: 完善更多事件的定义
    */
-  userBehavior?: {
+  actions?: {
     /** 鼠标点击 */
     onClick?: Function;
     /** 移动端手势处罚 */
     onTap?: Function;
+    /** 值改变时的回调 */
+    onChange?: Function;
+    /** 获取焦点时的回调 */
+    onFocus?: Function;
   };
 }
 
