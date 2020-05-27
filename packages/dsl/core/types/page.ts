@@ -20,7 +20,7 @@ interface TableLayout {
   };
 }
 
-/** action 回调的 context */
+/** 是指解析器在运行的过程中产生的上下文 context */
 interface ActionContext {
   type: string;
   data: {};
@@ -48,6 +48,19 @@ type ActionRefType = {
 
 type ActionTypes = ActionDirectType | ActionRefType;
 
+interface Events {
+  onMount?: ActionTypes;
+  onUnmount?: ActionTypes;
+  /** 鼠标点击 */
+  onClick?: ActionTypes;
+  /** 移动端手势处罚 */
+  onTap?: ActionTypes;
+  /** 值改变时的回调 */
+  onChange?: ActionTypes;
+  /** 获取焦点时的回调 */
+  onFocus?: ActionTypes;
+}
+
 /** 元素基础描述 */
 interface ElementAST {
   /** ID */
@@ -57,10 +70,10 @@ interface ElementAST {
   // /** 给元素的属性 */
   // attr?: {};
   /** 元素的生命周期 */
-  lifecycle?: {
-    onMount?: ActionTypes;
-    onUnmount?: ActionTypes;
-  };
+  // lifecycle?: {
+  //   onMount?: ActionTypes;
+  //   onUnmount?: ActionTypes;
+  // };
 }
 /**
  * 容器元素
@@ -92,16 +105,17 @@ interface ComponentElement extends ElementAST {
    * 用户操作触发的事件
    * TODO: 完善更多事件的定义
    */
-  actions?: {
-    /** 鼠标点击 */
-    onClick?: ActionTypes;
-    /** 移动端手势处罚 */
-    onTap?: ActionTypes;
-    /** 值改变时的回调 */
-    onChange?: ActionTypes;
-    /** 获取焦点时的回调 */
-    onFocus?: ActionTypes;
-  };
+  actions?: Events;
+  // actions?: {
+  //   /** 鼠标点击 */
+  //   onClick?: ActionTypes;
+  //   /** 移动端手势处罚 */
+  //   onTap?: ActionTypes;
+  //   /** 值改变时的回调 */
+  //   onChange?: ActionTypes;
+  //   /** 获取焦点时的回调 */
+  //   onFocus?: ActionTypes;
+  // };
 }
 
 /** 从 component hub 中引用组件 */
@@ -172,6 +186,10 @@ export interface PageDefination {
   name: string;
   /** 页面类型 */
   type: PageTypes;
+  outputData: {
+    type: '';
+    value: () => any;
+  };
 
   /** 页面布局内容边界 */
   contentHub: PageContentGeneral | PageContentCustom;

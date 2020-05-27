@@ -4,6 +4,10 @@ export const CreateUserPage: PageDefination = {
   id: 'id',
   type: 'config',
   name: '用户管理',
+  outputData: {
+    type: '',
+    value: () => ({})
+  },
   dataSourceHub: {
     type: 'general',
     tableName: 'User',
@@ -82,17 +86,6 @@ export const CreateUserPage: PageDefination = {
         },
         required: true,
       },
-      // 该组件在页面生命周期中的回调动作（callback）
-      lifecycle: {
-        onMount: {
-          type: 'direct',
-          func: () => ({})
-        },
-        onUnmount: {
-          type: 'direct',
-          func: () => ({})
-        },
-      },
       /**
        * 承载所有动作，所有的动作都可以通过 [动作] 来描述操作
        *
@@ -101,6 +94,14 @@ export const CreateUserPage: PageDefination = {
        * 动作：动作的回调参数中有当前页面的「上下文状态」，用于在运行时获取页面信息，包括一切需要的信息
        */
       actions: {
+        onMount: {
+          type: 'direct',
+          func: () => ({})
+        },
+        onUnmount: {
+          type: 'direct',
+          func: () => ({})
+        },
         onClick: {
           type: 'actionRef',
           actionID: 'business-1'
