@@ -205,7 +205,7 @@ export const CreateUserPage: PageDefination = {
             },
             actions: {
               onClick: (context) => {
-                // 提交
+                // 提交，可以是库表操作
                 context.submit();
               },
               onTap: () => ({}),
