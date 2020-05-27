@@ -22,7 +22,6 @@ export interface Selector extends BaseForm {
 
 export interface Input extends BaseForm {
   type: 'Input';
-  expression?: (expressionInput: string) => any;
 }
 
 export interface TreeSelector extends BaseForm {
