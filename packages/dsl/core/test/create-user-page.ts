@@ -23,6 +23,10 @@ export const CreateUserPage: PageDefination = {
         },
         body: [
           {
+            type: 'componentRef',
+            componentID: '22'
+          },
+          {
             id: '33',
             type: 'component',
             component: {

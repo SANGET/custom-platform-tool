@@ -70,7 +70,7 @@ interface ContainerElement extends ElementAST {
   /** 布局信息 */
   layout: FlexLayout | TableLayout;
   /** 容器内容 */
-  body: (ContainerElement | ComponentElement)[];
+  body: (ContainerElement | ComponentElementRefType | ComponentElement)[];
 }
 /**
  * 组件元素，行为载体
