@@ -8,10 +8,37 @@ export const CreateUserPage: PageDefination = {
     type: '',
     value: () => ({})
   },
+  // 数据源
   dataSourceHub: {
     type: 'general',
     tableName: 'User',
   },
+  relationshipsHub: {
+
+  },
+  // 数据关系
+  dataRelationships: [{
+    // 注意互相订阅广播关系导致死循环
+    type: 'subscribe',
+    // 数据字段变化订阅，例如 username 订阅 department 的变化
+    subscriber: {
+      username: [{
+        target: 'department1'
+      }, {
+        target: 'department2'
+      }]
+    }
+  }, {
+    type: 'broadcast',
+    // 数据字段广播
+    broadcaster: {
+      username: [{
+        target: 'department1'
+      }, {
+        target: 'department2'
+      }]
+    }
+  }],
   contentHub: {
     type: 'general', // 这个节点可以承载自定义页面，自定义页面是通过另一个在线 IDE 编辑生成
     child: [
@@ -27,6 +54,7 @@ export const CreateUserPage: PageDefination = {
         },
         body: [
           {
+            id: 'ref11',
             type: 'componentRef',
             componentID: '22'
           },
@@ -46,6 +74,22 @@ export const CreateUserPage: PageDefination = {
               type: 'TreeSelector',
               field: 'department',
               required: false,
+              dataSource: {
+                tableName: 'TreeTable'
+              }
+            },
+          },
+          {
+            id: '44',
+            type: 'component',
+            component: {
+              type: 'Table',
+              onMountQuery: true,
+              bindQueryBtn: '',
+              columns: [{
+                field: 'username',
+                editable: true
+              }],
               dataSource: {
                 tableName: 'TreeTable'
               }
@@ -144,8 +188,48 @@ export const CreateUserPage: PageDefination = {
       context.expression();
     },
     'business-submit': (context) => {
+      context.submit(
+        new Promise(async (transport) => {
+          transport({
+            method: 'insert',
+            tableName: 'User',
+            params: {
+              username: 'xxx',
+            }
+          })
+            .then((res) => {
+              transport({
+                method: 'insert',
+                tableName: 'Department',
+                params: {
+                  name: 'xxx',
+                  username: res.username
+                }
+              });
+            });
+        })
+      );
       // 提交
-      context.submit();
+      // context.submit([
+      //   {
+      //     method: 'insert',
+      //     tableName: 'User',
+      //     params: {
+      //       username: 'xxx',
+      //     }
+      //   },
+      //   {
+      //     method: 'insert',
+      //     tableName: 'Department',
+      //     params: {
+      //       name: 'xxx',
+      //     }
+      //   },
+      // ]);
     }
   }
+};
+
+const parser = () => {
+
 };

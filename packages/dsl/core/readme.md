@@ -1,71 +1,58 @@
 # DSL-Core
 
+这里将 DSL 视为「可视化工具」的核心中枢，基于 DSL 构建上层应用。
+
 ## IUB-DSL 定义（Definition）
 
-Interaction between User and Business DSL（IUB-DSL）：用户与业务的交互 DSL
+Interaction between User and Business DSL（IUB-DSL）：用户与业务的交互 DSL。
 
-主要用于描述用户如何与业务交互，以及 UI 布局。
+主要用于「描述」用户如何与业务交互，具体体现为 UI 如何布局、权限如何流转、数据之间的关系，组件之间的关系等。
 
-> 实际上，指的是由 JS 语法来描述的、抽象于「业务」和「元素布局」的 AST。所以 IUB-DSL 在本质上是业务 AST，以 JSON 形式存在。
+> IUB-DSL 本质上是 js，在这基础上按照 AST 的规则，每个节点都由 type 进行描述，这样可以将布局与业务抽离，用更抽象的模型来描述「数据」「布局」「控件」「权限」之间的关系。
 
 -----
 
 ## 职责（Responsibilities）
 
-IUB-DSL 的主要职责：规范编辑器的 IUB-DSL 输出，规范解析器的解析渲染。是桥接「编辑器」和「解析器」的接口规范，也是描述大部分业务场景的核心准则规范。
+1. 「描述」业务场景
+2. 规范核心模块的输入输出（I/O），规范编辑器如何输出 IUB-DSL，通知解析器如何工作
 
 -----
 
-## IUB-DSL 设计（Design of IBDSL）
+## 设计（Design）
 
-### 设计原则（Principle）
+### IUB-DSL 设计原则（Principle）
 
 IUB-DSL 遵循 AST 规则：
 
-1. 每一个功能点（feature）描述为一个节点（node）
-2. 每个节点需要由 `type` 说明节点类型
+1. 每一个节点（node）代表一个功能点（feature）
+2. 每个节点（node）需要 `type` 声明节点类型
 
-### 功能节点设计
+### IUB-DSL 解析器原则
 
-- 页面 page
-  - id
-  - name
-  - type
-  - dataSource
-  - content
-    - type
-    - child[]
-      - ElementType
-        - container
-          - layout
-            - type
-            - props -> layout info
-        - component
-          - type
-          - userBehavior
-            - onClick
-            - onChange
-            - onTap
-          - lifecycle
-            - onMount
-            - onUnmount
-          - expression
+IUB-DSL 解析器（parser）由针对每一个不同的 type 设计实现一个专门的子解析器（sub-parser for type）组成。
+
+如是可以针对子解析器进行调试、测试，这样可以降低耦合，增强解析器的稳定性。
+
+### IUB-DSL 编辑器原则
+
+TODO
 
 -----
 
-## 交互
+## 模块间关系（relationship between modules）
 
-### 与编辑器（editor）的交互
+### 与编辑器（editor）的关系
 
-编辑器的最主要职能是：输出 IUB-DSL 的实例内容，包括将动作（action）和表达式（expression）片段插入到 IUB-DSL 实例中，然后交给存储服务存储。
+编辑器负责输出 IUB-DSL 实例。将运行代码片段插入到 IUB-DSL 实例中。
 
-### 与解析器（parser）的交互
+### 与解析器（parser）的关系
 
-解析器的最主要职能是：根据已有的 IUB-DSL 实例进行运行时解析，包括其中的动作（action）和表达式（expression）的执行，用户的交互等。
+解析器负责根据已有的 IUB-DSL 输入进行解析。包括处理节点之间的关系。
 
 -----
 
-## 实现（Implement）
+## 实现细节（Detail of Implement）
 
 type definition：查看 [`./types/page.ts`](https://github.com/SANGET/custom-platform-tool/blob/master/packages/dsl/core/types/page.ts)
 

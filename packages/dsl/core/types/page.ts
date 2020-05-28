@@ -120,6 +120,7 @@ interface ComponentElement extends ElementAST {
 
 /** 从 component hub 中引用组件 */
 type ComponentElementRefType = {
+  id: string;
   type: 'componentRef';
   /** 引用的页面，如果没有，则代表当前页 */
   pageID?: string;
@@ -172,6 +173,35 @@ interface SearchingTableMapping {
 }
 
 /**
+ * 数据关系 - 订阅字段变化
+ */
+interface DataRelationshipSubscribe {
+  type: 'subscribe';
+  subscriber: {
+    [subscriber: string]: ({
+      target: string;
+    })[];
+  };
+}
+
+/**
+ * 数据关系 - 订阅字段变化
+ */
+interface DataRelationshipBroadcast {
+  type: 'broadcast';
+  broadcaster: {
+    [broadcaster: string]: ({
+      target: string;
+    })[];
+  };
+}
+
+/**
+ * 数据关系
+ */
+type DataRelationships = DataRelationshipSubscribe | DataRelationshipBroadcast;
+
+/**
  * 描述页面信息的 DSL
  *
  * 规则：一级属性存储描述页面的信息
@@ -191,18 +221,29 @@ export interface PageDefination {
     value: () => any;
   };
 
-  /** 页面布局内容边界 */
+  /** 页面布局内容枢纽 */
   contentHub: PageContentGeneral | PageContentCustom;
 
-  /** 数据源关系集合 */
+  /** 数据关系 */
+  dataRelationships: DataRelationships[];
+
+  /** 关系中枢 */
+  relationshipsHub: [];
+
+  /**
+   * 数据源关系枢纽
+   *
+   * 规则：
+   * 1. 子模版的 dataSourceHub 需要合并到最高层，
+   */
   dataSourceHub: GeneralTableMapping | SearchingTableMapping;
 
-  /** 组件集合 */
+  /** 组件枢纽 */
   componentsHub: {
     [componentID: string]: ComponentElement;
   };
 
-  /** 动作集合，与 component 的事件关联 */
+  /** 动作枢纽 */
   actionsHub: {
     [actionID: string]: Action;
   };
