@@ -12,6 +12,13 @@ export const CreateUserPage: PageDefination = {
   dataSourceHub: {
     type: 'general',
     tableName: 'User',
+    columns: {
+      username: 'string',
+      username1: 'string',
+      username2: 'string',
+      username3: 'string',
+      username4: 'string',
+    }
   },
   relationshipsHub: {
 
@@ -23,7 +30,9 @@ export const CreateUserPage: PageDefination = {
     // 数据字段变化订阅，例如 username 订阅 department 的变化
     subscriber: {
       username: [{
-        target: 'department1'
+        target: 'department1',
+        timer: 'onMount',
+        path: ''
       }, {
         target: 'department2'
       }]

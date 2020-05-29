@@ -1,10 +1,13 @@
 import { PageDefination } from '../types/page';
 
-const CreateUserPage: PageDefination = {
+const UserManager: PageDefination = {
   id: 'qqq',
   type: 'config',
   name: '用户管理',
-  dataSource: {
+  relationshipsHub: {
+
+  },
+  dataSourceHub: {
     type: 'general',
     tableName: 'User',
   },
@@ -41,26 +44,16 @@ const CreateUserPage: PageDefination = {
             },
           },
           {
-            id: '44',
+            id: '33',
             type: 'component',
             component: {
-              type: 'TreeSelector',
-              field: 'department',
-              required: false,
-              dataSource: {
-                tableName: 'TreeTable'
-              }
+              type: 'Button',
             },
-            props: {
-
-            },
-            lifecycle: {
-              onMount: () => ({}),
-              onUnmount: () => ({}),
-            },
-            userBehavior: {
-              onClick: () => ({}),
-              onTap: () => ({}),
+            actions: {
+              onClick: {
+                type: 'actionRef',
+                actionID: 'business-submit'
+              },
             },
           },
           {
@@ -74,5 +67,38 @@ const CreateUserPage: PageDefination = {
         ],
       }
     ]
+  },
+  actionsHub: {
+    'business-submit': (context) => {
+      /**
+       * 这里主要是为了获取数据
+       *
+       * 获取数据之前做的操作，以及获取数据以后的操作，以后详细设计
+       */
+
+      let resData;
+      if (context.pageState.age > 10) {
+
+      } else {
+        resData = context.query({
+          params: ['username', 'age']
+        });
+      }
+      return resData;
+    },
+    // bus: {
+    //   handle: (context) => {
+    //     let data = [];
+    //     data = context.fliterRelation({
+    //       filterRelation,
+    //       data,
+    //     });
+    //     return data;
+    //   },
+    //   condition: [],
+    //   queryRelation: [],
+    //   fliterRelation: [], // TODO: {} // 过滤数据
+    //   layyoutRelation: [],
+    // }
   }
 };
