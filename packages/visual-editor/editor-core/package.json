@@ -1,7 +1,6 @@
 {
-  "name": "@editor/auth",
+  "name": "@editor/core",
   "version": "0.0.1",
-  "description": "对接统一认证平台",
   "scripts": {
     "start": "start"
   },

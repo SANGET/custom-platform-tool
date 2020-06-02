@@ -7,8 +7,7 @@
     "packages/dsl/*",
     "packages/visual-editor/*",
     "packages/infrastructure/*",
-    "packages/comsumer-app",
-    "packages/web-server"
+    "packages/comsumer-app/*"
   ],
   "scripts": {
     "start:hall-app": "cd ./packages/provider-app-hub/EntryHall; npm start",

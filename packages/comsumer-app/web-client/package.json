@@ -1,5 +1,5 @@
 {
-  "name": "@comsumer-app/entity",
+  "name": "@comsumer-app/web-client",
   "version": "0.0.1",
   "scripts": {
     "start": "start"

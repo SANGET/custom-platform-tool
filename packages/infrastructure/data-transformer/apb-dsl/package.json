@@ -1,5 +1,5 @@
 {
-  "name": "@editor/api-transfore",
+  "name": "@infra/apb-dsl-transformer",
   "version": "0.0.1",
   "author": "SANGET",
   "license": "MIT"

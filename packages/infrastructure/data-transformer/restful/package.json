@@ -1,5 +1,5 @@
 {
-  "name": "@editor/orm-sdk",
+  "name": "@infra/restful-transformer",
   "version": "0.0.1",
   "author": "SANGET",
   "license": "MIT"
