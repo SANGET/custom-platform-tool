@@ -1,9 +1,6 @@
 {
-  "name": "@editor/core",
+  "name": "@engin/admin-container",
   "version": "0.0.1",
-  "scripts": {
-    "start": "start"
-  },
   "devDependencies": {
   },
   "dependencies": {

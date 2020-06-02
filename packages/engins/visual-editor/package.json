@@ -1,6 +1,9 @@
 {
-  "name": "@editor/app",
+  "name": "@engin/visual-editor",
   "version": "0.0.1",
+  "scripts": {
+    "start": "start"
+  },
   "devDependencies": {
   },
   "dependencies": {

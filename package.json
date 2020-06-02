@@ -4,8 +4,8 @@
   "private": true,
   "workspaces": [
     "packages/provider-app-hub/*",
-    "packages/dsl/*",
-    "packages/visual-editor/*",
+    "packages/iub-dsl/*",
+    "packages/engins/*",
     "packages/infrastructure/*",
     "packages/comsumer-app/*"
   ],

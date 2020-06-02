@@ -1,5 +1,5 @@
 {
-  "name": "@infra/apb-dsl-transformer",
+  "name": "@infra/data-transformer",
   "version": "0.0.1",
   "author": "SANGET",
   "license": "MIT"
