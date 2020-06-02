@@ -1,6 +1,6 @@
 import {
   CreateUserPage
-} from '@dsl/core/test/create-user-page';
+} from '@iub-dsl/core/test/create-user-page';
 import componentParser from './component-parser';
 
 const parser = (pageDSL) => {

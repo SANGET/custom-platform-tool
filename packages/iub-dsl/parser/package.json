@@ -1,5 +1,5 @@
 {
-  "name": "@dsl/parser",
+  "name": "@iub-dsl/parser",
   "version": "0.0.1",
   "scripts": {
     "start": "start"
