@@ -13,7 +13,12 @@ import MenuManager from '@provider-app/menu-manager/app';
 
 import Hall from './Hall';
 
+interface HallState {
+
+}
+
 const App = () => {
+  const state: HallState = {};
   return (
     <div>
       <Router>
@@ -37,7 +42,7 @@ const App = () => {
 
           <Switch>
             <Route path="/menu-manager">
-              <MenuManager />
+              <MenuManager {...state} />
             </Route>
             <Route path="/page-manager">
               <PageManager />

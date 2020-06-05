@@ -1,6 +1,10 @@
 import React from 'react';
 
-const Input = () => {
+interface InputProps {
+  onChange: (event) => void;
+}
+
+const Input: React.SFC<InputProps> = () => {
   return (
     <input type="text"/>
   );

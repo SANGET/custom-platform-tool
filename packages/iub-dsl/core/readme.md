@@ -61,9 +61,9 @@ type definition：查看 [`./types/page.ts`](https://github.com/SANGET/custom-pl
 这里是直接案例，用于展示如何承载实际业务：
 
 ```ts
-import { PageDefination } from '../types/page';
+import { TypeOfIUBDSL } from '../types/page';
 
-export const CreateUserPage: PageDefination = {
+export const CreateUserPage: TypeOfIUBDSL = {
   id: 'id',
   type: 'config',
   name: '用户管理',

@@ -1,6 +1,6 @@
-import { PageDefination } from '../types/page';
+import { TypeOfIUBDSL } from '../types/page';
 
-const UserManager: PageDefination = {
+const UserManager: TypeOfIUBDSL = {
   id: 'qqq',
   type: 'config',
   name: '用户管理',

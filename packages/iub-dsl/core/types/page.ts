@@ -206,7 +206,7 @@ type DataRelationships = DataRelationshipSubscribe | DataRelationshipBroadcast;
  *
  * 规则：一级属性存储描述页面的信息
  */
-export interface PageDefination {
+export interface TypeOfIUBDSL {
   /**
    * 页面 ID，用于给其他页面引用
    * TODO: 创建页面时需要获取
