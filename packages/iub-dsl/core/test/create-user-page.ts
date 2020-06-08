@@ -4,7 +4,14 @@ export const CreateUserPage: TypeOfIUBDSL = {
   id: 'id',
   type: 'config',
   name: '用户管理',
-  dataSourceRefID: 'dataSourceId1',
+  dataSourceRef: {
+    type: 'tableRef',
+    ref: {
+      dataSourceId1: {
+        subTable: 'dataSourceId2'
+      }
+    }
+  },
   // page interface，与其他 IUB-DSL 实例的输入输出接口
   interface: {
     // 这里可以参考 graphQL 的查询设计，https://graphql.org/
@@ -61,10 +68,10 @@ export const CreateUserPage: TypeOfIUBDSL = {
             componentBindField_UUID_1: [{
               target: 'componentBindField_UUID_2',
               trigger: {
-                when: 'onFocus',
+                when: 'onChange',
                 how: {
                   type: 'actionRef',
-                  actionID: 'subscriber-business-1'
+                  actionID: 'b-1'
                 }
               },
             }, {
@@ -84,7 +91,7 @@ export const CreateUserPage: TypeOfIUBDSL = {
                 when: 'onFocus',
                 how: {
                   type: 'actionRef',
-                  actionID: 'subscriber-business-2'
+                  actionID: 'b-2'
                 }
               },
             }]
@@ -148,88 +155,40 @@ export const CreateUserPage: TypeOfIUBDSL = {
     },
   },
   actionsCollection: {
-    'subscriber-business-1': async (context) => {
-      // 通过表达式计算新值，返回将影响
-      const newValue = 'expression';
-      return newValue;
-    },
-    'subscriber-business-2': async (context) => {
-      // 通过表达式计算新值，返回将影响
-      const newValue = 'expression';
-      return newValue;
-    },
-    'business-1': async (context) => {
-      // 发送请求
-      let a = maping(context.data);
-      a = xhr(a);
-
-      // 异步任务集合
-      const step1 = new Promise();
-      const step2 = new Promise();
-      const step3 = new Promise();
-      Promise.all([
-        step1, step2, step3
-      ]);
-
-      // 同步任务集合
-      await serviceA(a);
-      await serviceB(a);
-      await serviceC(a);
-
-      // 表达式
-      context.expression();
-    },
-    'business-submit2': (context) => {
-      context.apiFetch({
-        method: 'insert',
-        tableName: 'User',
-        params: {
-          username: '123'
-        }
-      })
-        .then((res) => {
-
-        });
-    },
-    'business-submit': (context) => {
-      context.submit(
-        new Promise(async (transport) => {
-          transport({
-            method: 'insert',
-            tableName: 'User',
-            params: {
-              username: 'xxx',
-            }
-          })
-            .then((res) => {
-              transport({
-                method: 'insert',
-                tableName: 'Department',
-                params: {
-                  name: 'xxx',
-                  username: res.username
-                }
-              });
-            });
-        })
-      );
-      // 提交
-      // context.submit([
-      //   {
-      //     method: 'insert',
-      //     tableName: 'User',
-      //     params: {
-      //       username: 'xxx',
-      //     }
-      //   },
-      //   {
-      //     method: 'insert',
-      //     tableName: 'Department',
-      //     params: {
-      //       name: 'xxx',
-      //     }
-      //   },
-      // ]);
+    // 如何和上面的结合起来。
+    // 上一个的输出是下一个的输入。
+    // 条件在流程中，不应该在表达式中。
+    // 每个流程的变量 和 处理情况
+    'b-1': {
+      flow: {
+        // 没有 api 数据请求
+        f1: {
+          id: 'f1',
+          variable: 'v1',
+          expression: ``
+        },
+        f2: {
+          // api 数据请求
+          id: 'f2',
+          variable: 'v2',
+          flowExpression: `#{v1} > 10`,
+          expression: `#{v1} + #{v2}`,
+          success: '',
+          fail: ''
+        },
+        f3: {
+          id: 'f3',
+          variable: 'v3',
+          flowExpression: `#{v1} < 10`,
+          expression: ``
+        },
+        f4: {
+          id: 'f4',
+          variable: 'v4',
+          expression: `#{v1} + #{v2}`
+        },
+      },
+      flowControl: 'f1 & (f2 | f3) & f4',
     }
   },
   layoutContent: {

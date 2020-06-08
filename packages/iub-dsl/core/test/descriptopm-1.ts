@@ -6,6 +6,22 @@ const globalCollections = {
     'API': {
       query: () => {
         return ['data']
+      },
+      query2: {
+        async: true,
+        handler: () => {
+          return ['data']
+        },
+        success: () => {},
+        fail: () => {}
+      },
+      feachTable: {
+        async: true,
+        handler: () => {
+          return ['data']
+        },
+        success: () => {},
+        fail: () => {}
       }
     }
   }
@@ -16,6 +32,7 @@ const listTableIUBDSL = {
   type: 'config',
   name: '用户管理',
   // 理论上这一层应该在顶可以复用
+  // 元数据映射
   metaDataMapping: {
     'tableId1': {
       // TODO: 不同类型能否也遵循这种规范
@@ -68,13 +85,15 @@ const listTableIUBDSL = {
   },
   // 是否也可以是页面变量
   /** 1 */
+  // 通过元数据映射，生成一个store一样的仓库映射。
+  // 你实际请求的时候，对应后台
   dataSourceMappingCollections: {
     'collection1_query': {
       name: '',
       id: '',
       type: 'object', // array
       field: {
-        // 这里有key
+        // 这里有key ,, 是否这样生成。
         a: 'tableId1.uuid1',
         b: {
           source: 'tableId2.uuid1',
@@ -151,123 +170,105 @@ const listTableIUBDSL = {
        * 6. 
        */
       actions: {
-        onClick: {
-          expression: 'string',
-          input: {
-            $1: 'groupId.uuid/controlId',
-          },
-          output: {
-            $1: 'groupId.uuid/controlId',
-          },
-          // eventCode
-          useEvent: {
-            'ECode1': 'eventCollection.API.query',
-            'ECode2': (context ,inputParamRef, outputParamRef) => {
-
-            }
-          },
-          useRelationship: {
-
-          },
-          outputEffect: {
-            // 回填数据？还是其他逻辑？
-          }
-        }
-      }
-    }
-  },
-  a: {
-    // 多个流程都在一个容器内运行！！～～
-    // 主流程、子流程
-    flowId: [
-      {
-        step: '1',
-        expressionId: '',
-        condition: '',
-        input: {},
-        output: {},
-        next: {
-          step: '2',
-          condition: '',
-          input: {},
-          output: {},
-          next: []
-        }
-      }
-    ],
-    container: {
-      // 定位、集合、引用
-      // fail
-      useSource: [
-        // 集合  // 视为整体1？
-        'collection1_query',
-        'collection1_query.a',
-        {
-          use: 'collection1_query',
-          inculdes: ['filed1', 'filed2'],
-          exculdes: ['filed3'] // or
-        }
-        // 整体？
-      ],
-      
-      // thinking ---- 
-      useTempVariable: [
-        'temp1', 'temp2'
-      ],
-      // useVariable
-      query_1: {
-        // 这个好像引用会有问题  // fail
-        $$var$$: ['...collection1_query'],
-
-        $key1$: 'collection1_query.a',
-        $key2$: 'collection1_query.b',
-      },
-      table_1: {
-        // 系统默认变量
-        $$type$$: 'array',
-
-        $key1$: 'collection1_query.a',
-        $key2$: 'collection1_query.b',
-      }
-    },
-    expressionCollection: {
-      'expression1': {
-        expression: '',
-        // input: [{
-        //   // 定位源？
-        //   // 1. dataSource
-        //   // 2. 流程变量？
-        //   // 输入、输出的代理？
-        //   // 1. key: value (key(uuid);value是引用到仓库的地址)
-        //   // 2. key: tempValue
-        //   //  key是真实的key、value是引用？
-        // }, ['$[v1]','$[v2]'], '$[v3]'],
-        // output: [{}]
+        onClick: 'business-flow-1'
       }
     }
   },
   actionsCollection: {
-    'business-1': {
-      expression: '',
-      input: {
-        $1: 'groupId.uuid/controlId',
-      },
-      output: {
-        $1: 'groupId.uuid/controlId',
-      },
-      // eventCode
-      useEvent: {
-        'ECode1': 'eventCollection.API.query',
-        'ECode2': (context ,inputParamRef, outputParamRef) => {
-
+    'business-flow-1': {
+      // contextRef: {},
+      containerRef: {
+        useTempVariable: [
+          'temp1', 'temp2', 'temp3'
+        ],
+        // useVariable
+        query_1: {
+          // 这个好像引用会有问题  // fail
+          // $$var$$: ['...collection1_query'],
+  
+          $key1$: 'collection1_query.a',
+          $key2$: 'collection1_query.b',
+        },
+        query_2: {
+          $key1$: 'collection1_query.a',
+          $key2$: 'collection1_query.b',
+        },
+        table_1: {
+          // 系统默认变量
+          $$type$$: 'array',
+  
+          $key1$: 'collection1_query.a',
+          $key2$: 'collection1_query.b',
         }
       },
-      useRelationship: {
-
-      },
-      outputEffect: {
-        // 回填数据？还是其他逻辑？
+      flowing: [{
+        step: '0',
+        expression: 'var temp1 = 10',
+        condition: 'query_1 !== undefined && query_2 !== undefined',
+        next: [{
+          step: '1',
+          condition: 'temp1 > 10',
+          expression: 'expression_id1',
+          next: {
+            step: '2',
+            condition: '',
+            expression: 'expression_id3',
+          },
+        },{
+          step: '1',
+          condition: 'temp1 <= 10',
+          expression: 'expression_id2',
+          next: {
+            step: '2',
+            condition: '',
+            expression: 'expression_id3',
+          },
+        }]
+      }],
+      expressionCollection: {
+        expression_id1: {
+          expression: `
+            var T1 = A(query_1.$$key1$$);
+            query_1.$$key1$$ = T1;
+            query_2.$$key1$$ = T1 + query_1.$$key2$$;
+            var temp2 = T1 * query_1.$$key2$$;
+          `,
+          useEvent: {
+            A: 'eventCollection.API.query()',
+          },
+          input: ['query_1', 'query_2.$$key1$$'],
+          output: ['temp2', 'query_1', 'query_2.$$key1$$'] // 输出和改变的值
+        },
+        expression_id2: {
+          // 有三个、handler、success、fail
+          expression: `
+            var T1 = A(query_2);
+            query_1.$key1$ = T1.$key1$;
+            query_1.$key2$ = T1.$key2$;
+            var temp3 = (T1.$key1$ + query_1.$$key2$$) * T1.$key2$
+          `,
+          useEvent: {
+            A: 'eventCollection.API.query2',
+          },
+          input: ['query_2', 'query_1.$$key2$$'],
+          output: ['temp3', 'query_1'] // 输出和改变的值 
+        },
+        expression_id3: {
+          expression: `
+            table_1 = A(query_1, param1)
+          `,
+          input: [
+            'query_1', 
+            {
+              alias: 'param1',
+              source: ['temp2','temp3']
+            }
+          ],
+          output: ['table_1']
+        }
       }
     }
-  }
+  },
+  // 多个流程都在一个容器内运行！！～～
+  // 主流程、子流程
 }
