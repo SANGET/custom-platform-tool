@@ -3,7 +3,7 @@ import { ComponentElementRefType, ComponentElement } from "../component/collecti
 import PageInterface from "./page-interface";
 import MetadataMapping from "../metadata/metadata-mapping";
 import RelationshipsCollection from "../relationship/relationship-collection";
-import { Action } from "../actions/action-collection";
+import { ActionFlow } from "../actions/action-collection";
 
 type ElementType = ContainerElement | ComponentElementRefType;
 
@@ -50,6 +50,8 @@ export interface TypeOfIUBDSL {
   /** 页面名称 */
   name: string;
 
+  dataSourceRef: {};
+
   /** 页面之间的接口 */
   interface: PageInterface;
 
@@ -71,7 +73,7 @@ export interface TypeOfIUBDSL {
 
   /** 动作集合 */
   actionsCollection: {
-    [actionID: string]: Action;
+    [actionID: string]: ActionFlow;
   };
 
   /** 布局信息 */
