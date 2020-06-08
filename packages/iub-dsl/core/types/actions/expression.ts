@@ -13,27 +13,28 @@
  */
 type Expression = string;
 
-export interface FlowExpression {
-  /** 表达式类型 */
-  type: 'flow-express';
-  /** 表达式的处理格式 */
-  handler: Expression;
-}
+// export interface FlowExpression {
+//   /** 表达式类型 */
+//   type: 'flow-express';
+//   /** 表达式的处理格式 */
+//   handler: Expression;
+// }
 
-interface ComputeExpression {
-  /** 表达式类型 */
-  type: 'compute';
-  /** 表达式的处理格式 */
-  handler: Expression;
-}
+// interface ComputeExpression {
+//   /** 表达式类型 */
+//   type: 'compute';
+//   /** 表达式的处理格式 */
+//   handler: Expression;
+// }
 
-interface FetchDataExpression {
-  /** 表达式类型 */
-  type: 'fetch-data';
-  /** 表达式的处理格式 */
-  handler: Expression;
-}
+// interface FetchDataExpression {
+//   /** 表达式类型 */
+//   type: 'fetch-data';
+//   /** 表达式的处理格式 */
+//   handler: Expression;
+// }
 
-type ExpressionTypes = ComputeExpression | FetchDataExpression;
+// type ExpressionTypes = ComputeExpression | FetchDataExpression;
+// export default ExpressionTypes;
 
-export default ExpressionTypes;
+export default Expression;
