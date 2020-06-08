@@ -1,4 +1,4 @@
-import { TypeOfIUBDSL } from '../types/page';
+import { TypeOfIUBDSL } from '../types';
 
 export const CreateUserPage: TypeOfIUBDSL = {
   id: 'id',
@@ -10,11 +10,11 @@ export const CreateUserPage: TypeOfIUBDSL = {
     // 这里可以参考 graphQL 的查询设计，https://graphql.org/
     output: {
       type: 'text',
-      return: 'value'
+      getStruct: {}
     },
     input: {
       type: 'struct',
-      return: {
+      getStruct: {
         var1: 'string',
         var2: 'int',
         var3: {
@@ -28,9 +28,9 @@ export const CreateUserPage: TypeOfIUBDSL = {
     mapping: {
       type: 'uuid2field',
       mapping: {
-        'componentBindField_UUID_1': 'username',
-        'componentBindField_UUID_2': 'department',
-        'componentBindField_UUID_3': 'age',
+        componentBindField_UUID_1: 'username',
+        componentBindField_UUID_2: 'department',
+        componentBindField_UUID_3: 'age',
       }
     },
     dataSource: {
@@ -94,7 +94,7 @@ export const CreateUserPage: TypeOfIUBDSL = {
     },
     componentPipeData: {
       id: {
-        type: ''
+        type: '',
         componentID: '',
         field: ''
       }
@@ -104,12 +104,12 @@ export const CreateUserPage: TypeOfIUBDSL = {
     22: {
       id: '22',
       // 实际控件，不具备布局功能，专注交互功能
-      type: 'component', 
+      type: 'component',
       component: {
         // 控件类型，这里系统内置了足够的控件
         type: 'Input',
         // 对应数据库的 field
-        field: 'componentBindField_UUID_1', 
+        field: 'componentBindField_UUID_1',
         required: true,
       },
       /**
