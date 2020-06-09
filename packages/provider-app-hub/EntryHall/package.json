@@ -3,7 +3,8 @@
   "version": "0.0.1",
   "private": true,
   "scripts": {
-    "start": "PORT=6679 minictl start"
+    "start": "PORT=6679 minictl start",
+    "build": "minictl build"
   },
   "devDependencies": {
     "@infra/env-scripts": "^0.0.1"

@@ -6,7 +6,7 @@ interface FlowItem {
   variable: string;
   /** 此流程的执行表达式 */
   expression: ExpressionTypes;
-  flowExpression: FlowExpression;
+  flowExpression?: FlowExpression;
 }
 
 /** 动作描述 */
