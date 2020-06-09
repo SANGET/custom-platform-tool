@@ -1,6 +1,6 @@
 import { ContainerElement } from "../layout-content/container";
 import { ComponentElementRefType, ComponentElement } from "../component/collection";
-import PageInterface from "./page-interface";
+import SRCInterface from "./src-interface";
 import MetadataMapping from "../metadata/metadata-mapping";
 import RelationshipsCollection from "../relationship/relationship-collection";
 import { ActionFlow } from "../actions/action-collection";
@@ -52,8 +52,8 @@ export interface TypeOfIUBDSL {
 
   dataSourceRef: {};
 
-  /** 页面之间的接口 */
-  interface: PageInterface;
+  /** 与 system runtime context 的接口 */
+  SRCInterface: SRCInterface;
 
   /**
    * 数据源关系枢纽

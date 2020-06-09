@@ -8,6 +8,8 @@ Interaction between User and Business DSL（IUB-DSL）：用户与业务的交�
 
 主要用于「描述」用户如何与业务交互，具体体现为 UI 如何布局、权限如何流转、数据之间的关系，组件之间的关系等。
 
+更进一步来说，IUB-DSL 是一种 MVC 模式的描述，更关注于「数据」层面，统一处理数据（Controller），统一存储运行时数据（Model），统一页面渲染（View）
+
 > IUB-DSL 本质上是 js，在这基础上按照 AST 的规则，每个节点都由 type 进行描述，这样可以将布局与业务抽离，用更抽象的模型来描述「数据」「布局」「控件」「权限」之间的关系。
 
 -----
@@ -21,22 +23,57 @@ Interaction between User and Business DSL（IUB-DSL）：用户与业务的交�
 
 ## 设计（Design）
 
+IUB-DSL Entity（实例）本质上是一种结构化数据存储，每个节点负责对应的数据的存储。详情如下：
+
+- metadataMapping 元数据映射集合，用于对应
+
 ### IUB-DSL 设计原则（Principle）
 
 IUB-DSL 遵循 AST 规则：
 
-1. 每一个节点（node）代表一个功能点（feature）
-2. 每个节点（node）需要 `type` 声明节点类型
+1. 结构化数据存储
+2. 每一个节点（node）代表一个功能点（feature）
+3. 每个节点（node）需要 `type` 声明节点类型
 
-### IUB-DSL 解析器原则
+### 运行时上下文（Runtime context）
 
-IUB-DSL 解析器（parser）由针对每一个不同的 type 设计实现一个专门的子解析器（sub-parser for type）组成。
+> 这里指的是「应用平台 web 前端」的运行时上下文。IUB-DSL 从另一个角度看，是描述数据如何在不同的运行时上下文中流转。
 
-如是可以针对子解析器进行调试、测试，这样可以降低耦合，增强解析器的稳定性。
+「应用平台 web 端」在运行时一共会由「三种运行时上下文」：
 
-### IUB-DSL 编辑器原则
+1. 系统运行时上下文 system runtime context（简称 SRC）
+2. 页面运行时上下文 page runtime context（简称 PRC）
+3. 表达式运行时上下文 expression runtime context（简称 ERC）
 
-TODO
+上下文的通讯规则是：
+
+- 运行时数据传递由上到下，不允许跨级通讯。
+- 运行时数据统一存储在「系统运行时上下文 SRC」之中
+- 「页面运行时上下文 PRC」是平行关系，并且统一由 SRC 管理
+- 「表达式运行时上下文 ERC」在 PRC 之中，是业务运行时的数据流转载体
+
+通过上述规则规定了数据的单向流动，确保数据一致性。
+
+-----
+
+那么 IUB-DSL 是如何描述数据在上下文中的流转？
+
+1. 描述一个独立页面需要从 SRC 中获取什么数据
+2. 描述输出什么数据到 SRC 中
+3. 描述 UI 控件如何触发事件（how），触发什么事件（what）
+4. 描述来自 UI 或者系统生命周期回调的「事件的工作流程」，就是如何更改运行时数据
+   1. 何时调用
+      1. onChange
+   2. 如何调用
+      1. 程序流程控制
+      2. 变量获取
+         1. 系统变量
+         2. 页面变量
+         3. 控件变量
+      3. 更改数据
+         1. 通过一次更改通过一个表达式完成一个数据的更改
+
+以上是 IUB-DSL 的数据流转规则，通过 1 2 描述页面之间的通讯，通过 3 4 描述页面内部如何工作，更改运行时数据。
 
 -----
 
@@ -61,158 +98,15 @@ type definition：查看 [`./types/page.ts`](https://github.com/SANGET/custom-pl
 这里是直接案例，用于展示如何承载实际业务：
 
 ```ts
-import { TypeOfIUBDSL } from '../types/page';
-
-export const CreateUserPage: TypeOfIUBDSL = {
-  id: 'id',
-  type: 'config',
-  name: '用户管理',
-  outputData: {
-    type: '',
-    value: () => ({})
-  },
-  dataSourceHub: {
-    type: 'general',
-    tableName: 'User',
-  },
-  contentHub: {
-    type: 'general', // 这个节点可以承载自定义页面，自定义页面是通过另一个在线 IDE 编辑生成
-    child: [
-      {
-        id: '1',
-        type: 'container', // 布局容器
-        layout: {
-          type: 'flex', // 布局方式
-          props: {
-            justifyContent: 'start',
-            justifyItems: 'start'
-          }
-        },
-        body: [
-          {
-            type: 'componentRef',
-            componentID: '22'
-          },
-          {
-            id: '33',
-            type: 'component',
-            component: {
-              type: 'Input',
-              field: 'age',
-              required: false
-            },
-          },
-          {
-            id: '44',
-            type: 'component',
-            component: {
-              type: 'TreeSelector',
-              field: 'department',
-              required: false,
-              dataSource: {
-                tableName: 'TreeTable'
-              }
-            },
-          },
-          {
-            id: '66',
-            type: 'component',
-            component: {
-              type: 'Button',
-              text: '录入'
-            },
-            actions: {
-              onClick: {
-                type: 'actionRef',
-                actionID: 'business-submit'
-              },
-            },
-            props: {
-
-            }
-          },
-        ],
-      }
-    ]
-  },
-  componentsHub: {
-    22: {
-      id: '22',
-      type: 'component', // 实际控件，不具备布局功能，专注交互功能
-      component: {
-        // 控件类型，这里系统内置了足够的控件
-        type: 'Input',
-        field: 'username', // 对应数据库的 field
-        fieldHook: { // 获取数据库字段的钩子回调动作（callback）
-          before: () => ({}),
-          after: () => ({}),
-        },
-        required: true,
-      },
-      /**
-       * 承载所有动作，所有的动作都可以通过 [动作] 来描述操作
-       *
-       * 格式为 [事件 event]: [动作 action]
-       *
-       * 动作：动作的回调参数中有当前页面的「上下文状态」，用于在运行时获取页面信息，包括一切需要的信息
-       */
-      actions: {
-        onMount: {
-          type: 'direct',
-          func: () => ({})
-        },
-        onUnmount: {
-          type: 'direct',
-          func: () => ({})
-        },
-        onClick: {
-          type: 'actionRef',
-          actionID: 'business-1'
-        },
-        onTap: {
-          type: 'direct',
-          func: () => ({})
-        },
-        onChange: {
-          type: 'direct',
-          func: () => ({})
-        },
-        onFocus: {
-          type: 'direct',
-          func: () => ({})
-        },
-      },
-    },
-  },
-  actionsHub: {
-    'business-1': async (context) => {
-      // 发送请求
-      let a = maping(context.data);
-      a = xhr(a);
-
-      // 异步任务集合
-      const step1 = new Promise();
-      const step2 = new Promise();
-      const step3 = new Promise();
-      Promise.all([
-        step1, step2, step3
-      ]);
-
-      // 同步任务集合
-      await serviceA(a);
-      await serviceB(a);
-      await serviceC(a);
-
-      // 表达式
-      context.expression();
-    },
-    'business-submit': (context) => {
-      // 提交
-      context.submit();
-    }
-  }
-};
 ```
+
+-----
+
+## 表达式
+
+图灵完备。
+
+我们需要图灵完备的表达式，用于描述所有由用户或者系统触发的 action 的可计算处理过程。
 
 -----
 
