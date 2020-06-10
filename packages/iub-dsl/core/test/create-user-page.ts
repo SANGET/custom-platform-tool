@@ -1,7 +1,9 @@
+/* eslint-disable @typescript-eslint/camelcase */
+
 import { TypeOfIUBDSL } from '../types';
 
 export const CreateUserPage: TypeOfIUBDSL = {
-  id: 'id',
+  id: 'pageID',
   type: 'config',
   name: '用户管理',
   dataSourceRef: {
@@ -12,8 +14,17 @@ export const CreateUserPage: TypeOfIUBDSL = {
       }
     }
   },
-  // page interface，与其他 IUB-DSL 实例的输入输出接口
-  interface: {
+  // 与 system runtime context 的接口
+  SRCInterface: {
+    // 将内部的变量导出到 system runtime context
+    exposeVar: {
+      componentBindField_UUID_1: 'var1'
+    },
+    // 引用其他页面的
+    refVar: [
+      `#{pageID}.componentBindField_UUID_1`,
+      `#{pageID}.componentBindField_UUID_2`,
+    ],
     // 这里可以参考 graphQL 的查询设计，https://graphql.org/
     output: {
       type: 'text',
@@ -108,7 +119,7 @@ export const CreateUserPage: TypeOfIUBDSL = {
     }
   },
   componentsCollection: {
-    22: {
+    cId1: {
       id: '22',
       // 实际控件，不具备布局功能，专注交互功能
       type: 'component',
@@ -137,7 +148,7 @@ export const CreateUserPage: TypeOfIUBDSL = {
         },
         onClick: {
           type: 'actionRef',
-          actionID: 'business-1'
+          actionID: 'b-submit-1'
         },
         onTap: {
           type: 'direct',
@@ -153,6 +164,19 @@ export const CreateUserPage: TypeOfIUBDSL = {
         },
       },
     },
+    cId2: {
+      type: 'component',
+      component: {
+        type: 'Button',
+        text: '提交'
+      },
+      actions: {
+        onClick: {
+          type: 'actionRef',
+          actionID: 'b-submit-1'
+        }
+      }
+    }
   },
   actionsCollection: {
     // 如何和上面的结合起来。
@@ -167,6 +191,25 @@ export const CreateUserPage: TypeOfIUBDSL = {
           expression: `submit({componentBindField_UUID_1,componentBindField_UUID_2})`,
         }
       },
+    'b-submit-1': {
+      flow: {
+        f1: {
+          id: 'f1',
+          variable: 'click',
+          expression: {
+            type: 'func',
+            handler: (context) => {
+              context.submit({
+                method: 'insert',
+                tableName: 'User',
+                params: {
+
+                }
+              });
+            }
+          }
+        }
+      }
     },
     'b-1': {
       flow: {
