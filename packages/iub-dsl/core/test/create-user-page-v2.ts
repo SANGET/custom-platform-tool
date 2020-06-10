@@ -303,38 +303,33 @@ export const CreateUserPage: TypeOfIUBDSL = {
           expression: `@fetch(#group1.a)`
         },
         f3: {
-<<<<<<< HEAD:packages/iub-dsl/core/test/create-user-page.ts
           id: 'f3',
           variable: 'v3',
           flowExpression: `#{v1} < 10`,
           expression: `@{f5}`
-=======
           variable: '#temp3',
           expression: `@fetch(#temp1)`
->>>>>>> c8e0d697af55da89ee0673ff09e6ddca57e2d433:packages/iub-dsl/core/test/create-user-page-v2.ts
         },
         f4: {
           variable: '#temp4',
           expression: `@fetch(#temp3)`
         },
       },
-<<<<<<< HEAD:packages/iub-dsl/core/test/create-user-page.ts
       flowControl: 'f1 & (f2 & (f5[success] & f4 | f6[fail] & f7 ) | f3) & f4',
-    }
-=======
-      flowExpression: {
-        fe1: {
-          variable: 'var1',
-          expression: `#{group1.a} > 10`,
-        },
-        fe2: {
-          variable: 'var2',
-          expression: `#{v1} < 10`,
-        },
+    },
+    flowExpression: {
+      fe1: {
+        variable: 'var1',
+        expression: `#{group1.a} > 10`,
       },
-      /**
-       * 简单场景：按钮 -> 发送查询条件的表单数据 -> 获取表格数据
-       */
+      fe2: {
+        variable: 'var2',
+        expression: `#{v1} < 10`,
+      },
+    },
+    /**
+     * 简单场景：按钮 -> 发送查询条件的表单数据 -> 获取表格数据
+     */
       flowControl_simple: `
         #f1;
         if(#var1) {
@@ -368,8 +363,6 @@ export const CreateUserPage: TypeOfIUBDSL = {
           #f3;
         }
       `,
-    },
->>>>>>> c8e0d697af55da89ee0673ff09e6ddca57e2d433:packages/iub-dsl/core/test/create-user-page-v2.ts
   },
   layoutContent: {
     type: 'general', // 这个节点可以承载自定义页面，自定义页面是通过另一个在线 IDE 编辑生成
