@@ -205,6 +205,40 @@ export const CreateUserPage: TypeOfIUBDSL = {
       }
     }
   },
+  actionsCollection: {
+    // 如何和上面的结合起来。
+    // 上一个的输出是下一个的输入。
+    // 条件在流程中，不应该在表达式中。
+    // 每个流程的变量 和 处理情况
+    // 流程复杂了，变量定位不好。
+    // 一次处理一个，多个值分拆多个子流程处理。
+    'b-2': {
+      flow: {
+        f1: {
+          expression: `submit({componentBindField_UUID_1,componentBindField_UUID_2})`,
+        }
+      },
+    },
+    'b-submit-1': {
+      flow: {
+        f1: {
+          id: 'f1',
+          variable: 'click',
+          expression: {
+            type: 'func',
+            handler: (context) => {
+              context.submit({
+                method: 'insert',
+                tableName: 'User',
+                params: {
+
+                }
+              });
+            }
+          }
+        }
+      }
+    },
   // 流程运行时上下文的 Schema
   flowSchemas: {
     '#group1.a': {
@@ -269,14 +303,25 @@ export const CreateUserPage: TypeOfIUBDSL = {
           expression: `@fetch(#group1.a)`
         },
         f3: {
+<<<<<<< HEAD:packages/iub-dsl/core/test/create-user-page.ts
+          id: 'f3',
+          variable: 'v3',
+          flowExpression: `#{v1} < 10`,
+          expression: `@{f5}`
+=======
           variable: '#temp3',
           expression: `@fetch(#temp1)`
+>>>>>>> c8e0d697af55da89ee0673ff09e6ddca57e2d433:packages/iub-dsl/core/test/create-user-page-v2.ts
         },
         f4: {
           variable: '#temp4',
           expression: `@fetch(#temp3)`
         },
       },
+<<<<<<< HEAD:packages/iub-dsl/core/test/create-user-page.ts
+      flowControl: 'f1 & (f2 & (f5[success] & f4 | f6[fail] & f7 ) | f3) & f4',
+    }
+=======
       flowExpression: {
         fe1: {
           variable: 'var1',
@@ -324,6 +369,7 @@ export const CreateUserPage: TypeOfIUBDSL = {
         }
       `,
     },
+>>>>>>> c8e0d697af55da89ee0673ff09e6ddca57e2d433:packages/iub-dsl/core/test/create-user-page-v2.ts
   },
   layoutContent: {
     type: 'general', // 这个节点可以承载自定义页面，自定义页面是通过另一个在线 IDE 编辑生成
@@ -402,4 +448,5 @@ export const CreateUserPage: TypeOfIUBDSL = {
       }
     ]
   },
+}
 };

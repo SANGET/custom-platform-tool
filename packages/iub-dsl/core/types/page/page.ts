@@ -4,6 +4,7 @@ import SRCInterface from "./src-interface";
 import MetadataMapping from "../metadata/metadata-mapping";
 import RelationshipsCollection from "../relationship/relationship-collection";
 import { ActionFlow } from "../actions/action-collection";
+import FlowSchemas from "../flow/flow-schema";
 
 type ElementType = ContainerElement | ComponentElementRefType;
 
@@ -53,7 +54,10 @@ export interface TypeOfIUBDSL {
   dataSourceRef: {};
 
   /** 与 system runtime context 的接口 */
-  SRCInterface: SRCInterface;
+  sysRtCxtInterface: SRCInterface;
+
+  /** 流程运行时上下文 flow runtime context 的 Schema */
+  flowSchemas: FlowSchemas;
 
   /**
    * 数据源关系枢纽

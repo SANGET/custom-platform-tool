@@ -14,8 +14,11 @@ export const CreateUserPage: TypeOfIUBDSL = {
       }
     }
   },
-  // 与 system runtime context 的接口
-  SRCInterface: {
+  /**
+   * 1. 与 system runtime context 的接口
+   * 2. 约定页面的输入输出数据
+   */
+  sysRtCxtInterface: {
     // 将内部的变量导出到 system runtime context
     exposeVar: {
       componentBindField_UUID_1: 'var1'
@@ -41,7 +44,9 @@ export const CreateUserPage: TypeOfIUBDSL = {
       }
     }
   },
-  // 元数据映射集合
+  /**
+   * 元数据映射集合
+   */
   metadataMapping: {
     mapping: {
       type: 'uuid2field',
@@ -63,7 +68,19 @@ export const CreateUserPage: TypeOfIUBDSL = {
             len: 32
           }
         ]
-      }
+      },
+      dataSourceId2: {
+        type: 'general',
+        database: '-',
+        tableName: 'Department',
+        columns: [
+          {
+            field: 'name',
+            type: 'char',
+            len: 32
+          }
+        ]
+      },
     }
   },
   // 对应组件组的mapping
@@ -71,43 +88,53 @@ export const CreateUserPage: TypeOfIUBDSL = {
     // 数据关系
     dataPipeData: {
       subscribe: {
-        id1: {
-          // 注意互相订阅广播关系导致死循环
-          // type: 'subscribe',
-          // 数据字段变化订阅，例如 username 订阅 department 的变化
-          subscriber: {
-            componentBindField_UUID_1: [{
-              target: 'componentBindField_UUID_2',
-              trigger: {
-                when: 'onChange',
-                how: {
-                  type: 'actionRef',
-                  actionID: 'b-1'
-                }
-              },
-            }, {
-              target: 'componentBindField_UUID_3'
-            }]
-          }
-        },
+        // 数据字段变化订阅，例如 username 订阅 department 的变化
+        componentBindField_UUID_1: [{
+          target: 'componentBindField_UUID_2',
+          trigger: {
+            when: 'onChange',
+            how: {
+              type: 'actionRef',
+              actionID: 'b-1'
+            }
+          },
+        }, {
+          target: 'componentBindField_UUID_3'
+        }, {
+          target: ['componentBindField_UUID_2', 'componentBindField_UUID_3']
+        }]
+      },
+      publish: {
+        ASubcribe: {
+          target: ['B', 'C'],
+          condintion: '',
+        }
       },
       broadcast: {
-        id2: {
-          // type: 'broadcast',
-          // 数据字段广播
-          broadcaster: {
-            componentBindField_UUID_3: [{
-              target: 'department1',
-              trigger: {
-                when: 'onFocus',
-                how: {
-                  type: 'actionRef',
-                  actionID: 'b-2'
-                }
-              },
-            }]
-          }
-        }
+        // type: 'broadcast',
+        // 数据字段广播
+        componentBindField_UUID_3: [
+          {
+            target: 'department1',
+            trigger: {
+              when: 'onFocus',
+              how: {
+                type: 'actionRef',
+                actionID: 'b-2'
+              }
+            },
+          },
+          {
+            target: 'department2',
+            trigger: {
+              when: 'onFocus',
+              how: {
+                type: 'actionRef',
+                actionID: 'b-3'
+              }
+            },
+          },
+        ]
       }
     },
     componentPipeData: {
@@ -178,37 +205,120 @@ export const CreateUserPage: TypeOfIUBDSL = {
       }
     }
   },
+  // 流程运行时上下文的 Schema
+  flowSchemas: {
+    '#group1.a': {
+      type: 'array',
+      struct: {
+        username: 'string',
+        age: 'num'
+      }
+    },
+    '#group1.b': {
+      type: 'array',
+      struct: {
+        username: `#group1.a`,
+        age: 'num'
+      }
+    },
+    temp1: {
+      type: 'array',
+      filed: {
+        username: 'string',
+        age: 'num'
+      }
+    },
+    temp2: {
+      type: 'array',
+      filed: {
+        username: 'string',
+        age: 'num'
+      }
+    },
+    group1: {
+      method: 'insert',
+      tableName: 'dataSourceId1',
+      params: [{
+        type: '',
+        field: 'componentBindField_UUID_1',
+        filter: () => {},
+        trace: true
+      }]
+    },
+    group2: {
+      username: '',
+      age: '',
+    },
+    group3: {
+      data: [],
+      pageIdx: 1
+    },
+    group4: {},
+    rule1: {}
+  },
   actionsCollection: {
-    // 如何和上面的结合起来。
-    // 上一个的输出是下一个的输入。
-    // 条件在流程中，不应该在表达式中。
-    // 每个流程的变量 和 处理情况
-    // 流程复杂了，变量定位不好。
-    // 一次处理一个，多个值分拆多个子流程处理。
-    'b-2': {
+    'b-3': {
       flow: {
         f1: {
-          expression: `submit({componentBindField_UUID_1,componentBindField_UUID_2})`,
-        }
-      },
+          // frc => flow runtime context
+          variable: '#group1.a',
+          expression: `@insert(@group1)` // int [] {}
+        },
+        f2: {
+          variable: '#temp1',
+          expression: `@fetch(#group1.a)`
+        },
+        f3: {
+          variable: '#temp1',
+          expression: `@fetch(#temp1)`
+        },
+      }
+    },
     'b-submit-1': {
       flow: {
         f1: {
           id: 'f1',
           variable: 'click',
-          expression: {
-            type: 'func',
-            handler: (context) => {
-              context.submit({
-                method: 'insert',
-                tableName: 'User',
-                params: {
+          // expression: {
+          //   type: 'func',
+          //   handler: (context) => {
+          //     context.submit({
+          //       method: 'insert',
+          //       tableName: 'User',
+          //       params: {
 
-                }
-              });
-            }
-          }
-        }
+          //       }
+          //     });
+          //   }
+          // },
+          code: `
+            #group1.a = @fetch(@group1)
+            #temp1 = @fetch(#group1.a)
+            #temp2 = @filter(#temp1, @group2)
+            #group2 = @fetch(#temp2) // 表格数据
+            #group3 = @filter(#group2, @rule1) // 过滤表格数据
+          `,
+          output: ['group1.a', 'group2', 'group3'] // 流程数据仓库中改了什么值
+        },
+        f2: {
+          id: 'f1',
+          variable: 'click',
+          code: `
+            #temp = filter(@group1)
+            #group2 = map(#temp)
+            #group3 = #temp
+          `
+        },
+        f3: {
+          id: 'f1',
+          variable: 'click',
+          code: `
+            mark(@group2, @group3)
+          `
+        },
+      },
+      flowControl: {
+        expression: ``
       }
     },
     'b-1': {
@@ -223,16 +333,27 @@ export const CreateUserPage: TypeOfIUBDSL = {
           // api 数据请求
           id: 'f2',
           variable: 'v2',
-          flowExpression: `#{v1} > 10`,
-          expression: `#{v1} + #{v2}`,
-          success: '',
+          // inout: ['temp1', 'group1', '...'],
+          // 模拟 insert 数据
+          expression: `
+            let a = @fetch(@group1); // {}
+            let b = @fetch(@group1); // string
+            let c = @fetch(@group1); // int
+            #group2.a = a
+            #group2.b = b
+            #group2.c = c
+            #group3 = #fetch(#group2); // []
+            #group4 = #fetch(#group1); // int
+            @fetch(#group4)
+          `,
+          // output : ['temp1', 'group1', 'group2', 'group3'], // 改变了group1
           fail: ''
         },
         f3: {
           id: 'f3',
+          // input: ['temp1', 'group2', 'group3']
           variable: 'v3',
-          flowExpression: `#{v1} < 10`,
-          expression: `@{f5}`
+          expression: ``
         },
         f4: {
           id: 'f4',
@@ -240,7 +361,16 @@ export const CreateUserPage: TypeOfIUBDSL = {
           expression: `#{v1} + #{v2}`
         },
       },
-      flowControl: 'f1 & (f2 & (f5[success] & f4 | f6[fail] & f7 ) | f3) & f4',
+      flowExpression: {
+        fe1: {
+          variable: 'var1',
+          expression: `#{v1} > 10`,
+        },
+        fe2: {
+          expression: `#{v1} < 10`,
+        },
+      },
+      flowControl: 'if(!{fe1()}) { #{f1()} } else { f3(f4()) }',
     }
   },
   layoutContent: {

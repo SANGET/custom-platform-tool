@@ -12,7 +12,6 @@ const appRuntimeState = {
   getDataFromApi: () => {},
 };
 
-
 const pageRuntimeState = {
   pageName: 'pageName',
   pageId: 'pageId',
