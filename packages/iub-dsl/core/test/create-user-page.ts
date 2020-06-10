@@ -159,6 +159,15 @@ export const CreateUserPage: TypeOfIUBDSL = {
     // 上一个的输出是下一个的输入。
     // 条件在流程中，不应该在表达式中。
     // 每个流程的变量 和 处理情况
+    // 流程复杂了，变量定位不好。
+    // 一次处理一个，多个值分拆多个子流程处理。
+    'b-2': {
+      flow: {
+        f1: {
+          expression: `submit({componentBindField_UUID_1,componentBindField_UUID_2})`,
+        }
+      },
+    },
     'b-1': {
       flow: {
         // 没有 api 数据请求
@@ -180,7 +189,7 @@ export const CreateUserPage: TypeOfIUBDSL = {
           id: 'f3',
           variable: 'v3',
           flowExpression: `#{v1} < 10`,
-          expression: ``
+          expression: `@{f5}`
         },
         f4: {
           id: 'f4',
@@ -188,7 +197,7 @@ export const CreateUserPage: TypeOfIUBDSL = {
           expression: `#{v1} + #{v2}`
         },
       },
-      flowControl: 'f1 & (f2 | f3) & f4',
+      flowControl: 'f1 & (f2 & (f5[success] & f4 | f6[fail] & f7 ) | f3) & f4',
     }
   },
   layoutContent: {

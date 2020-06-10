@@ -12,6 +12,7 @@ const context = {
 };
 
 const a = expressionParser(A.expression, context);
+context[A.variable] = a;
 context.currValue = a;
 
 const b = expressionParser(B.expression, context);
