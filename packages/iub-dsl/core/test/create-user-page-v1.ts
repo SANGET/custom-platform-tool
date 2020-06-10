@@ -269,61 +269,109 @@ export const CreateUserPage: TypeOfIUBDSL = {
           expression: `@fetch(#group1.a)`
         },
         f3: {
-          variable: '#temp3',
+          variable: '#temp1',
           expression: `@fetch(#temp1)`
         },
+      }
+    },
+    'b-submit-1': {
+      flow: {
+        f1: {
+          id: 'f1',
+          variable: 'click',
+          // expression: {
+          //   type: 'func',
+          //   handler: (context) => {
+          //     context.submit({
+          //       method: 'insert',
+          //       tableName: 'User',
+          //       params: {
+
+          //       }
+          //     });
+          //   }
+          // },
+          code: `
+            #group1.a = @fetch(@group1)
+            #temp1 = @fetch(#group1.a)
+            #temp2 = @filter(#temp1, @group2)
+            #group2 = @fetch(#temp2) // 表格数据
+            #group3 = @filter(#group2, @rule1) // 过滤表格数据
+          `,
+          output: ['group1.a', 'group2', 'group3'] // 流程数据仓库中改了什么值
+        },
+        f2: {
+          id: 'f1',
+          variable: 'click',
+          code: `
+            #temp = filter(@group1)
+            #group2 = map(#temp)
+            #group3 = #temp
+          `
+        },
+        f3: {
+          id: 'f1',
+          variable: 'click',
+          code: `
+            mark(@group2, @group3)
+          `
+        },
+      },
+      flowControl: {
+        expression: ``
+      }
+    },
+    'b-1': {
+      flow: {
+        // 没有 api 数据请求
+        f1: {
+          id: 'f1',
+          variable: 'v1',
+          expression: ``
+        },
+        f2: {
+          // api 数据请求
+          id: 'f2',
+          variable: 'v2',
+          // inout: ['temp1', 'group1', '...'],
+          // 模拟 insert 数据
+          expression: `
+            let a = @fetch(@group1); // {}
+            let b = @fetch(@group1); // string
+            let c = @fetch(@group1); // int
+            #group2.a = a
+            #group2.b = b
+            #group2.c = c
+            #group3 = #fetch(#group2); // []
+            #group4 = #fetch(#group1); // int
+            @fetch(#group4)
+          `,
+          // output : ['temp1', 'group1', 'group2', 'group3'], // 改变了group1
+          fail: ''
+        },
+        f3: {
+          id: 'f3',
+          // input: ['temp1', 'group2', 'group3']
+          variable: 'v3',
+          expression: ``
+        },
         f4: {
-          variable: '#temp4',
-          expression: `@fetch(#temp3)`
+          id: 'f4',
+          variable: 'v4',
+          expression: `#{v1} + #{v2}`
         },
       },
       flowExpression: {
         fe1: {
           variable: 'var1',
-          expression: `#{group1.a} > 10`,
+          expression: `#{v1} > 10`,
         },
         fe2: {
-          variable: 'var2',
           expression: `#{v1} < 10`,
         },
       },
-      /**
-       * 简单场景：按钮 -> 发送查询条件的表单数据 -> 获取表格数据
-       */
-      flowControl_simple: `
-        #f1;
-        if(#var1) {
-          #f2
-        } else {
-          #f4;
-          #f3;
-        }
-      `,
-      /**
-       * 中等复杂场景
-       */
-      flowControl_normal: `
-        #f1;
-        if(#var1) {
-          #f2
-        } else {
-          #f4;
-          #f3;
-        }
-      `,
-      /**
-       * 重度复杂场景
-       */
-      flowControl_hard_1: `
-        #f1;
-        if(#var1) {
-          #f2
-        } else {
-          #f4;
-          #f3;
-        }
-      `,
-    },
+      flowControl: 'if(!{fe1()}) { #{f1()} } else { f3(f4()) }',
+    }
   },
   layoutContent: {
     type: 'general', // 这个节点可以承载自定义页面，自定义页面是通过另一个在线 IDE 编辑生成
