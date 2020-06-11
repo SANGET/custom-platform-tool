@@ -24,10 +24,10 @@ export const CreateUserPage: TypeOfIUBDSL = {
       componentBindField_UUID_1: 'var1'
     },
     // 引用其他页面的
-    refVar: [
-      `#{pageID}.componentBindField_UUID_1`,
-      `#{pageID}.componentBindField_UUID_2`,
-    ],
+    refVar: {
+      uuid1: `#{pageID}.componentBindField_UUID_1`,
+      uuid2: `#{pageID}.componentBindField_UUID_2`,
+    },
     // 这里可以参考 graphQL 的查询设计，https://graphql.org/
     output: {
       type: 'text',
@@ -205,59 +205,63 @@ export const CreateUserPage: TypeOfIUBDSL = {
       }
     }
   },
-  // 流程运行时上下文的 Schema
-  flowSchemas: {
-    '#group1.a': {
-      type: 'array',
-      struct: {
-        username: 'string',
-        age: 'num'
-      }
+  schemas: {
+    flow: {
+      '#group1.a': {
+        type: 'array',
+        struct: {
+          username: 'string',
+          age: 'num'
+        }
+      },
+      '#group1.b': {
+        type: 'array',
+        struct: {
+          username: `#group1.a`,
+          age: 'num'
+        }
+      },
+      temp1: {
+        type: 'array',
+        filed: {
+          username: 'string',
+          age: 'num'
+        }
+      },
+      temp2: {
+        type: 'array',
+        filed: {
+          username: 'string',
+          age: 'num'
+        }
+      },
+      group1: {
+        method: 'insert',
+        tableName: 'dataSourceId1',
+        params: [{
+          type: '',
+          field: 'componentBindField_UUID_1',
+          filter: () => {},
+          trace: true
+        }]
+      },
+      group2: {
+        username: '',
+        age: '',
+      },
+      group3: {
+        data: [],
+        pageIdx: 1
+      },
+      group4: {},
     },
-    '#group1.b': {
-      type: 'array',
-      struct: {
-        username: `#group1.a`,
-        age: 'num'
-      }
-    },
-    temp1: {
-      type: 'array',
-      filed: {
-        username: 'string',
-        age: 'num'
-      }
-    },
-    temp2: {
-      type: 'array',
-      filed: {
-        username: 'string',
-        age: 'num'
-      }
-    },
-    group1: {
-      method: 'insert',
-      tableName: 'dataSourceId1',
-      params: [{
-        type: '',
-        field: 'componentBindField_UUID_1',
-        filter: () => {},
-        trace: true
-      }]
-    },
-    group2: {
-      username: '',
-      age: '',
-    },
-    group3: {
-      data: [],
-      pageIdx: 1
-    },
-    group4: {},
-    rule1: {}
+    page: {
+      expressionVar1: 'string',
+    }
   },
   actionsCollection: {
     'b-3': {
+      label: 'fl1',
       flow: {
         f1: {
           // frc => flow runtime context
@@ -266,15 +270,15 @@ export const CreateUserPage: TypeOfIUBDSL = {
         },
         f2: {
           variable: '#temp1',
-          expression: `@fetch(#group1.a)`
+          expression: `@fetch(#fl1.group1.a)`
         },
         f3: {
           variable: '#temp3',
-          expression: `@fetch(#temp1)`
+          expression: `@fetch(#fl1.temp1)`
         },
         f4: {
           variable: '#temp4',
-          expression: `@fetch(#temp3)`
+          expression: `@fetch(#fl1.temp3)`
         },
       },
       flowExpression: {
@@ -324,6 +328,29 @@ export const CreateUserPage: TypeOfIUBDSL = {
         }
       `,
     },
+    'b-4': {
+      label: 'fl1',
+      flow: {
+        f1: {
+          // frc => flow runtime context
+          variable: '#group1.a',
+          toPage: 'expressionVar1',
+          expression: `@insert(@group1)` // int [] {}
+        },
+        f2: {
+          variable: '#temp1',
+          expression: `@fetch(#fl1.group1.a)`
+        },
+        f3: {
+          variable: '#temp3',
+          expression: `@fetch(#temp1)`
+        },
+        f4: {
+          variable: '#temp4',
+          expression: `@fetch(#fl1.temp3)`
+        },
+      },
+    }
   },
   layoutContent: {
     type: 'general', // 这个节点可以承载自定义页面，自定义页面是通过另一个在线 IDE 编辑生成

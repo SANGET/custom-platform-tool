@@ -134,6 +134,8 @@ const relationship = {
     chain: `#a1 => c; (#a2); #B.td; exp_&(#C.te, #D.te)`,
     'exp_&': {
       type: 'lowCode',
+      // 1、触发条件。 2、同一个handle 3、不同的handle
+      triggerCondition: '后更改的值触发 ｜ 同时触发 ｜ 低代码判断',
       // 默认嵌套什么内容，由生成器决定
       handler: (C, D) => {
         // `@handle(#C, #D)`
