@@ -6,9 +6,16 @@ export const BaseReference = {
 
   /**
    * 元数据映射集合
+   * TODO: 什么时候更新? 更改元数据的时候
    */
   metadataCollection: {
+    // 解析时才需要的
+    // mappingCollection: {
+    //   uuid1: 'dataSourceId1.username',
+    //   uuid2: 'dataSourceId2.department'
+    // },
     dataSource: {
+      // TODO: 取消列、删除附属表？在Node服务中解决
       dataSourceId1: {
         type: 'general',
         database: '-',
@@ -48,6 +55,7 @@ export const BaseReference = {
   },
   /**
    * 布局信息 
+   * TODO: 应该仅描述页面结构才对的？不是特别重要可以灵活处理。
    */
   layoutContent: {
     type: 'general', // 这个节点可以承载自定义页面，自定义页面是通过另一个在线 IDE 编辑生成
@@ -81,14 +89,19 @@ export const BaseReference = {
   /**
    * 组件集合
    * @description component：描述comp长什么样。actions：解析能够提供的所有动作。
+   * TODO: 用户个性化？忘了？表格显示多少列。组件内部。？
+   * TODO: 页面模板：如何保留数据源、保留什么数据源、联动、等
+   * TODO: 模板复制和关联。？需要标记和处理好是否全部复制。
    */
   componentsCollection: {
+    // TODO: 组件是否可以是页面、模板、三方组件
     22: {
       type: 'component',
       component: {
         type: 'Button',
         text: '提交'
       },
+      // TODO: components来源、不同comp、事件？按照设想应该由ui隔离层中的Comp决定的
       actions: {
         onClick: {
           type: 'actionRef',
@@ -101,6 +114,9 @@ export const BaseReference = {
   /**
    * 动作集合
    * @description 需求：一个动作提交一次，一次提交一个事物
+   * TODO: 货币特殊处理。详细写代码时候考虑的问题。
+   * TODO: API操作后的刷新、特定刷新页面的动作？数据流向没问题，不存在这些问题
+   * TODO: 控件独立状态控制？？应该通过状态关系控制？
    * @description 可以引用单个f1或者#outputF1变量，但是不能引用整个b-1。 
    */
   actionsCollection: {
@@ -159,6 +175,7 @@ export const BaseReference = {
    */
   relationshipsCollection: {
     dataChanged: {
+      // relationshipOfDataChanged: {
       relationId1: {
         broadcaster: {
           UUIDA: {
@@ -304,7 +321,7 @@ export const BaseReference = {
         struct: {
           name: 'string',
           age: 'num',
-        } 
+        }
       }
     },
   }
