@@ -206,7 +206,7 @@ export const CreateUserPage: TypeOfIUBDSL = {
     }
   },
   // 流程运行时上下文的 Schema
-  flowSchemas: {
+ flowSchemas: {
     '#group1.a': {
       type: 'array',
       struct: {
