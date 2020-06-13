@@ -1,0 +1,10 @@
+{
+  "packages": [
+    "packages/provider-app-hub/*",
+    "packages/iub-dsl/*",
+    "packages/engins/*",
+    "packages/infrastructure/*",
+    "packages/comsumer-app/*"
+  ],
+  "version": "0.0.0"
+}
