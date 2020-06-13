@@ -10,6 +10,8 @@
     "packages/comsumer-app/*"
   ],
   "scripts": {
+    "postinstall": "lerna bootstrap",
+    "start:all": "lerna run --parallel --stream start",
     "start:hall-app": "cd ./packages/provider-app-hub/EntryHall; npm start",
     "start:page-designer": "cd ./packages/provider-app-hub/PageDesigner; npm start",
     "start:server": "minictl build",
@@ -17,9 +19,8 @@
     "format": "npm run prettier:base -- --write \"src/**/*.{ts,tsx}\""
   },
   "devDependencies": {
+    "lerna": "^3.21.0",
     "prettier": "^2.0.5"
-  },
-  "dependencies": {
   },
   "author": "SANGET",
   "license": "MIT",

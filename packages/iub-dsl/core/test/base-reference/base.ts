@@ -16,7 +16,7 @@ export const BaseReference: TypeOfIUBDSL = {
         database: '-',
         tableName: 'User',
         columns: {
-          uuid1:{
+          uuid1: {
             field: 'username',
             type: 'char',
             len: 32
@@ -28,7 +28,7 @@ export const BaseReference: TypeOfIUBDSL = {
         database: '-',
         tableName: 'Department',
         columns: {
-          uuid2:{
+          uuid2: {
             field: 'department',
             type: 'char',
             len: 32
@@ -49,7 +49,7 @@ export const BaseReference: TypeOfIUBDSL = {
     },
   },
   /**
-   * 布局信息 
+   * 布局信息
    */
   layoutContent: {
     type: 'general', // 这个节点可以承载自定义页面，自定义页面是通过另一个在线 IDE 编辑生成
@@ -101,7 +101,7 @@ export const BaseReference: TypeOfIUBDSL = {
         onClick: {
           type: 'actionRef',
           // TODO: 多动作的流程需要合并？应该是一个动作关系描述。而且这个动作关系不太复杂的关系
-          actionID: ['b-1', 'b-2'], 
+          actionID: ['b-1', 'b-2'],
         }
       }
     }
@@ -109,7 +109,7 @@ export const BaseReference: TypeOfIUBDSL = {
   /**
    * 动作集合
    * @description 需求：一个动作提交一次，一次提交一个事物
-   * @description 可以引用单个f1或者#outputF1变量，但是不能引用整个b-1。 
+   * @description 可以引用单个f1或者#outputF1变量，但是不能引用整个b-1。
    */
   actionsCollection: {
     'b-1': {
@@ -117,11 +117,11 @@ export const BaseReference: TypeOfIUBDSL = {
         // co
         f1: {
           variable: 'outputF1',
-          expression: '@business1(@group1)'
+          expression: '@query(@group1)'
         },
         f2: {
           variable: 'outputF2',
-          expression: '@bussiness2(#temp1 + #outputF1 + @group1)'
+          expression: '@bussiness2(@uuid3 + #outputF1 + @group1)'
         },
         f3: {
           variable: 'outputF3',
@@ -135,15 +135,33 @@ export const BaseReference: TypeOfIUBDSL = {
       flowExpression: {
         fe1: {
           variable: 'var1',
-          expression: `#{v1} > 10`,
+          expression: `#outputF1 > 10`,
         },
         fe2: {
           variable: 'var2',
-          expression: `#{v1} < 10`,
+          expression: `#outputF1 < 10`,
         },
       },
       /** 简单场景：按钮 -> 发送查询条件的表单数据 -> 获取表格数据 */
       flowControl: `
+        function flowControl() {
+          let resData;
+
+          #f1(); -> var outputF1 = context.query({
+            username: 'hui ge',
+            age: 10,
+          }).submit({
+            username: 'string',
+            age: 'num',
+          });
+          #f2(outputF1);
+          #f3();
+          resData = #f4();
+          return resData;
+        }
+        const resData = flowControl();
+        context.commit(resData)
+
         #f1;
         if(#var1) {
           #f2
@@ -152,7 +170,7 @@ export const BaseReference: TypeOfIUBDSL = {
           #f3;
         }
       `,
-    }, 
+    },
     'b-2': {
       flow: {
         f1: {
@@ -239,22 +257,23 @@ export const BaseReference: TypeOfIUBDSL = {
   schemas: {
     page: {
       expresstionVar1: 'string',
+      v3: {},
       expresstionVar2: {
-       type: 'array',
-       struct: {
-         username: '@expresstionVar1',
-         age: 'num',
-       } 
+        type: 'array',
+        struct: {
+          uuid1: '@expresstionVar1',
+          uuid2: 'num',
+        }
       }
     },
     flow: {
       group1: {
         type: 'object',
         struct: {
-          name: 'string',
-          age: 'num',
-        } 
+          uuid1: 'string',
+          uuid2: 'num',
+        }
       }
     },
   }
-}
+};
