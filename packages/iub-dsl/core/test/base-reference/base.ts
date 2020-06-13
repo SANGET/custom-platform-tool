@@ -1,4 +1,6 @@
-export const BaseReference = {
+import { TypeOfIUBDSL } from "../../types";
+
+export const BaseReference: TypeOfIUBDSL = {
   // baseInfo
   id: 'pageId',
   type: 'config',
@@ -83,11 +85,17 @@ export const BaseReference = {
    * @description component：描述comp长什么样。actions：解析能够提供的所有动作。
    */
   componentsCollection: {
-    22: {
+    compId: {
+      id: '',
       type: 'component',
       component: {
         type: 'Button',
         text: '提交'
+      },
+      /** 存储通用 props 编辑后生成的数据 */
+      props: {
+        /** 支持部分通用样式 */
+        style: {}
       },
       actions: {
         onClick: {
@@ -162,70 +170,14 @@ export const BaseReference = {
       relationId1: {
         broadcaster: {
           UUIDA: {
-            target: {
-              tb: {
-                field: 'UUIDB',
-                when: ['onUserChange', 'onMount', 'onChange'],
-                how: {
-                  type: '',
-                  actionID: 'a1'
-                }
-              },
-              tc: {
-                field: 'UUIDC',
-                when: ['onApiChange'],
-                how: {
-                  actionID: 'a2'
-                }
-              },
-            }
-          },
-          UUIDB: {
-            target: {
-              td: {
-                field: 'UUIDD',
-                when: 'onChange',
-                how: {
-                  actionID: 'b1'
-                }
+            tb: {
+              field: 'UUIDB',
+              when: ['onUserChange', 'onMount', 'onChange'],
+              how: {
+                type: '',
+                actionID: 'a1'
               }
-            }
-          },
-          UUIDC: {
-            target: {
-              tb: {
-                field: 'UUIDB',
-                when: 'onChange',
-                how: {
-                  actionID: 'c1'
-                }
-              },
-              td: {
-                field: 'UUIDD',
-                when: 'onChange',
-                how: {
-                  actionID: 'c1'
-                }
-              },
-              te: {
-                field: 'UUIDE',
-                when: 'onChange',
-                how: {
-                  actionID: 'c1'
-                }
-              },
-            }
-          },
-          UUIDD: {
-            target: {
-              te: {
-                field: 'UUIDE',
-                when: 'onChange',
-                how: {
-                  actionID: 'd1'
-                }
-              }
-            }
+            },
           },
         },
         targetFlowChain: {
@@ -250,8 +202,8 @@ export const BaseReference = {
             type: '',
             handler: '',
           },
-          exp_D: {},
-          exp_E: {},
+          exp_D: { type: '' },
+          exp_E: { type: '' },
         }
       }
     },
@@ -268,22 +220,19 @@ export const BaseReference = {
     },
     // 引用其他页面的
     refVar: {
-      uuid1: `#{pageID}.componentBindField_UUID_1`,
-      uuid2: `#{pageID}.componentBindField_UUID_2`,
+      pageUuid1: `#{pageID}.componentBindField_UUID_1`,
+      pageUuid2: `#{pageID}.componentBindField_UUID_2`,
     },
     // 这里可以参考 graphQL 的查询设计，https://graphql.org/
     // TODO: 多个、单个？不同情况输入/输出不同的数据结构。？
     output: {
       type: 'text',
-      getStruct: {}
+      struct: {}
     },
     input: {
       type: 'struct',
-      getStruct: {
+      struct: {
         var1: 'string',
-        var2: 'int',
-        var3: {
-        }
       }
     }
   },
