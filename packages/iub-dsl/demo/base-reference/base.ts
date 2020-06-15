@@ -1,4 +1,4 @@
-import { TypeOfIUBDSL } from "../../types";
+import { TypeOfIUBDSL } from "..";
 
 export const BaseReference: TypeOfIUBDSL = {
   // baseInfo
@@ -257,7 +257,6 @@ export const BaseReference: TypeOfIUBDSL = {
   schemas: {
     page: {
       expresstionVar1: 'string',
-      v3: {},
       expresstionVar2: {
         type: 'array',
         struct: {

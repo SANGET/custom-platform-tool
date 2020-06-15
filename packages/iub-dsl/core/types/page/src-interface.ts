@@ -1,5 +1,5 @@
 
-type FieldType = 'string' | 'int'
+type FieldType = 'string' | 'int' | 'num'
 
 interface PageVariable {
   /** uuid: variable */

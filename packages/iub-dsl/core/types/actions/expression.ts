@@ -42,6 +42,10 @@ interface ExpressionRef {
   variable: string;
   /** 此流程的执行表达式 */
   expression: ExpressionTypes;
+  /** 是否熔断 */
+  isFusing?: boolean;
+  /** 是否返回 */
+  isReturn?: boolean;
 }
 
 export default ExpressionRef;

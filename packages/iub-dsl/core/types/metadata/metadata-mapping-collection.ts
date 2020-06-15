@@ -25,14 +25,27 @@ interface GeneralTableMapping {
   };
 }
 
+// TODO: 商讨一下。是否这样。强引用主从表。弱引用
+interface QuoteRef {
+  connectKey: string; // tableId.filed
+  key?: string; // tableId.id
+  value?: string; // tableId.show
+}
+
 /**
  * 数据源关系
  */
 interface DataSourceRelation {
   [dataSourceId: string]: {
     type: string;
-    subTable?: string;
-    parentTable?: string;
+    subTable?: string | QuoteRef;
+    parentTable?: string | {
+      [dataUUID: string]: QuoteRef;
+    };
+    quoteRef?: {
+      // tableId.filed。 Object扩展预留
+      [dataUUID: string]: string | QuoteRef; 
+    }
   }
 }
 
