@@ -23,17 +23,17 @@ const SimpleCreateUser: TypeOfIUBDSL = {
   /** 元数据映射集合 [数据源关系枢纽] */
   metadataCollection: {
     dataSource: {
-      userTableId: {
+      userTable_UUID: {
         type: 'general',
         database: '-',
         tableName: 'user',
         columns: {
-          tableUUID1: {
+          filed_UUID1: {
             field: 'username',
             type: 'string',
             len: 32
           },
-          tableUUID2: {
+          filed_UUID2: {
             field: 'age',
             type: 'int',
             len: 3,
@@ -49,26 +49,26 @@ const SimpleCreateUser: TypeOfIUBDSL = {
     exposeVar: {
       // TODO: 数组是否能支持？如何支持？
       // 输出key，接受key
-      'userFrom.dataUUID1': 'var1',
-      'userFrom.dataUUID2': 'var2',
+      'userFrom.data_UUID1': 'var1',
+      'userFrom.data_UUID2': 'var2',
     },
     refVar: {
-      'userFrom.dataUUID1': 'pageID.var1',
-      pageContextUUID1: 'pageID.var1',
-      // 'userFrom.dataUUID1': 'pageID.pageSchemasId.dataUUID1',
+      pageContext_UUID1: 'pageID.var1',
+      // 'userFrom.data_UUID1': 'pageID.var1',
+      // 'userFrom.data_UUID1': 'pageID.pageSchemasId.data_UUID1',
     },
     output: {
       type: '',
       struct: {
-        'userFrom.dataUUID1': 'string',
-        'userFrom.dataUUID2': 'int',
+        'userFrom.data_UUID1': 'string',
+        'userFrom.data_UUID2': 'int',
       }
     },
     // TODO: 挂在context上有声明还是不需要。？
     input: {
       type: '',
       struct: {
-        pageContextUUID2: 'string'
+        pageContext_UUID2: 'string'
       }
     }
   },
@@ -80,12 +80,12 @@ const SimpleCreateUser: TypeOfIUBDSL = {
       userFrom: {
         type: 'object',
         struct: {
-          dataUUID1: {
+          data_UUID1: {
             type: 'string',
             defaultVal: '张三',
-            mapping: 'userTableId.tableUUID1',
-            // TODO: 数据关系？？
-            selectData: ['defaultVal', '@pageContextUUID1'],
+            mapping: 'userTable_UUID.filed_UUID1',
+            // TODO: 数据关系？？存在先后问题，具体再定。
+            selectData: ['defaultVal', '@pageContext_UUID1'],
             rules: {
               require: true,
               minLength: 3,
@@ -93,20 +93,20 @@ const SimpleCreateUser: TypeOfIUBDSL = {
               sysRules: 'xxx', // ?
             }
           },
-          dataUUID2: {
+          data_UUID2: {
             type: 'num',
-            mapping: 'userTableId.tableUUID2',
+            mapping: 'userTable_UUID.filed_UUID2',
           }
         }
       },
-      // TODO: 验证是分开还是一起。还是其他方式
-      validUserFrom: {
-        type: 'object',
-        struct: {
-          dataUUID1: 'boolean',
-          dataUUID2: 'boolean'
-        }
-      },
+      // TODO: 验证是分开还是一起。还是其他方式 // 否
+      // validUserFrom: {
+      //   type: 'object',
+      //   struct: {
+      //     data_UUID1: 'boolean',
+      //     data_UUID2: 'boolean'
+      //   }
+      // },
     },
     flow: {}
   },
@@ -164,7 +164,7 @@ const SimpleCreateUser: TypeOfIUBDSL = {
       type: 'component',
       component: {
         type: 'Input',
-        field: 'pageContextUUID2'
+        field: 'pageContext_UUID2'
       },
       props: {},
       actions: {
@@ -197,7 +197,7 @@ const SimpleCreateUser: TypeOfIUBDSL = {
       flow: {
         f1: {
           variable: 'var1',
-          expression: '@success(@userFrom.dataUUID2, "年龄符合标准!")',
+          expression: '@success(@userFrom.data_UUID2, "年龄符合标准!")',
           isReturn: true,
         },
         f2: {
@@ -220,15 +220,15 @@ const SimpleCreateUser: TypeOfIUBDSL = {
       flowExpression: {
         fe0: {
           variable: 'feVar0',
-          expression: '@userFrom.dataUUID2 > 0'
+          expression: '@userFrom.data_UUID2 > 0'
         },
         fe1: {
           variable: 'feVar1',
-          expression: '@userFrom.dataUUID2 > 14 && @userFrom.dataUUID2 <= 100'
+          expression: '@userFrom.data_UUID2 > 14 && @userFrom.data_UUID2 <= 100'
         },
         fe2: {
           variable: 'feVar2',
-          expression: '@userFrom.dataUUID2 > 100'
+          expression: '@userFrom.data_UUID2 > 100'
         },
       },
       // TODO: ?
