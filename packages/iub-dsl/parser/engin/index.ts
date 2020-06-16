@@ -1,7 +1,5 @@
-import {
-  CreateUserPage
-} from '@iub-dsl/core/test/create-user-page';
-import componentParser from './component-parser';
+import { CreateUserPage } from "@iub-dsl/core/test/create-user-page";
+import componentParser from "./component-parser";
 
 const parser = (pageDSL) => {
   const res = pageDSL.body.map(({ component }) => {

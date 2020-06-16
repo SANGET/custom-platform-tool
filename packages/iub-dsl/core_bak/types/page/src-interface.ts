@@ -1,6 +1,6 @@
 import Expression from "../actions/expression";
 
-type FieldType = 'string' | 'int'
+type FieldType = "string" | "int";
 
 interface PageInterface {
   exposeVar: {

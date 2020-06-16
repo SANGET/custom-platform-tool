@@ -1,5 +1,3 @@
-interface FlowSchemas {
-
-}
+interface FlowSchemas {}
 
 export default FlowSchemas;

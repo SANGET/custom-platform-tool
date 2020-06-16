@@ -9,7 +9,7 @@ interface GeneralTableColumn {
  * 通用的数据表
  */
 interface GeneralTableMapping {
-  type: 'general';
+  type: "general";
   database?: string;
   tableName: string;
   columns: GeneralTableColumn[];
@@ -19,7 +19,7 @@ interface GeneralTableMapping {
  * 搜索规则的数据表
  */
 interface SearchingTableMapping {
-  type: 'searching';
+  type: "searching";
   rule: string;
 }
 
@@ -27,7 +27,7 @@ interface SearchingTableMapping {
  * 字段映射
  */
 interface Mapping {
-  type: 'uuid2field';
+  type: "uuid2field";
   mapping: {
     [componentBindFieldUUID: string]: string;
   };

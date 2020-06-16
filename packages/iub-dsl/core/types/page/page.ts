@@ -1,5 +1,8 @@
 import { ContainerElement } from "../layout-content/container";
-import { ComponentElementRefType, ComponentElement } from "../component/collection";
+import {
+  ComponentElementRefType,
+  ComponentElement,
+} from "../component/collection";
 import SRCInterface from "./src-interface";
 import MetadataMappingCollection from "../metadata/metadata-mapping-collection";
 import RelationshipsCollection from "../relationship/relationship-collection";
@@ -11,27 +14,27 @@ type ElementType = ContainerElement | ComponentElementRefType;
 /** 页面内容 */
 type LayoutContentGeneral = {
   /** 页面内容类型 */
-  type: 'general';
+  type: "general";
   /** 子内容 */
   content: ElementType[];
-}
+};
 
 /** 页面内容 */
 type LayoutContentCustom = {
   /** 页面内容类型 */
-  type: 'custom';
+  type: "custom";
   /** 子内容 */
   content: () => any;
-}
+};
 
 /**
  * 页面类型详细定义
  */
 type PageTypes =
-/** 通过配置生成 */
-'config' |
-/** 嵌入页面 */
-'embed';
+  /** 通过配置生成 */
+  | "config"
+  /** 嵌入页面 */
+  | "embed";
 
 /**
  * 描述页面信息的 DSL
@@ -58,7 +61,7 @@ export interface TypeOfIUBDSL {
   schemas: {
     page: PageSchemas;
     flow: FlowSchemas;
-  },
+  };
 
   /**
    * 元数据映射集合 [数据源关系枢纽]

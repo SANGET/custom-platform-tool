@@ -1,16 +1,17 @@
-
-type FieldType = 'string' | 'int' | 'num'
+type FieldType = "string" | "int" | "num";
 
 interface PageVariable {
   /** uuid: variable */
   [uuid: string]: string;
-};
+}
+
 interface TransmissionValueRef {
   type: string;
   struct: {
     [variable: string]: FieldType;
   };
-};
+}
+
 interface PageInterface {
   exposeVar?: PageVariable;
   refVar?: PageVariable;

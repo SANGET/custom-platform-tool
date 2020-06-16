@@ -2,9 +2,9 @@ import { TypeOfIUBDSL } from "..";
 
 export const BaseReference: TypeOfIUBDSL = {
   // baseInfo
-  id: 'pageId',
-  type: 'config',
-  name: '基础参考',
+  id: "pageId",
+  type: "config",
+  name: "基础参考",
 
   /**
    * 元数据映射集合
@@ -12,73 +12,73 @@ export const BaseReference: TypeOfIUBDSL = {
   metadataCollection: {
     dataSource: {
       dataSourceId1: {
-        type: 'general',
-        database: '-',
-        tableName: 'User',
+        type: "general",
+        database: "-",
+        tableName: "User",
         columns: {
           uuid1: {
-            field: 'username',
-            type: 'char',
-            len: 32
-          }
-        }
+            field: "username",
+            type: "char",
+            len: 32,
+          },
+        },
       },
       dataSourceId2: {
-        type: 'general',
-        database: '-',
-        tableName: 'Department',
+        type: "general",
+        database: "-",
+        tableName: "Department",
         columns: {
           uuid2: {
-            field: 'department',
-            type: 'char',
-            len: 32
-          }
-        }
+            field: "department",
+            type: "char",
+            len: 32,
+          },
+        },
       },
     },
     // TODO: 关系是否需要描述库？
     dataSourceRelation: {
       dataSourceId1: {
-        type: 'tableRef',
-        subTable: 'dataSourceId2'
+        type: "tableRef",
+        subTable: "dataSourceId2",
       },
       dataSourceId2: {
-        type: 'tableRef',
-        parentTable: 'dataSourceId1'
-      }
+        type: "tableRef",
+        parentTable: "dataSourceId1",
+      },
     },
   },
   /**
    * 布局信息
    */
   layoutContent: {
-    type: 'general', // 这个节点可以承载自定义页面，自定义页面是通过另一个在线 IDE 编辑生成
+    type: "general", // 这个节点可以承载自定义页面，自定义页面是通过另一个在线 IDE 编辑生成
     content: [
       // content Item
       {
-        id: '1',
-        type: 'container', // 布局容器
+        id: "1",
+        type: "container", // 布局容器
         layout: {
-          type: 'flex', // 布局方式
+          type: "flex", // 布局方式
           props: {
-            justifyContent: 'start',
-            justifyItems: 'start'
-          }
+            justifyContent: "start",
+            justifyItems: "start",
+          },
         },
         body: [
           {
-            id: 'ref11',
-            type: 'componentRef',
-            componentID: '22'
+            id: "ref11",
+            type: "componentRef",
+            componentID: "22",
           },
           {
-            id: 'ref11',
-            type: 'componentRef',
-            componentID: '23'
+            id: "ref11",
+            type: "componentRef",
+            componentID: "23",
           },
-        ]
-      }
-    ]
+        ],
+      },
+    ],
   },
   /**
    * 组件集合
@@ -86,25 +86,25 @@ export const BaseReference: TypeOfIUBDSL = {
    */
   componentsCollection: {
     compId: {
-      id: '',
-      type: 'component',
+      id: "",
+      type: "component",
       component: {
-        type: 'Button',
-        text: '提交'
+        type: "Button",
+        text: "提交",
       },
       /** 存储通用 props 编辑后生成的数据 */
       props: {
         /** 支持部分通用样式 */
-        style: {}
+        style: {},
       },
       actions: {
         onClick: {
-          type: 'actionRef',
+          type: "actionRef",
           // TODO: 多动作的流程需要合并？应该是一个动作关系描述。而且这个动作关系不太复杂的关系
-          actionID: ['b-1', 'b-2'],
-        }
-      }
-    }
+          actionID: ["b-1", "b-2"],
+        },
+      },
+    },
   },
   /**
    * 动作集合
@@ -112,33 +112,33 @@ export const BaseReference: TypeOfIUBDSL = {
    * @description 可以引用单个f1或者#outputF1变量，但是不能引用整个b-1。
    */
   actionsCollection: {
-    'b-1': {
+    "b-1": {
       flow: {
         // co
         f1: {
-          variable: 'outputF1',
-          expression: '@query(@group1)'
+          variable: "outputF1",
+          expression: "@query(@group1)",
         },
         f2: {
-          variable: 'outputF2',
-          expression: '@bussiness2(@uuid3 + #outputF1 + @group1)'
+          variable: "outputF2",
+          expression: "@bussiness2(@uuid3 + #outputF1 + @group1)",
         },
         f3: {
-          variable: 'outputF3',
-          expression: '@business3(#f4)'
+          variable: "outputF3",
+          expression: "@business3(#f4)",
         },
         f4: {
-          variable: 'outputF4',
-          expression: '@business4(#outputF3)'
+          variable: "outputF4",
+          expression: "@business4(#outputF3)",
         },
       },
       flowExpression: {
         fe1: {
-          variable: 'var1',
+          variable: "var1",
           expression: `#outputF1 > 10`,
         },
         fe2: {
-          variable: 'var2',
+          variable: "var2",
           expression: `#outputF1 < 10`,
         },
       },
@@ -171,14 +171,14 @@ export const BaseReference: TypeOfIUBDSL = {
         }
       `,
     },
-    'b-2': {
+    "b-2": {
       flow: {
         f1: {
-          variable: 'b-1',
-          expression: `@handle(@A)`
-        }
-      }
-    }
+          variable: "b-1",
+          expression: `@handle(@A)`,
+        },
+      },
+    },
   },
   /**
    * 关系集合
@@ -189,17 +189,17 @@ export const BaseReference: TypeOfIUBDSL = {
         broadcaster: {
           UUIDA: {
             tb: {
-              field: 'UUIDB',
-              when: ['onUserChange', 'onMount', 'onChange'],
+              field: "UUIDB",
+              when: ["onUserChange", "onMount", "onChange"],
               how: {
-                type: '',
-                actionID: 'a1'
-              }
+                type: "",
+                actionID: "a1",
+              },
             },
           },
         },
         targetFlowChain: {
-          type: '',
+          type: "",
           chain: `
             #a1;
             pipe(
@@ -217,13 +217,13 @@ export const BaseReference: TypeOfIUBDSL = {
         },
         flowConditionCollection: {
           exp_B: {
-            type: '',
-            handler: '',
+            type: "",
+            handler: "",
           },
-          exp_D: { type: '' },
-          exp_E: { type: '' },
-        }
-      }
+          exp_D: { type: "" },
+          exp_E: { type: "" },
+        },
+      },
     },
     runAction: {},
   },
@@ -234,7 +234,7 @@ export const BaseReference: TypeOfIUBDSL = {
   sysRtCxtInterface: {
     // 将内部的变量导出到 system runtime context
     exposeVar: {
-      componentBindField_UUID_1: 'var1'
+      componentBindField_UUID_1: "var1",
     },
     // 引用其他页面的
     refVar: {
@@ -244,35 +244,35 @@ export const BaseReference: TypeOfIUBDSL = {
     // 这里可以参考 graphQL 的查询设计，https://graphql.org/
     // TODO: 多个、单个？不同情况输入/输出不同的数据结构。？
     output: {
-      type: 'text',
-      struct: {}
+      type: "text",
+      struct: {},
     },
     input: {
-      type: 'struct',
+      type: "struct",
       struct: {
-        var1: 'string',
-      }
-    }
+        var1: "string",
+      },
+    },
   },
   schemas: {
     page: {
-      expresstionVar1: 'string',
+      expresstionVar1: "string",
       expresstionVar2: {
-        type: 'array',
+        type: "array",
         struct: {
-          uuid1: '@expresstionVar1',
-          uuid2: 'num',
-        }
-      }
+          uuid1: "@expresstionVar1",
+          uuid2: "num",
+        },
+      },
     },
     flow: {
       group1: {
-        type: 'object',
+        type: "object",
         struct: {
-          uuid1: 'string',
-          uuid2: 'num',
-        }
-      }
+          uuid1: "string",
+          uuid2: "num",
+        },
+      },
     },
-  }
+  },
 };

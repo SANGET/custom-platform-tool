@@ -1,7 +1,7 @@
 type FieldHook = {
   before: () => {};
   after: () => {};
-}
+};
 
 export interface BaseForm {
   /** 对应 table 的 column 的 field */
@@ -17,26 +17,26 @@ export interface BaseForm {
 }
 
 export interface Selector extends BaseForm {
-  type: 'Selector';
+  type: "Selector";
 }
 
 export interface Input extends BaseForm {
-  type: 'Input';
+  type: "Input";
 }
 
 export interface TreeSelector extends BaseForm {
-  type: 'TreeSelector';
+  type: "TreeSelector";
   dataSource: {
     tableName: string;
   };
 }
 
 export interface Table {
-  type: 'Table';
+  type: "Table";
   dataSource: {};
 }
 
 export interface Button {
-  type: 'Button';
+  type: "Button";
   text: string;
 }

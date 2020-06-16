@@ -1,9 +1,7 @@
-import React from 'react';
+import React from "react";
 
 const Hall = () => {
-  return (
-    <div>工作台</div>
-  );
+  return <div>工作台</div>;
 };
 
 export default Hall;

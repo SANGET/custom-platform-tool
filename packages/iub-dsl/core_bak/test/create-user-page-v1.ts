@@ -1,18 +1,18 @@
 /* eslint-disable @typescript-eslint/camelcase */
 
-import { TypeOfIUBDSL } from '../types';
+import { TypeOfIUBDSL } from "../types";
 
 export const CreateUserPage: TypeOfIUBDSL = {
-  id: 'pageID',
-  type: 'config',
-  name: '用户管理',
+  id: "pageID",
+  type: "config",
+  name: "用户管理",
   dataSourceRef: {
-    type: 'tableRef',
+    type: "tableRef",
     ref: {
       dataSourceId1: {
-        subTable: 'dataSourceId2'
-      }
-    }
+        subTable: "dataSourceId2",
+      },
+    },
   },
   /**
    * 1. 与 system runtime context 的接口
@@ -21,7 +21,7 @@ export const CreateUserPage: TypeOfIUBDSL = {
   sysRtCxtInterface: {
     // 将内部的变量导出到 system runtime context
     exposeVar: {
-      componentBindField_UUID_1: 'var1'
+      componentBindField_UUID_1: "var1",
     },
     // 引用其他页面的
     refVar: [
@@ -30,58 +30,56 @@ export const CreateUserPage: TypeOfIUBDSL = {
     ],
     // 这里可以参考 graphQL 的查询设计，https://graphql.org/
     output: {
-      type: 'text',
-      getStruct: {}
+      type: "text",
+      getStruct: {},
     },
     input: {
-      type: 'struct',
+      type: "struct",
       getStruct: {
-        var1: 'string',
-        var2: 'int',
-        var3: {
-
-        }
-      }
-    }
+        var1: "string",
+        var2: "int",
+        var3: {},
+      },
+    },
   },
   /**
    * 元数据映射集合
    */
   metadataMapping: {
     mapping: {
-      type: 'uuid2field',
+      type: "uuid2field",
       mapping: {
-        componentBindField_UUID_1: 'username',
-        componentBindField_UUID_2: 'department',
-        componentBindField_UUID_3: 'age',
-      }
+        componentBindField_UUID_1: "username",
+        componentBindField_UUID_2: "department",
+        componentBindField_UUID_3: "age",
+      },
     },
     dataSource: {
       dataSourceId1: {
-        type: 'general',
-        database: '-',
-        tableName: 'User',
+        type: "general",
+        database: "-",
+        tableName: "User",
         columns: [
           {
-            field: 'username',
-            type: 'char',
-            len: 32
-          }
-        ]
+            field: "username",
+            type: "char",
+            len: 32,
+          },
+        ],
       },
       dataSourceId2: {
-        type: 'general',
-        database: '-',
-        tableName: 'Department',
+        type: "general",
+        database: "-",
+        tableName: "Department",
         columns: [
           {
-            field: 'name',
-            type: 'char',
-            len: 32
-          }
-        ]
+            field: "name",
+            type: "char",
+            len: 32,
+          },
+        ],
       },
-    }
+    },
   },
   // 对应组件组的mapping
   relationshipsCollection: {
@@ -89,72 +87,76 @@ export const CreateUserPage: TypeOfIUBDSL = {
     dataPipeData: {
       subscribe: {
         // 数据字段变化订阅，例如 username 订阅 department 的变化
-        componentBindField_UUID_1: [{
-          target: 'componentBindField_UUID_2',
-          trigger: {
-            when: 'onChange',
-            how: {
-              type: 'actionRef',
-              actionID: 'b-1'
-            }
+        componentBindField_UUID_1: [
+          {
+            target: "componentBindField_UUID_2",
+            trigger: {
+              when: "onChange",
+              how: {
+                type: "actionRef",
+                actionID: "b-1",
+              },
+            },
           },
-        }, {
-          target: 'componentBindField_UUID_3'
-        }, {
-          target: ['componentBindField_UUID_2', 'componentBindField_UUID_3']
-        }]
+          {
+            target: "componentBindField_UUID_3",
+          },
+          {
+            target: ["componentBindField_UUID_2", "componentBindField_UUID_3"],
+          },
+        ],
       },
       publish: {
         ASubcribe: {
-          target: ['B', 'C'],
-          condintion: '',
-        }
+          target: ["B", "C"],
+          condintion: "",
+        },
       },
       broadcast: {
         // type: 'broadcast',
         // 数据字段广播
         componentBindField_UUID_3: [
           {
-            target: 'department1',
+            target: "department1",
             trigger: {
-              when: 'onFocus',
+              when: "onFocus",
               how: {
-                type: 'actionRef',
-                actionID: 'b-2'
-              }
+                type: "actionRef",
+                actionID: "b-2",
+              },
             },
           },
           {
-            target: 'department2',
+            target: "department2",
             trigger: {
-              when: 'onFocus',
+              when: "onFocus",
               how: {
-                type: 'actionRef',
-                actionID: 'b-3'
-              }
+                type: "actionRef",
+                actionID: "b-3",
+              },
             },
           },
-        ]
-      }
+        ],
+      },
     },
     componentPipeData: {
       id: {
-        type: '',
-        componentID: '',
-        field: ''
-      }
-    }
+        type: "",
+        componentID: "",
+        field: "",
+      },
+    },
   },
   componentsCollection: {
     cId1: {
-      id: '22',
+      id: "22",
       // 实际控件，不具备布局功能，专注交互功能
-      type: 'component',
+      type: "component",
       component: {
         // 控件类型，这里系统内置了足够的控件
-        type: 'Input',
+        type: "Input",
         // 对应数据库的 field
-        field: 'componentBindField_UUID_1',
+        field: "componentBindField_UUID_1",
         required: true,
       },
       /**
@@ -166,119 +168,121 @@ export const CreateUserPage: TypeOfIUBDSL = {
        */
       actions: {
         onMount: {
-          type: 'direct',
-          func: () => ({})
+          type: "direct",
+          func: () => ({}),
         },
         onUnmount: {
-          type: 'direct',
-          func: () => ({})
+          type: "direct",
+          func: () => ({}),
         },
         onClick: {
-          type: 'actionRef',
-          actionID: 'b-submit-1'
+          type: "actionRef",
+          actionID: "b-submit-1",
         },
         onTap: {
-          type: 'direct',
-          func: () => ({})
+          type: "direct",
+          func: () => ({}),
         },
         onChange: {
-          type: 'direct',
-          func: () => ({})
+          type: "direct",
+          func: () => ({}),
         },
         onFocus: {
-          type: 'direct',
-          func: () => ({})
+          type: "direct",
+          func: () => ({}),
         },
       },
     },
     cId2: {
-      type: 'component',
+      type: "component",
       component: {
-        type: 'Button',
-        text: '提交'
+        type: "Button",
+        text: "提交",
       },
       actions: {
         onClick: {
-          type: 'actionRef',
-          actionID: 'b-submit-1'
-        }
-      }
-    }
+          type: "actionRef",
+          actionID: "b-submit-1",
+        },
+      },
+    },
   },
   // 流程运行时上下文的 Schema
- flowSchemas: {
-    '#group1.a': {
-      type: 'array',
+  flowSchemas: {
+    "#group1.a": {
+      type: "array",
       struct: {
-        username: 'string',
-        age: 'num'
-      }
+        username: "string",
+        age: "num",
+      },
     },
-    '#group1.b': {
-      type: 'array',
+    "#group1.b": {
+      type: "array",
       struct: {
         username: `#group1.a`,
-        age: 'num'
-      }
+        age: "num",
+      },
     },
     temp1: {
-      type: 'array',
+      type: "array",
       filed: {
-        username: 'string',
-        age: 'num'
-      }
+        username: "string",
+        age: "num",
+      },
     },
     temp2: {
-      type: 'array',
+      type: "array",
       filed: {
-        username: 'string',
-        age: 'num'
-      }
+        username: "string",
+        age: "num",
+      },
     },
     group1: {
-      method: 'insert',
-      tableName: 'dataSourceId1',
-      params: [{
-        type: '',
-        field: 'componentBindField_UUID_1',
-        filter: () => {},
-        trace: true
-      }]
+      method: "insert",
+      tableName: "dataSourceId1",
+      params: [
+        {
+          type: "",
+          field: "componentBindField_UUID_1",
+          filter: () => {},
+          trace: true,
+        },
+      ],
     },
     group2: {
-      username: '',
-      age: '',
+      username: "",
+      age: "",
     },
     group3: {
       data: [],
-      pageIdx: 1
+      pageIdx: 1,
     },
     group4: {},
-    rule1: {}
+    rule1: {},
   },
   actionsCollection: {
-    'b-3': {
+    "b-3": {
       flow: {
         f1: {
           // frc => flow runtime context
-          variable: '#group1.a',
-          expression: `@insert(@group1)` // int [] {}
+          variable: "#group1.a",
+          expression: `@insert(@group1)`, // int [] {}
         },
         f2: {
-          variable: '#temp1',
-          expression: `@fetch(#group1.a)`
+          variable: "#temp1",
+          expression: `@fetch(#group1.a)`,
         },
         f3: {
-          variable: '#temp1',
-          expression: `@fetch(#temp1)`
+          variable: "#temp1",
+          expression: `@fetch(#temp1)`,
         },
-      }
+      },
     },
-    'b-submit-1': {
+    "b-submit-1": {
       flow: {
         f1: {
-          id: 'f1',
-          variable: 'click',
+          id: "f1",
+          variable: "click",
           // expression: {
           //   type: 'func',
           //   handler: (context) => {
@@ -298,41 +302,41 @@ export const CreateUserPage: TypeOfIUBDSL = {
             #group2 = @fetch(#temp2) // 表格数据
             #group3 = @filter(#group2, @rule1) // 过滤表格数据
           `,
-          output: ['group1.a', 'group2', 'group3'] // 流程数据仓库中改了什么值
+          output: ["group1.a", "group2", "group3"], // 流程数据仓库中改了什么值
         },
         f2: {
-          id: 'f1',
-          variable: 'click',
+          id: "f1",
+          variable: "click",
           code: `
             #temp = filter(@group1)
             #group2 = map(#temp)
             #group3 = #temp
-          `
+          `,
         },
         f3: {
-          id: 'f1',
-          variable: 'click',
+          id: "f1",
+          variable: "click",
           code: `
             mark(@group2, @group3)
-          `
+          `,
         },
       },
       flowControl: {
-        expression: ``
-      }
+        expression: ``,
+      },
     },
-    'b-1': {
+    "b-1": {
       flow: {
         // 没有 api 数据请求
         f1: {
-          id: 'f1',
-          variable: 'v1',
-          expression: ``
+          id: "f1",
+          variable: "v1",
+          expression: ``,
         },
         f2: {
           // api 数据请求
-          id: 'f2',
-          variable: 'v2',
+          id: "f2",
+          variable: "v2",
           // inout: ['temp1', 'group1', '...'],
           // 模拟 insert 数据
           expression: `
@@ -347,107 +351,107 @@ export const CreateUserPage: TypeOfIUBDSL = {
             @fetch(#group4)
           `,
           // output : ['temp1', 'group1', 'group2', 'group3'], // 改变了group1
-          fail: ''
+          fail: "",
         },
         f3: {
-          id: 'f3',
+          id: "f3",
           // input: ['temp1', 'group2', 'group3']
-          variable: 'v3',
-          expression: ``
+          variable: "v3",
+          expression: ``,
         },
         f4: {
-          id: 'f4',
-          variable: 'v4',
-          expression: `#{v1} + #{v2}`
+          id: "f4",
+          variable: "v4",
+          expression: `#{v1} + #{v2}`,
         },
       },
       flowExpression: {
         fe1: {
-          variable: 'var1',
+          variable: "var1",
           expression: `#{v1} > 10`,
         },
         fe2: {
           expression: `#{v1} < 10`,
         },
       },
-      flowControl: 'if(!{fe1()}) { #{f1()} } else { f3(f4()) }',
-    }
+      flowControl: "if(!{fe1()}) { #{f1()} } else { f3(f4()) }",
+    },
   },
   layoutContent: {
-    type: 'general', // 这个节点可以承载自定义页面，自定义页面是通过另一个在线 IDE 编辑生成
+    type: "general", // 这个节点可以承载自定义页面，自定义页面是通过另一个在线 IDE 编辑生成
     child: [
       {
-        id: '1',
-        type: 'container', // 布局容器
+        id: "1",
+        type: "container", // 布局容器
         layout: {
-          type: 'flex', // 布局方式
+          type: "flex", // 布局方式
           props: {
-            justifyContent: 'start',
-            justifyItems: 'start'
-          }
+            justifyContent: "start",
+            justifyItems: "start",
+          },
         },
         body: [
           {
-            id: 'ref11',
-            type: 'componentRef',
-            componentID: '22'
+            id: "ref11",
+            type: "componentRef",
+            componentID: "22",
           },
           {
-            id: '33',
-            type: 'component',
+            id: "33",
+            type: "component",
             component: {
-              type: 'Input',
-              field: 'age',
-              required: false
+              type: "Input",
+              field: "age",
+              required: false,
             },
           },
           {
-            id: '44',
-            type: 'component',
+            id: "44",
+            type: "component",
             component: {
-              type: 'TreeSelector',
-              field: 'department',
+              type: "TreeSelector",
+              field: "department",
               required: false,
               dataSource: {
-                tableName: 'TreeTable'
-              }
+                tableName: "TreeTable",
+              },
             },
           },
           {
-            id: '44',
-            type: 'component',
+            id: "44",
+            type: "component",
             component: {
-              type: 'Table',
+              type: "Table",
               onMountQuery: true,
-              bindQueryBtn: '',
-              columns: [{
-                field: 'username',
-                editable: true
-              }],
+              bindQueryBtn: "",
+              columns: [
+                {
+                  field: "username",
+                  editable: true,
+                },
+              ],
               dataSource: {
-                tableName: 'TreeTable'
-              }
+                tableName: "TreeTable",
+              },
             },
           },
           {
-            id: '66',
-            type: 'component',
+            id: "66",
+            type: "component",
             component: {
-              type: 'Button',
-              text: '录入'
+              type: "Button",
+              text: "录入",
             },
             actions: {
               onClick: {
-                type: 'actionRef',
-                actionID: 'business-submit2'
+                type: "actionRef",
+                actionID: "business-submit2",
               },
             },
-            props: {
-
-            }
+            props: {},
           },
         ],
-      }
-    ]
+      },
+    ],
   },
 };

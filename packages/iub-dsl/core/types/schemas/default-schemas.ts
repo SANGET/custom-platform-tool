@@ -1,7 +1,7 @@
-type DefaultScheamsType = 'string' | 'num' | 'any' | 'boolean'
+type DefaultScheamsType = "string" | "num" | "any" | "boolean";
 
 interface FieldRef {
-  type: DefaultScheamsType,
+  type: DefaultScheamsType;
   rules?: string | object;
   defaultVal?: string; // 默认值
 
@@ -10,14 +10,14 @@ interface FieldRef {
   selectData?: any;
 }
 interface StructRef {
-  type: 'array' | 'object';
+  type: "array" | "object";
   struct: {
     [key: string]: DefaultScheamsType | string | FieldRef;
-  }
+  };
 }
 
 interface DefaultSchemas {
-  [variable: string]: DefaultScheamsType | StructRef ;
+  [variable: string]: DefaultScheamsType | StructRef;
 }
 
 export default DefaultSchemas;

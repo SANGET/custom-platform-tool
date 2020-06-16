@@ -1,5 +1,5 @@
 import { createBrowserHistory, Location } from "history";
-import { urlParamsToQuery } from '@mini-code/request/url-resolve';
+import { urlParamsToQuery } from "@mini-code/request/url-resolve";
 
 interface NavigateConfig {
   from?: Location;
@@ -10,32 +10,32 @@ interface NavigateConfig {
 
 const history = createBrowserHistory();
 
-let ROUTE_KEY = '_R';
+let ROUTE_KEY = "_R";
 const changeRouteKey = (routeKey: string) => {
   ROUTE_KEY = routeKey;
 };
 const getRouteKey = () => ROUTE_KEY;
 
 const pushToHistory = (url: string, params?) => {
-  history.push(url.replace(/\/\//g, '/'), params);
+  history.push(url.replace(/\/\//g, "/"), params);
 };
 
 const replaceHistory = (url: string, params?) => {
-  history.replace(url.replace(/\/\//g, '/'), params);
+  history.replace(url.replace(/\/\//g, "/"), params);
 };
 
 const wrapPushUrl = (pushConfig: NavigateConfig) => {
   const { href, hash } = window.location;
-  const targetHash = hash.replace('#/', '').split('?')[0];
+  const targetHash = hash.replace("#/", "").split("?")[0];
   const { route, params } = pushConfig;
   let result = urlParamsToQuery({
     params: {
       ...params,
       [ROUTE_KEY]: route,
     },
-    toBase64: true
+    toBase64: true,
   });
-  result = `${targetHash}${result.replace(/&&$/g, '')}`;
+  result = `${targetHash}${result.replace(/&&$/g, "")}`;
   return result;
 };
 
@@ -44,11 +44,11 @@ const wrapPushUrl = (pushConfig: NavigateConfig) => {
  * @param {object} config { type: 'PUSH | GO_BACK | LINK', component: route, params: {} }
  */
 const onNavigate = (config: NavigateConfig) => {
-  if (!config) return console.log('Not config');
+  if (!config) return console.log("Not config");
   const { location } = history;
   const nextConfig = {
     ...config,
-    from: location
+    from: location,
   };
   switch (nextConfig.type) {
     case "PUSH":

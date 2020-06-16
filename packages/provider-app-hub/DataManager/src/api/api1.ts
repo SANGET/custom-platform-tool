@@ -1,16 +1,13 @@
-import RESTFulT from '';
-import Fetch from '';
+import RESTFulT from "";
+import Fetch from "";
 
-const GetUsers = async ({
-  pageSize = 0,
-  pageIdx = 0,
-}) => {
+const GetUsers = async ({ pageSize = 0, pageIdx = 0 }) => {
   const restfulData = RESTFulT({
-    method: 'GET',
+    method: "GET",
     params: {
       pageSize,
-      pageIdx
-    }
+      pageIdx,
+    },
   });
 
   const resData = await Fetch(restfulData);
@@ -20,5 +17,5 @@ const GetUsers = async ({
 
 GetUsers({
   pageIdx: 1,
-  pageSize: 10
+  pageSize: 10,
 });

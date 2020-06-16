@@ -2,7 +2,7 @@
  * 搜索规则的数据表 TODO: 留个坑
  */
 interface SearchingTableMapping {
-  type: 'searching';
+  type: "searching";
   rule: string;
 }
 
@@ -17,7 +17,7 @@ interface GeneralTableColumn {
  * 通用的数据表
  */
 interface GeneralTableMapping {
-  type: 'general';
+  type: "general";
   database?: string;
   tableName: string;
   columns: {
@@ -39,14 +39,16 @@ interface DataSourceRelation {
   [dataSourceId: string]: {
     type: string;
     subTable?: string | QuoteRef;
-    parentTable?: string | {
+    parentTable?:
+    | string
+    | {
       [dataUUID: string]: QuoteRef;
     };
     quoteRef?: {
       // tableId.filed。 Object扩展预留
-      [dataUUID: string]: string | QuoteRef; 
-    }
-  }
+      [dataUUID: string]: string | QuoteRef;
+    };
+  };
 }
 
 interface MetadataMappingCollection {

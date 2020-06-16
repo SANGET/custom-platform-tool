@@ -5,71 +5,71 @@ const relationship = {
         A: {
           target: {
             tb: {
-              field: 'B',
-              when: ['onUserChange', 'onMount', 'onChange'],
+              field: "B",
+              when: ["onUserChange", "onMount", "onChange"],
               how: {
-                type: '',
-                actionID: 'a1'
-              }
+                type: "",
+                actionID: "a1",
+              },
             },
             tc: {
-              field: 'C',
-              when: ['onApiChange'],
+              field: "C",
+              when: ["onApiChange"],
               how: {
-                actionID: 'a2'
-              }
+                actionID: "a2",
+              },
             },
-          }
+          },
         },
         B: {
           target: {
             td: {
-              field: 'D',
-              when: 'onChange',
+              field: "D",
+              when: "onChange",
               how: {
-                actionID: 'b1'
-              }
-            }
-          }
+                actionID: "b1",
+              },
+            },
+          },
         },
         C: {
           target: {
             tb: {
-              field: 'B',
-              when: 'onChange',
+              field: "B",
+              when: "onChange",
               how: {
-                actionID: 'c1'
-              }
+                actionID: "c1",
+              },
             },
             td: {
-              field: 'D',
-              when: 'onChange',
+              field: "D",
+              when: "onChange",
               how: {
-                actionID: 'c1'
-              }
+                actionID: "c1",
+              },
             },
             te: {
-              field: 'E',
-              when: 'onChange',
+              field: "E",
+              when: "onChange",
               how: {
-                actionID: 'c1'
-              }
+                actionID: "c1",
+              },
             },
-          }
+          },
         },
         D: {
           target: {
             te: {
-              field: 'E',
-              when: 'onChange',
+              field: "E",
+              when: "onChange",
               how: {
-                actionID: 'd1'
-              }
-            }
-          }
+                actionID: "d1",
+              },
+            },
+          },
         },
-      }
-    }
+      },
+    },
   },
   // subscribe: {
   //   subscriber: {
@@ -98,7 +98,7 @@ const relationship = {
   //   }
   // },
   targetFlowChain: {
-    type: '',
+    type: "",
     // chain1: `
     //   #a1;
     //   var b_1 = exp_B(#a2, #c1);
@@ -132,21 +132,21 @@ const relationship = {
       ), 
     `,
     chain: `#a1 => c; (#a2); #B.td; exp_&(#C.te, #D.te)`,
-    'exp_&': {
-      type: 'lowCode',
+    "exp_&": {
+      type: "lowCode",
       // 1、触发条件。 2、同一个handle 3、不同的handle
-      triggerCondition: '后更改的值触发 ｜ 同时触发 ｜ 低代码判断',
+      triggerCondition: "后更改的值触发 ｜ 同时触发 ｜ 低代码判断",
       // 默认嵌套什么内容，由生成器决定
       handler: (C, D) => {
         // `@handle(#C, #D)`
         return C + D;
-      }
+      },
     },
     exp_B: {},
     exp_E: {},
     // chain: `a->b; b->d; a->c; (c->e & d->e)`
     // chain: `e->d & (e->c & (d->c | d->b)) & b->c & b->a & c->a`
-  }
+  },
   // targetFlowChain: {
   //   type: '',
   //   chain: `#A.tb; #A.tc; #B.td; exp_&(#C.te, #D.te)`,
@@ -166,49 +166,49 @@ const actionsCollection = {
   a1: {
     flow: {
       f1: {
-        variable: 'a-1',
-        expression: `@handle(@A)`
-      }
-    }
+        variable: "a-1",
+        expression: `@handle(@A)`,
+      },
+    },
   },
   a2: {
     flow: {
       f1: {
-        variable: 'a-1',
-        expression: `@handle(@A)`
-      }
-    }
+        variable: "a-1",
+        expression: `@handle(@A)`,
+      },
+    },
   },
   a3: {
     flow: {
       f1: {
-        variable: 'a-1',
-        expression: `@handle(@A)`
-      }
-    }
+        variable: "a-1",
+        expression: `@handle(@A)`,
+      },
+    },
   },
   b1: {
     flow: {
       f1: {
-        variable: 'a-1',
-        expression: `@handle(@B)`
-      }
-    }
+        variable: "a-1",
+        expression: `@handle(@B)`,
+      },
+    },
   },
   c1: {
     flow: {
       f1: {
-        variable: 'c-1',
-        expression: `@handle(@C)`
+        variable: "c-1",
+        expression: `@handle(@C)`,
       },
-    }
+    },
   },
   d1: {
     flow: {
       f1: {
-        variable: 'd-1',
-        expression: `@handle(@D)`
-      }
-    }
+        variable: "d-1",
+        expression: `@handle(@D)`,
+      },
+    },
   },
 };

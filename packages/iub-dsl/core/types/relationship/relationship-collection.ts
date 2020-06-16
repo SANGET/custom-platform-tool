@@ -10,28 +10,27 @@ interface Trigger {
   };
 }
 
-
 interface RelationshipsCollection {
   dataChanged?: {
     [relationId: string]: {
       broadcaster: {
         [componentUuid: string]: {
-          [targetComponentUuid: string]: Trigger
-        }
-      },
+          [targetComponentUuid: string]: Trigger;
+        };
+      };
       targetFlowChain: {
         type: string;
         chain: string; // 流程控制链
-      },
+      };
       flowConditionCollection: {
         [exp: string]: {
           type: string;
           handler?: string;
-        }
-      }
-    }
-  },
-  runAction?: {}
+        };
+      };
+    };
+  };
+  runAction?: {};
 }
 
 export default RelationshipsCollection;

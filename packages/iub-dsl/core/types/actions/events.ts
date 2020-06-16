@@ -1,12 +1,12 @@
-export type UserBehavior = 'onClick'
-| 'onChange'
-| 'onUserChange'
-| 'onFocus'
-| 'onBlur'
+export type UserBehavior =
+  | "onClick"
+  | "onChange"
+  | "onUserChange"
+  | "onFocus"
+  | "onBlur";
 
-export type Lifecycles = 'onMount'
-| 'onUnmount'
+export type Lifecycles = "onMount" | "onUnmount";
 
-type TriggerEvents = UserBehavior | Lifecycles
+type TriggerEvents = UserBehavior | Lifecycles;
 
 export default TriggerEvents;

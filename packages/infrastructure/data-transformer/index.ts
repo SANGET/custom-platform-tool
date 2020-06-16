@@ -1,5 +1,3 @@
-const T = () => {
-
-};
+const T = () => {};
 
 export default T;

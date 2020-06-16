@@ -8,6 +8,5 @@ async function run() {
   await a1();
   await a2();
   await b1();
-  Prmoise.all('c1', 'd1')
-    .then(([C, D]) => handler(C, D));
+  Prmoise.all("c1", "d1").then(([C, D]) => handler(C, D));
 }
