@@ -10,7 +10,7 @@
     "packages/comsumer-app/*"
   ],
   "scripts": {
-    "postinstall": "lerna bootstrap",
+    "lerna:bootstrap": "lerna bootstrap",
     "start:all": "lerna run --parallel --stream start",
     "start:hall-app": "cd ./packages/provider-app-hub/EntryHall; npm start",
     "start:page-designer": "cd ./packages/provider-app-hub/PageDesigner; npm start",

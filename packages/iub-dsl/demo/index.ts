@@ -1,5 +1,5 @@
-import { TypeOfIUBDSL } from "../core/types";
+import { TypeOfIUBDSL } from "@iub-dsl/core/types";
 
 export {
   TypeOfIUBDSL
-}
+};
