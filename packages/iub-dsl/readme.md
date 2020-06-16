@@ -1,6 +1,59 @@
-# DSL-Core
+- [ ] 系统设计方案制定前：是否有对A/B方案进行优缺点对比和决策
+- [x] 是否有业务领域模型
+- [x] 是否有系统领域模型（包含用例图）
+- [ ] 是否有系统物理部署架构图
+- [x] 是否有系统分层架构
+- [ ] 是否有核心接口分层架构图
+- [ ] 是否有核心接口UML图及说明
+- [ ] 是否有核心业务处理时序图（包括业务流程&核心功能处理）
+- [ ] 是否有代码工程项目结构
+- [ ] 是否有业务核心痛点解决方案
+- [ ] 是否有核心性能痛点解决方案
+- [ ] 是否有核心安全痛点解决方案
+- [x] 是否符合高内聚、低耦合的要求
+- [x] 是否有足够的扩展性
+- [ ] 功能分解是否完整
+- [x] 是否对兼容性进行考虑
+- [x] 是否对稳定性进行考虑
+- [x] 是否对可维护性进行考虑
+- [x] 是否有完整的需求双向跟踪表（需求开发<->架构设计<->概要设计）【模块级】
+- [x] 是否有文档变更记录，是否完整
+
+-----
+
+## Changelog
+
+| 作者 | 更新日期 | 备注 |
+|---|---|---|
+| 相杰 | 2020-06-15 | v1 |
+
+# IUB-DSL 设计
+
+## 引言
+
+> DSL -> System Core
 
 DSL -> Domain specific language，特定领域语言。我们尝试建立一套通用的 DSL 模型，尽可能描述 80% 的通用业务，剩余的需求通过更高阶的实现进行扩展，从而完成「业务可视化生成器」，达到提高生产力的目标。
+
+-----
+
+## 名词解释
+
+- IUB-DSL：如下
+- AST：抽象语法树，用于表示程序的源代码结构。这里用于描述业务的抽象结构
+- 上下文 context：程序运行过程中产生的变量逻辑运行环境。
+
+-----
+
+## 背景
+
+TODO
+
+## 编写目的和范围
+
+TODO
+
+-----
 
 ## IUB-DSL 定义（Definition）
 
@@ -10,51 +63,55 @@ Interaction between User and Business DSL（IUB-DSL）：用户与业务的交�
 
 > IUB-DSL 本质上是 js，在这基础上按照 AST 的规则，每个节点都由 type 进行描述，这样可以将布局与业务抽离，用更抽象的模型来描述「数据」「布局」「控件」「权限」之间的关系。
 
------
+<!-- -----
 
 ## 职责（Responsibilities）
 
 1. 「描述」业务场景
+2. 可视化系统生成工具的系统运转中心 -->
 
 -----
 
 ## 设计（Design）
 
-### IUB-DSL 节点设计原则（Principle）
+IUB-DSL 的核心是「数据」，围绕「数据」的变化（何时变化、如何变化、如何体现变化 -> 渲染页面）链路，制定变化规则，可用于满足大部分业务场景，作为系统的运转核心和依据。
 
-IUB-DSL 遵循 AST 规则：
+通过将业务数据流向的抽象，抽离出结构化的数据节点，各个节点产生对应的关联，保证数据的变化和流动的方向的正确性，让系统容易扩展和维护。
 
-1. 每一个节点（node）代表一个功能点（feature）
-2. 每个节点（node）需要 `type` 声明节点类型
+### IUB-DSL 业务模型
 
-### IUB-DSL 节点关系
+![img](./docs/images/B0前端系统设计%20-%20IUB-DSL模型-模型.png)
 
-![img](./docs/images/B0前端系统设计%20-%20IUB-DSL模型-Main.png)
+IUB-DSL Entity（实例）本质上是一种结构化数据，每个节点遵循单一职责原则（SRP），只对一种类型的任务或实体负责：
 
-IUB-DSL Entity（实例）本质上是一种结构化数据存储，每个节点负责对应的数据的存储。详情如下：
+前端系统元配置数据：应用的默认配置信息，以及数据处理流程中的默认数据获取链路。
 
-上下文接口：
+<!-- 上下文接口：
 
-- sysRtCxtInterface 与系统运行时上下文的交互接口
-- flowSchemas 流程运行时上下文的数据 Schema 集合，用于与页面运行时上下文
+- `sysRtCxtInterface` 与系统运行时上下文的交互接口
+- `schemas` 页面运行时上下文的数据模型集合，用于与页面运行时上下文
+  - `page` 页面的数据模型
+  - `flow` 流程表达式的数据模型
 
 IUB-DSL 信息存储：
 
-- metadataMapping 元数据映射集合
-- actionsCollection 动作集合
-- componentsCollection 组件集合
-- relationshipCollection 关系集合
-  - dataPipeData 数据变更关系管道
-  - componentPipeData 组件与数据的关系管道
-- layoutContent 布局信息
+- `metadataMapping` 元数据映射集合
+- `actionsCollection` 动作集合
+- `componentsCollection` 组件集合
+- `relationshipCollection` 关系集合
+  - `dataPipeData` 数据变更关系管道
+  - `componentPipeData` 组件与数据的关系管道
+- `layoutContent` 布局信息 -->
 
 -----
 
 ## 工作原理
 
+工作原理是 IUB-DSL 模型可行性的验证。
+
 ### 运行时上下文（Runtime context -> RtCtx）
 
-![img](./docs/images/B0前端系统设计%20-%20IUB-DSL模型-IUB-DSL%20解析运行时上下文.png)
+![img](./docs/images/B0前端系统设计%20-%20IUB-DSL模型-工作原理.png)
 
 IUB-DSL 在运行时一共由「三种运行时上下文」支撑：
 
@@ -65,44 +122,86 @@ IUB-DSL 在运行时一共由「三种运行时上下文」支撑：
 上下文的通讯规则是：
 
 - 运行时数据传递由上到下，不允许跨级通讯。
-- 运行时数据统一存储在「系统运行时上下文 SysRtCtx」之中
-- 「页面运行时上下文 PRC」是平行关系，并且统一由 SysRtCtx 管理
-- 「表达式运行时上下文 ERC」在 PRC 之中，是业务运行时的数据流转载体
+- 「页面运行时上下文 PgRtCtx」是平行关系，统一由 SysRtCtx 调度
+- 「流程运行时上下文 FlRtCtx」在 PgRtCtx 之中，是业务运行时的数据流转载体
 
-通过上述规则规定了数据的单向流动，确保数据一致性。
+数据规则：
 
------
+- 每一个数据字段都有一个页面内 UUID
+- 需要引用数据的地方只需要引用数据的 UUID 即可
+- 只有一个元数据映射与真实数据表有关联，统一出入口
 
-那么 IUB-DSL 是如何描述数据在上下文中的流转？
-
-1. 描述一个独立页面需要从 SysRtCtx 中获取什么数据
-2. 描述输出什么数据到 SysRtCtx 中
-3. 描述 UI 控件合适触发事件（when），如何触发事件（how），触发什么事件（what）
-4. 描述来自 UI 或者系统生命周期回调的「事件的工作流程」，就是如何更改运行时数据
-   1. 何时调用
-      1. onChange
-   2. 如何调用
-      1. 程序流程控制
-      2. 变量获取
-         1. 系统变量
-         2. 页面变量
-         3. 控件变量
-      3. 更改数据
-         1. 通过一次更改通过一个表达式完成一个数据的更改
-
-以上是 IUB-DSL 的数据流转规则，通过 1 2 描述页面之间的通讯，通过 3 4 描述页面内部如何工作，更改运行时数据。
-
-通过「上下文机制」，可以支持「系统变量」、「页面变量」、「控件变量」、「表达式变量」等变量体系。
+通过上述规则规定了数据的单向流动，确保数据最终的一致性。
 
 -----
 
-## 关系集合
+### 扩展性、兼容性
 
-### 数据关系
+IUB-DSL 实际上是定义一种数据运行规则，符合「微内核引擎 -> 插件 -> 业务插件」的插件系统设计思路。
 
-数据变动关系原则：数据变动单向发布。
+当我们了解了 IUB 中每个功能节点的职能，以及节点与节点之间的关系之后，扩展是很容易的，只需要在对应节点继续添加节点，以及对应的节点解析器即可。扩展的节点集中在「关系集合」与「动作集合」之中。可扩展性也是在这一点上得到体现。
 
-### 关系变动的流程控制
+由于是通过节点的增量来满足未来需求，「向前兼容」也得到了保证。
+
+### 可维护性
+
+由于 IUB-DSL 是一份规范、生成的系统的运行依据。通过图示和 Typescript 的 interface 来确保 IUB-DSL 的稳定和可维护性。
+
+<!-- ## IUB-DSL 节点设计原则（Principle）
+
+IUB-DSL 遵循 AST 规则：
+
+1. 每一个节点（node）代表一个功能点（feature）
+2. 每个节点（node）需要 `type` 声明节点类型 -->
+
+-----
+
+## 节点图示
+
+
+
+## interface 代码事例：
+
+```ts
+interface TypeOfIUBDSL {
+  /** 页面 ID，用于给其他页面引用 */
+  id: string;
+
+  /** 页面类型 */
+  type: PageTypes;
+
+  /** 页面名称 */
+  name: string;
+
+  /** 与 system runtime context 的接口 */
+  sysRtCxtInterface: SRCInterface;
+
+  /** Schema 数据模型 */
+  schemas: {
+    page: PageSchemas;
+    flow: FlowSchemas;
+  };
+
+  /** 元数据映射集合 [数据源关系枢纽] */
+  metadataCollection: MetadataMappingCollection;
+
+  /** 关系集合 */
+  relationshipsCollection: RelationshipsCollection;
+
+  /** 组件集合 */
+  componentsCollection: {
+    [componentID: string]: ComponentElement;
+  };
+
+  /** 动作集合 */
+  actionsCollection: {
+    [actionID: string]: ActionFlow;
+  };
+
+  /** 布局信息 */
+  layoutContent: LayoutContentGeneral | LayoutContentCustom;
+}
+```
 
 -----
 
