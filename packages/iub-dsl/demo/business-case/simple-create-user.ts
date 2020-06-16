@@ -1,4 +1,4 @@
-import { TypeOfIUBDSL } from ".."
+import { TypeOfIUBDSL } from "..";
 
 /**
  * @description 整体运行链路
@@ -15,6 +15,13 @@ import { TypeOfIUBDSL } from ".."
  * 3. 数据间的引用。以及数据校验 [元数据默认校验规则、控件配置校验规则]
  * 4. 提交后的反馈和后续操作
  */
+
+/**
+  * @description 问题
+  * 1. 校验的rule放在哪
+  * 2. schemas使用了input、refVar、defaultVal，哪个权重更高
+  * 3.
+  */
 const SimpleCreateUser: TypeOfIUBDSL = {
   id: 'SimpleCreateUser',
   type: 'config',
@@ -28,12 +35,12 @@ const SimpleCreateUser: TypeOfIUBDSL = {
         database: '-',
         tableName: 'user',
         columns: {
-          tableUUID1: {
+          fieldUUID1: {
             field: 'username',
             type: 'string',
             len: 32
           },
-          tableUUID2: {
+          fieldUUID2: {
             field: 'age',
             type: 'int',
             len: 3,
@@ -77,36 +84,44 @@ const SimpleCreateUser: TypeOfIUBDSL = {
   schemas: {
     page: {
       // userFromKey如何定。这个应该也是唯一的
-      userFrom: {
+      userFrom_UUID: {
         type: 'object',
         struct: {
           dataUUID1: {
             type: 'string',
             defaultVal: '张三',
-            mapping: 'userTableId.tableUUID1',
-            // TODO: 数据关系？？
+            fieldMapping: 'userTableId.fieldUUID1', // metadataCollection.dataSource[userTableId].columns[fieldUUID1]
+            // TODO: 数据关系？？交给配置人员
             selectData: ['defaultVal', '@pageContextUUID1'],
-            rules: {
-              require: true,
-              minLength: 3,
-              maxLength: 32,
-              sysRules: 'xxx', // ?
-            }
+            rules: [
+              { require: true },
+              { minLength: 3 },
+              { maxLength: 32 },
+              { sysRules: 'xxx' }, // ?
+            ]
           },
           dataUUID2: {
             type: 'num',
-            mapping: 'userTableId.tableUUID2',
+            fieldMapping: 'userTableId.tableUUID2',
           }
         }
       },
       // TODO: 验证是分开还是一起。还是其他方式
-      validUserFrom: {
-        type: 'object',
-        struct: {
-          dataUUID1: 'boolean',
-          dataUUID2: 'boolean'
-        }
-      },
+      // validUserFrom: {
+      //   type: 'object',
+      //   struct: {
+      //     dataUUID1: {
+      //       type: 'boolean',
+      //       rules: [
+      //         { require: true },
+      //         { minLength: 3 },
+      //         { maxLength: 32 },
+      //         { sysRules: 'xxx' }, // ?
+      //       ]
+      //     },
+      //     dataUUID2: 'boolean'
+      //   }
+      // },
     },
     flow: {}
   },
@@ -154,7 +169,7 @@ const SimpleCreateUser: TypeOfIUBDSL = {
       type: 'component',
       component: {
         type: 'Input',
-        field: 'userFrom'
+        field: '@userFrom_UUID.dataUUID1'
       },
       props: {},
       actions: {}
@@ -164,7 +179,7 @@ const SimpleCreateUser: TypeOfIUBDSL = {
       type: 'component',
       component: {
         type: 'Input',
-        field: 'pageContextUUID2'
+        field: '@userFrom_UUID.dataUUID2'
       },
       props: {},
       actions: {
@@ -172,9 +187,9 @@ const SimpleCreateUser: TypeOfIUBDSL = {
           type: 'actionRef',
           actionID: 'validAgeRules',
         }
-      }
+      },
     },
-    compUUID3:{
+    compUUID3: {
       id: 'compUUID3',
       type: 'component',
       component: {
@@ -193,26 +208,26 @@ const SimpleCreateUser: TypeOfIUBDSL = {
 
   /** 动作集合 */
   actionsCollection: {
-    'validAgeRules': {
+    validAgeRules: {
       flow: {
         f1: {
           variable: 'var1',
-          expression: '@success(@userFrom.dataUUID2, "年龄符合标准!")',
+          expression: '@showTip.success(@userFrom.dataUUID2, "年龄符合标准!")',
           isReturn: true,
         },
         f2: {
           variable: 'var2',
-          expression: '@error("年龄不小于0。")',
+          expression: '@showTip.error("年龄不小于0。")',
           isReturn: true,
         },
         f3: {
           variable: 'var3',
-          expression: '@warn(“年龄小于14岁请注意童工。”)',
+          expression: '@showTip.warn(“年龄小于14岁请注意童工。”)',
           isReturn: true,
         },
         f4: {
           variable: 'var4',
-          expression: '@warn("年龄过大注意劳动力不足。")',
+          expression: '@showTip.warn("年龄过大注意劳动力不足。")',
           isReturn: true,
         }
 
@@ -246,7 +261,7 @@ const SimpleCreateUser: TypeOfIUBDSL = {
         }
       `
     },
-    'clickUUID1': {
+    clickUUID1: {
       flow: {
         f1: {
           variable: 'var1',
@@ -264,7 +279,7 @@ const SimpleCreateUser: TypeOfIUBDSL = {
       flowControl: `
         if(#var1) {
           #f2;
-          @sysDefault; // ?
+          !showTip.sysDefault; // ?
         } else {
           #f3;
         }
@@ -275,9 +290,13 @@ const SimpleCreateUser: TypeOfIUBDSL = {
   /** 关系集合 */
   relationshipsCollection: {
     // ?
-    // rulesCollections: {
-    // }
+    rulesCollections: {
+      requiredRule: {
+        type: 'required',
+        comIds: ['cID'],
+      }
+    }
   }
-}
+};
 
-export default SimpleCreateUser
+export default SimpleCreateUser;

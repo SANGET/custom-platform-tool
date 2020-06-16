@@ -1,7 +1,7 @@
-import { TypeOfIUBDSL } from '../';
+import { TypeOfIUBDSL } from "..";
 
 
-const CreteUser:TypeOfIUBDSL = {
+const CreteUser: TypeOfIUBDSL = {
   id: 'CreteUser',
   type: 'config',
   name: 'CreteUser',
@@ -122,7 +122,7 @@ const CreteUser:TypeOfIUBDSL = {
           tableUUID3: {
             // ??
             connectKey: 'deparmentTableId.tableUUID0', // 链接key
-            key: 'deparmentTableId.tableUUID0',  // 存储值
+            key: 'deparmentTableId.tableUUID0', // 存储值
             value: 'deparmentTableId.tableUUID1' // 显示值
           }
         }
@@ -132,13 +132,13 @@ const CreteUser:TypeOfIUBDSL = {
         parentTable: {
           tableUUID2: {
             connectKey: 'deparmentTableId.tableUUID0', // 链接key
-            key: 'deparmentTableId.tableUUID0',  // 存储值
+            key: 'deparmentTableId.tableUUID0', // 存储值
             value: 'deparmentTableId.tableUUID1' // 显示值
           }
         },
         quoteRef: {
           tableUUID3: {
-            connectKey: 'locationTableId.tableUUID0', // 
+            connectKey: 'locationTableId.tableUUID0', //
             key: 'locationTableId.tableUUID0',
             value: 'locationTableId.tableUUID1',
           }
@@ -150,13 +150,13 @@ const CreteUser:TypeOfIUBDSL = {
         parentTable: {
           tableUUID2: {
             connectKey: 'locationTableId.tableUUID0', // 链接key
-            key: 'locationTableId.tableUUID0',  // 存储值
+            key: 'locationTableId.tableUUID0', // 存储值
             value: 'locationTableId.tableUUID1' // 显示值
           }
         },
         quoteRef: {
           tableUUID3: {
-            connectKey: 'dictionaryTableId.tableUUID2', // 
+            connectKey: 'dictionaryTableId.tableUUID2', //
             key: 'dictionaryTableId.tableUUID0',
             value: 'dictionaryTableId.tableUUID1',
           }
@@ -504,6 +504,6 @@ const CreteUser:TypeOfIUBDSL = {
       }
     }
   }
-}
+};
 
 export default CreteUser;
