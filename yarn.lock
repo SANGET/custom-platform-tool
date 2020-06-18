@@ -2163,6 +2163,20 @@
     npmlog "^4.1.2"
     write-file-atomic "^2.3.0"
 
+"@mini-code/base-func@^1.1.0":
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/@mini-code/base-func/-/base-func-1.1.0.tgz#8c9e2d12074fa824b88312a7a73a4bd3f86f77ef"
+  integrity sha512-nw+hzOcxDf1u2NFqWlUwhL3ZoaXlPZ2ulbqpdZJR6JpVmk5f00o/R5a6HF1oyGc/oBa5a93p334QBfL4nc+3lw==
+
+"@mini-code/request@^1.0.0-rc1.1":
+  version "1.0.0-rc1.1"
+  resolved "https://registry.yarnpkg.com/@mini-code/request/-/request-1.0.0-rc1.1.tgz#38e5aec0ab88943faa3920e65a1310c16212f0cb"
+  integrity sha512-b1DUUbZn5kha7yQPTVCKYvhvkGmEOaNpfV9Mure9HAzq6Ln2GqFfiWbTv5r9znqh02biYI99RXjcvXF6f+ZhRg==
+  dependencies:
+    lzma "^2.3.2"
+    rc4-ts "^2.0.0"
+    whatwg-fetch "^3.0.0"
+
 "@mrmlnc/readdir-enhanced@^2.2.1":
   version "2.2.1"
   resolved "http://r.cnpmjs.org/@mrmlnc/readdir-enhanced/download/@mrmlnc/readdir-enhanced-2.2.1.tgz#524af240d1a360527b730475ecfa1344aa540dde"
@@ -8303,6 +8317,11 @@ lru-cache@^5.1.1:
   dependencies:
     yallist "^3.0.2"
 
+lzma@^2.3.2:
+  version "2.3.2"
+  resolved "https://registry.yarnpkg.com/lzma/-/lzma-2.3.2.tgz#3783b24858b9c0e747a0df3cbf1fb5fcaa92c441"
+  integrity sha1-N4OySFi5wOdHoN88vx+1/KqSxEE=
+
 macos-release@^2.2.0:
   version "2.3.0"
   resolved "http://r.cnpmjs.org/macos-release/download/macos-release-2.3.0.tgz#eb1930b036c0800adebccd5f17bc4c12de8bb71f"
@@ -10636,6 +10655,11 @@ raw-body@2.4.0:
     http-errors "1.7.2"
     iconv-lite "0.4.24"
     unpipe "1.0.0"
+
+rc4-ts@^2.0.0:
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/rc4-ts/-/rc4-ts-2.0.0.tgz#0b424303a6571a370da13c1905d420d778692def"
+  integrity sha512-PFsuSyNTSfQ2V/xkEgwuBrv5N0lc2ausG+qgnI6E+DutLEco2N3cF+ZVLHzRDdFHzPJAw4aTd0737cIHrdVk5w==
 
 react-app-polyfill@^1.0.1:
   version "1.0.6"
