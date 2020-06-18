@@ -6,6 +6,8 @@
     "react": "^16.13.1"
   },
   "dependencies": {
+    "@mini-code/base-func": "^1.1.0",
+    "@mini-code/request": "^1.0.0-rc1.1",
     "history": "^4.9.0"
   },
   "author": "Alex"

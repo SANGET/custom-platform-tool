@@ -65,7 +65,7 @@ const SimpleCreateUser: TypeOfIUBDSL = {
       // 'userFrom.dataUUID1': 'pageID.pageSchemasId.dataUUID1',
     },
     output: {
-      type: "",
+      type: "schema",
       struct: {
         "userFrom.dataUUID1": "string",
         "userFrom.dataUUID2": "int",
@@ -73,7 +73,7 @@ const SimpleCreateUser: TypeOfIUBDSL = {
     },
     // TODO: 挂在context上有声明还是不需要。？
     input: {
-      type: "",
+      type: "schema",
       struct: {
         pageContextUUID2: "string",
       },
