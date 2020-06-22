@@ -1,6 +1,18 @@
 import Expression from "../actions/expression";
 
-type FieldType = 'string' | 'int'
+type FieldType = "string" | "int" | "num";
+
+interface PageVariable {
+  /** uuid: variable */
+  [uuid: string]: string;
+}
+
+interface TransmissionValueRef {
+  type: string;
+  struct: {
+    [variable: string]: FieldType;
+  };
+}
 
 interface PageInterface {
   exposeVar: {
@@ -18,14 +30,3 @@ interface PageInterface {
 }
 
 export default PageInterface;
-
-const contextA = {
-  var1: 1,
-  var2: 2,
-  var3: 3,
-};
-const contextM = {
-  var1: 1,
-  var2: 2,
-  var3: 3,
-};

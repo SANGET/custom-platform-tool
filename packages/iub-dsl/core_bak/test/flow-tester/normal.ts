@@ -14,28 +14,28 @@ const relativeship = {
           // },
           target: {
             tb: {
-              field: 'B',
-              when: ['onUserChange', 'onMount', 'onChange'],
+              field: "B",
+              when: ["onUserChange", "onMount", "onChange"],
               how: {
-                type: '',
-                actionID: 'a1'
-              }
+                type: "",
+                actionID: "a1",
+              },
             },
             tc: {
-              field: 'C',
-              when: ['onApiChange'],
+              field: "C",
+              when: ["onApiChange"],
               how: {
-                actionID: 'a2'
-              }
+                actionID: "a2",
+              },
             },
             td: {
-              field: 'D',
-              when: ['onChange'],
+              field: "D",
+              when: ["onChange"],
               how: {
-                actionID: 'a3'
-              }
+                actionID: "a3",
+              },
             },
-          }
+          },
         },
         B: {
           // targetId2: {
@@ -49,84 +49,84 @@ const relativeship = {
           // },
           target: {
             td: {
-              field: 'D',
-              when: 'onChange',
+              field: "D",
+              when: "onChange",
               how: {
-                actionID: 'b1'
-              }
-            }
-          }
-        }
+                actionID: "b1",
+              },
+            },
+          },
+        },
       },
       targetFlowChain: {
-        type: '',
-        chain: [`#A.tb`, `#B.td`, `#A.tc`, `#A.td`]
-      }
-    }
-  }
+        type: "",
+        chain: [`#A.tb`, `#B.td`, `#A.tc`, `#A.td`],
+      },
+    },
+  },
 };
 
 const actionsCollection = {
   a1: {
     flow: {
       f1: {
-        variable: 'a-1',
-        expression: `@handle(@A)`
-      }
-    }
+        variable: "a-1",
+        expression: `@handle(@A)`,
+      },
+    },
   },
   a2: {
     flow: {
       f1: {
-        variable: 'a-1',
-        expression: `@handle(@A)`
-      }
-    }
+        variable: "a-1",
+        expression: `@handle(@A)`,
+      },
+    },
   },
   a3: {
     flow: {
       f1: {
-        variable: 'a-1',
-        expression: `@handle(@A)`
-      }
-    }
+        variable: "a-1",
+        expression: `@handle(@A)`,
+      },
+    },
   },
   b1: {
     flow: {
       f1: {
-        variable: 'a-1',
-        expression: `@handle(@B)`
-      }
-    }
+        variable: "a-1",
+        expression: `@handle(@B)`,
+      },
+    },
   },
 
   // /////
-  'b-3': {
+  "b-3": {
     flow: {
       f1: {
-        variable: '#a',
-        expression: `@handle(@xxx)`
+        variable: "#a",
+        expression: `@handle(@xxx)`,
       },
       f2: {
-        variable: '#b',
-        expression: `@handle(#a)`
+        variable: "#b",
+        expression: `@handle(#a)`,
       },
       f3: {
-        variable: '#c',
-        expression: `@handle(#b)`
+        variable: "#c",
+        expression: `@handle(#b)`,
       },
       f4: {
-        variable: '#temp4',
-        expression: `@handle(#c)`
+        variable: "#temp4",
+        expression: `@handle(#c)`,
       },
     },
     flowExpression: {
       fe1: {
-        variable: 'var1',
+        variable: "var1",
         expression: `#a > 10`,
       },
       fe2: {
-        variable: 'var2',
+        variable: "var2",
         expression: `#{v1} < 10`,
       },
     },

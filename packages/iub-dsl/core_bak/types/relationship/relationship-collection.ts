@@ -3,7 +3,7 @@ import TriggerEvents from "../actions/events";
 interface Trigger {
   when: TriggerEvents;
   how: {
-    type: 'actionRef';
+    type: "actionRef";
     /** action ref id */
     actionID: string;
   };
@@ -13,21 +13,21 @@ interface Trigger {
  * 数据关系 - 订阅字段变化
  */
 interface Subscriber {
-  [componentBindFieldUUID: string]: ({
+  [componentBindFieldUUID: string]: {
     /** componentBindFieldUUID */
     target: string;
     trigger?: Trigger;
-  })[];
+  }[];
 }
 
 /**
  * 数据关系 - 订阅字段变化
  */
 interface Broadcaster {
-  [componentBindFieldUUID: string]: ({
+  [componentBindFieldUUID: string]: {
     target: string;
     trigger?: Trigger;
-  })[];
+  }[];
 }
 
 interface RelationshipsCollection {

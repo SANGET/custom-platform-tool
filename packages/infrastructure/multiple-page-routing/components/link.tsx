@@ -1,11 +1,9 @@
-import React from 'react';
+import React from "react";
 
-import { getUrlParams } from '@mini-code/request/url-resolve';
-import { Call, IsUrl } from '@mini-code/base-func';
+import { getUrlParams } from "@mini-code/request/url-resolve";
+import { Call, IsUrl } from "@mini-code/base-func";
 
-import {
-  getRouteKey, onNavigate
-} from '../utils';
+import { getRouteKey, onNavigate } from "../utils";
 
 export interface LinkProps {
   /** 将要导航到的路由 */
@@ -21,33 +19,39 @@ export interface LinkProps {
  * 用于导航到另外页面的组件
  */
 const Link: React.SFC<LinkProps> = ({
-  to, className, isActive,
-  children, onClick, params
+  to,
+  className,
+  isActive,
+  children,
+  onClick,
+  params,
 }) => {
   const activeRoute = getUrlParams(undefined, undefined, true)[getRouteKey()];
-  const _isActive = typeof isActive != 'undefined' ? isActive : activeRoute === to;
+  const _isActive =
+    typeof isActive != "undefined" ? isActive : activeRoute === to;
 
   return (
     <span
-      className={className + (_isActive ? ' active' : '')}
+      className={className + (_isActive ? " active" : "")}
       onClick={(e) => {
         Call(onClick, e);
         if (IsUrl(to)) {
           window.open(to);
         } else {
           onNavigate({
-            type: 'PUSH',
+            type: "PUSH",
             route: to,
-            params
+            params,
           });
         }
-      }}>
+      }}
+    >
       {children}
     </span>
   );
 };
 Link.defaultProps = {
-  className: 'link-btn',
+  className: "link-btn",
 };
 
 export default Link;

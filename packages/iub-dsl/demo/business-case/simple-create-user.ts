@@ -17,15 +17,15 @@ import { TypeOfIUBDSL } from "..";
  */
 
 /**
-  * @description 问题
-  * 1. 校验的rule放在哪
-  * 2. schemas使用了input、refVar、defaultVal，哪个权重更高
-  * 3.
-  */
+ * @description 问题
+ * 1. 校验的rule放在哪
+ * 2. schemas使用了input、refVar、defaultVal，哪个权重更高
+ * 3.
+ */
 const SimpleCreateUser: TypeOfIUBDSL = {
-  id: 'SimpleCreateUser',
-  type: 'config',
-  name: 'SimpleCreateUser',
+  id: "SimpleCreateUser",
+  type: "config",
+  name: "SimpleCreateUser",
 
   /** 元数据映射集合 [数据源关系枢纽] */
   metadataCollection: {
@@ -45,9 +45,9 @@ const SimpleCreateUser: TypeOfIUBDSL = {
             type: 'int',
             len: 3,
             // rule ?
-          }
-        }
-      }
+          },
+        },
+      },
     },
   },
 
@@ -65,7 +65,7 @@ const SimpleCreateUser: TypeOfIUBDSL = {
       // 'userFrom.data_UUID1': 'pageID.pageSchemasId.data_UUID1',
     },
     output: {
-      type: '',
+      type: "schema",
       struct: {
         'userFrom.data_UUID1': 'string',
         'userFrom.data_UUID2': 'int',
@@ -73,7 +73,7 @@ const SimpleCreateUser: TypeOfIUBDSL = {
     },
     // TODO: 挂在context上有声明还是不需要。？
     input: {
-      type: '',
+      type: "schema",
       struct: {
         pageContext_UUID2: 'string'
       }
@@ -85,20 +85,20 @@ const SimpleCreateUser: TypeOfIUBDSL = {
     page: {
       // userFromKey如何定。这个应该也是唯一的
       userFrom_UUID: {
-        type: 'object',
+        type: "object",
         struct: {
           data_UUID1: {
             type: 'string',
             defaultVal: '张三',
             fieldMapping: 'userTableId.field_UUID1', // metadataCollection.dataSource[userTableId].columns[field_UUID1]
             // TODO: 数据关系？？交给配置人员
-            selectData: ['defaultVal', '@pageContextUUID1'],
+            selectData: ["defaultVal", "@pageContextUUID1"],
             rules: [
               { require: true },
               { minLength: 3 },
               { maxLength: 32 },
-              { sysRules: 'xxx' }, // ?
-            ]
+              { sysRules: "xxx" }, // ?
+            ],
           },
           data_UUID2: {
             type: 'num',
@@ -123,60 +123,60 @@ const SimpleCreateUser: TypeOfIUBDSL = {
       //   }
       // },
     },
-    flow: {}
+    flow: {},
   },
 
   /** 布局信息 */
   layoutContent: {
-    type: 'general',
+    type: "general",
     content: [
       {
-        id: 'containerUUID1',
-        type: 'container',
+        id: "containerUUID1",
+        type: "container",
         layout: {
-          type: 'flex',
+          type: "flex",
           props: {
-            justifyContent: 'start'
+            justifyContent: "start",
           },
         },
         // TODO: 布局解析？
         body: [
           {
-            id: 'controlId1',
-            type: 'componentRef',
-            componentID: 'compUUID1'
+            id: "controlId1",
+            type: "componentRef",
+            componentID: "compUUID1",
           },
           {
-            id: 'controlId2',
-            type: 'componentRef',
-            componentID: 'compUUID2'
+            id: "controlId2",
+            type: "componentRef",
+            componentID: "compUUID2",
           },
           {
-            id: 'controlId3',
-            type: 'componentRef',
-            componentID: 'compUUID3'
+            id: "controlId3",
+            type: "componentRef",
+            componentID: "compUUID3",
           },
-        ]
-      }
-    ]
+        ],
+      },
+    ],
   },
 
   /** 组件集合 */
   // TODO: 表单提交校验放在哪？
   componentsCollection: {
     compUUID1: {
-      id: 'compUUID1',
-      type: 'component',
+      id: "compUUID1",
+      type: "component",
       component: {
         type: 'Input',
         field: '@userFrom_UUID.data_UUID1'
       },
       props: {},
-      actions: {}
+      actions: {},
     },
     compUUID2: {
-      id: 'compUUID2',
-      type: 'component',
+      id: "compUUID2",
+      type: "component",
       component: {
         type: 'Input',
         field: '@userFrom_UUID.data_UUID2'
@@ -184,26 +184,26 @@ const SimpleCreateUser: TypeOfIUBDSL = {
       props: {},
       actions: {
         onFocus: {
-          type: 'actionRef',
-          actionID: 'validAgeRules',
-        }
+          type: "actionRef",
+          actionID: "validAgeRules",
+        },
       },
     },
     compUUID3: {
-      id: 'compUUID3',
-      type: 'component',
+      id: "compUUID3",
+      type: "component",
       component: {
-        type: 'Button',
-        text: '提交'
+        type: "Button",
+        text: "提交",
       },
       props: {},
       actions: {
         onClick: {
-          type: 'actionRef',
-          actionID: 'clickUUID1',
-        }
-      }
-    }
+          type: "actionRef",
+          actionID: "clickUUID1",
+        },
+      },
+    },
   },
 
   /** 动作集合 */
@@ -216,21 +216,20 @@ const SimpleCreateUser: TypeOfIUBDSL = {
           isReturn: true,
         },
         f2: {
-          variable: 'var2',
+          variable: "var2",
           expression: '@showTip.error("年龄不小于0。")',
           isReturn: true,
         },
         f3: {
-          variable: 'var3',
-          expression: '@showTip.warn(“年龄小于14岁请注意童工。”)',
+          variable: "var3",
+          expression: "@showTip.warn(“年龄小于14岁请注意童工。”)",
           isReturn: true,
         },
         f4: {
-          variable: 'var4',
+          variable: "var4",
           expression: '@showTip.warn("年龄过大注意劳动力不足。")',
           isReturn: true,
-        }
-
+        },
       },
       flowCondition: {
         fe0: {
@@ -259,17 +258,17 @@ const SimpleCreateUser: TypeOfIUBDSL = {
         } else {
           return #f2
         }
-      `
+      `,
     },
     clickUUID1: {
       flowItems: {
         f1: {
-          variable: 'var1',
-          expression: '@vaild(@validUserFrom)'
+          variable: "var1",
+          expression: "@vaild(@validUserFrom)",
         },
         f2: {
-          variable: 'var2',
-          expression: '@insert(@userFrom)'
+          variable: "var2",
+          expression: "@insert(@userFrom)",
         },
         f3: {
           variable: 'var3',
@@ -283,8 +282,8 @@ const SimpleCreateUser: TypeOfIUBDSL = {
         } else {
           #f3;
         }
-      `
-    }
+      `,
+    },
   },
 
   /** 关系集合 */

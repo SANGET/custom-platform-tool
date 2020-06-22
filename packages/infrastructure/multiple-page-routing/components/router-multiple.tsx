@@ -1,12 +1,16 @@
-import React, { Component } from 'react';
+import React, { Component } from "react";
 
-import { getUrlParams, UrlParamsRes } from '@mini-code/request/url-resolve';
-import { RemoveArrayItem, Call } from '@mini-code/base-func';
+import { getUrlParams, UrlParamsRes } from "@mini-code/request/url-resolve";
+import { RemoveArrayItem, Call } from "@mini-code/base-func";
 
 import {
-  history, wrapPushUrl, pushToHistory, replaceHistory,
-  getRouteKey, onNavigate
-} from '../utils';
+  history,
+  wrapPushUrl,
+  pushToHistory,
+  replaceHistory,
+  getRouteKey,
+  onNavigate,
+} from "../utils";
 
 export interface RouterHelperProps {
   /** 是否缓存 state */
@@ -37,21 +41,27 @@ const defaultState: RouterState = {
   routers: [],
   routerInfo: {},
   activeRouteIdx: -1,
-  activeRoute: '',
+  activeRoute: "",
 };
 let cachedState = Object.assign({}, defaultState);
 
 const getAllUrlParams = () => {
   const res = getUrlParams(undefined, undefined, true);
-  const nextRes: {} = typeof res === 'string' ? {
-    _R: res
-  } : {
-    ...res
-  };
+  const nextRes: {} =
+    typeof res === "string"
+      ? {
+          _R: res,
+        }
+      : {
+          ...res,
+        };
   return nextRes;
 };
 
-class RouterHelper<P extends RouterHelperProps, S extends RouterState> extends Component<P, S> {
+class RouterHelper<
+  P extends RouterHelperProps,
+  S extends RouterState
+> extends Component<P, S> {
   history = history;
 
   wrapPushUrl: Function = wrapPushUrl;
@@ -64,9 +74,9 @@ class RouterHelper<P extends RouterHelperProps, S extends RouterState> extends C
 
   defaultPath: string | null = null;
 
-  handlePop!: () => void
+  handlePop!: () => void;
 
-  handlePush!: () => void
+  handlePush!: () => void;
 
   constructor(props) {
     super(props);
@@ -85,18 +95,18 @@ class RouterHelper<P extends RouterHelperProps, S extends RouterState> extends C
 
   changeRoute = (route: string, params) => {
     onNavigate({
-      type: 'PUSH',
+      type: "PUSH",
       route,
-      params
+      params,
     });
   };
 
   handleHistory = (location, action) => {
     switch (action) {
-      case 'POP':
+      case "POP":
         Call(this.handlePop);
         break;
-      case 'PUSH':
+      case "PUSH":
         Call(this.handlePush);
         break;
     }
@@ -108,12 +118,12 @@ class RouterHelper<P extends RouterHelperProps, S extends RouterState> extends C
   };
 
   closeAll = () => {
-    replaceHistory('/');
-    this.setState(prevState => ({
+    replaceHistory("/");
+    this.setState((prevState) => ({
       ...prevState,
-      ...defaultState
+      ...defaultState,
     }));
-  }
+  };
 
   closeTab = (idx: number) => {
     const { routers, routerInfo, activeRouteIdx } = this.state;
@@ -123,7 +133,8 @@ class RouterHelper<P extends RouterHelperProps, S extends RouterState> extends C
     const nextRouterInfo = { ...routerInfo };
     delete nextRouterInfo[targetRoute];
     const nextRoutersLen = nextRouters.length - 1;
-    const nextActiveIdx = activeRouteIdx > nextRoutersLen ? nextRoutersLen : activeRouteIdx;
+    const nextActiveIdx =
+      activeRouteIdx > nextRoutersLen ? nextRoutersLen : activeRouteIdx;
     const nextActiveRoute = nextRouters[nextActiveIdx];
 
     if (!nextActiveRoute) return this.closeAll();
@@ -144,18 +155,21 @@ class RouterHelper<P extends RouterHelperProps, S extends RouterState> extends C
     //   nextRouters: nextState
     // });
     const config = {
-      type: 'PUSH',
+      type: "PUSH",
       route: nextActiveRoute,
       params: nextRouterParams.params,
-      nextRouters: nextState
+      nextRouters: nextState,
     };
     // pushToHistory(wrapPushUrl(config), config);
     onNavigate(config);
 
     return nextState;
-  }
+  };
 
-  selectTab = (activeRoute: string, nextRouterState?: RouterState): void | null => {
+  selectTab = (
+    activeRoute: string,
+    nextRouterState?: RouterState
+  ): void | null => {
     if (nextRouterState) return this.setState(nextRouterState);
     if (!activeRoute) return null;
 
@@ -167,7 +181,7 @@ class RouterHelper<P extends RouterHelperProps, S extends RouterState> extends C
       const currParams = getAllUrlParams();
       nextRouterInfo[activeRoute] = {
         ...(nextRouterInfo[activeRoute] || {}),
-        params: currParams
+        params: currParams,
       };
       let activeIdx = currComIdx;
       if (currComIdx === -1) {
@@ -184,21 +198,22 @@ class RouterHelper<P extends RouterHelperProps, S extends RouterState> extends C
         activeRoute,
         activeRouteIdx: activeIdx,
         routers: nextRouters,
-        routerInfo: nextRouterInfo
+        routerInfo: nextRouterInfo,
       };
       cachedState = nextState;
       return nextState;
     });
-  }
+  };
 
   initRoute = () => {
     // let initRoute = resolvePath(location.hash)[0];
     const { defaultPath } = this;
     // const initRoute = getUrlParams()[getRouteKey()];
-    defaultPath && onNavigate({
-      type: 'PUSH',
-      route: defaultPath
-    });
+    defaultPath &&
+      onNavigate({
+        type: "PUSH",
+        route: defaultPath,
+      });
     // if (!initRoute && defaultPath) {
     //   onNavigate({
     //     type: 'PUSH',
@@ -207,7 +222,7 @@ class RouterHelper<P extends RouterHelperProps, S extends RouterState> extends C
     // } else {
     //   this.selectTab(initRoute);
     // }
-  }
+  };
 }
 
 export default RouterHelper;

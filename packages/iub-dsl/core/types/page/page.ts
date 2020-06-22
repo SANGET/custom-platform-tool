@@ -1,37 +1,40 @@
 import { ContainerElement } from "../layout-content/container";
-import { ComponentElementRefType, ComponentElement } from "../component/collection";
+import {
+  ComponentElementRefType,
+  ComponentElement,
+} from "../component/collection";
 import SRCInterface from "./src-interface";
 import MetadataMapping from "../metadata/metadata-mapping";
 import RelationshipsCollection from "../relationship/relationship-collection";
 import { ActionFlow } from "../actions/action-collection";
-import FlowSchemas from "../flow/flow-schema";
+import { PageSchemas, FlowSchemas } from "../schemas";
 
 type ElementType = ContainerElement | ComponentElementRefType;
 
 /** 页面内容 */
 type LayoutContentGeneral = {
   /** 页面内容类型 */
-  type: 'general';
+  type: "general";
   /** 子内容 */
-  child: ElementType[];
-}
+  content: ElementType[];
+};
 
 /** 页面内容 */
 type LayoutContentCustom = {
   /** 页面内容类型 */
-  type: 'custom';
+  type: "custom";
   /** 子内容 */
-  child: () => any;
-}
+  content: () => any;
+};
 
 /**
  * 页面类型详细定义
  */
 type PageTypes =
-/** 通过配置生成 */
-'config' |
-/** 嵌入页面 */
-'embed';
+  /** 通过配置生成 */
+  | "config"
+  /** 嵌入页面 */
+  | "embed";
 
 /**
  * 描述页面信息的 DSL
@@ -56,8 +59,11 @@ export interface TypeOfIUBDSL {
   /** 与 system runtime context 的接口 */
   sysRtCxtInterface: SRCInterface;
 
-  /** 流程运行时上下文 flow runtime context 的 Schema */
-  flowSchemas: FlowSchemas;
+  /** Schema 数据模型 */
+  schemas: {
+    page: PageSchemas;
+    flow: FlowSchemas;
+  };
 
   /**
    * 数据源关系枢纽

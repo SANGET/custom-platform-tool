@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 
 // import {
 //   Input
@@ -10,7 +10,7 @@ import React from 'react';
 const componentParser = async (component) => {
   const { type } = component;
   switch (type) {
-    case 'Input':
+    case "Input":
       const { Input } = await import("@infra/ui-interface");
       return <Input />;
     default:
@@ -21,14 +21,18 @@ const componentParser = async (component) => {
 const ComParser = ({ config, context }) => {
   const { type } = config;
   switch (type) {
-    case 'Input':
+    case "Input":
       const { Input } = await import("@infra/ui-interface");
       return <Input />;
-    case 'Button':
+    case "Button":
       const { Button } = await import("@infra/ui-interface");
-      return <Button onClick={e => {
-        config.actions.onClick(context);
-      }} />;
+      return (
+        <Button
+          onClick={(e) => {
+            config.actions.onClick(context);
+          }}
+        />
+      );
     default:
       break;
   }
@@ -39,18 +43,17 @@ const App = () => {
     apiFetch: (params) => {
       const reqApbData = toApb(params);
       const resData = fetch(reqApbData);
-    }
+    },
   };
   return (
-    <ComParser config={{
-      type: 'Button',
-      text: '录入'
-    }}
-    context={runtimeState}
-    />;
-  )
-}
-
-
+    <ComParser
+      config={{
+        type: "Button",
+        text: "录入",
+      }}
+      context={runtimeState}
+    />
+  );
+};
 
 export default componentParser;

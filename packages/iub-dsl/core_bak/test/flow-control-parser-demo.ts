@@ -3,12 +3,10 @@ const B = {};
 const C = {};
 const D = {};
 
-function expressionParser(expression, context) {
-
-}
+function expressionParser(expression, context) {}
 
 const context = {
-  currValue: {}
+  currValue: {},
 };
 
 const a = expressionParser(A.expression, context);

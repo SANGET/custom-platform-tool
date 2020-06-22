@@ -1,8 +1,8 @@
 export const BaseReference = {
   // baseInfo
-  id: 'pageId',
-  type: 'config',
-  name: '基础参考',
+  id: "pageId",
+  type: "config",
+  name: "基础参考",
 
   /**
    * 元数据映射集合
@@ -17,74 +17,74 @@ export const BaseReference = {
     dataSource: {
       // TODO: 取消列、删除附属表？在Node服务中解决
       dataSourceId1: {
-        type: 'general',
-        database: '-',
-        tableName: 'User',
+        type: "general",
+        database: "-",
+        tableName: "User",
         columns: {
-          uuid1:{
-            field: 'username',
-            type: 'char',
-            len: 32
-          }
-        }
+          uuid1: {
+            field: "username",
+            type: "char",
+            len: 32,
+          },
+        },
       },
       dataSourceId2: {
-        type: 'general',
-        database: '-',
-        tableName: 'Department',
+        type: "general",
+        database: "-",
+        tableName: "Department",
         columns: {
-          uuid2:{
-            field: 'department',
-            type: 'char',
-            len: 32
-          }
-        }
+          uuid2: {
+            field: "department",
+            type: "char",
+            len: 32,
+          },
+        },
       },
     },
     // TODO: 关系是否需要描述库？
     dataSourceRelation: {
       dataSourceId1: {
-        type: 'tableRef',
-        subTable: 'dataSourceId2'
+        type: "tableRef",
+        subTable: "dataSourceId2",
       },
       dataSourceId2: {
-        type: 'tableRef',
-        parentTable: 'dataSourceId1'
-      }
+        type: "tableRef",
+        parentTable: "dataSourceId1",
+      },
     },
   },
   /**
-   * 布局信息 
+   * 布局信息
    * TODO: 应该仅描述页面结构才对的？不是特别重要可以灵活处理。
    */
   layoutContent: {
-    type: 'general', // 这个节点可以承载自定义页面，自定义页面是通过另一个在线 IDE 编辑生成
+    type: "general", // 这个节点可以承载自定义页面，自定义页面是通过另一个在线 IDE 编辑生成
     content: [
       // content Item
       {
-        id: '1',
-        type: 'container', // 布局容器
+        id: "1",
+        type: "container", // 布局容器
         layout: {
-          type: 'flex', // 布局方式
+          type: "flex", // 布局方式
           props: {
-            justifyContent: 'start',
-            justifyItems: 'start'
-          }
+            justifyContent: "start",
+            justifyItems: "start",
+          },
         },
         body: [
           {
-            id: 'ref11',
-            type: 'componentRef',
-            componentID: '22'
+            id: "ref11",
+            type: "componentRef",
+            componentID: "22",
           },
           {
-            id: 'ref11',
-            type: 'componentRef',
-            componentID: '23'
+            id: "ref11",
+            type: "componentRef",
+            componentID: "23",
           },
-        ]
-      }
-    ]
+        ],
+      },
+    ],
   },
   /**
    * 组件集合
@@ -96,20 +96,20 @@ export const BaseReference = {
   componentsCollection: {
     // TODO: 组件是否可以是页面、模板、三方组件
     22: {
-      type: 'component',
+      type: "component",
       component: {
-        type: 'Button',
-        text: '提交'
+        type: "Button",
+        text: "提交",
       },
       // TODO: components来源、不同comp、事件？按照设想应该由ui隔离层中的Comp决定的
       actions: {
         onClick: {
-          type: 'actionRef',
+          type: "actionRef",
           // TODO: 多动作的流程需要合并？应该是一个动作关系描述。而且这个动作关系不太复杂的关系
-          actionID: ['b-1', 'b-2'], 
-        }
-      }
-    }
+          actionID: ["b-1", "b-2"],
+        },
+      },
+    },
   },
   /**
    * 动作集合
@@ -117,36 +117,36 @@ export const BaseReference = {
    * TODO: 货币特殊处理。详细写代码时候考虑的问题。
    * TODO: API操作后的刷新、特定刷新页面的动作？数据流向没问题，不存在这些问题
    * TODO: 控件独立状态控制？？应该通过状态关系控制？
-   * @description 可以引用单个f1或者#outputF1变量，但是不能引用整个b-1。 
+   * @description 可以引用单个f1或者#outputF1变量，但是不能引用整个b-1。
    */
   actionsCollection: {
-    'b-1': {
+    "b-1": {
       flow: {
         // co
         f1: {
-          variable: 'outputF1',
-          expression: '@business1(@group1)'
+          variable: "outputF1",
+          expression: "@business1(@group1)",
         },
         f2: {
-          variable: 'outputF2',
-          expression: '@bussiness2(#temp1 + #outputF1 + @group1)'
+          variable: "outputF2",
+          expression: "@bussiness2(#temp1 + #outputF1 + @group1)",
         },
         f3: {
-          variable: 'outputF3',
-          expression: '@business3(#f4)'
+          variable: "outputF3",
+          expression: "@business3(#f4)",
         },
         f4: {
-          variable: 'outputF4',
-          expression: '@business4(#outputF3)'
+          variable: "outputF4",
+          expression: "@business4(#outputF3)",
         },
       },
       flowExpression: {
         fe1: {
-          variable: 'var1',
+          variable: "var1",
           expression: `#{v1} > 10`,
         },
         fe2: {
-          variable: 'var2',
+          variable: "var2",
           expression: `#{v1} < 10`,
         },
       },
@@ -160,15 +160,15 @@ export const BaseReference = {
           #f3;
         }
       `,
-    }, 
-    'b-2': {
+    },
+    "b-2": {
       flow: {
         f1: {
-          variable: 'b-1',
-          expression: `@handle(@A)`
-        }
-      }
-    }
+          variable: "b-1",
+          expression: `@handle(@A)`,
+        },
+      },
+    },
   },
   /**
    * 关系集合
@@ -181,72 +181,72 @@ export const BaseReference = {
           UUIDA: {
             target: {
               tb: {
-                field: 'UUIDB',
-                when: ['onUserChange', 'onMount', 'onChange'],
+                field: "UUIDB",
+                when: ["onUserChange", "onMount", "onChange"],
                 how: {
-                  type: '',
-                  actionID: 'a1'
-                }
+                  type: "",
+                  actionID: "a1",
+                },
               },
               tc: {
-                field: 'UUIDC',
-                when: ['onApiChange'],
+                field: "UUIDC",
+                when: ["onApiChange"],
                 how: {
-                  actionID: 'a2'
-                }
+                  actionID: "a2",
+                },
               },
-            }
+            },
           },
           UUIDB: {
             target: {
               td: {
-                field: 'UUIDD',
-                when: 'onChange',
+                field: "UUIDD",
+                when: "onChange",
                 how: {
-                  actionID: 'b1'
-                }
-              }
-            }
+                  actionID: "b1",
+                },
+              },
+            },
           },
           UUIDC: {
             target: {
               tb: {
-                field: 'UUIDB',
-                when: 'onChange',
+                field: "UUIDB",
+                when: "onChange",
                 how: {
-                  actionID: 'c1'
-                }
+                  actionID: "c1",
+                },
               },
               td: {
-                field: 'UUIDD',
-                when: 'onChange',
+                field: "UUIDD",
+                when: "onChange",
                 how: {
-                  actionID: 'c1'
-                }
+                  actionID: "c1",
+                },
               },
               te: {
-                field: 'UUIDE',
-                when: 'onChange',
+                field: "UUIDE",
+                when: "onChange",
                 how: {
-                  actionID: 'c1'
-                }
+                  actionID: "c1",
+                },
               },
-            }
+            },
           },
           UUIDD: {
             target: {
               te: {
-                field: 'UUIDE',
-                when: 'onChange',
+                field: "UUIDE",
+                when: "onChange",
                 how: {
-                  actionID: 'd1'
-                }
-              }
-            }
+                  actionID: "d1",
+                },
+              },
+            },
           },
         },
         targetFlowChain: {
-          type: '',
+          type: "",
           chain: `
             #a1;
             pipe(
@@ -264,13 +264,13 @@ export const BaseReference = {
         },
         flowConditionCollection: {
           exp_B: {
-            type: '',
-            handler: '',
+            type: "",
+            handler: "",
           },
           exp_D: {},
           exp_E: {},
-        }
-      }
+        },
+      },
     },
     runAction: {},
   },
@@ -281,7 +281,7 @@ export const BaseReference = {
   sysRtCxtInterface: {
     // 将内部的变量导出到 system runtime context
     exposeVar: {
-      componentBindField_UUID_1: 'var1'
+      componentBindField_UUID_1: "var1",
     },
     // 引用其他页面的
     refVar: {
@@ -291,38 +291,37 @@ export const BaseReference = {
     // 这里可以参考 graphQL 的查询设计，https://graphql.org/
     // TODO: 多个、单个？不同情况输入/输出不同的数据结构。？
     output: {
-      type: 'text',
-      getStruct: {}
+      type: "text",
+      getStruct: {},
     },
     input: {
-      type: 'struct',
+      type: "struct",
       getStruct: {
-        var1: 'string',
-        var2: 'int',
-        var3: {
-        }
-      }
-    }
+        var1: "string",
+        var2: "int",
+        var3: {},
+      },
+    },
   },
   schemas: {
     page: {
-      expresstionVar1: 'string',
+      expresstionVar1: "string",
       expresstionVar2: {
-       type: 'array',
-       struct: {
-         username: '@expresstionVar1',
-         age: 'num',
-       } 
-      }
+        type: "array",
+        struct: {
+          username: "@expresstionVar1",
+          age: "num",
+        },
+      },
     },
     flow: {
       group1: {
-        type: 'object',
+        type: "object",
         struct: {
-          name: 'string',
-          age: 'num',
-        }
-      }
+          name: "string",
+          age: "num",
+        },
+      },
     },
-  }
-}
+  },
+};

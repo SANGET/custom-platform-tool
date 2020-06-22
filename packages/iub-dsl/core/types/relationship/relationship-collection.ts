@@ -31,17 +31,26 @@ interface Broadcaster {
 }
 
 interface RelationshipsCollection {
-  dataPipeData: {
-    subscribe: Subscriber;
-    broadcast: Broadcaster;
-  };
-  componentPipeData: {
-    [ID: string]: {
-      type: string;
-      componentID: string;
-      field: string;
+  dataChanged?: {
+    [relationId: string]: {
+      broadcaster: {
+        [componentUuid: string]: {
+          [targetComponentUuid: string]: Trigger;
+        };
+      };
+      targetFlowChain: {
+        type: string;
+        chain: string; // 流程控制链
+      };
+      flowConditionCollection: {
+        [exp: string]: {
+          type: string;
+          handler?: string;
+        };
+      };
     };
   };
+  runAction?: {};
 }
 
 export default RelationshipsCollection;

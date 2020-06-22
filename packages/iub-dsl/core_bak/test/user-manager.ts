@@ -1,75 +1,73 @@
-import { TypeOfIUBDSL } from '../types/page';
+import { TypeOfIUBDSL } from "../types/page";
 
 const UserManager: TypeOfIUBDSL = {
-  id: 'qqq',
-  type: 'config',
-  name: '用户管理',
-  relationshipsHub: {
-
-  },
+  id: "qqq",
+  type: "config",
+  name: "用户管理",
+  relationshipsHub: {},
   dataSourceHub: {
-    type: 'general',
-    tableName: 'User',
+    type: "general",
+    tableName: "User",
   },
   content: {
-    type: '',
+    type: "",
     child: [
       {
-        id: '1',
-        type: 'container',
+        id: "1",
+        type: "container",
         layout: {
-          type: 'flex',
+          type: "flex",
           props: {
-            justifyContent: 'start',
-            justifyItems: 'start'
-          }
+            justifyContent: "start",
+            justifyItems: "start",
+          },
         },
         body: [
           {
-            id: '22',
-            type: 'component',
+            id: "22",
+            type: "component",
             component: {
-              type: 'Input',
-              field: 'username',
-              required: true
+              type: "Input",
+              field: "username",
+              required: true,
             },
           },
           {
-            id: '33',
-            type: 'component',
+            id: "33",
+            type: "component",
             component: {
-              type: 'Input',
-              field: 'age',
-              required: false
+              type: "Input",
+              field: "age",
+              required: false,
             },
           },
           {
-            id: '33',
-            type: 'component',
+            id: "33",
+            type: "component",
             component: {
-              type: 'Button',
+              type: "Button",
             },
             actions: {
               onClick: {
-                type: 'actionRef',
-                actionID: 'business-submit'
+                type: "actionRef",
+                actionID: "business-submit",
               },
             },
           },
           {
-            id: '55',
-            type: 'component',
+            id: "55",
+            type: "component",
             component: {
-              type: 'Table',
-              dataSource: {}
+              type: "Table",
+              dataSource: {},
             },
           },
         ],
-      }
-    ]
+      },
+    ],
   },
   actionsHub: {
-    'business-submit': (context) => {
+    "business-submit": (context) => {
       /**
        * 这里主要是为了获取数据
        *
@@ -78,10 +76,9 @@ const UserManager: TypeOfIUBDSL = {
 
       let resData;
       if (context.pageState.age > 10) {
-
       } else {
         resData = context.query({
-          params: ['username', 'age']
+          params: ["username", "age"],
         });
       }
       return resData;
@@ -100,5 +97,5 @@ const UserManager: TypeOfIUBDSL = {
     //   fliterRelation: [], // TODO: {} // 过滤数据
     //   layyoutRelation: [],
     // }
-  }
+  },
 };

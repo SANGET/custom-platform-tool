@@ -2,17 +2,19 @@ import { ElementAST } from "../layout-content/element";
 import {
   Selector, TreeSelector, Table, Button, Input
 } from "./components";
-import { Action } from "../actions/action-collection";
+
+/** 直接引用 action */
+// import { Action } from "../actions/action-collection";
 
 /** 直接引用 action */
 type ActionDirectType = {
-  type: 'direct';
-  func: Action;
+  type: "direct";
+  func: "Action";
 };
 
 /** 从 action collection 中引用 action */
 type ActionRefType = {
-  type: 'actionRef';
+  type: "actionRef";
   /** 引用的页面，如果没有，则代表当前页 */
   pageID?: string;
   /** 需要引用的组件 ID */
@@ -39,7 +41,7 @@ interface Events {
  */
 export interface ComponentElement extends ElementAST {
   id: string;
-  type: 'component';
+  type: "component";
   /**
    * 对应的 component
    * TODO: 完善所有 component 的 mapping
@@ -72,9 +74,9 @@ export interface ComponentElement extends ElementAST {
  */
 export type ComponentElementRefType = {
   id: string;
-  type: 'componentRef';
+  type: "componentRef";
   /** 引用的页面，如果没有，则代表当前页 */
   pageID?: string;
   /** 需要引用的组件 ID */
   componentID: string;
-}
+};

@@ -1,21 +1,16 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
+import React from "react";
+import ReactDOM from "react-dom";
 import {
-  BrowserRouter as Router,
-  Switch,
-  Route,
-  Link
+  BrowserRouter as Router, Switch, Route, Link
 } from "react-router-dom";
 
-import DataManager from '@provider-app/data-manager/app';
-import PageManager from '@provider-app/page-manager/app';
-import MenuManager from '@provider-app/menu-manager/app';
+import DataManager from "@provider-app/data-manager/app";
+import PageManager from "@provider-app/page-manager/app";
+import MenuManager from "@provider-app/menu-manager/app";
 
-import Hall from './Hall';
+import Hall from "./Hall";
 
-interface HallState {
-
-}
+interface HallState {}
 
 const App = () => {
   const state: HallState = {};
@@ -60,7 +55,4 @@ const App = () => {
   );
 };
 
-ReactDOM.render(
-  <App />,
-  document.querySelector('#Main')
-);
+ReactDOM.render(<App />, document.querySelector("#Main"));

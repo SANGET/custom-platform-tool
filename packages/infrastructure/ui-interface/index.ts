@@ -1,5 +1,3 @@
-import Input from './form/input';
+import Input from "./form/input";
 
-export {
-  Input
-};
+export { Input };

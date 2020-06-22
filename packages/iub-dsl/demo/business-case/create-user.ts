@@ -1,18 +1,17 @@
 import { TypeOfIUBDSL } from "..";
 
-
 const CreteUser: TypeOfIUBDSL = {
-  id: 'CreteUser',
-  type: 'config',
-  name: 'CreteUser',
+  id: "CreteUser",
+  type: "config",
+  name: "CreteUser",
 
   /** 元数据映射集合 [数据源关系枢纽] */
   metadataCollection: {
     dataSource: {
       userTableId: {
-        type: 'general',
-        database: '-',
-        tableName: 'user',
+        type: "general",
+        database: "-",
+        tableName: "user",
         columns: {
           data_UUID0: {
             field: 'id',
@@ -34,12 +33,12 @@ const CreteUser: TypeOfIUBDSL = {
             type: 'string',
             len: 32,
           },
-        }
+        },
       },
       deparmentTableId: {
-        type: 'general',
-        database: '-',
-        tableName: 'deparment',
+        type: "general",
+        database: "-",
+        tableName: "deparment",
         columns: {
           data_UUID0: {
             field: 'id',
@@ -61,12 +60,12 @@ const CreteUser: TypeOfIUBDSL = {
             type: 'string',
             len: 32
           },
-        }
+        },
       },
       locationTableId: {
-        type: 'general',
-        database: '-',
-        tableName: 'location',
+        type: "general",
+        database: "-",
+        tableName: "location",
         columns: {
           data_UUID0: {
             field: 'id',
@@ -91,9 +90,9 @@ const CreteUser: TypeOfIUBDSL = {
         }
       },
       dictionaryTableId: {
-        type: 'general',
-        database: '-',
-        tableName: 'dictionary',
+        type: "general",
+        database: "-",
+        tableName: "dictionary",
         columns: {
           data_UUID0: {
             field: 'id',
@@ -109,13 +108,13 @@ const CreteUser: TypeOfIUBDSL = {
             field: 'dictionaryType',
             type: 'string',
             len: 6,
-          }
-        }
-      }
+          },
+        },
+      },
     },
     dataSourceRelation: {
       userTableId: {
-        type: 'tableRef',
+        type: "tableRef",
         // 当前表的uuid和其他表的引用关系
         quoteRef: {
           // data_UUID3: 'deparmentTableId.data_UUID0'
@@ -128,7 +127,7 @@ const CreteUser: TypeOfIUBDSL = {
         }
       },
       deparmentTableId: {
-        type: 'tableRef',
+        type: "tableRef",
         parentTable: {
           data_UUID2: {
             connectKey: 'deparmentTableId.data_UUID0', // 链接key
@@ -146,7 +145,7 @@ const CreteUser: TypeOfIUBDSL = {
         }
       },
       locationTableId: {
-        type: 'tableRef',
+        type: "tableRef",
         parentTable: {
           data_UUID2: {
             connectKey: 'locationTableId.data_UUID0', // 链接key
@@ -172,7 +171,7 @@ const CreteUser: TypeOfIUBDSL = {
     flow: {},
     page: {
       userFromSu: {
-        type: 'object',
+        type: "object",
         struct: {
           data_UUID1: { // 用户名
             type: 'string',
@@ -198,10 +197,10 @@ const CreteUser: TypeOfIUBDSL = {
             type: 'string',
             fieldMapping: '@locationRef.data_UUID0',
           },
-        }
+        },
       },
       userFrom: {
-        type: 'object',
+        type: "object",
         struct: {
           data_UUID1: {
             type: 'string',
@@ -216,10 +215,10 @@ const CreteUser: TypeOfIUBDSL = {
             fieldMapping: '@deparmentRef.data_UUID0',
           },
           // 是否需要引入？？成组
-        }
+        },
       },
       deparmentRef: {
-        type: 'object',
+        type: "object",
         struct: {
           data_UUID0: {
             type: 'string',
@@ -239,10 +238,10 @@ const CreteUser: TypeOfIUBDSL = {
             type: 'string',
             fieldMapping: '@locationRef.data_UUID0'
           },
-        }
+        },
       },
       locationRef: {
-        type: 'object',
+        type: "object",
         struct: {
           data_UUID0: {
             type: 'string',
@@ -263,7 +262,7 @@ const CreteUser: TypeOfIUBDSL = {
         }
       },
       dictionaryTableId: {
-        type: 'object',
+        type: "object",
         struct: {
           data_UUID0: {
             type: 'string',
@@ -277,8 +276,8 @@ const CreteUser: TypeOfIUBDSL = {
             type: 'string',
             fieldMapping: 'dictionaryTableId.data_UUID2'
           },
-        }
-      }
+        },
+      },
     },
   },
 
@@ -287,15 +286,15 @@ const CreteUser: TypeOfIUBDSL = {
 
   /** 布局信息 */
   layoutContent: {
-    type: 'general',
+    type: "general",
     content: [
       {
-        id: 'containerUUID1',
-        type: 'container',
+        id: "containerUUID1",
+        type: "container",
         layout: {
-          type: 'flex',
+          type: "flex",
           props: {
-            justifyContent: 'start'
+            justifyContent: "start",
           },
         },
         body: [
@@ -339,9 +338,9 @@ const CreteUser: TypeOfIUBDSL = {
             type: 'componentRef',
             componentID: 'comp_UUID8'
           },
-        ]
-      }
-    ]
+        ],
+      },
+    ],
   },
 
   /** 组件集合 */
@@ -355,7 +354,7 @@ const CreteUser: TypeOfIUBDSL = {
         label: '用户名',
       },
       props: {},
-      actions: {}
+      actions: {},
     },
     comp_UUID2: {
       id: 'comp_UUID2',
@@ -368,7 +367,7 @@ const CreteUser: TypeOfIUBDSL = {
       props: {},
       actions: {
         // 同上simple-create-user
-      }
+      },
     },
     comp_UUID3: {
       id: 'comp_UUID3',
@@ -381,10 +380,10 @@ const CreteUser: TypeOfIUBDSL = {
       props: {},
       actions: {
         onClick: {
-          type: 'actionRef',
-          actionID: 'selectDeparment',
-        }
-      }
+          type: "actionRef",
+          actionID: "selectDeparment",
+        },
+      },
     },
     comp_UUID4: {
       id: 'comp_UUID4',
@@ -395,7 +394,7 @@ const CreteUser: TypeOfIUBDSL = {
         label: '所属部门建筑物',
       },
       props: {},
-      actions: {}
+      actions: {},
     },
     comp_UUID5: {
       id: 'comp_UUID5',
@@ -406,7 +405,7 @@ const CreteUser: TypeOfIUBDSL = {
         label: '所属部门楼层',
       },
       props: {},
-      actions: {}
+      actions: {},
     },
     comp_UUID6: {
       id: 'comp_UUID6',
@@ -417,22 +416,22 @@ const CreteUser: TypeOfIUBDSL = {
         label: '所属部门区域',
       },
       props: {},
-      actions: {}
+      actions: {},
     },
     comp_UUID7: {
       id: 'comp_UUID7',
       type: 'component',
       component: {
-        type: 'Button',
-        text: '提交'
+        type: "Button",
+        text: "提交",
       },
       props: {},
       actions: {
         onClick: {
-          type: 'actionRef',
-          actionID: 'actionId1',
-        }
-      }
+          type: "actionRef",
+          actionID: "actionId1",
+        },
+      },
     },
   },
 
@@ -445,13 +444,13 @@ const CreteUser: TypeOfIUBDSL = {
     selectDeparment: {
       flowItems: {
         f1: {
-          variable: 'var1',
-          expression: '@open(url, @PageOutput)',
+          variable: "var1",
+          expression: "@open(url, @PageOutput)",
         },
         f2: {
-          variable: 'var2',
-          expression: '@transformShow(#var1)',
-        }
+          variable: "var2",
+          expression: "@transformShow(#var1)",
+        },
       },
       flowCondition: {},
       // 检查页面输出的值。并赋值和转换成页面展示
@@ -459,8 +458,8 @@ const CreteUser: TypeOfIUBDSL = {
         if (#f1) {
           #f2;
         }
-      `
-    }
+      `,
+    },
   },
 
   /** 关系集合 */
@@ -476,38 +475,37 @@ const CreteUser: TypeOfIUBDSL = {
               field: '@usetFromSu.data_UUID4',
               when: ['onChange'],
               how: {
-                type: '',
-                actionID: ''
-              }
+                type: "",
+                actionID: "",
+              },
             },
             // TODO: ???
             '@usetFromSu.data_UUID5': {
               field: '@usetFromSu.data_UUID5',
               when: ['onChange'],
               how: {
-                type: '',
-                actionID: ''
-              }
+                type: "",
+                actionID: "",
+              },
             },
             '@usetFromSu.data_UUID6': {
               field: '@usetFromSu.data_UUID6',
               when: ['onChange'],
               how: {
-                type: '',
-                actionID: ''
-              }
+                type: "",
+                actionID: "",
+              },
             },
-          }
+          },
         },
-        flowConditionCollection: {
-        },
+        flowConditionCollection: {},
         targetFlowChain: {
-          type: '',
+          type: "",
           chain: ``,
         },
-      }
-    }
-  }
+      },
+    },
+  },
 };
 
 export default CreteUser;
