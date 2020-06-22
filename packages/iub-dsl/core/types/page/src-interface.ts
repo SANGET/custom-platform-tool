@@ -1,3 +1,5 @@
+import Expression from "../actions/expression";
+
 type FieldType = "string" | "int" | "num";
 
 interface PageVariable {
@@ -13,11 +15,18 @@ interface TransmissionValueRef {
 }
 
 interface PageInterface {
-  exposeVar?: PageVariable;
-  refVar?: PageVariable;
-  // TODO: 多个、单个？不同情况输入/输出不同的数据结构。？
-  output?: TransmissionValueRef;
-  input?: TransmissionValueRef;
+  exposeVar: {
+    /** uuid: variable */
+    [uuid: string]: string;
+  };
+  refVar: Expression[];
+  output: {
+    type: string;
+    getStruct: {
+      [variable: string]: FieldType;
+    };
+  };
+  input: {};
 }
 
 export default PageInterface;

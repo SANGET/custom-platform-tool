@@ -4,7 +4,7 @@ import {
   ComponentElement,
 } from "../component/collection";
 import SRCInterface from "./src-interface";
-import MetadataMappingCollection from "../metadata/metadata-mapping-collection";
+import MetadataMapping from "../metadata/metadata-mapping";
 import RelationshipsCollection from "../relationship/relationship-collection";
 import { ActionFlow } from "../actions/action-collection";
 import { PageSchemas, FlowSchemas } from "../schemas";
@@ -54,6 +54,8 @@ export interface TypeOfIUBDSL {
   /** 页面名称 */
   name: string;
 
+  dataSourceRef: {};
+
   /** 与 system runtime context 的接口 */
   sysRtCxtInterface: SRCInterface;
 
@@ -64,9 +66,12 @@ export interface TypeOfIUBDSL {
   };
 
   /**
-   * 元数据映射集合 [数据源关系枢纽]
+   * 数据源关系枢纽
+   *
+   * 规则：
+   * 1. 子模版的 dataSourceHub 需要合并到最高层，
    */
-  metadataCollection: MetadataMappingCollection;
+  metadataMapping: MetadataMapping;
 
   /** 关系集合 */
   relationshipsCollection: RelationshipsCollection;

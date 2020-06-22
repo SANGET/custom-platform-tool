@@ -11,7 +11,7 @@
  * 变量：#{variable} 可以获取 context 中对应的变量的值
  * 嵌套：@{fid} 可嵌套其他的 flowItem 作为变量
  */
-type ExpressionTypes = string;
+type Expression = string;
 
 // export interface FlowExpression {
 //   /** 表达式类型 */
@@ -37,15 +37,4 @@ type ExpressionTypes = string;
 // type ExpressionTypes = ComputeExpression | FetchDataExpression;
 // export default ExpressionTypes;
 
-interface ExpressionRef {
-  /** 用于标识此流程产生出的值赋予的变量的名称 */
-  variable: string;
-  /** 此流程的执行表达式 */
-  expression: ExpressionTypes;
-  /** 是否熔断 */
-  isFusing?: boolean;
-  /** 是否返回 */
-  isReturn?: boolean;
-}
-
-export default ExpressionRef;
+export default Expression;

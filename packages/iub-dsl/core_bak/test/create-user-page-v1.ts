@@ -209,8 +209,8 @@ export const CreateUserPage: TypeOfIUBDSL = {
   },
   // 流程运行时上下文的 Schema
   flowSchemas: {
-    "#group1.a": {
-      type: "array",
+    '#group1.a': {
+      type: 'array',
       struct: {
         username: "string",
         age: "num",

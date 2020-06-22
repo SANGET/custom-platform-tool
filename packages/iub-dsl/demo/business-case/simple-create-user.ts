@@ -30,19 +30,19 @@ const SimpleCreateUser: TypeOfIUBDSL = {
   /** 元数据映射集合 [数据源关系枢纽] */
   metadataCollection: {
     dataSource: {
-      userTableId: {
-        type: "general",
-        database: "-",
-        tableName: "user",
+      userTable_UUID: {
+        type: 'general',
+        database: '-',
+        tableName: 'user',
         columns: {
-          fieldUUID1: {
-            field: "username",
-            type: "string",
-            len: 32,
+          field_UUID1: {
+            field: 'username',
+            type: 'string',
+            len: 32
           },
-          fieldUUID2: {
-            field: "age",
-            type: "int",
+          field_UUID2: {
+            field: 'age',
+            type: 'int',
             len: 3,
             // rule ?
           },
@@ -56,28 +56,28 @@ const SimpleCreateUser: TypeOfIUBDSL = {
     exposeVar: {
       // TODO: 数组是否能支持？如何支持？
       // 输出key，接受key
-      "userFrom.dataUUID1": "var1",
-      "userFrom.dataUUID2": "var2",
+      'userFrom.data_UUID1': 'var1',
+      'userFrom.data_UUID2': 'var2',
     },
     refVar: {
-      "userFrom.dataUUID1": "pageID.var1",
-      pageContextUUID1: "pageID.var1",
-      // 'userFrom.dataUUID1': 'pageID.pageSchemasId.dataUUID1',
+      pageContext_UUID1: 'pageID.var1',
+      // 'userFrom.data_UUID1': 'pageID.var1',
+      // 'userFrom.data_UUID1': 'pageID.pageSchemasId.data_UUID1',
     },
     output: {
       type: "schema",
       struct: {
-        "userFrom.dataUUID1": "string",
-        "userFrom.dataUUID2": "int",
-      },
+        'userFrom.data_UUID1': 'string',
+        'userFrom.data_UUID2': 'int',
+      }
     },
     // TODO: 挂在context上有声明还是不需要。？
     input: {
       type: "schema",
       struct: {
-        pageContextUUID2: "string",
-      },
-    },
+        pageContext_UUID2: 'string'
+      }
+    }
   },
 
   /** 数据模型 */
@@ -87,10 +87,10 @@ const SimpleCreateUser: TypeOfIUBDSL = {
       userFrom_UUID: {
         type: "object",
         struct: {
-          dataUUID1: {
-            type: "string",
-            defaultVal: "张三",
-            fieldMapping: "userTableId.fieldUUID1", // metadataCollection.dataSource[userTableId].columns[fieldUUID1]
+          data_UUID1: {
+            type: 'string',
+            defaultVal: '张三',
+            fieldMapping: 'userTableId.field_UUID1', // metadataCollection.dataSource[userTableId].columns[field_UUID1]
             // TODO: 数据关系？？交给配置人员
             selectData: ["defaultVal", "@pageContextUUID1"],
             rules: [
@@ -100,17 +100,17 @@ const SimpleCreateUser: TypeOfIUBDSL = {
               { sysRules: "xxx" }, // ?
             ],
           },
-          dataUUID2: {
-            type: "num",
-            fieldMapping: "userTableId.tableUUID2",
-          },
-        },
+          data_UUID2: {
+            type: 'num',
+            fieldMapping: 'userTableId.field_UUID2',
+          }
+        }
       },
       // TODO: 验证是分开还是一起。还是其他方式
       // validUserFrom: {
       //   type: 'object',
       //   struct: {
-      //     dataUUID1: {
+      //     data_UUID1: {
       //       type: 'boolean',
       //       rules: [
       //         { require: true },
@@ -119,7 +119,7 @@ const SimpleCreateUser: TypeOfIUBDSL = {
       //         { sysRules: 'xxx' }, // ?
       //       ]
       //     },
-      //     dataUUID2: 'boolean'
+      //     data_UUID2: 'boolean'
       //   }
       // },
     },
@@ -168,8 +168,8 @@ const SimpleCreateUser: TypeOfIUBDSL = {
       id: "compUUID1",
       type: "component",
       component: {
-        type: "Input",
-        field: "@userFrom_UUID.dataUUID1",
+        type: 'Input',
+        field: '@userFrom_UUID.data_UUID1'
       },
       props: {},
       actions: {},
@@ -178,8 +178,8 @@ const SimpleCreateUser: TypeOfIUBDSL = {
       id: "compUUID2",
       type: "component",
       component: {
-        type: "Input",
-        field: "@userFrom_UUID.dataUUID2",
+        type: 'Input',
+        field: '@userFrom_UUID.data_UUID2'
       },
       props: {},
       actions: {
@@ -209,10 +209,10 @@ const SimpleCreateUser: TypeOfIUBDSL = {
   /** 动作集合 */
   actionsCollection: {
     validAgeRules: {
-      flow: {
+      flowItems: {
         f1: {
-          variable: "var1",
-          expression: '@showTip.success(@userFrom.dataUUID2, "年龄符合标准!")',
+          variable: 'var1',
+          expression: '@showTip.success(@userFrom.data_UUID2, "年龄符合标准!")',
           isReturn: true,
         },
         f2: {
@@ -231,18 +231,18 @@ const SimpleCreateUser: TypeOfIUBDSL = {
           isReturn: true,
         },
       },
-      flowExpression: {
+      flowCondition: {
         fe0: {
-          variable: "feVar0",
-          expression: "@userFrom.dataUUID2 > 0",
+          variable: 'feVar0',
+          expression: '@userFrom.data_UUID2 > 0'
         },
         fe1: {
-          variable: "feVar1",
-          expression: "@userFrom.dataUUID2 > 14 && @userFrom.dataUUID2 <= 100",
+          variable: 'feVar1',
+          expression: '@userFrom.data_UUID2 > 14 && @userFrom.data_UUID2 <= 100'
         },
         fe2: {
-          variable: "feVar2",
-          expression: "@userFrom.dataUUID2 > 100",
+          variable: 'feVar2',
+          expression: '@userFrom.data_UUID2 > 100'
         },
       },
       // TODO: ?
@@ -261,7 +261,7 @@ const SimpleCreateUser: TypeOfIUBDSL = {
       `,
     },
     clickUUID1: {
-      flow: {
+      flowItems: {
         f1: {
           variable: "var1",
           expression: "@vaild(@validUserFrom)",
@@ -271,9 +271,9 @@ const SimpleCreateUser: TypeOfIUBDSL = {
           expression: "@insert(@userFrom)",
         },
         f3: {
-          variable: "var3",
-          expression: '@warn("表单校验失败！")',
-        },
+          variable: 'var3',
+          expression: '@showTip.warn("表单校验失败！")'
+        }
       },
       flowControl: `
         if(#var1) {
@@ -289,13 +289,13 @@ const SimpleCreateUser: TypeOfIUBDSL = {
   /** 关系集合 */
   relationshipsCollection: {
     // ?
-    rulesCollections: {
-      requiredRule: {
-        type: "required",
-        comIds: ["cID"],
-      },
-    },
-  },
+    // rulesCollections: {
+    //   requiredRule: {
+    //     type: 'required',
+    //     comIds: ['cID'],
+    //   }
+    // }
+  }
 };
 
 export default SimpleCreateUser;

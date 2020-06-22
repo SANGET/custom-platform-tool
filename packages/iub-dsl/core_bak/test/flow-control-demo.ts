@@ -24,10 +24,10 @@ export const CreateUserPage: TypeOfIUBDSL = {
       componentBindField_UUID_1: "var1",
     },
     // 引用其他页面的
-    refVar: {
-      uuid1: `#{pageID}.componentBindField_UUID_1`,
-      uuid2: `#{pageID}.componentBindField_UUID_2`,
-    },
+    refVar: [
+      `#{pageID}.componentBindField_UUID_1`,
+      `#{pageID}.componentBindField_UUID_2`,
+    ],
     // 这里可以参考 graphQL 的查询设计，https://graphql.org/
     output: {
       type: "text",
