@@ -1,4 +1,3 @@
-
 /** 元素基础描述 */
 export interface ElementAST {
   /** ID */

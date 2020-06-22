@@ -6,8 +6,8 @@ interface FlexLayout {
   type: 'flex';
   props: {
     /** TODO: 填充完整 */
-    justifyItems?: 'start' | 'end';
-    justifyContent?: 'start' | 'end';
+    justifyItems: 'start' | 'end';
+    justifyContent: 'start' | 'end';
   };
 }
 

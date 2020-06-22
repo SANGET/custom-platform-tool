@@ -1,6 +1,5 @@
 export type UserBehavior = 'onClick'
 | 'onChange'
-| 'onUserChange'
 | 'onFocus'
 | 'onBlur'
 

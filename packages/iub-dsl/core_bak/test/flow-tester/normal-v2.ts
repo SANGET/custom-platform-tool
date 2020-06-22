@@ -162,6 +162,44 @@ const relationship = {
   // }
 };
 
+const dataCahnge = {
+  broadcast: {
+    data_UUID1: {
+      data_UUID2: {
+        when: ['onChange'],
+        how: {
+          type: '',
+          actionID: 'a2'
+        }
+      }
+    }
+  },
+  targetFlowChain: {
+    data_UUID1 : {
+      type: '',
+      chain: `
+      pipe(
+        #a1,
+        #a2,
+        pipe(
+          #a3;
+        )
+      )
+      `,
+      // useActions: ['actionUUID']
+    }
+  }
+}
+
+const rule = {
+  userFrom: {
+    type: 'onFource/onSubmit',
+    data_UUID1: [
+      {reqire: true, msg: 'fa'}
+    ]
+  }
+}
+
 const actionsCollection = {
   a1: {
     flow: {

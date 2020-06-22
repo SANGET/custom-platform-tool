@@ -1,0 +1,1 @@
+export type IdRefType = string | number;

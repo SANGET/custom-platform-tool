@@ -152,7 +152,7 @@ export const BaseReference = {
       },
       /** 简单场景：按钮 -> 发送查询条件的表单数据 -> 获取表格数据 */
       flowControl: `
-        #(f1);
+        #f1;
         if(#var1) {
           #f2
         } else {

@@ -1,10 +1,10 @@
 import { ContainerElement } from "../layout-content/container";
 import { ComponentElementRefType, ComponentElement } from "../component/collection";
 import SRCInterface from "./src-interface";
-import MetadataMappingCollection from "../metadata/metadata-mapping-collection";
+import MetadataMapping from "../metadata/metadata-mapping";
 import RelationshipsCollection from "../relationship/relationship-collection";
 import { ActionFlow } from "../actions/action-collection";
-import { PageSchemas, FlowSchemas } from "../schemas";
+import FlowSchemas from "../flow/flow-schema";
 
 type ElementType = ContainerElement | ComponentElementRefType;
 
@@ -13,7 +13,7 @@ type LayoutContentGeneral = {
   /** 页面内容类型 */
   type: 'general';
   /** 子内容 */
-  content: ElementType[];
+  child: ElementType[];
 }
 
 /** 页面内容 */
@@ -21,7 +21,7 @@ type LayoutContentCustom = {
   /** 页面内容类型 */
   type: 'custom';
   /** 子内容 */
-  content: () => any;
+  child: () => any;
 }
 
 /**
@@ -51,19 +51,21 @@ export interface TypeOfIUBDSL {
   /** 页面名称 */
   name: string;
 
+  dataSourceRef: {};
+
   /** 与 system runtime context 的接口 */
   sysRtCxtInterface: SRCInterface;
 
-  /** Schema 数据模型 */
-  schemas: {
-    page: PageSchemas;
-    flow: FlowSchemas;
-  },
+  /** 流程运行时上下文 flow runtime context 的 Schema */
+  flowSchemas: FlowSchemas;
 
   /**
-   * 元数据映射集合 [数据源关系枢纽]
+   * 数据源关系枢纽
+   *
+   * 规则：
+   * 1. 子模版的 dataSourceHub 需要合并到最高层，
    */
-  metadataCollection: MetadataMappingCollection;
+  metadataMapping: MetadataMapping;
 
   /** 关系集合 */
   relationshipsCollection: RelationshipsCollection;

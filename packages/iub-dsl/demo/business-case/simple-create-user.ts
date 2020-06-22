@@ -209,7 +209,7 @@ const SimpleCreateUser: TypeOfIUBDSL = {
   /** 动作集合 */
   actionsCollection: {
     validAgeRules: {
-      flow: {
+      flowItems: {
         f1: {
           variable: 'var1',
           expression: '@showTip.success(@userFrom.data_UUID2, "年龄符合标准!")',
@@ -232,7 +232,7 @@ const SimpleCreateUser: TypeOfIUBDSL = {
         }
 
       },
-      flowExpression: {
+      flowCondition: {
         fe0: {
           variable: 'feVar0',
           expression: '@userFrom.data_UUID2 > 0'
@@ -262,7 +262,7 @@ const SimpleCreateUser: TypeOfIUBDSL = {
       `
     },
     clickUUID1: {
-      flow: {
+      flowItems: {
         f1: {
           variable: 'var1',
           expression: '@vaild(@validUserFrom)'
@@ -273,7 +273,7 @@ const SimpleCreateUser: TypeOfIUBDSL = {
         },
         f3: {
           variable: 'var3',
-          expression: '@warn("表单校验失败！")'
+          expression: '@showTip.warn("表单校验失败！")'
         }
       },
       flowControl: `
@@ -290,12 +290,12 @@ const SimpleCreateUser: TypeOfIUBDSL = {
   /** 关系集合 */
   relationshipsCollection: {
     // ?
-    rulesCollections: {
-      requiredRule: {
-        type: 'required',
-        comIds: ['cID'],
-      }
-    }
+    // rulesCollections: {
+    //   requiredRule: {
+    //     type: 'required',
+    //     comIds: ['cID'],
+    //   }
+    // }
   }
 };
 
