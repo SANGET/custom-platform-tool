@@ -1,0 +1,30 @@
+{
+  "name": "@consumer-app/web-client",
+  "version": "0.0.1",
+  "scripts": {
+    "start": "PORT=6699 minictl start",
+    "build": "minictl build"
+  },
+  "devDependencies": {
+    "@infra/env-scripts": "^0.0.1"
+  },
+  "dependencies": {
+    "react": "16.13.1",
+    "react-dom": "16.13.1",
+    "react-router-dom": "5.2.0"
+  },
+  "author": "SANGET",
+  "license": "MIT",
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  }
+}
