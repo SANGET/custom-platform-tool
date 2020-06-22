@@ -47,14 +47,13 @@ let cachedState = Object.assign({}, defaultState);
 
 const getAllUrlParams = () => {
   const res = getUrlParams(undefined, undefined, true);
-  const nextRes: {} =
-    typeof res === "string"
-      ? {
-          _R: res,
-        }
-      : {
-          ...res,
-        };
+  const nextRes: {} = typeof res === "string"
+    ? {
+      _R: res,
+    }
+    : {
+      ...res,
+    };
   return nextRes;
 };
 
@@ -133,8 +132,7 @@ class RouterHelper<
     const nextRouterInfo = { ...routerInfo };
     delete nextRouterInfo[targetRoute];
     const nextRoutersLen = nextRouters.length - 1;
-    const nextActiveIdx =
-      activeRouteIdx > nextRoutersLen ? nextRoutersLen : activeRouteIdx;
+    const nextActiveIdx = activeRouteIdx > nextRoutersLen ? nextRoutersLen : activeRouteIdx;
     const nextActiveRoute = nextRouters[nextActiveIdx];
 
     if (!nextActiveRoute) return this.closeAll();
@@ -209,8 +207,8 @@ class RouterHelper<
     // let initRoute = resolvePath(location.hash)[0];
     const { defaultPath } = this;
     // const initRoute = getUrlParams()[getRouteKey()];
-    defaultPath &&
-      onNavigate({
+    defaultPath
+      && onNavigate({
         type: "PUSH",
         route: defaultPath,
       });
