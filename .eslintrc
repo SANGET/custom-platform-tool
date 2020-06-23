@@ -4,14 +4,14 @@
     "plugin:@typescript-eslint/recommended",
     "react-app"
   ],
-  "parser": "@typescript-eslint/parser",
   "plugins": [
     "react", "@typescript-eslint"
   ],
   "rules": {
     "@typescript-eslint/indent": ["error", 2],
-    "@typescript-eslint/explicit-function-return-type": 0,
+    // "@typescript-eslint/explicit-function-return-type": 0,
     "@typescript-eslint/explicit-member-accessibility": 0,
+    "@typescript-eslint/explicit-module-boundary-types": 0,
     "indent": ["error", 2, { "SwitchCase": 1 }],
     "semi": ["error", "always"],
     "no-unused-vars": [
@@ -63,6 +63,9 @@
           "./packages"
         ]
       }
+    },
+    "import/parsers": {
+      "@typescript-eslint/parser": [ ".js", ".jsx", ".ts", ".tsx" ]
     },
     "import/external-module-folders": [
       "./packages"
