@@ -37,7 +37,7 @@ export interface RouterState {
   activeRoute: string;
 }
 
-const defaultState: RouterState = {
+export const defaultState: RouterState = {
   routers: [],
   routerInfo: {},
   activeRouteIdx: -1,
@@ -77,6 +77,8 @@ class RouterHelper<
 
   handlePush!: () => void;
 
+  handleHistoryChange!: (pageID) => void;
+
   constructor(props) {
     super(props);
 
@@ -114,6 +116,9 @@ class RouterHelper<
     const activeRoute = getAllUrlParams()[getRouteKey()];
     const nextRouterState = state.nextRouters;
     this.selectTab(activeRoute, nextRouterState);
+
+    // hook 函数
+    Call(this.handleHistoryChange, activeRoute);
   };
 
   closeAll = () => {
@@ -166,7 +171,8 @@ class RouterHelper<
 
   selectTab = (
     activeRoute: string,
-    nextRouterState?: RouterState
+    nextRouterState?: RouterState,
+    mergeState = {}
   ): void | null => {
     if (nextRouterState) return this.setState(nextRouterState);
     if (!activeRoute) return null;
@@ -197,6 +203,7 @@ class RouterHelper<
         activeRouteIdx: activeIdx,
         routers: nextRouters,
         routerInfo: nextRouterInfo,
+        ...mergeState
       };
       cachedState = nextState;
       return nextState;
