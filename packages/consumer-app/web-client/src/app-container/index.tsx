@@ -77,10 +77,12 @@ class AppContainer extends RouterMultiple<AppContainerProps, AppContainerState> 
                 this.setState({
                   preparingPage: false
                 });
-              });
+              })
+              .catch((err) => {});
           }
         }
-      });
+      })
+      .catch((err) => {});
   }
 
   render() {
@@ -96,9 +98,11 @@ class AppContainer extends RouterMultiple<AppContainerProps, AppContainerState> 
           ready ? (
             <React.Fragment>
               <Nav navConfig={navStore} />
-              <div className="router-tabs" style={{
-                margin: 20
-              }}
+              <div
+                className="router-tabs" 
+                style={{
+                  margin: 20
+                }}
               >
                 <div>Tab container</div>
                 {
@@ -128,7 +132,7 @@ class AppContainer extends RouterMultiple<AppContainerProps, AppContainerState> 
                     const currPage = pageCache[pageID];
                     const pageAuthInfo = pageAuthCache[pageID];
                     const isShow = pageID === activeRoute;
-                    const pageKey = pageID + isShow;
+                    const pageKey = pageID;
                     return (
                       <div
                         key={pageKey}
