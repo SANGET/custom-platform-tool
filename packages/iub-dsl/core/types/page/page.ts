@@ -9,10 +9,10 @@ import RelationshipsCollection from "../relationship/relationship-collection";
 import { ActionFlow } from "../actions/action-collection";
 import { PageSchemas, FlowSchemas } from "../schemas";
 
-type ElementType = ContainerElement | ComponentElementRefType;
+export type ElementType = ContainerElement | ComponentElementRefType;
 
 /** 页面内容 */
-type LayoutContentGeneral = {
+export type LayoutContentGeneral = {
   /** 页面内容类型 */
   type: "general";
   /** 子内容 */

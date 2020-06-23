@@ -1,23 +1,23 @@
-import componentParser from "./component-parser";
 import { ParserParamsOfIUBDSL } from "../types/parser-interface";
 import layoutParser from "./layout";
 
-// const parser = (pageDSL) => {
-//   const res = pageDSL.body.map(({ component }) => {
-//     return componentParser(component);
-//   });
-//   return res;
-// };
-
-// export default parser;
-
 const IUBDSLParser = ({
   dsl,
+  context,
   authUI
 }: ParserParamsOfIUBDSL) => {
-  const { layoutContent } = dsl;
+  const { layoutContent, componentsCollection, actionsCollection } = dsl;
   return layoutParser({
-    type: 'Input'
+    layoutNode: layoutContent,
+    authUI,
+    bindAction: (actionID) => {
+      // console.log(actionID);
+      return actionsCollection[actionID];
+    },
+    bindComponent: (componentID) => {
+      // console.log(componentID);
+      return componentsCollection[componentID];
+    }
   });
 };
 

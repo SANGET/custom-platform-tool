@@ -1,5 +1,6 @@
 import React from "react";
 import { Input } from "@infra/ui-interface";
+import { ComponentElement } from "@iub-dsl/core/types/component/collection";
 
 // import {
 //   Input
@@ -8,11 +9,22 @@ import { Input } from "@infra/ui-interface";
 /**
  * 解析 DSL 描述的 component
  */
-const componentParser = (component) => {
-  const { type } = component;
+const componentParser = (componentConfig: ComponentElement) => {
+  if (!componentConfig) {
+    return (
+      <div>组件配置异常</div>
+    );
+  }
+  const { type } = componentConfig.component;
   switch (type) {
     case "Input":
-      return <Input />;
+      return (
+        <Input
+          onChange={(e) => {
+            console.log(e);
+          }}
+        />
+      );
     default:
       break;
   }
