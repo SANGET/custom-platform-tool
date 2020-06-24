@@ -1,17 +1,10 @@
 import React from 'react';
 import { LayoutContentGeneral, ElementType } from '@iub-dsl/core/types';
-import { ComponentElement } from '@iub-dsl/core/types/component/collection';
-import { ActionFlow } from '@iub-dsl/core/types/actions/action-collection';
 
 import componentParser from "./component-parser";
+import { ParserBindActions } from '../types/parser-interface';
 
-interface LayoutBindActions {
-  bindAction: (actionID: string) => ActionFlow;
-  bindComponent: (componentID: string) => ComponentElement;
-  authUI: Function;
-}
-
-export interface LayoutParserParams extends LayoutBindActions {
+export interface LayoutParserParams extends ParserBindActions {
   layoutNode: LayoutContentGeneral;
 }
 
@@ -27,7 +20,7 @@ const containerLayoutParser = (layoutInfo): React.CSSProperties => {
 /**
  * 布局渲染器
  */
-const renderLayout = (layoutNode: ElementType[], bindActions: LayoutBindActions) => {
+const renderLayout = (layoutNode: ElementType[], bindActions: ParserBindActions) => {
   return Array.isArray(layoutNode) && layoutNode.map((node, idx) => {
     switch (node.type) {
       case 'container':
@@ -47,7 +40,7 @@ const renderLayout = (layoutNode: ElementType[], bindActions: LayoutBindActions)
         const componentConfig = bindActions.bindComponent(node.componentID);
         return (
           <div className="component" key={componentConfig?.id || 'none'}>
-            {componentParser(componentConfig)}
+            {componentParser(componentConfig, bindActions)}
           </div>
         );
     }

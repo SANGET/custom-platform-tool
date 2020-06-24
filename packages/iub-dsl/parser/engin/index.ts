@@ -1,13 +1,19 @@
 import { ParserParamsOfIUBDSL } from "../types/parser-interface";
 import layoutParser from "./layout";
+import flowExecutor from "./flow";
 
 const IUBDSLParser = ({
   dsl,
   context,
   authUI
 }: ParserParamsOfIUBDSL) => {
-  const { layoutContent, componentsCollection, actionsCollection } = dsl;
+  const {
+    layoutContent, componentsCollection, actionsCollection,
+    metadataMapping, relationshipsCollection, schemas,
+    sysRtCxtInterface
+  } = dsl;
   return layoutParser({
+    context,
     layoutNode: layoutContent,
     authUI,
     bindAction: (actionID) => {
@@ -17,7 +23,7 @@ const IUBDSLParser = ({
     bindComponent: (componentID) => {
       // console.log(componentID);
       return componentsCollection[componentID];
-    }
+    },
   });
 };
 

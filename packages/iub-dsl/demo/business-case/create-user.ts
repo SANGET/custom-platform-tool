@@ -281,7 +281,7 @@ const CreteUser: TypeOfIUBDSL = {
     },
   },
 
-    /** 与 system runtime context 的接口 */
+  /** 与 system runtime context 的接口 */
   sysRtCxtInterface: {},
 
   /** 布局信息 */

@@ -1,17 +1,21 @@
-import ExpressionTypes, { FlowExpression } from "./expression";
+import ExpressionTypes from "./expression";
 
 interface FlowItem {
-  id: string;
   /** 用于标识此流程产生出的值赋予的变量的名称 */
   variable: string;
   /** 此流程的执行表达式 */
   expression: ExpressionTypes;
-  flowExpression?: FlowExpression;
+  /** 是否注册到页面上下文 */
+  isReturn?: boolean;
 }
 
 /** 动作描述 */
 export type ActionFlow = {
-  flow: {
-    [flowID: string]: FlowItem;
+  flowItems: {
+    [flowItemID: string]: FlowItem;
   };
+  flowCondition: {
+    [flowItemID: string]: FlowItem;
+  };
+  flowControl: string;
 };

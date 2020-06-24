@@ -1,33 +1,73 @@
 import React from "react";
 import { Input } from "@infra/ui-interface";
 import { ComponentElement } from "@iub-dsl/core/types/component/collection";
+import { ParserBindActions } from "../types/parser-interface";
+import flowExecutor from "./flow";
 
-// import {
-//   Input
-// } from "@infra/ui-interface";
+export interface ComWrapperProps {
+  onClick: () => void;
+}
+
+const ComWrapper = ({
+  children,
+  onClick
+}: ComWrapperProps) => {
+  return (
+    <div
+      onClick={(e) => {
+        onClick(e);
+      }}
+    >
+      {children}
+    </div>
+  );
+};
 
 /**
  * 解析 DSL 描述的 component
  */
-const componentParser = (componentConfig: ComponentElement) => {
+const componentParser = (
+  componentConfig: ComponentElement,
+  bindActions: ParserBindActions
+) => {
   if (!componentConfig) {
     return (
       <div>组件配置异常</div>
     );
   }
-  const { type } = componentConfig.component;
+  const { component, actions } = componentConfig;
+  const { type } = component;
+  let resCom;
   switch (type) {
     case "Input":
-      return (
+      resCom = (
         <Input
           onChange={(e) => {
             console.log(e);
           }}
         />
       );
+      break;
     default:
       break;
   }
+  return (
+    <ComWrapper
+      onClick={(e) => {
+        // TODO: 做 actionLoader
+        let onClickActionFlow;
+        switch (actions?.onClick?.type) {
+          case 'actionRef':
+            onClickActionFlow = bindActions.bindAction(actions.onClick.actionID);
+            // console.log(onClickActionFlow);
+            flowExecutor(onClickActionFlow);
+            break;
+        }
+      }}
+    >
+      {resCom}
+    </ComWrapper>
+  );
 };
 
 // const ComParser = ({ config, context }) => {

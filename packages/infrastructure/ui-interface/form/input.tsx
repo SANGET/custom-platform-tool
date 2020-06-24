@@ -1,11 +1,13 @@
 import React from "react";
 
 interface InputProps {
-  onChange: (event) => void;
+  onChange: ((event: React.ChangeEvent<HTMLInputElement>) => void);
 }
 
-const Input: React.SFC<InputProps> = () => {
-  return <input type="text" />;
+const Input: React.SFC<InputProps> = ({
+  onChange
+}) => {
+  return <input type="text" onChange={onChange} />;
 };
 
 export default Input;
