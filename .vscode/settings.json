@@ -21,6 +21,7 @@
     "**/node_modules": true,
     "**/bower_components": true,
     "**/dist": true,
+    "**/.bak": true,
     "**/coverage": true
   },
   "typescript.referencesCodeLens.enabled": true,
