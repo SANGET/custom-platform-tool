@@ -12,6 +12,8 @@ const IUBDSLParser = ({
     metadataMapping, relationshipsCollection, schemas,
     sysRtCxtInterface
   } = dsl;
+  // TODO: 订阅其他页面的数据变化
+  // context.subscribeDataChange(sysRtCxtInterface);
   return layoutParser({
     context,
     layoutNode: layoutContent,

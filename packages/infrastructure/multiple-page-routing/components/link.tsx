@@ -27,8 +27,7 @@ const Link: React.SFC<LinkProps> = ({
   params,
 }) => {
   const activeRoute = getUrlParams(undefined, undefined, true)[getRouteKey()];
-  const _isActive =
-    typeof isActive != "undefined" ? isActive : activeRoute === to;
+  const _isActive = typeof isActive != "undefined" ? isActive : activeRoute === to;
 
   return (
     <span

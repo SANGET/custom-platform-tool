@@ -18,7 +18,8 @@
     "build:provider-app": "minictl build",
     "start:consumer-app": "cd ./packages/consumer-app/web-client; npm start",
     "prettier:base": "prettier --parser typescript",
-    "format": "npm run prettier:base -- --write \"packages/**/*.{ts,tsx}\""
+    "format": "npm run prettier:base -- --write \"packages/**/*.{ts,tsx}\"",
+    "test": "jest"
   },
   "devDependencies": {
     "lerna": "^3.21.0",
