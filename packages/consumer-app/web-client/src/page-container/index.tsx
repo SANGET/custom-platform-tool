@@ -6,7 +6,9 @@ import React from 'react';
 
 import { TypeOfIUBDSL } from "@iub-dsl/core/types";
 import IUBDSLParser from '@iub-dsl/parser/engin';
+
 import { AuthUIByUIID } from '../services/auth';
+import $R from '../services/req';
 
 const SpecificParser = () => {
   return (
@@ -26,6 +28,10 @@ const parserLoader = (type, { dsl, pageAuthInfo }) => {
     case 'iub-dsl':
       return IUBDSLParser({
         // 接口反射，UI 验证
+        context: {
+          setContext: () => ({}),
+        },
+        requestAPI: $R,
         authUI: (UIID) => AuthUIByUIID(UIID, pageAuthInfo),
         dsl
       });

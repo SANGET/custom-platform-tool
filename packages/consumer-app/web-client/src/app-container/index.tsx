@@ -99,7 +99,7 @@ class AppContainer extends RouterMultiple<AppContainerProps, AppContainerState> 
             <React.Fragment>
               <Nav navConfig={navStore} />
               <div
-                className="router-tabs" 
+                className="router-tabs"
                 style={{
                   margin: 20
                 }}
