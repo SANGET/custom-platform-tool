@@ -27,6 +27,7 @@
     "no-console": 0,
     "arrow-body-style": 0,
     "no-return-assign": 0,
+    "import/extensions": 0,
     "no-case-declarations": 0,
     "no-plusplus": 0,
     "prefer-object-spread": 0,
@@ -63,9 +64,6 @@
           "./packages"
         ]
       }
-    },
-    "import/parsers": {
-      "@typescript-eslint/parser": [ ".js", ".jsx", ".ts", ".tsx" ]
     },
     "import/external-module-folders": [
       "./packages"
