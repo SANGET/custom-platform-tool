@@ -2,9 +2,9 @@ import React from 'react';
 import { LayoutContentGeneral, ElementType } from '@iub-dsl/core/types';
 
 import componentParser from "./component-parser";
-import { ParserBindActions } from '../types/parser-interface';
+import { ParserContextGroup } from '../types';
 
-export interface LayoutParserParams extends ParserBindActions {
+export interface LayoutParserParams {
   layoutNode: LayoutContentGeneral;
 }
 
@@ -19,8 +19,10 @@ const containerLayoutParser = (layoutInfo): React.CSSProperties => {
 
 /**
  * 布局渲染器
+ *
+ * parserContext 将传入每一个 parser
  */
-const renderLayout = (layoutNode: ElementType[], bindActions: ParserBindActions) => {
+const renderLayout = (layoutNode: ElementType[], parserContext: ParserContextGroup) => {
   return Array.isArray(layoutNode) && layoutNode.map((node, idx) => {
     switch (node.type) {
       case 'container':
@@ -32,29 +34,32 @@ const renderLayout = (layoutNode: ElementType[], bindActions: ParserBindActions)
             key={idx}
           >
             {
-              renderLayout(node.body, bindActions)
+              renderLayout(node.body, parserContext)
             }
           </div>
         );
       case 'componentRef':
-        const componentConfig = bindActions.bindComponent(node.componentID);
+        const componentConfig = parserContext.bindComponent(node.componentID);
         return (
           <div className="component" key={componentConfig?.id || 'none'}>
-            {componentParser(componentConfig, bindActions)}
+            {componentParser(componentConfig, parserContext)}
           </div>
         );
     }
   });
 };
 
-const layoutParser = ({
-  layoutNode,
-  ...bindActions
-}: LayoutParserParams) => {
+const layoutParser = (
+  layoutParams: LayoutParserParams,
+  parserContext: ParserContextGroup
+) => {
+  const {
+    layoutNode,
+  } = layoutParams;
   return (
     <div>
       {
-        renderLayout(layoutNode.content, bindActions)
+        renderLayout(layoutNode.content, parserContext)
       }
     </div>
   );

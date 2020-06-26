@@ -1,11 +1,12 @@
 import React from "react";
 import { Input } from "@infra/ui-interface";
 import { ComponentElement } from "@iub-dsl/core/types/component/collection";
-import { ParserBindActions } from "../types/parser-interface";
+import { ParserContextGroup } from "../types";
 import flowExecutor from "./flow";
 
 export interface ComWrapperProps {
-  onClick: () => void;
+  onClick: (event?) => void;
+  children: any;
 }
 
 const ComWrapper = ({
@@ -28,7 +29,7 @@ const ComWrapper = ({
  */
 const componentParser = (
   componentConfig: ComponentElement,
-  bindActions: ParserBindActions
+  parserContext: ParserContextGroup
 ) => {
   if (!componentConfig) {
     return (
@@ -53,14 +54,14 @@ const componentParser = (
   }
   return (
     <ComWrapper
-      onClick={(e) => {
-        // TODO: 做 actionLoader
+      onClick={() => {
+        // TODO: actionLoader
         let onClickActionFlow;
         switch (actions?.onClick?.type) {
           case 'actionRef':
-            onClickActionFlow = bindActions.bindAction(actions.onClick.actionID);
+            onClickActionFlow = parserContext.bindAction(actions.onClick.actionID);
             // console.log(onClickActionFlow);
-            flowExecutor(onClickActionFlow);
+            flowExecutor(onClickActionFlow, parserContext);
             break;
         }
       }}
@@ -69,43 +70,5 @@ const componentParser = (
     </ComWrapper>
   );
 };
-
-// const ComParser = ({ config, context }) => {
-//   const { type } = config;
-//   switch (type) {
-//     case "Input":
-//       const { Input } = await import("@infra/ui-interface");
-//       return <Input />;
-//     case "Button":
-//       const { Button } = await import("@infra/ui-interface");
-//       return (
-//         <Button
-//           onClick={(e) => {
-//             config.actions.onClick(context);
-//           }}
-//         />
-//       );
-//     default:
-//       break;
-//   }
-// };
-
-// const App = () => {
-//   const runtimeState = {
-//     apiFetch: (params) => {
-//       const reqApbData = toApb(params);
-//       const resData = fetch(reqApbData);
-//     },
-//   };
-//   return (
-//     <ComParser
-//       config={{
-//         type: "Button",
-//         text: "录入",
-//       }}
-//       context={runtimeState}
-//     />
-//   );
-// };
 
 export default componentParser;
