@@ -1,31 +1,12 @@
-import { ContainerElement } from "../layout-content/container";
 import {
-  ComponentElementRefType,
   ComponentElement,
-} from "../component/collection";
+} from "../component";
 import SRCInterface from "./src-interface";
 import MetadataMapping from "../metadata/metadata-mapping";
 import RelationshipsCollection from "../relationship/relationship-collection";
 import { ActionFlow } from "../actions/action-collection";
 import { PageSchemas, FlowSchemas } from "../schemas";
-
-export type ElementType = ContainerElement | ComponentElementRefType;
-
-/** 页面内容 */
-export type LayoutContentGeneral = {
-  /** 页面内容类型 */
-  type: "general";
-  /** 子内容 */
-  content: ElementType[];
-};
-
-/** 页面内容 */
-type LayoutContentCustom = {
-  /** 页面内容类型 */
-  type: "custom";
-  /** 子内容 */
-  content: () => any;
-};
+import { LayoutContent } from "../layout-content";
 
 /**
  * 页面类型详细定义
@@ -53,8 +34,6 @@ export interface TypeOfIUBDSL {
 
   /** 页面名称 */
   name: string;
-
-  dataSourceRef: {};
 
   /** 与 system runtime context 的接口 */
   sysRtCxtInterface: SRCInterface;
@@ -87,5 +66,5 @@ export interface TypeOfIUBDSL {
   };
 
   /** 布局信息 */
-  layoutContent: LayoutContentGeneral | LayoutContentCustom;
+  layoutContent: LayoutContent;
 }
