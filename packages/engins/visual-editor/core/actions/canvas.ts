@@ -1,6 +1,11 @@
 export const SELECT_ENTITY = 'SELECT_ENTITY';
-export const SelectEntity = (entityID) => {
+export const SelectEntity = (entity) => {
   return {
-    entityID
+    type: SELECT_ENTITY,
+    entity
   };
 };
+
+export interface Dispatcher {
+  SelectEntity: typeof SelectEntity
+}

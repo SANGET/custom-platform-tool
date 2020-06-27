@@ -1,0 +1,1 @@
+import './actions/canvas.d';

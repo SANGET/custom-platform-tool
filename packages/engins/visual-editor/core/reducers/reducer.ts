@@ -1,11 +1,11 @@
 import { combineReducers } from "redux";
 
 import {
-  selectedEntity,
+  layoutContent,
 } from './canvas-state';
 
 const Reducers = combineReducers({
-  selectedEntity,
+  layoutContent,
 });
 
 export default Reducers;

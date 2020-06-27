@@ -1,6 +1,6 @@
 import React from "react";
 
-import { Grid } from '@infra/ui-interface';
+import { Row, Col } from '@infra/ui-interface/layout/row';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 
@@ -12,7 +12,7 @@ import PropertiesEditor from '../components/PropertiesEditor';
 import { Dispatcher } from "../core/actions";
 import { VisualEditorStore } from "../core/store";
 
-import '@deer-ui/core/default.css';
+import 'antd/dist/antd.css';
 
 interface VisualEditorAppProps {
   dispatcher: Dispatcher
@@ -23,59 +23,45 @@ const VisualEditorApp = (props: VisualEditorAppProps) => {
   const { dispatcher, layoutContent } = props;
   return (
     <div>
-      <Grid container alignItems="center">
-        <Grid
-          item
+      <Row>
+        <Col
           className="logo"
-          lg={2}
+          span={2}
         >
           <h3>Visual editor</h3>
-        </Grid>
-        <Grid
-          item
+        </Col>
+        <Col
           className=""
-          lg={10}
+          span={10}
         >
           <ToolBar />
-        </Grid>
-      </Grid>
-      <Grid container>
+        </Col>
+      </Row>
+      <Row>
         <DndProvider backend={HTML5Backend}>
-          <Grid
-            lg={2}
-            md={2}
-            sm={2}
-            xs={2}
-            item
+          <Col
+            span={2}
             className="left-panel"
           >
             <ComponentPanel />
-          </Grid>
-          <Grid
-            lg={8}
-            md={8}
-            sm={8}
-            xs={8}
-            item
+          </Col>
+          <Col
+            span={8}
             className="canvas-container"
           >
             <CanvasStage
               layoutContent={layoutContent}
               selectEntity={dispatcher.SelectEntity}
             />
-          </Grid>
+          </Col>
         </DndProvider>
-        <Grid
-          lg={2}
-          md={2}
-          sm={2}
-          xs={2}
-          item
+        <Col
+          span={2}
           className="right-panel"
         >
           <PropertiesEditor />
-        </Grid>
-      </Grid>
+        </Col>
+      </Row>
     </div>
   );
 };

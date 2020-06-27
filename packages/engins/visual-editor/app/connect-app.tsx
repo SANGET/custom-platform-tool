@@ -20,7 +20,11 @@ const mapDispatchToProps = (dispatch) => {
       const obj = {};
       for (const item in VisualEditorActions) {
         const _dispatch = VisualEditorActions[item];
-        if (typeof _dispatch !== 'string') obj[item] = _dispatch;
+        if (typeof _dispatch === 'function') {
+          obj[item] = (...args) => {
+            dispatch(_dispatch(...args));
+          };
+        }
       }
       return obj;
     }());

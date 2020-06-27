@@ -2,12 +2,17 @@ import React from 'react';
 import { useDrag } from 'react-dnd';
 import { ItemTypes } from './types';
 
+export interface DragItemProps {
+  children: any;
+  entity: any;
+}
+
 const DragItem = ({
-  children, item, ...other
-}) => {
+  children, entity, ...other
+}: DragItemProps) => {
   const [collectedPropsForDrag, drag] = useDrag({
     item: {
-      originItem: item,
+      entity,
       type: ItemTypes.DragComponent
     },
     collect: (monitor) => ({

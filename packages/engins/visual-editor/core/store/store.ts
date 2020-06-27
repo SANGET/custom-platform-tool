@@ -1,8 +1,13 @@
 import { createStore, applyMiddleware } from 'redux';
 
 import AppReducers from '../reducers';
+import { layoutContentState } from '../reducers/canvas-state';
 
-let store;
+export interface VisualEditorStore {
+  layoutContentState: layoutContentState
+}
+
+let store: VisualEditorStore | null;
 
 export const getStore = () => {
   return store;
@@ -14,7 +19,7 @@ export const disposeStore = () => {
 
 export default function createChatStore(preloadedState?) {
   if (!store) {
-    store = createStore(
+    store = createStore<VisualEditorStore>(
       AppReducers,
       preloadedState,
       applyMiddleware(
