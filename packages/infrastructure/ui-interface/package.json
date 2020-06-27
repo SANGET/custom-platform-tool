@@ -7,7 +7,8 @@
   "dependencies": {
     "react": "16.13.1",
     "antd": "^4.3.5",
-    "@material-ui/core": "^4.10.2"
+    "@material-ui/core": "^4.10.2",
+    "@deer-ui/core": "^4.0.0-rc5.9"
   },
   "author": "SANGET",
   "license": "MIT"

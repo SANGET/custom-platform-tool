@@ -1,4 +1,4 @@
-import Grid from '@material-ui/core/Grid';
+import { Grid } from '@deer-ui/core/grid';
 
 export {
   Grid
