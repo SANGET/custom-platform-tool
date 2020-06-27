@@ -6,5 +6,5 @@
     "packages/infrastructure/*",
     "packages/consumer-app/*"
   ],
-  "version": "0.0.0"
+  "version": "0.0.1"
 }
