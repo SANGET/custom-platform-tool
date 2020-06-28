@@ -47,6 +47,7 @@ const PageContainer = (props: PageContainerProps) => {
     dsl, pageAuthInfo, // type, pageID
   } = props;
   const { name, id, type } = dsl || {};
+<<<<<<< HEAD
   // TODO: 数据的可用性统一管理  (状态校验: loading、路由鉴权)。尝试一下，需要讨论
   return (<ValidRender
     pageAuthInfo={pageAuthInfo}
@@ -70,6 +71,23 @@ const ValidRender = ({
     return Wrapper ? (<Wrapper>{children}</Wrapper>) : children;
   }
   return (<div>Not Permitted</div>);
+=======
+  // TODO: 数据的可用性统一管理
+  return dsl ? (
+    <div className="page-container">
+      <h1>{id}</h1>
+      <h2>{name}</h2>
+      {
+        parserLoader(type, {
+          dsl,
+          pageAuthInfo
+        })
+      }
+    </div>
+  ) : (
+    <div>Loading</div>
+  );
+>>>>>>> 31574bb159b71381c18dd4a2e93a166666bb87fc
 };
 
 const PageContainerWrapper = (props) => (
