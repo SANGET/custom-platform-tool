@@ -7,21 +7,22 @@ export interface layoutContentState {
   content: LayoutContentElement[]
 }
 export const layoutContent = (
-  state: layoutContentState = {},
+  state: layoutContentState = {
+    content: []
+  },
   action
 ) => {
   switch (action.type) {
     case SELECT_ENTITY:
-      console.log(action);
       switch (action.entity.type) {
         case "component":
-
+          state.content = [...state.content, action.entity];
           break;
         case "container":
 
           break;
       }
-      return action.entity;
+      return state;
     default:
       return state;
   }
@@ -38,7 +39,6 @@ export const componentsCollection = (
 ) => {
   switch (action.type) {
     case SELECT_ENTITY:
-      console.log(action);
       switch (action.entity.type) {
         case "component":
 

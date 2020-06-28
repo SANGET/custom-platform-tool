@@ -1,12 +1,12 @@
 /**
  * 搜索规则的数据表 TODO: 留个坑
  */
-interface SearchingTableMapping {
+export interface SearchingTableMapping {
   type: "searching";
   rule: string;
 }
 
-interface GeneralTableColumn {
+export interface GeneralTableColumn {
   field: string;
   /** TODO: 这里对应数据表的 column type */
   type: string;
@@ -16,7 +16,7 @@ interface GeneralTableColumn {
 /**
  * 通用的数据表
  */
-interface GeneralTableMapping {
+export interface GeneralTableMapping {
   type: "general";
   database?: string;
   tableName: string;
@@ -26,7 +26,7 @@ interface GeneralTableMapping {
 }
 
 // TODO: 商讨一下。是否这样。强引用主从表。弱引用
-interface QuoteRef {
+export interface QuoteRef {
   connectKey: string; // tableId.filed
   key?: string; // tableId.id
   value?: string; // tableId.show
@@ -35,7 +35,7 @@ interface QuoteRef {
 /**
  * 数据源关系
  */
-interface DataSourceRelation {
+export interface DataSourceRelation {
   [dataSourceId: string]: {
     type: string;
     subTable?: string | QuoteRef;
@@ -51,7 +51,7 @@ interface DataSourceRelation {
   };
 }
 
-interface MetadataMappingCollection {
+export interface MetadataMappingCollection {
   dataSource: {
     [ID: string]: GeneralTableMapping;
   };

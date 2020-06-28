@@ -8,7 +8,7 @@
 
 // 1. 用户关联部门。
 // 2. 统计部门下有多少用户
-// 3. 
+// 3.
 
 // 1. 预编译，转成伪代码
 
@@ -34,14 +34,11 @@
 
 // TODO: 不同地方配置的APB-DSL支持合并成一步操作
 
-
 /** 解析解析引擎总入口 */
 interface ParseIUB_DSL {
   /** 分发解析IUB_DSL */
   distributionParse(IUB_DSL: TypeOfIUBDSL): IUBParseResult;
 }
-
-
 
 /**
  * 职能：
@@ -56,7 +53,7 @@ interface ParseMetaDataMapping {
   tableMappingCollection: TableMapping;
 
   /** 字段关系描述映射 */
-  filedRelationMapping: RelationMapping; 
+  filedRelationMapping: RelationMapping;
 
   /** 解析数据源 */
   parseDataSource(dataSorce: DataSorce): MappingCollection;
@@ -72,7 +69,7 @@ interface ParseMetaDataMapping {
 
 const tableMappingCollection = {
   dataSourceId1: 'User'
-}
+};
 
 const mappingCollection = {
   // uuid2: 'dataSourceId2.department', // faild
@@ -80,14 +77,13 @@ const mappingCollection = {
     field: 'dataSourceId2.department',
     relation: '',
   }
-}
+};
 
-
-// store + dispatch标准  
+// store + dispatch标准
 /** 解析数据模型 */
 interface ParseSchema {
   /** 解析页面数据模型 */
-  parsePageSchema(pageSchema: PageSchema, isAutoInit: Boolean): PageStore;
+  parsePageSchema(pageSchema: PageSchema, isAutoInit: boolean): PageStore;
   /** 解析页面数据模型的校验规则 */
   ParseRules(pageSchemaItem: PageSchemas): PageStore;
   /** 解析流程上下文数据模型 */
@@ -135,13 +131,11 @@ declare namespace ParseRelationCollection {
   interface ParseXXXRelation { }
 }
 
-
 interface RuntimeContainer {
 
 }
 
-
-interface  Button {}
+interface Button {}
 
 declare namespace AntdUI {
   interface Button {

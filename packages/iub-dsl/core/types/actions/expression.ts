@@ -11,7 +11,7 @@
  * 变量：#{variable} 可以获取 context 中对应的变量的值
  * 嵌套：@{fid} 可嵌套其他的 flowItem 作为变量
  */
-type Expression = string;
+export type Expression = string;
 
 // export interface FlowExpression {
 //   /** 表达式类型 */

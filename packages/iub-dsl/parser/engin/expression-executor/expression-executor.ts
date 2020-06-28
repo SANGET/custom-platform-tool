@@ -10,7 +10,8 @@ const expressionExecutor = (
   parserContext: ParserContextGroup
 ) => {
   // TODO:
-  parserContext.context.requestAPI({});
+  // parserContext.context.requestAPI({});
+  console.log('expression');
 };
 
 export default expressionExecutor;

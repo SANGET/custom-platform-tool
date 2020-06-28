@@ -3,26 +3,31 @@ import { Tabs, Tab } from '@infra/ui-interface';
 
 import DragItem from './DragItem';
 
+interface ComponentItem {
+  type: 'container' | 'component'
+  id: string
+  label: string;
+  // TODO: 绑定可编辑的属性
+  properties: {
+
+  }
+}
+
 export interface ComponentPanelProps {
   componentConfig: {
     tabGroup: ({
       title: string,
       itemsGroups: ({
         title: string
-        items: ({
-          id: string,
-          component: string,
-          label: string,
-          type: 'component' | 'container',
-        })[]
+        items: ComponentItem[]
       })[]
     })[]
   }
 }
 
-const ComponentPanel = ({
+const ComponentPanel: React.SFC<ComponentPanelProps> = ({
   componentConfig
-} : ComponentPanelProps) => {
+}) => {
   const { tabGroup } = componentConfig;
   const handleChange = () => {
     console.log('object');
@@ -49,22 +54,17 @@ const ComponentPanel = ({
                     } = ig;
                     return (
                       <div key={`${idx}_${_idx}`}>
-                        <h3>{igTitle}</h3>
+                        <h5>{igTitle}</h5>
                         {
                           items.map((itm, __idx) => {
                             const {
-                              component, id, label, type
+                              id, label
                             } = itm;
                             return (
                               <div key={id}>
                                 <DragItem
                                   entity={{
-                                    id,
-                                    component,
-                                    type,
-                                    properties: {
-
-                                    }
+                                    ...itm,
                                   }}
                                 >
                                   {label}
@@ -96,13 +96,32 @@ ComponentPanel.defaultProps = {
             title: '基础控件',
             items: [
               {
-                id: 'c1',
+                id: 'com1',
                 component: 'Input',
                 label: '文本框',
                 type: 'component',
+                properties: {
+
+                }
               }
             ]
-          }
+          },
+          {
+            title: '布局',
+            items: [
+              {
+                id: 'con1',
+                layout: {
+                  type: 'flex',
+                },
+                label: 'Flex 布局',
+                type: 'container',
+                properties: {
+
+                }
+              }
+            ]
+          },
         ]
       },
     ]
