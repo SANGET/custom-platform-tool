@@ -1,11 +1,13 @@
 import { combineReducers } from "redux";
 
 import {
-  layoutContent,
+  // layoutContent,
+  componentsCollection,
 } from './canvas-state';
 
 const Reducers = combineReducers({
-  layoutContent,
+  // layoutContent,
+  componentsCollection,
 });
 
 export default Reducers;
