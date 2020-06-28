@@ -17,7 +17,7 @@ const SpecificParser = () => {
 };
 
 interface PageContainerProps {
-  type: 'iub-dsl' | 'specific';
+  // type: 'iub-dsl' | 'specific';
   dsl: TypeOfIUBDSL;
   pageID?: string;
   pageAuthInfo?: {};
@@ -25,7 +25,7 @@ interface PageContainerProps {
 
 const parserLoader = (type, { dsl, pageAuthInfo }) => {
   switch (type) {
-    case 'iub-dsl':
+    case 'config':
       return IUBDSLParser({
         // 接口反射，UI 验证
         context: {
@@ -35,7 +35,7 @@ const parserLoader = (type, { dsl, pageAuthInfo }) => {
         authUI: (UIID) => AuthUIByUIID(UIID, pageAuthInfo),
         dsl
       });
-    case 'specific':
+    case 'embed':
       return SpecificParser();
     default:
       return <div></div>;
@@ -44,13 +44,13 @@ const parserLoader = (type, { dsl, pageAuthInfo }) => {
 
 const PageContainer = (props: PageContainerProps) => {
   const {
-    type, dsl, pageID, pageAuthInfo
+    dsl, pageAuthInfo, // type, pageID
   } = props;
-  const { name } = dsl || {};
+  const { name, id, type } = dsl || {};
   // TODO: 数据的可用性统一管理
   return dsl ? (
     <div className="page-container">
-      <h1>{pageID}</h1>
+      <h1>{id}</h1>
       <h2>{name}</h2>
       {
         parserLoader(type, {
