@@ -46,6 +46,7 @@ const renderLayout = (
       case 'container':
         const { layout } = node;
         const { containerWrapper, componentWrapper } = wrapper;
+        // TODO: 加入布局UI隔离
         const childOfContainer = (
           <div
             style={containerLayoutParser(layout)}
@@ -64,6 +65,7 @@ const renderLayout = (
       case 'componentRef':
         const componentConfig = parserContext.bindComponent(node.componentID);
         console.log(node.componentID);
+        // TODO: 套这一层应该，放在布局容器，用其他方式解耦
         const childOfComponent = (
           <div className="component" key={componentConfig?.id + idx || 'none'}>
             {componentParser(componentConfig, parserContext)}

@@ -2,7 +2,7 @@
  * TODO: 引用 redux
  */
 
-import React from 'react';
+import React, { Children } from 'react';
 
 import { TypeOfIUBDSL } from "@iub-dsl/core/types";
 import IUBDSLParser from '@iub-dsl/parser/engin';
@@ -47,21 +47,37 @@ const PageContainer = (props: PageContainerProps) => {
     dsl, pageAuthInfo, // type, pageID
   } = props;
   const { name, id, type } = dsl || {};
-  // TODO: 数据的可用性统一管理
-  return dsl ? (
-    <div className="page-container">
-      <h1>{id}</h1>
-      <h2>{name}</h2>
-      {
-        parserLoader(type, {
-          dsl,
-          pageAuthInfo
-        })
-      }
-    </div>
-  ) : (
-    <div>Loading</div>
-  );
+  // TODO: 数据的可用性统一管理  (状态校验: loading、路由鉴权)。尝试一下，需要讨论
+  return (<ValidRender
+    pageAuthInfo={pageAuthInfo}
+    dsl={dsl}
+    Wrapper={<PageContainerWrapper></PageContainerWrapper>}
+  >{
+      parserLoader(type, {
+        dsl,
+        pageAuthInfo
+      })
+    }</ValidRender>);
 };
+
+const ValidRender = ({
+  pageAuthInfo, dsl, Wrapper, children
+}) => {
+  if (!dsl) {
+    return (<div>Loading</div>);
+  }
+  if (pageAuthInfo(dsl.id)) {
+    return Wrapper ? (<Wrapper>{children}</Wrapper>) : children;
+  }
+  return (<div>Not Permitted</div>);
+};
+
+const PageContainerWrapper = (props) => (
+  <div className="page-container">
+    <h1>{props.id}</h1>
+    <h2>{props.name}</h2>
+    {props.children}
+  </div>
+);
 
 export default PageContainer;
