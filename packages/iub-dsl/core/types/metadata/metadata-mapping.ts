@@ -1,4 +1,4 @@
-interface GeneralTableColumn {
+export interface GeneralTableColumn {
   field: string;
   /** TODO: 这里对应数据表的 column type */
   type: string;
@@ -8,7 +8,7 @@ interface GeneralTableColumn {
 /**
  * 通用的数据表
  */
-interface GeneralTableMapping {
+export interface GeneralTableMapping {
   type: 'general';
   database?: string;
   tableName: string;
@@ -18,7 +18,7 @@ interface GeneralTableMapping {
 /**
  * 搜索规则的数据表
  */
-interface SearchingTableMapping {
+export interface SearchingTableMapping {
   type: 'searching';
   rule: string;
 }
@@ -26,14 +26,14 @@ interface SearchingTableMapping {
 /**
  * 字段映射
  */
-interface Mapping {
+export interface Mapping {
   type: 'uuid2field';
   mapping: {
     [componentBindFieldUUID: string]: string;
   };
 }
 
-interface MetadataMapping {
+export interface MetadataMapping {
   mapping: Mapping;
   dataSource: {
     [ID: string]: GeneralTableMapping | SearchingTableMapping;

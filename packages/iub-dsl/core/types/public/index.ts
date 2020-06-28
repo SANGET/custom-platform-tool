@@ -1,1 +1,1 @@
-export type IdRefType = string | number;
+export type IdRefType = string;

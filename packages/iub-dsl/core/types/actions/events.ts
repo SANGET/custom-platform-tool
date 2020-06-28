@@ -7,6 +7,6 @@ export type UserBehavior =
 
 export type Lifecycles = "onMount" | "onUnmount";
 
-type TriggerEvents = UserBehavior | Lifecycles;
+export type TriggerEvents = UserBehavior | Lifecycles;
 
 export default TriggerEvents;

@@ -1,5 +1,5 @@
 import { ParserParamsOfIUBDSL } from "../types/parser-interface";
-import layoutParser from "./layout";
+import LayoutParser from "./layout";
 import flowExecutor from "./flow";
 
 const IUBDSLParser = ({
@@ -26,8 +26,8 @@ const IUBDSLParser = ({
     case 'general':
       // TODO: 订阅其他页面的数据变化
       // context.subscribeDataChange(sysRtCxtInterface);
-      return layoutParser({
-        layoutNode: layoutContent,
+      return LayoutParser({
+        layoutNode: layoutContent.content,
       }, parserContext);
     case 'custom':
       return '';

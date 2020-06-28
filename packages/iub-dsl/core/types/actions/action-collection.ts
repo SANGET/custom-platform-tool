@@ -1,6 +1,6 @@
 import ExpressionTypes from "./expression";
 
-interface FlowItem {
+export interface FlowItem {
   /** 用于标识此流程产生出的值赋予的变量的名称 */
   variable: string;
   /** 此流程的执行表达式 */
