@@ -10,6 +10,7 @@ import { ItemTypes } from '../ComponentPanel/types';
 import { Dispatcher } from '../../core/actions';
 import { VisualEditorStore } from '../../core/store';
 import { increaseID, parseObjToTreeNode, wrapID } from './utils';
+import DragItem from '../ComponentPanel/DragItem';
 
 const StageRender = styled.div`
   min-height: 50vh;
@@ -25,8 +26,12 @@ const StageRender = styled.div`
 const ContainerWrapper = styled.div`
   background-color: rgba(0,0,0, 0.1);
   padding: 20px;
-  &.overing {
+  margin: 10px;
+  &:hover {
     background-color: rgba(0,0,0, 0.15);
+  }
+  &.overing {
+    background-color: rgba(48, 95, 144, 0.5);
   }
 `;
 
@@ -37,6 +42,7 @@ export interface CanvasStageProps {
 
 const ContainerWrapperCom = ({
   children,
+  currEntity,
   id,
   onDrop
 }) => {
@@ -51,23 +57,31 @@ const ContainerWrapperCom = ({
     }),
   });
   return (
-    <ContainerWrapper
+    <div
       ref={drop}
-      className={`${isOverCurrent ? 'overing' : ''}`}
       onClick={(e) => {
         console.log('id', id);
       }}
     >
-      {children}
-    </ContainerWrapper>
+      <DragItem
+        entity={currEntity}
+      >
+        <ContainerWrapper
+          className={`${isOverCurrent ? 'overing' : ''}`}
+        >
+          {children}
+        </ContainerWrapper>
+      </DragItem>
+    </div>
   );
 };
 
 // TODO: 性能优化
-const containerWrapper = (onDrop) => (container, { id, idx }) => {
+const containerWrapper = (onDrop, layoutContentCollection) => (container, { id, idx }) => {
   const key = wrapID(id, idx);
   return (
     <ContainerWrapperCom
+      currEntity={layoutContentCollection[id]}
       onDrop={onDrop}
       id={id}
       key={key}
@@ -86,17 +100,36 @@ const CanvasStage = ({
   const [componentsCollection, setComponentsCollection] = useState({});
 
   const addContainer = (entity) => {
-    const entityRuntimeID = increaseID();
-    const resEntity = Object.assign({}, entity, {
-      id: entityRuntimeID,
-      comID: entity.id,
-    });
-    setLayoutContentCollection(
-      {
+    console.log(entity);
+    if (entity.state === 'active') {
+      updateContainer(entity.id, entity);
+    } else {
+      const entityRuntimeID = increaseID();
+      const resEntity = Object.assign({}, entity, {
+        id: entityRuntimeID,
+        comID: entity.id,
+        state: 'active'
+      });
+      const nextState = {
         ...layoutContentCollection,
         [entityRuntimeID]: resEntity
-      }
-    );
+      };
+      setLayoutContentCollection(nextState);
+    }
+  };
+  const updateContainer = (id, targetEntity) => {
+    const nextState = {
+      ...layoutContentCollection,
+    };
+    nextState[id] = targetEntity;
+    setLayoutContentCollection(nextState);
+  };
+  const delContainer = (id) => {
+    const nextState = {
+      ...layoutContentCollection,
+    };
+    delete nextState[id];
+    setLayoutContentCollection(nextState);
   };
 
   const [{
@@ -117,7 +150,6 @@ const CanvasStage = ({
   });
 
   const onDropForContainer = (entity) => {
-    console.log(entity);
     addContainer(entity);
   };
 
@@ -132,7 +164,7 @@ const CanvasStage = ({
       return componentsCollection[componentID];
     },
   };
-  // console.log(parseObjToTreeNode(layoutContentCollection));
+  console.log(layoutContentCollection);
 
   return (
     <div>
@@ -144,7 +176,7 @@ const CanvasStage = ({
         {
           LayoutParser({
             layoutNode: parseObjToTreeNode(layoutContentCollection),
-            containerWrapper: containerWrapper(onDropForContainer)
+            containerWrapper: containerWrapper(onDropForContainer, layoutContentCollection)
           }, parserContext)
         }
         {children}
