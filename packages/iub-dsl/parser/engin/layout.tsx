@@ -42,11 +42,15 @@ const renderLayout = (
 ) => {
   return Array.isArray(layoutNode) && layoutNode.map((node, idx) => {
     const { id } = node;
+    const { containerWrapper, componentWrapper } = wrapper;
     switch (node.type) {
       case 'container':
         const { layout } = node;
+<<<<<<< HEAD
         const { containerWrapper, componentWrapper } = wrapper;
         // TODO: 加入布局UI隔离
+=======
+>>>>>>> ea57f5adf65108eb9e35d30724236a2480d24fbb
         const childOfContainer = (
           <div
             style={containerLayoutParser(layout)}
@@ -67,7 +71,7 @@ const renderLayout = (
         console.log(node.componentID);
         // TODO: 套这一层应该，放在布局容器，用其他方式解耦
         const childOfComponent = (
-          <div className="component" key={componentConfig?.id + idx || 'none'}>
+          <div className="component" key={id + idx || 'none'}>
             {componentParser(componentConfig, parserContext)}
           </div>
         );
@@ -88,7 +92,7 @@ const LayoutParser = (
     componentWrapper,
   } = layoutParams;
   return (
-    <div>
+    <div className="layout-parser-content">
       {
         renderLayout(layoutNode, {
           containerWrapper,

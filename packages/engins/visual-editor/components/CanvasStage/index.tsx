@@ -1,5 +1,7 @@
 /**
  * CanvasStage
+ *
+ * TODO: Fix bug，父容器拖动到子容器会出现问题
  */
 import React, { useState } from 'react';
 import { useDrop } from 'react-dnd';
@@ -40,7 +42,7 @@ const ContainerWrapper = styled.div`
 `;
 
 export interface CanvasStageProps {
-  selectEntity: Dispatcher['SelectEntity']
+  // selectEntity: Dispatcher['SelectEntity']
   // layoutContent: VisualEditorStore['layoutContentState']
 }
 
@@ -55,7 +57,7 @@ const ContainerWrapperCom = ({
   const [{ isOverCurrent }, drop] = useDrop({
     accept: ItemTypes.DragComponent,
     drop: ({ entityClass }) => {
-      if (isOverCurrent) onDrop({ ...entityClass, parentID: id });
+      if (isOverCurrent) onDrop({ ...entityClass }, id);
     },
     collect: (monitor) => ({
       // isOver: !!monitor.isOver(),
@@ -89,16 +91,53 @@ const ContainerWrapperCom = ({
     </div>
   );
 };
+const ComponentWrapperCom = ({
+  children,
+  currEntity,
+  onClick,
+  id,
+  isSelected,
+}) => {
+  const classes = classnames([
+    isSelected && 'selected'
+  ]);
+
+  // TODO: 修复 flex 布局的问题
+  return (
+    <div
+      onClick={(e) => {
+        e.stopPropagation();
+        onClick(e, { id });
+      }}
+    >
+      <DragItem
+        entityClass={currEntity}
+      >
+        <ContainerWrapper
+          className={classes}
+        >
+          {children}
+        </ContainerWrapper>
+      </DragItem>
+    </div>
+  );
+};
+
+interface ContainerWrapperFacActions {
+  onDrop?: (entity, containerID?) => void;
+  onClick?: (event, id) => void;
+}
 
 // TODO: 性能优化
-const containerWrapper = (
-  { onDrop, onClick },
+const containerWrapperFac = (
+  WrapperComponent,
+  { onDrop, onClick }: ContainerWrapperFacActions,
   { layoutContentCollection, selectState }
-) => (container, { id, idx }) => {
+) => (children, { id, idx }) => {
   const key = wrapID(id, idx);
   const isSelected = !!selectState[id];
   return (
-    <ContainerWrapperCom
+    <WrapperComponent
       currEntity={layoutContentCollection[id]}
       onClick={onClick}
       onDrop={onDrop}
@@ -107,8 +146,8 @@ const containerWrapper = (
       key={id}
     >
       <div>id: {key}</div>
-      {container}
-    </ContainerWrapperCom>
+      {children}
+    </WrapperComponent>
   );
 };
 
@@ -174,7 +213,7 @@ const entityToComponentConfig = (entityClass, id) => {
 };
 
 const CanvasStage = ({
-  selectEntity,
+  // selectEntity,
   children
 }: CanvasStageProps) => {
   const [layoutContentCollection, setLayoutContentCollection] = useState({});
@@ -196,18 +235,23 @@ const CanvasStage = ({
     del: delComponent
   } = stateOperatorFac(componentsCollection, setComponentsCollection);
 
-  const onDropFilter = (entityClass) => {
-    switch (entityClass.type) {
+  const onDropFilter = (entityClass, parentID?) => {
+    const entity = Object.assign({}, entityClass);
+    if (parentID) {
+      entity.parentID = parentID;
+    }
+    switch (entity.type) {
       case 'container':
-        addContainer(entityClass);
+        addContainer(entity);
         break;
       case 'component':
         const componentID = increaseID();
-        addComponent(entityToComponentConfig(entityClass, componentID));
+        addComponent(entityToComponentConfig(entity, componentID));
         addContainer({
           entityID: `comp_ref_${componentID}`,
           type: "componentRef",
           componentID,
+          parentID
         });
         break;
     }
@@ -249,7 +293,7 @@ const CanvasStage = ({
   // console.log(parseObjToTreeNode(layoutContentCollection));
 
   return (
-    <div>
+    <div className="canvas-stage-container">
       CanvasStage
       <StageRender
         ref={drop}
@@ -258,13 +302,27 @@ const CanvasStage = ({
         {
           LayoutParser({
             layoutNode: parseObjToTreeNode(layoutContentCollection),
-            containerWrapper: containerWrapper({
-              onDrop: onDropFilter,
-              onClick: onSelectEntityForClick,
-            }, {
-              layoutContentCollection,
-              selectState
-            })
+            componentWrapper: containerWrapperFac(
+              ComponentWrapperCom,
+              {
+                onClick: onSelectEntityForClick,
+              },
+              {
+                layoutContentCollection,
+                selectState,
+              }
+            ),
+            containerWrapper: containerWrapperFac(
+              ContainerWrapperCom,
+              {
+                onDrop: onDropFilter,
+                onClick: onSelectEntityForClick,
+              },
+              {
+                layoutContentCollection,
+                selectState,
+              }
+            )
           }, parserContext)
         }
         {children}
