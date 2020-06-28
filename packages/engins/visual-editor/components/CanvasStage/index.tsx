@@ -37,13 +37,13 @@ export interface CanvasStageProps {
 
 const ContainerWrapperCom = ({
   children,
-  parentID,
+  id,
   onDrop
 }) => {
   const [{ isOverCurrent }, drop] = useDrop({
     accept: ItemTypes.DragComponent,
     drop: ({ entity }) => {
-      onDrop({ ...entity, parentID });
+      if (isOverCurrent) onDrop({ ...entity, parentID: id });
     },
     collect: (monitor) => ({
       // isOver: !!monitor.isOver(),
@@ -55,7 +55,7 @@ const ContainerWrapperCom = ({
       ref={drop}
       className={`${isOverCurrent ? 'overing' : ''}`}
       onClick={(e) => {
-        console.log('click container');
+        console.log('id', id);
       }}
     >
       {children}
@@ -69,7 +69,7 @@ const containerWrapper = (onDrop) => (container, { id, idx }) => {
   return (
     <ContainerWrapperCom
       onDrop={onDrop}
-      parentID={id}
+      id={id}
       key={key}
     >
       <div>id: {key}</div>
@@ -84,11 +84,12 @@ const CanvasStage = ({
 }: CanvasStageProps) => {
   const [layoutContentCollection, setLayoutContentCollection] = useState({});
   const [componentsCollection, setComponentsCollection] = useState({});
+
   const addContainer = (entity) => {
     const entityRuntimeID = increaseID();
     const resEntity = Object.assign({}, entity, {
       id: entityRuntimeID,
-      runtimeID: entityRuntimeID,
+      comID: entity.id,
     });
     setLayoutContentCollection(
       {
@@ -97,18 +98,17 @@ const CanvasStage = ({
       }
     );
   };
-  const [
-    {
-    // isOver,
-      isOverCurrent
-    },
-    drop
-  ] = useDrop({
+
+  const [{
+    isOverCurrent
+  }, drop] = useDrop({
     accept: ItemTypes.DragComponent,
     drop: ({ entity }) => {
       // console.log('drop');
       // selectEntity(entity);
-      if (isOverCurrent) addContainer(entity);
+      if (isOverCurrent) {
+        addContainer(entity);
+      }
     },
     collect: (monitor) => ({
       // isOver: !!monitor.isOver(),
@@ -117,6 +117,7 @@ const CanvasStage = ({
   });
 
   const onDropForContainer = (entity) => {
+    console.log(entity);
     addContainer(entity);
   };
 
@@ -131,7 +132,7 @@ const CanvasStage = ({
       return componentsCollection[componentID];
     },
   };
-  console.log(layoutContentCollection, parseObjToTreeNode(layoutContentCollection));
+  // console.log(parseObjToTreeNode(layoutContentCollection));
 
   return (
     <div>
