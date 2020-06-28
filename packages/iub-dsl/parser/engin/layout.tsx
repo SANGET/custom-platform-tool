@@ -41,9 +41,10 @@ const renderLayout = (
   parserContext: ParserContextGroup
 ) => {
   return Array.isArray(layoutNode) && layoutNode.map((node, idx) => {
+    const { id } = node;
     switch (node.type) {
       case 'container':
-        const { layout, id } = node;
+        const { layout } = node;
         const { containerWrapper, componentWrapper } = wrapper;
         const childOfContainer = (
           <div
@@ -62,6 +63,7 @@ const renderLayout = (
           : childOfContainer;
       case 'componentRef':
         const componentConfig = parserContext.bindComponent(node.componentID);
+        console.log(node.componentID);
         const childOfComponent = (
           <div className="component" key={componentConfig?.id + idx || 'none'}>
             {componentParser(componentConfig, parserContext)}

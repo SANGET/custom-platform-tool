@@ -63,7 +63,7 @@ const ComponentPanel: React.SFC<ComponentPanelProps> = ({
                             return (
                               <div key={id}>
                                 <DragItem
-                                  entity={{
+                                  entityClass={{
                                     ...itm,
                                   }}
                                 >

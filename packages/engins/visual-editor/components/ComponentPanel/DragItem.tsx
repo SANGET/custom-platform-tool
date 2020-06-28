@@ -4,15 +4,15 @@ import { ItemTypes } from './types';
 
 export interface DragItemProps {
   children: any;
-  entity: any;
+  entityClass: any;
 }
 
 const DragItem = ({
-  children, entity, ...other
+  children, entityClass, ...other
 }: DragItemProps) => {
   const [collectedPropsForDrag, drag] = useDrag({
     item: {
-      entity,
+      entityClass,
       type: ItemTypes.DragComponent
     },
     collect: (monitor) => ({

@@ -54,8 +54,8 @@ const ContainerWrapperCom = ({
 }) => {
   const [{ isOverCurrent }, drop] = useDrop({
     accept: ItemTypes.DragComponent,
-    drop: ({ entity }) => {
-      if (isOverCurrent) onDrop({ ...entity, parentID: id });
+    drop: ({ entityClass }) => {
+      if (isOverCurrent) onDrop({ ...entityClass, parentID: id });
     },
     collect: (monitor) => ({
       // isOver: !!monitor.isOver(),
@@ -78,7 +78,7 @@ const ContainerWrapperCom = ({
       }}
     >
       <DragItem
-        entity={currEntity}
+        entityClass={currEntity}
       >
         <ContainerWrapper
           className={classes}
@@ -112,6 +112,67 @@ const containerWrapper = (
   );
 };
 
+const stateOperatorFac = (state, setState) => {
+  const update = (id, targetEntity) => {
+    const nextState = {
+      ...state,
+    };
+    nextState[id] = targetEntity;
+    setState(nextState);
+  };
+  const add = (entityClass) => {
+    /** 防止嵌套 */
+    if (!!entityClass.id && entityClass.id === entityClass.parentID) return;
+
+    /** 如果已经实例化的组件 */
+    if (entityClass._state === 'active') {
+      update(entityClass.id, entityClass);
+    } else {
+      /** 外部可以通过 entityID 设置真正的 entity 的 id */
+      let entityRuntimeID = entityClass.entityID;
+      if (!entityRuntimeID) {
+        entityRuntimeID = increaseID();
+      }
+      /** 如果组件还没被实例化 */
+      /** 实例化 */
+      const entity = Object.assign({}, entityClass, {
+        id: entityRuntimeID,
+
+        /** 下划线前缀为内部字段 */
+        _comID: entityClass.id,
+        _state: 'active'
+      });
+      const nextState = {
+        ...state,
+        [entityRuntimeID]: entity
+      };
+      setState(nextState);
+    }
+  };
+  const del = (id) => {
+    const nextState = {
+      ...state,
+    };
+    delete nextState[id];
+    setState(nextState);
+  };
+  return {
+    add,
+    update,
+    del,
+  };
+};
+
+const entityToComponentConfig = (entityClass, id) => {
+  return {
+    ...entityClass,
+    entityID: id,
+    component: {
+      type: entityClass.component
+    }
+  };
+};
+
 const CanvasStage = ({
   selectEntity,
   children
@@ -120,54 +181,47 @@ const CanvasStage = ({
   const [componentsCollection, setComponentsCollection] = useState({});
   const [selectState, setSelectState] = useState({});
 
-  const addContainer = (entity) => {
-    /** 防止嵌套 */
-    if (entity.id === entity.parentID) return;
+  console.log('componentsCollection', componentsCollection);
+  console.log('layoutContentCollection', layoutContentCollection);
 
-    /** 如果已经实例化的组件 */
-    if (entity.state === 'active') {
-      updateContainer(entity.id, entity);
-    } else {
-      /** 如果组件还没被实例化 */
-      const entityRuntimeID = increaseID();
-      const resEntity = Object.assign({}, entity, {
-        id: entityRuntimeID,
-        comID: entity.id,
-        state: 'active'
-      });
-      const nextState = {
-        ...layoutContentCollection,
-        [entityRuntimeID]: resEntity
-      };
-      setLayoutContentCollection(nextState);
+  const {
+    add: addContainer,
+    update: updateContainer,
+    del: delContainer
+  } = stateOperatorFac(layoutContentCollection, setLayoutContentCollection);
+
+  const {
+    add: addComponent,
+    update: updateComponent,
+    del: delComponent
+  } = stateOperatorFac(componentsCollection, setComponentsCollection);
+
+  const onDropFilter = (entityClass) => {
+    switch (entityClass.type) {
+      case 'container':
+        addContainer(entityClass);
+        break;
+      case 'component':
+        const componentID = increaseID();
+        addComponent(entityToComponentConfig(entityClass, componentID));
+        addContainer({
+          entityID: `comp_ref_${componentID}`,
+          type: "componentRef",
+          componentID,
+        });
+        break;
     }
-  };
-  const updateContainer = (id, targetEntity) => {
-    const nextState = {
-      ...layoutContentCollection,
-    };
-    nextState[id] = targetEntity;
-    setLayoutContentCollection(nextState);
-  };
-
-  // TODO: delete 组件
-  const delContainer = (id) => {
-    const nextState = {
-      ...layoutContentCollection,
-    };
-    delete nextState[id];
-    setLayoutContentCollection(nextState);
   };
 
   const [{
     isOverCurrent
   }, drop] = useDrop({
     accept: ItemTypes.DragComponent,
-    drop: ({ entity }) => {
+    drop: ({ entityClass }) => {
       // console.log('drop');
-      // selectEntity(entity);
+      // selectEntity(entityClass);
       if (isOverCurrent) {
-        addContainer(entity);
+        onDropFilter(entityClass);
       }
     },
     collect: (monitor) => ({
@@ -175,10 +229,6 @@ const CanvasStage = ({
       isOverCurrent: monitor.isOver({ shallow: true }),
     }),
   });
-
-  const onDropForContainer = (entity) => {
-    addContainer(entity);
-  };
 
   const onSelectEntityForClick = (clickEvent, { id }) => {
     setSelectState({
@@ -193,7 +243,6 @@ const CanvasStage = ({
       return {};
     },
     bindComponent: (componentID) => {
-      // console.log(componentID);
       return componentsCollection[componentID];
     },
   };
@@ -210,7 +259,7 @@ const CanvasStage = ({
           LayoutParser({
             layoutNode: parseObjToTreeNode(layoutContentCollection),
             containerWrapper: containerWrapper({
-              onDrop: onDropForContainer,
+              onDrop: onDropFilter,
               onClick: onSelectEntityForClick,
             }, {
               layoutContentCollection,
@@ -225,3 +274,42 @@ const CanvasStage = ({
 };
 
 export default CanvasStage;
+
+// const addContainer = (entity) => {
+//   /** 防止嵌套 */
+//   if (entity.id === entity.parentID) return;
+
+//   /** 如果已经实例化的组件 */
+//   if (entity.state === 'active') {
+//     updateContainer(entity.id, entity);
+//   } else {
+//     /** 如果组件还没被实例化 */
+//     const entityRuntimeID = increaseID();
+//     const resEntity = Object.assign({}, entity, {
+//       id: entityRuntimeID,
+//       comID: entity.id,
+//       state: 'active'
+//     });
+//     const nextState = {
+//       ...layoutContentCollection,
+//       [entityRuntimeID]: resEntity
+//     };
+//     setLayoutContentCollection(nextState);
+//   }
+// };
+// const updateContainer = (id, targetEntity) => {
+//   const nextState = {
+//     ...layoutContentCollection,
+//   };
+//   nextState[id] = targetEntity;
+//   setLayoutContentCollection(nextState);
+// };
+
+// // TODO: delete 组件
+// const delContainer = (id) => {
+//   const nextState = {
+//     ...layoutContentCollection,
+//   };
+//   delete nextState[id];
+//   setLayoutContentCollection(nextState);
+// };
