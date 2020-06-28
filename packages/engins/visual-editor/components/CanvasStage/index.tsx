@@ -4,6 +4,7 @@
 import React, { useState } from 'react';
 import { useDrop } from 'react-dnd';
 import styled from 'styled-components';
+import classnames from 'classnames';
 
 import LayoutParser from '@iub-dsl/parser/engin/layout';
 import { ItemTypes } from '../ComponentPanel/types';
@@ -24,14 +25,17 @@ const StageRender = styled.div`
 `;
 
 const ContainerWrapper = styled.div`
-  background-color: rgba(0,0,0, 0.1);
   padding: 20px;
+  background-color: rgba(0,0,0, 0.1);
   margin: 10px;
   &:hover {
     background-color: rgba(0,0,0, 0.15);
   }
   &.overing {
     background-color: rgba(48, 95, 144, 0.5);
+  }
+  &.selected {
+    box-shadow: 0 0 3px 5px rgba(48,95,144,0.4);
   }
 `;
 
@@ -43,7 +47,9 @@ export interface CanvasStageProps {
 const ContainerWrapperCom = ({
   children,
   currEntity,
+  onClick,
   id,
+  isSelected,
   onDrop
 }) => {
   const [{ isOverCurrent }, drop] = useDrop({
@@ -56,18 +62,26 @@ const ContainerWrapperCom = ({
       isOverCurrent: monitor.isOver({ shallow: true }),
     }),
   });
+
+  const classes = classnames([
+    isOverCurrent && 'overing',
+    isSelected && 'selected'
+  ]);
+
+  // TODO: 修复 flex 布局的问题
   return (
     <div
       ref={drop}
       onClick={(e) => {
-        console.log('id', id);
+        e.stopPropagation();
+        onClick(e, { id });
       }}
     >
       <DragItem
         entity={currEntity}
       >
         <ContainerWrapper
-          className={`${isOverCurrent ? 'overing' : ''}`}
+          className={classes}
         >
           {children}
         </ContainerWrapper>
@@ -77,14 +91,20 @@ const ContainerWrapperCom = ({
 };
 
 // TODO: 性能优化
-const containerWrapper = (onDrop, layoutContentCollection) => (container, { id, idx }) => {
+const containerWrapper = (
+  { onDrop, onClick },
+  { layoutContentCollection, selectState }
+) => (container, { id, idx }) => {
   const key = wrapID(id, idx);
+  const isSelected = !!selectState[id];
   return (
     <ContainerWrapperCom
       currEntity={layoutContentCollection[id]}
+      onClick={onClick}
       onDrop={onDrop}
       id={id}
-      key={key}
+      isSelected={isSelected}
+      key={id}
     >
       <div>id: {key}</div>
       {container}
@@ -98,12 +118,17 @@ const CanvasStage = ({
 }: CanvasStageProps) => {
   const [layoutContentCollection, setLayoutContentCollection] = useState({});
   const [componentsCollection, setComponentsCollection] = useState({});
+  const [selectState, setSelectState] = useState({});
 
   const addContainer = (entity) => {
-    console.log(entity);
+    /** 防止嵌套 */
+    if (entity.id === entity.parentID) return;
+
+    /** 如果已经实例化的组件 */
     if (entity.state === 'active') {
       updateContainer(entity.id, entity);
     } else {
+      /** 如果组件还没被实例化 */
       const entityRuntimeID = increaseID();
       const resEntity = Object.assign({}, entity, {
         id: entityRuntimeID,
@@ -124,6 +149,8 @@ const CanvasStage = ({
     nextState[id] = targetEntity;
     setLayoutContentCollection(nextState);
   };
+
+  // TODO: delete 组件
   const delContainer = (id) => {
     const nextState = {
       ...layoutContentCollection,
@@ -153,6 +180,12 @@ const CanvasStage = ({
     addContainer(entity);
   };
 
+  const onSelectEntityForClick = (clickEvent, { id }) => {
+    setSelectState({
+      [id]: true
+    });
+  };
+
   const parserContext = {
     context: {},
     bindAction: (actionID) => {
@@ -164,7 +197,7 @@ const CanvasStage = ({
       return componentsCollection[componentID];
     },
   };
-  console.log(layoutContentCollection);
+  // console.log(parseObjToTreeNode(layoutContentCollection));
 
   return (
     <div>
@@ -176,7 +209,13 @@ const CanvasStage = ({
         {
           LayoutParser({
             layoutNode: parseObjToTreeNode(layoutContentCollection),
-            containerWrapper: containerWrapper(onDropForContainer, layoutContentCollection)
+            containerWrapper: containerWrapper({
+              onDrop: onDropForContainer,
+              onClick: onSelectEntityForClick,
+            }, {
+              layoutContentCollection,
+              selectState
+            })
           }, parserContext)
         }
         {children}
