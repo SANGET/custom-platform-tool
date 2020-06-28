@@ -42,10 +42,10 @@ const renderLayout = (
 ) => {
   return Array.isArray(layoutNode) && layoutNode.map((node, idx) => {
     const { id } = node;
+    const { containerWrapper, componentWrapper } = wrapper;
     switch (node.type) {
       case 'container':
         const { layout } = node;
-        const { containerWrapper, componentWrapper } = wrapper;
         const childOfContainer = (
           <div
             style={containerLayoutParser(layout)}
@@ -63,9 +63,8 @@ const renderLayout = (
           : childOfContainer;
       case 'componentRef':
         const componentConfig = parserContext.bindComponent(node.componentID);
-        console.log(node.componentID);
         const childOfComponent = (
-          <div className="component" key={componentConfig?.id + idx || 'none'}>
+          <div className="component" key={id + idx || 'none'}>
             {componentParser(componentConfig, parserContext)}
           </div>
         );
@@ -86,7 +85,7 @@ const LayoutParser = (
     componentWrapper,
   } = layoutParams;
   return (
-    <div>
+    <div className="layout-parser-content">
       {
         renderLayout(layoutNode, {
           containerWrapper,
