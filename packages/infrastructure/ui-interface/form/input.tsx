@@ -10,4 +10,4 @@ const Input: React.SFC<InputProps> = ({
   return <input type="text" onChange={onChange} />;
 };
 
-export default Input;
+export { Input };
