@@ -34,7 +34,6 @@ const ComponentPanel: React.SFC<ComponentPanelProps> = ({
   };
   return (
     <div>
-      ComponentPanel
       <Tabs
         onChangeTab={handleChange}
       >

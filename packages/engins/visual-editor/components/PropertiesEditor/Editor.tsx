@@ -64,7 +64,7 @@ const PropertiesEditor = ({
 
     timmer = setTimeout(() => {
       setUpdateState(false);
-    }, 2000);
+    }, 1000);
   };
 
   useEffect(() => {
@@ -75,7 +75,6 @@ const PropertiesEditor = ({
 
   return (
     <div>
-      PropertiesEditor
       {
         hasProps && (
           Array.isArray(properties.propRefs)
