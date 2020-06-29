@@ -1,7 +1,5 @@
 /**
  * CanvasStage
- *
- * TODO: Fix bug，父容器拖动到子容器会出现问题
  */
 import React, { useState } from 'react';
 import { useDrop } from 'react-dnd';
@@ -42,7 +40,7 @@ const ContainerWrapper = styled.div`
 `;
 
 export interface CanvasStageProps {
-  // selectEntity: Dispatcher['SelectEntity']
+  selectEntity: Dispatcher['SelectEntity']
   // layoutContent: VisualEditorStore['layoutContentState']
 }
 
@@ -56,13 +54,20 @@ const ContainerWrapperCom = ({
 }) => {
   const [{ isOverCurrent }, drop] = useDrop({
     accept: ItemTypes.DragComponent,
+    /**
+     * TODO: Fix bug，父容器拖动到子容器会出现问题
+     *
+     * ref: https://react-dnd.github.io/react-dnd/docs/api/use-drop
+     */
     drop: ({ entityClass }) => {
       if (isOverCurrent) onDrop({ ...entityClass }, id);
     },
-    collect: (monitor) => ({
-      // isOver: !!monitor.isOver(),
-      isOverCurrent: monitor.isOver({ shallow: true }),
-    }),
+    collect: (monitor) => {
+      return {
+        // isOver: !!monitor.isOver(),
+        isOverCurrent: monitor.isOver({ shallow: true }),
+      };
+    },
   });
 
   const classes = classnames([
@@ -163,30 +168,25 @@ const stateOperatorFac = (state, setState) => {
     /** 防止嵌套 */
     if (!!entityClass.id && entityClass.id === entityClass.parentID) return;
 
-    /** 如果已经实例化的组件 */
-    if (entityClass._state === 'active') {
-      update(entityClass.id, entityClass);
-    } else {
-      /** 外部可以通过 entityID 设置真正的 entity 的 id */
-      let entityRuntimeID = entityClass.entityID;
-      if (!entityRuntimeID) {
-        entityRuntimeID = increaseID();
-      }
-      /** 如果组件还没被实例化 */
-      /** 实例化 */
-      const entity = Object.assign({}, entityClass, {
-        id: entityRuntimeID,
-
-        /** 下划线前缀为内部字段 */
-        _comID: entityClass.id,
-        _state: 'active'
-      });
-      const nextState = {
-        ...state,
-        [entityRuntimeID]: entity
-      };
-      setState(nextState);
+    /** 外部可以通过 entityID 设置真正的 entity 的 id */
+    let entityRuntimeID = entityClass.entityID;
+    if (!entityRuntimeID) {
+      entityRuntimeID = increaseID();
     }
+    /** 如果组件还没被实例化 */
+    /** 实例化 */
+    const entity = Object.assign({}, entityClass, {
+      id: entityRuntimeID,
+
+      /** 下划线前缀为内部字段 */
+      _comID: entityClass.id,
+      _state: 'active'
+    });
+    const nextState = {
+      ...state,
+      [entityRuntimeID]: entity
+    };
+    setState(nextState);
   };
   const del = (id) => {
     const nextState = {
@@ -213,15 +213,15 @@ const entityToComponentConfig = (entityClass, id) => {
 };
 
 const CanvasStage = ({
-  // selectEntity,
+  selectEntity,
   children
 }: CanvasStageProps) => {
   const [layoutContentCollection, setLayoutContentCollection] = useState({});
   const [componentsCollection, setComponentsCollection] = useState({});
   const [selectState, setSelectState] = useState({});
 
-  console.log('componentsCollection', componentsCollection);
-  console.log('layoutContentCollection', layoutContentCollection);
+  // console.log('componentsCollection', componentsCollection);
+  // console.log('layoutContentCollection', layoutContentCollection);
 
   const {
     add: addContainer,
@@ -240,6 +240,14 @@ const CanvasStage = ({
     if (parentID) {
       entity.parentID = parentID;
     }
+
+    /** 如果已经实例化的组件 */
+    const isUpdate = entity._state === 'active';
+
+    if (isUpdate) {
+      return updateContainer(entity.id, entity);
+    }
+
     switch (entity.type) {
       case 'container':
         addContainer(entity);
@@ -332,42 +340,3 @@ const CanvasStage = ({
 };
 
 export default CanvasStage;
-
-// const addContainer = (entity) => {
-//   /** 防止嵌套 */
-//   if (entity.id === entity.parentID) return;
-
-//   /** 如果已经实例化的组件 */
-//   if (entity.state === 'active') {
-//     updateContainer(entity.id, entity);
-//   } else {
-//     /** 如果组件还没被实例化 */
-//     const entityRuntimeID = increaseID();
-//     const resEntity = Object.assign({}, entity, {
-//       id: entityRuntimeID,
-//       comID: entity.id,
-//       state: 'active'
-//     });
-//     const nextState = {
-//       ...layoutContentCollection,
-//       [entityRuntimeID]: resEntity
-//     };
-//     setLayoutContentCollection(nextState);
-//   }
-// };
-// const updateContainer = (id, targetEntity) => {
-//   const nextState = {
-//     ...layoutContentCollection,
-//   };
-//   nextState[id] = targetEntity;
-//   setLayoutContentCollection(nextState);
-// };
-
-// // TODO: delete 组件
-// const delContainer = (id) => {
-//   const nextState = {
-//     ...layoutContentCollection,
-//   };
-//   delete nextState[id];
-//   setLayoutContentCollection(nextState);
-// };
