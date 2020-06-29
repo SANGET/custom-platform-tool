@@ -1,5 +1,5 @@
 // import React from "react";
-import { Input } from '@deer-ui/core/input';
+import { Button } from '@deer-ui/core/button';
 
 // interface InputProps {
 //   onChange: ((event: React.ChangeEvent<HTMLInputElement>) => void);
@@ -11,4 +11,4 @@ import { Input } from '@deer-ui/core/input';
 //   return <input type="text" onChange={onChange} />;
 // };
 
-export { Input };
+export { Button };

@@ -10,7 +10,7 @@ export interface DragItemProps {
 const DragItem = ({
   children, entityClass, ...other
 }: DragItemProps) => {
-  const [collectedPropsForDrag, drag] = useDrag({
+  const [{ isDragging }, drag] = useDrag({
     item: {
       entityClass,
       type: ItemTypes.DragComponent

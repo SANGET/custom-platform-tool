@@ -35,23 +35,56 @@ const ContainerWrapper = styled.div`
     background-color: rgba(48, 95, 144, 0.5);
   }
   &.selected {
-    box-shadow: 0 0 3px 5px rgba(48,95,144,0.4);
+    box-shadow: 0 0 1px 3px rgba(127, 113, 185, 0.5);
+  }
+`;
+
+const ComponentWrapper = styled.div`
+  padding: 5px;
+  background-color: rgba(0,0,0, 0.8);
+  margin: 10px;
+  color: #FFF;
+  &:hover {
+    background-color: rgba(0,0,0, 0.7);
+  }
+  &.selected {
+    box-shadow: 0 0 1px 3px rgba(127, 113, 185, 0.5);
   }
 `;
 
 export interface CanvasStageProps {
-  selectEntity: Dispatcher['SelectEntity']
+  // selectEntity: Dispatcher['SelectEntity']
   // layoutContent: VisualEditorStore['layoutContentState']
 }
+
+const layoutNodeNestingInfo = {};
+const setNodeArrayInfo = (nodeArray, layoutObj) => {
+  Object.keys(layoutObj).map((nodeID) => {
+    const node = layoutObj[nodeID];
+    const { parentID } = node;
+    if (parentID) {
+      if (!layoutNodeNestingInfo[parentID]) layoutNodeNestingInfo[parentID] = new Set();
+      layoutNodeNestingInfo[parentID].add(node.id);
+    }
+  });
+  // console.log(layoutNodeNestingInfo);
+};
+const isNodeInChild = (srcNodeID, targetNodeID) => {
+  // console.log(layoutNodeNestingInfo);
+  return !!layoutNodeNestingInfo[targetNodeID]
+    && layoutNodeNestingInfo[targetNodeID].has(srcNodeID);
+  // console.log(layoutNodeArray);
+};
 
 const ContainerWrapperCom = ({
   children,
   currEntity,
   onClick,
   id,
-  isSelected,
+  getSelectedState,
   onDrop
 }) => {
+  const isSelected = getSelectedState(id);
   const [{ isOverCurrent }, drop] = useDrop({
     accept: ItemTypes.DragComponent,
     /**
@@ -59,8 +92,26 @@ const ContainerWrapperCom = ({
      *
      * ref: https://react-dnd.github.io/react-dnd/docs/api/use-drop
      */
-    drop: ({ entityClass }) => {
-      if (isOverCurrent) onDrop({ ...entityClass }, id);
+    drop: ({ entityClass: dropedEntityClass }) => {
+      /**
+       * @important 重要策略
+       *
+       * 1. isOverCurrent 判断是否拖动在容器内
+       * 2. isNodeInChild 判断自身是否拖到子容器中，避免嵌套
+       */
+      if (isOverCurrent) {
+        setTimeout(() => {
+          const isNodeInChildRes = isNodeInChild(id, dropedEntityClass.id);
+          // console.log(isNodeInChildRes);
+          if (!isNodeInChildRes) {
+            onDrop({ ...dropedEntityClass }, id);
+          }
+        });
+      }
+    },
+    canDrop: ({ entityClass: dropedEntityClass }, monitor) => {
+      /** 不允许放到自身 */
+      return dropedEntityClass.id !== id;
     },
     collect: (monitor) => {
       return {
@@ -81,7 +132,7 @@ const ContainerWrapperCom = ({
       ref={drop}
       onClick={(e) => {
         e.stopPropagation();
-        onClick(e, { id });
+        onClick(e, { id, entity: currEntity });
       }}
     >
       <DragItem
@@ -90,19 +141,23 @@ const ContainerWrapperCom = ({
         <ContainerWrapper
           className={classes}
         >
+          <div>容器, ID: {id}</div>
           {children}
         </ContainerWrapper>
       </DragItem>
     </div>
   );
 };
+
 const ComponentWrapperCom = ({
   children,
   currEntity,
+  componentConfig,
   onClick,
   id,
-  isSelected,
+  getSelectedState,
 }) => {
+  const isSelected = getSelectedState(componentConfig.id);
   const classes = classnames([
     isSelected && 'selected'
   ]);
@@ -112,17 +167,18 @@ const ComponentWrapperCom = ({
     <div
       onClick={(e) => {
         e.stopPropagation();
-        onClick(e, { id });
+        onClick(e, { id: componentConfig.id, entity: componentConfig });
       }}
     >
       <DragItem
         entityClass={currEntity}
       >
-        <ContainerWrapper
+        <ComponentWrapper
           className={classes}
         >
+          <div>组件, ID: {id}</div>
           {children}
-        </ContainerWrapper>
+        </ComponentWrapper>
       </DragItem>
     </div>
   );
@@ -137,20 +193,18 @@ interface ContainerWrapperFacActions {
 const containerWrapperFac = (
   WrapperComponent,
   { onDrop, onClick }: ContainerWrapperFacActions,
-  { layoutContentCollection, selectState }
-) => (children, { id, idx }) => {
-  const key = wrapID(id, idx);
-  const isSelected = !!selectState[id];
+  { layoutContentCollection, getSelectedState }
+) => (children, { id, idx, ...other }) => {
   return (
     <WrapperComponent
+      {...other}
       currEntity={layoutContentCollection[id]}
       onClick={onClick}
       onDrop={onDrop}
+      getSelectedState={getSelectedState}
       id={id}
-      isSelected={isSelected}
       key={id}
     >
-      <div>id: {key}</div>
       {children}
     </WrapperComponent>
   );
@@ -163,10 +217,12 @@ const stateOperatorFac = (state, setState) => {
     };
     nextState[id] = targetEntity;
     setState(nextState);
+
+    return nextState;
   };
   const add = (entityClass) => {
     /** 防止嵌套 */
-    if (!!entityClass.id && entityClass.id === entityClass.parentID) return;
+    if (!!entityClass.id && entityClass.id === entityClass.parentID) return entityClass;
 
     /** 外部可以通过 entityID 设置真正的 entity 的 id */
     let entityRuntimeID = entityClass.entityID;
@@ -187,6 +243,8 @@ const stateOperatorFac = (state, setState) => {
       [entityRuntimeID]: entity
     };
     setState(nextState);
+
+    return entity;
   };
   const del = (id) => {
     const nextState = {
@@ -194,6 +252,8 @@ const stateOperatorFac = (state, setState) => {
     };
     delete nextState[id];
     setState(nextState);
+
+    return nextState;
   };
   return {
     add,
@@ -214,14 +274,19 @@ const entityToComponentConfig = (entityClass, id) => {
 
 const CanvasStage = ({
   selectEntity,
+  selectedEntities,
   children
 }: CanvasStageProps) => {
   const [layoutContentCollection, setLayoutContentCollection] = useState({});
   const [componentsCollection, setComponentsCollection] = useState({});
-  const [selectState, setSelectState] = useState({});
+  // const [selectState, setSelectState] = useState({});
 
   // console.log('componentsCollection', componentsCollection);
   // console.log('layoutContentCollection', layoutContentCollection);
+
+  const onSelectEntityForOnce = (clickEvent, { id, entity }) => {
+    selectEntity(id, entity);
+  };
 
   const {
     add: addContainer,
@@ -236,31 +301,38 @@ const CanvasStage = ({
   } = stateOperatorFac(componentsCollection, setComponentsCollection);
 
   const onDropFilter = (entityClass, parentID?) => {
-    const entity = Object.assign({}, entityClass);
+    const entityClassCopy = Object.assign({}, entityClass);
     if (parentID) {
-      entity.parentID = parentID;
+      entityClassCopy.parentID = parentID;
     }
 
     /** 如果已经实例化的组件 */
-    const isUpdate = entity._state === 'active';
+    const isUpdate = entityClassCopy._state === 'active';
 
+    /** 更新布局 */
     if (isUpdate) {
-      return updateContainer(entity.id, entity);
+      return updateContainer(entityClassCopy.id, entityClassCopy);
     }
 
-    switch (entity.type) {
+    switch (entityClassCopy.type) {
       case 'container':
-        addContainer(entity);
+        const entityID = increaseID();
+        entityClassCopy.entityID = entityID;
+        const entity = addContainer(entityClassCopy);
+        onSelectEntityForOnce(null, { id: entityID, entity });
         break;
       case 'component':
-        const componentID = increaseID();
-        addComponent(entityToComponentConfig(entity, componentID));
-        addContainer({
-          entityID: `comp_ref_${componentID}`,
+        const componentRefID = increaseID();
+        const componentID = `comp_id_${componentRefID}`;
+        const componentEntity = addComponent(entityToComponentConfig(entityClassCopy, componentID));
+        const componentRefConfig = {
+          entityID: componentRefID,
           type: "componentRef",
           componentID,
           parentID
-        });
+        };
+        const entityRes = addContainer(componentRefConfig);
+        onSelectEntityForOnce(null, { id: componentID, entity: componentEntity });
         break;
     }
   };
@@ -271,9 +343,10 @@ const CanvasStage = ({
     accept: ItemTypes.DragComponent,
     drop: ({ entityClass }) => {
       // console.log('drop');
-      // selectEntity(entityClass);
       if (isOverCurrent) {
-        onDropFilter(entityClass);
+        const entity = Object.assign({}, entityClass);
+        delete entity.parentID;
+        onDropFilter(entity);
       }
     },
     collect: (monitor) => ({
@@ -281,12 +354,6 @@ const CanvasStage = ({
       isOverCurrent: monitor.isOver({ shallow: true }),
     }),
   });
-
-  const onSelectEntityForClick = (clickEvent, { id }) => {
-    setSelectState({
-      [id]: true
-    });
-  };
 
   const parserContext = {
     context: {},
@@ -298,6 +365,12 @@ const CanvasStage = ({
       return componentsCollection[componentID];
     },
   };
+  const getSelectedState = (id) => {
+    return !!selectedEntities[id];
+  };
+
+  const layoutNodeArray = parseObjToTreeNode(layoutContentCollection);
+  setNodeArrayInfo(layoutNodeArray, layoutContentCollection);
   // console.log(parseObjToTreeNode(layoutContentCollection));
 
   return (
@@ -309,26 +382,26 @@ const CanvasStage = ({
       >
         {
           LayoutParser({
-            layoutNode: parseObjToTreeNode(layoutContentCollection),
+            layoutNode: layoutNodeArray,
             componentWrapper: containerWrapperFac(
               ComponentWrapperCom,
               {
-                onClick: onSelectEntityForClick,
+                onClick: onSelectEntityForOnce,
               },
               {
                 layoutContentCollection,
-                selectState,
+                getSelectedState,
               }
             ),
             containerWrapper: containerWrapperFac(
               ContainerWrapperCom,
               {
                 onDrop: onDropFilter,
-                onClick: onSelectEntityForClick,
+                onClick: onSelectEntityForOnce,
               },
               {
                 layoutContentCollection,
-                selectState,
+                getSelectedState,
               }
             )
           }, parserContext)

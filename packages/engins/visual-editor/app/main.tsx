@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 
 import { Grid } from '@infra/ui-interface';
 import { DndProvider } from 'react-dnd';
@@ -19,11 +19,51 @@ interface VisualEditorAppProps {
   layoutContent: VisualEditorStore['layoutContentState']
 }
 
+interface ComponentPropStore {
+  [entityID: string]: {}
+}
+
 const VisualEditorApp = (props: VisualEditorAppProps) => {
   const { dispatcher, layoutContent } = props;
+
+  /** TODO: 优化状态管理 */
+  const [selectedEntities, setSelectedEntity] = useState({
+    selectedList: {},
+    activeID: '',
+    activeEntity: {}
+  });
+  const [componentPropStore, setComponentPropStore] = useState({});
+
+  const selectEntity = (id, entity) => {
+    setSelectedEntity({
+      selectedList: {
+        [id]: entity
+      },
+      activeID: id,
+      activeEntity: entity
+    });
+  };
+
+  const { activeID } = selectedEntities;
+
+  const saveComponentPropStore = (id, formState) => {
+    setComponentPropStore({
+      ...componentPropStore,
+      [id]: formState
+    });
+  };
+
+  // console.log(componentPropStore);
+  // console.log(activeID);
+  // console.log(selectedEntities.activeEntity);
+
   return (
     <div>
-      <Grid container alignItems="center">
+      <Grid
+        container
+        alignItems="center"
+        space={10}
+      >
         <Grid
           item
           className="logo"
@@ -39,7 +79,10 @@ const VisualEditorApp = (props: VisualEditorAppProps) => {
           <ToolBar />
         </Grid>
       </Grid>
-      <Grid container>
+      <Grid
+        container
+        space={10}
+      >
         <DndProvider backend={HTML5Backend}>
           <Grid
             lg={2}
@@ -60,8 +103,8 @@ const VisualEditorApp = (props: VisualEditorAppProps) => {
             className="canvas-container"
           >
             <CanvasStage
-              layoutContent={layoutContent}
-              selectEntity={dispatcher.SelectEntity}
+              selectedEntities={selectedEntities.selectedList}
+              selectEntity={selectEntity}
             />
           </Grid>
         </DndProvider>
@@ -73,7 +116,12 @@ const VisualEditorApp = (props: VisualEditorAppProps) => {
           item
           className="right-panel"
         >
-          <PropertiesEditor />
+          <PropertiesEditor
+            key={activeID}
+            selectedEntity={selectedEntities.activeEntity}
+            defaultFormState={componentPropStore[activeID]}
+            saveComponentPropStore={saveComponentPropStore}
+          />
         </Grid>
       </Grid>
     </div>
