@@ -1,6 +1,6 @@
 import { ComponentItemBindPropsConfig } from "../component/item-bind-props";
 
-const componentAccess: ComponentItemBindPropsConfig[] = [
+export const componentAccess: ComponentItemBindPropsConfig[] = [
   {
     type: 'Input',
     id: '111',
@@ -28,5 +28,3 @@ const componentAccess: ComponentItemBindPropsConfig[] = [
     ],
   }
 ];
-
-export default componentAccess;

@@ -1,12 +1,40 @@
 import { PropertiesItemCollection } from "../property/props-item";
 
-const propertiesItemCollection: PropertiesItemCollection = {
+export const propertiesItemCollection: PropertiesItemCollection = {
   'propID-1': {
-    label: '页面名称',
+    label: '输入1',
     component: {
       type: 'Input'
     }
-  }
+  },
+  'propID-2': {
+    label: '输入2',
+    component: {
+      type: 'Input'
+    }
+  },
+  'propID-3': {
+    label: '输入3',
+    component: {
+      type: 'Input'
+    }
+  },
+  'propID-4': {
+    label: '输入4',
+    component: {
+      type: 'Input'
+    }
+  },
+  'propID-5': {
+    label: '输入5',
+    component: {
+      type: 'Input'
+    }
+  },
 };
 
-export default propertiesItemCollection;
+export const getPropertyItems = () => {
+  return new Promise((resolve) => {
+    resolve(propertiesItemCollection);
+  });
+};

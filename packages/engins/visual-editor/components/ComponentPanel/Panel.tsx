@@ -101,7 +101,7 @@ ComponentPanel.defaultProps = {
                 label: '文本框',
                 type: 'component',
                 properties: {
-
+                  propRefs: ['propID-1', 'propID-2']
                 }
               }
             ]
@@ -117,7 +117,7 @@ ComponentPanel.defaultProps = {
                 label: 'Flex 布局',
                 type: 'container',
                 properties: {
-
+                  propRefs: ['propID-1', 'propID-2', 'propID-3', 'propID-4', 'propID-5']
                 }
               }
             ]
