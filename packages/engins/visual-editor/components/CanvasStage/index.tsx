@@ -40,7 +40,7 @@ const ContainerWrapper = styled.div`
 `;
 
 export interface CanvasStageProps {
-  // selectEntity: Dispatcher['SelectEntity']
+  selectEntity: Dispatcher['SelectEntity']
   // layoutContent: VisualEditorStore['layoutContentState']
 }
 
@@ -213,15 +213,15 @@ const entityToComponentConfig = (entityClass, id) => {
 };
 
 const CanvasStage = ({
-  // selectEntity,
+  selectEntity,
   children
 }: CanvasStageProps) => {
   const [layoutContentCollection, setLayoutContentCollection] = useState({});
   const [componentsCollection, setComponentsCollection] = useState({});
   const [selectState, setSelectState] = useState({});
 
-  console.log('componentsCollection', componentsCollection);
-  console.log('layoutContentCollection', layoutContentCollection);
+  // console.log('componentsCollection', componentsCollection);
+  // console.log('layoutContentCollection', layoutContentCollection);
 
   const {
     add: addContainer,
@@ -340,42 +340,3 @@ const CanvasStage = ({
 };
 
 export default CanvasStage;
-
-// const addContainer = (entity) => {
-//   /** 防止嵌套 */
-//   if (entity.id === entity.parentID) return;
-
-//   /** 如果已经实例化的组件 */
-//   if (entity.state === 'active') {
-//     updateContainer(entity.id, entity);
-//   } else {
-//     /** 如果组件还没被实例化 */
-//     const entityRuntimeID = increaseID();
-//     const resEntity = Object.assign({}, entity, {
-//       id: entityRuntimeID,
-//       comID: entity.id,
-//       state: 'active'
-//     });
-//     const nextState = {
-//       ...layoutContentCollection,
-//       [entityRuntimeID]: resEntity
-//     };
-//     setLayoutContentCollection(nextState);
-//   }
-// };
-// const updateContainer = (id, targetEntity) => {
-//   const nextState = {
-//     ...layoutContentCollection,
-//   };
-//   nextState[id] = targetEntity;
-//   setLayoutContentCollection(nextState);
-// };
-
-// // TODO: delete 组件
-// const delContainer = (id) => {
-//   const nextState = {
-//     ...layoutContentCollection,
-//   };
-//   delete nextState[id];
-//   setLayoutContentCollection(nextState);
-// };
