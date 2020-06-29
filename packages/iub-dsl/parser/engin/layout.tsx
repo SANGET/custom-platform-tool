@@ -69,7 +69,7 @@ const renderLayout = (
           </div>
         );
         return typeof componentWrapper === 'function'
-          ? componentWrapper(childOfComponent, { id, idx })
+          ? componentWrapper(childOfComponent, { id, idx, componentConfig })
           : childOfComponent;
     }
   });
