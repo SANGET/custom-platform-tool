@@ -46,11 +46,7 @@ const renderLayout = (
     switch (node.type) {
       case 'container':
         const { layout } = node;
-<<<<<<< HEAD
-        const { containerWrapper, componentWrapper } = wrapper;
         // TODO: 加入布局UI隔离
-=======
->>>>>>> ea57f5adf65108eb9e35d30724236a2480d24fbb
         const childOfContainer = (
           <div
             style={containerLayoutParser(layout)}

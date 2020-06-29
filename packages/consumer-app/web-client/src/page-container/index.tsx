@@ -9,11 +9,17 @@ import IUBDSLParser from '@iub-dsl/parser/engin';
 
 import { AuthUIByUIID } from '../services/auth';
 import $R from '../services/req';
+import { initPageContext } from './context';
+import { Loading } from '../common';
 
-const SpecificParser = () => {
+const SpecificParser = (pageContext) => {
   return (
     <div></div>
   );
+};
+
+const validAuth = (pageAuthInfo, pageId) => {
+  return AuthUIByUIID(pageId, pageAuthInfo);
 };
 
 interface PageContainerProps {
@@ -21,22 +27,28 @@ interface PageContainerProps {
   dsl: TypeOfIUBDSL;
   pageID?: string;
   pageAuthInfo?: {};
+  appContext: {
+    [str: string]: unknown
+  };
 }
 
-const parserLoader = (type, { dsl, pageAuthInfo }) => {
+const parserLoader = (type, appContext, { dsl, pageAuthInfo }) => {
+  const pageContext = initPageContext(appContext, dsl);
   switch (type) {
     case 'config':
+      pageContext.requestAPI = $R;
       return IUBDSLParser({
         // 接口反射，UI 验证
         context: {
           setContext: () => ({}),
         },
-        requestAPI: $R,
         authUI: (UIID) => AuthUIByUIID(UIID, pageAuthInfo),
-        dsl
+        dsl,
+        pageContext,
+        appContext
       });
     case 'embed':
-      return SpecificParser();
+      return SpecificParser(pageContext);
     default:
       return <div></div>;
   }
@@ -44,31 +56,28 @@ const parserLoader = (type, { dsl, pageAuthInfo }) => {
 
 const PageContainer = (props: PageContainerProps) => {
   const {
-    dsl, pageAuthInfo, // type, pageID
+    dsl, pageAuthInfo, appContext, // type, pageID
   } = props;
-  const { name, id, type } = dsl || {};
-  // TODO: 数据的可用性统一管理  (状态校验: loading、路由鉴权)。尝试一下，需要讨论
-  return (<ValidRender
-    pageAuthInfo={pageAuthInfo}
-    dsl={dsl}
-    Wrapper={<PageContainerWrapper></PageContainerWrapper>}
-  >{
-      parserLoader(type, {
-        dsl,
-        pageAuthInfo
-      })
-    }</ValidRender>);
-};
 
-const ValidRender = ({
-  pageAuthInfo, dsl, Wrapper, children
-}) => {
   if (!dsl) {
-    return (<div>Loading</div>);
+    return <Loading></Loading>;
   }
-  if (pageAuthInfo(dsl.id)) {
-    return Wrapper ? (<Wrapper>{children}</Wrapper>) : children;
+
+  if (dsl.id === undefined) {
+    return (<div>IUB-DSL格式错误</div>);
   }
+
+  const { name, id, type } = dsl;
+
+  if (validAuth(pageAuthInfo, dsl.id)) {
+    // 数据的可用性统一管理  (状态校验: loading、路由鉴权)。
+    const ParserResult = parserLoader(type, appContext, {
+      dsl,
+      pageAuthInfo
+    });
+    return (<PageContainerWrapper id={id} name={name}>{ParserResult}</PageContainerWrapper>);
+  }
+
   return (<div>Not Permitted</div>);
 };
 
@@ -81,3 +90,8 @@ const PageContainerWrapper = (props) => (
 );
 
 export default PageContainer;
+
+/**
+ * 1. appContext注入 、 数据调度器
+ * 2. pageContext包揽全局、数据可用性统一管理、初始化的时候的解析和IUB解析的关系、运行时候的仓库
+ */

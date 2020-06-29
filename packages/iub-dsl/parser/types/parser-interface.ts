@@ -20,6 +20,8 @@ export interface ParserParamsOfIUBDSL {
   dsl: TypeOfIUBDSL;
   /** context */
   context: ContextOfIUBDSL;
+  pageContext?: any;
+  appContext?: any;
 }
 
 export interface ParserContextGroup {

@@ -1,20 +1,22 @@
 import { ParserParamsOfIUBDSL } from "../types/parser-interface";
 import LayoutParser from "./layout";
 import flowExecutor from "./flow";
-import parseMetaData from "./mapping/metaData";
+import parseMetaData from "./meta-data/metaData";
+import { parseRelation } from "./relation";
 
 /**
  * 1. 页面运行上下文的生成、数据仓库、
  * 2. 事件绑定的时机？
- * 3.
+ * 3. 每个时机都是可以独立解析的，可以使用接口反射  ??
+ * 4. 绑定数据的时刻、钩子、反射？
  */
 
-const parseSchemas = () => {};
-const parsesysInput = () => {};
-const parsesysOutput = () => {};
+const parseSchemas = (...args) => {};
+const parsesysInput = (...args) => {};
+const parsesysOutput = (...args) => {};
 
 const IUBDSLParser = ({
-  dsl, context
+  dsl, context, pageContext, appContext
 }: ParserParamsOfIUBDSL) => {
   const {
     layoutContent, componentsCollection, actionsCollection,
@@ -22,11 +24,13 @@ const IUBDSLParser = ({
     sysRtCxtInterface
   } = dsl;
 
-  // metadataParse 解析元数据映射，数据转换时调用、使用关系时候调用
-
-  // relationshipCollection 任何时候都可能调用
-
+  // parseMetaData 解析元数据映射，数据转换时调用、使用关系时候调用
+  pageContext.metadataEntity = parseMetaData(metadataMapping);
   // schemas 页面渲染解析前调用
+  pageContext.store = parseSchemas(schemas);
+  // relationshipCollection 任何时候都可能调用
+  parseRelation('schemasCreate', relationshipsCollection);
+  parsesysInput(sysRtCxtInterface, pageContext.store, pageContext);
 
   const parserContext = {
     context,
@@ -53,31 +57,6 @@ const IUBDSLParser = ({
   }
 };
 
-// const IUBDSLParser = ({
-//   dsl,
-//   context,
-// }: ParserParamsOfIUBDSL) => {
-//   const {
-//     layoutContent, componentsCollection, actionsCollection,
-//     metadataMapping, relationshipsCollection, schemas,
-//     sysRtCxtInterface
-//   } = dsl;
-//   const metaDataMapping = parseMetaData();
-//   // 实际的数据引入、sys系统引用
-//   parsesysInput();
-//   parseSchemas();
-//   const parserContext = {
-//     context,
-//     metaDataMapping,
-//     bindAction: (actionID) => {
-//       // console.log(actionID);
-//       return actionsCollection[actionID];
-//     },
-//     bindComponent: (componentID) => {
-//       // console.log(componentID);
-//       return componentsCollection[componentID];
-//     },
-//   };
 //   try {
 //     switch (layoutContent.type) {
 //       case 'general':
@@ -96,7 +75,6 @@ const IUBDSLParser = ({
 //   } finally {
 //     parsesysOutput();
 //   }
-// };
 
 export default IUBDSLParser;
 

@@ -28,6 +28,8 @@ interface AppContainerProps extends RouterHelperProps {
 const pageCache = {};
 const pageAuthCache = {};
 
+const appContext = {};
+
 class AppContainer extends RouterMultiple<AppContainerProps, AppContainerState> {
   state: AppContainerState = defaultRouteState
 
@@ -145,6 +147,7 @@ class AppContainer extends RouterMultiple<AppContainerProps, AppContainerState> 
                           pageID={pageID}
                           dsl={currPage}
                           pageAuthInfo={pageAuthInfo}
+                          appContext={appContext}
                         >
 
                         </PageContainer>

@@ -1,4 +1,4 @@
-const parseMetaData = () => {
+const parseMetaData = (metadataMapping) => {
   return {};
 };
 
