@@ -1,7 +1,5 @@
 /**
  * CanvasStage
- *
- * TODO: Fix bug，父容器拖动到子容器会出现问题
  */
 import React, { useState } from 'react';
 import { useDrop } from 'react-dnd';
@@ -56,13 +54,20 @@ const ContainerWrapperCom = ({
 }) => {
   const [{ isOverCurrent }, drop] = useDrop({
     accept: ItemTypes.DragComponent,
+    /**
+     * TODO: Fix bug，父容器拖动到子容器会出现问题
+     *
+     * ref: https://react-dnd.github.io/react-dnd/docs/api/use-drop
+     */
     drop: ({ entityClass }) => {
       if (isOverCurrent) onDrop({ ...entityClass }, id);
     },
-    collect: (monitor) => ({
-      // isOver: !!monitor.isOver(),
-      isOverCurrent: monitor.isOver({ shallow: true }),
-    }),
+    collect: (monitor) => {
+      return {
+        // isOver: !!monitor.isOver(),
+        isOverCurrent: monitor.isOver({ shallow: true }),
+      };
+    },
   });
 
   const classes = classnames([
@@ -163,30 +168,25 @@ const stateOperatorFac = (state, setState) => {
     /** 防止嵌套 */
     if (!!entityClass.id && entityClass.id === entityClass.parentID) return;
 
-    /** 如果已经实例化的组件 */
-    if (entityClass._state === 'active') {
-      update(entityClass.id, entityClass);
-    } else {
-      /** 外部可以通过 entityID 设置真正的 entity 的 id */
-      let entityRuntimeID = entityClass.entityID;
-      if (!entityRuntimeID) {
-        entityRuntimeID = increaseID();
-      }
-      /** 如果组件还没被实例化 */
-      /** 实例化 */
-      const entity = Object.assign({}, entityClass, {
-        id: entityRuntimeID,
-
-        /** 下划线前缀为内部字段 */
-        _comID: entityClass.id,
-        _state: 'active'
-      });
-      const nextState = {
-        ...state,
-        [entityRuntimeID]: entity
-      };
-      setState(nextState);
+    /** 外部可以通过 entityID 设置真正的 entity 的 id */
+    let entityRuntimeID = entityClass.entityID;
+    if (!entityRuntimeID) {
+      entityRuntimeID = increaseID();
     }
+    /** 如果组件还没被实例化 */
+    /** 实例化 */
+    const entity = Object.assign({}, entityClass, {
+      id: entityRuntimeID,
+
+      /** 下划线前缀为内部字段 */
+      _comID: entityClass.id,
+      _state: 'active'
+    });
+    const nextState = {
+      ...state,
+      [entityRuntimeID]: entity
+    };
+    setState(nextState);
   };
   const del = (id) => {
     const nextState = {
@@ -240,6 +240,14 @@ const CanvasStage = ({
     if (parentID) {
       entity.parentID = parentID;
     }
+
+    /** 如果已经实例化的组件 */
+    const isUpdate = entity._state === 'active';
+
+    if (isUpdate) {
+      return updateContainer(entity.id, entity);
+    }
+
     switch (entity.type) {
       case 'container':
         addContainer(entity);
