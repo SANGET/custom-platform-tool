@@ -1,11 +1,14 @@
 import { PropertiesItemCollection } from "../property/props-item";
 
 export const propertiesItemCollection: PropertiesItemCollection = {
-  'propID-1': {
-    label: '输入1',
-    component: {
-      type: 'Input'
-    }
+  'propID-1': (entity) => {
+    return {
+      label: '输入1',
+      type: 'componentCollection.',
+      component: {
+        type: 'Input'
+      }
+    };
   },
   'propID-2': {
     label: '输入2',

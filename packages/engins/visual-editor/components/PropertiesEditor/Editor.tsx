@@ -4,14 +4,21 @@
 import React, { useState, useEffect } from 'react';
 import { Input, Button } from '@infra/ui-interface';
 import { propertiesItemCollection } from '../../core/access/mock-data';
+import { mergeDeep } from '../CanvasStage/utils/deepmerge';
+
+const extractPropConfig = (propConfig, entity) => {
+  if (typeof propConfig === 'function') return propConfig(mergeDeep({}, entity));
+  return propConfig;
+};
 
 const ComponentParser = ({
+  entity,
   propConfig,
   componentState,
   onChange,
 }) => {
   // console.log(propConfig);
-  const { label, component } = propConfig;
+  const { label, component } = extractPropConfig(propConfig, entity);
   let Com;
   switch (component.type) {
     case 'Input':
@@ -92,6 +99,7 @@ const PropertiesEditor = ({
                     updateFormValues(propID, nextValue);
                   }}
                   propConfig={propConfig}
+                  entity={selectedEntity}
                 />
               </div>
             );
