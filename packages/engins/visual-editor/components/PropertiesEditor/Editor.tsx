@@ -18,7 +18,8 @@ const ComponentParser = ({
   onChange,
 }) => {
   // console.log(propConfig);
-  const { label, component } = extractPropConfig(propConfig, entity);
+  const propConfigRes = extractPropConfig(propConfig, entity);
+  const { label, component, type } = propConfigRes;
   let Com;
   switch (component.type) {
     case 'Input':
@@ -27,7 +28,7 @@ const ComponentParser = ({
           value={componentState || ''}
           onChange={(value) => {
             // console.log(e.target.value);
-            onChange(value);
+            onChange(value, type);
           }}
         />
       );
@@ -56,10 +57,13 @@ const PropertiesEditor = ({
   const [formState, setFormState] = useState(defaultFormState);
   const [updateState, setUpdateState] = useState(false);
 
-  const updateFormValues = (formID, value) => {
+  const updateFormValues = (formID, value, propType) => {
     setFormState({
       ...formState,
-      [formID]: value
+      [formID]: {
+        propType,
+        value
+      }
     });
   };
 
@@ -86,17 +90,26 @@ const PropertiesEditor = ({
         hasProps && (
           Array.isArray(properties.propRefs)
           && properties.propRefs.map((propID) => {
+            const activeFormState = formState[propID];
+            const currValue = activeFormState?.value;
             const propConfig = propertiesItemCollection[propID];
             return (
               <div
                 key={propID}
               >
                 <ComponentParser
-                  componentState={formState[propID]}
-                  onChange={(nextValue, preValue) => {
-                    /** 性能优化部分 */
-                    if (nextValue === preValue) return;
-                    updateFormValues(propID, nextValue);
+                  componentState={currValue}
+                  onChange={(nextValue, propType) => {
+                    /**
+                     * 性能优化部分
+                     */
+                    const prevState = currValue;
+                    if (nextValue === prevState) return;
+
+                    /**
+                     * 更新数据
+                     */
+                    updateFormValues(propID, nextValue, propType);
                   }}
                   propConfig={propConfig}
                   entity={selectedEntity}

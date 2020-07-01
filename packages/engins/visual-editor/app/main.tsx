@@ -51,7 +51,9 @@ const VisualEditorApp = (props: VisualEditorAppProps) => {
   const saveComponentPropStore = (id, formState) => {
     setComponentPropStore({
       ...componentPropStore,
-      [id]: formState
+      [id]: {
+        formState
+      }
     });
   };
 
