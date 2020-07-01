@@ -13,19 +13,20 @@
     "pull:all": "git pull origin master --rebase",
     "lerna:bootstrap": "lerna bootstrap",
     "start:all": "lerna run --parallel --stream start",
-    "start:provider-app": "cd ./packages/provider-app-hub/EntryHall; npm start",
-    "start:visual-editor": "cd ./packages/engins/visual-editor; npm start",
-    "start:page-designer": "cd ./packages/provider-app-hub/PageDesigner; npm start",
-    "start:consumer-app": "cd ./packages/consumer-app/web-client; npm start",
+    "start:provider-app": "cd ./packages/provider-app-hub/EntryHall && npm start",
+    "start:visual-editor": "cd ./packages/engins/visual-editor && npm start",
+    "start:page-designer": "cd ./packages/provider-app-hub/PageDesigner && npm start",
+    "start:consumer-app": "cd ./packages/consumer-app/web-client && npm start",
     "build:provider-app": "minictl build",
-    "build:visual-editor-app": "cd ./packages/engins/visual-editor; npm run build",
+    "build:visual-editor-app": "cd ./packages/engins/visual-editor && npm run build",
     "prettier:base": "prettier --parser typescript",
     "format": "npm run prettier:base -- --write \"packages/**/*.{ts,tsx}\"",
     "test": "jest"
   },
   "devDependencies": {
     "lerna": "^3.21.0",
-    "prettier": "^2.0.5"
+    "prettier": "^2.0.5",
+    "cross-env": "^7.0.2"
   },
   "author": "SANGET",
   "license": "MIT",

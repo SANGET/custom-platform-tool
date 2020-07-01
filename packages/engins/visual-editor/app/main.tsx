@@ -44,6 +44,8 @@ const VisualEditorApp = (props: VisualEditorAppProps) => {
     });
   };
 
+  console.log(componentPropStore);
+
   const { activeID } = selectedEntities;
 
   const saveComponentPropStore = (id, formState) => {

@@ -2,7 +2,7 @@
   "name": "@engin/visual-editor",
   "version": "0.0.1",
   "scripts": {
-    "start": "PORT=7766 minictl start",
+    "start": "cross-env PORT=7766 minictl start",
     "build": "minictl build"
   },
   "devDependencies": {
