@@ -6,6 +6,8 @@ import { Input, Button } from '@infra/ui-interface';
 import { propertiesItemCollection } from '../../core/access/mock-data';
 import { mergeDeep } from '../CanvasStage/utils/deepmerge';
 
+export type SaveComponentPropStore = (id: string, formState: any) => void
+
 const extractPropConfig = (propConfig, entity) => {
   if (typeof propConfig === 'function') return propConfig(mergeDeep({}, entity));
   return propConfig;
@@ -44,11 +46,17 @@ const ComponentParser = ({
   );
 };
 
+export interface PropertiesEditorProps {
+  selectedEntity: {}
+  defaultFormState: {}
+  saveComponentPropStore: SaveComponentPropStore
+}
+
 const PropertiesEditor = ({
   selectedEntity,
   defaultFormState = {},
   saveComponentPropStore
-}) => {
+}: PropertiesEditorProps) => {
   // console.log(selectedEntity);
   const { properties } = selectedEntity;
   const hasProps = !!properties?.propRefs;

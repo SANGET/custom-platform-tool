@@ -11,6 +11,8 @@ import PropertiesEditor from '../components/PropertiesEditor';
 
 import { Dispatcher } from "../core/actions";
 import { VisualEditorStore } from "../core/store";
+import { useSelectEntity } from "./useSelectEntity";
+import { useComponentPropStore } from "./useComponentPropStore";
 
 import '@deer-ui/core/default.css';
 
@@ -19,47 +21,11 @@ interface VisualEditorAppProps {
   layoutContent: VisualEditorStore['layoutContentState']
 }
 
-interface ComponentPropStore {
-  [entityID: string]: {}
-}
-
 const VisualEditorApp = (props: VisualEditorAppProps) => {
-  const { dispatcher, layoutContent } = props;
-
-  /** TODO: 优化状态管理 */
-  const [selectedEntities, setSelectedEntity] = useState({
-    selectedList: {},
-    activeID: '',
-    activeEntity: {}
-  });
-  const [componentPropStore, setComponentPropStore] = useState({});
-
-  const selectEntity = (id, entity) => {
-    setSelectedEntity({
-      selectedList: {
-        [id]: entity
-      },
-      activeID: id,
-      activeEntity: entity
-    });
-  };
-
-  console.log(componentPropStore);
+  const [selectedEntities, selectEntity] = useSelectEntity();
+  const [componentPropStore, saveComponentPropStore] = useComponentPropStore();
 
   const { activeID } = selectedEntities;
-
-  const saveComponentPropStore = (id, formState) => {
-    setComponentPropStore({
-      ...componentPropStore,
-      [id]: {
-        formState
-      }
-    });
-  };
-
-  // console.log(componentPropStore);
-  // console.log(activeID);
-  // console.log(selectedEntities.activeEntity);
 
   return (
     <div>

@@ -1,37 +1,46 @@
 import React from 'react';
 import { Tabs, Tab } from '@infra/ui-interface';
 
-import DragItem from './DragItem';
+import DragItem, { DragItemConfig } from './DragItem';
+import { EditorComponentClass } from '../../types';
 
-interface ComponentItem {
-  type: 'container' | 'component'
-  id: string
-  label: string;
-  // TODO: 绑定可编辑的属性
-  properties: {
+export interface PanelItemsGroup {
+  title: string
+  items: EditorComponentClass[]
+}
 
-  }
+export interface PanelTabGroupItem {
+  title: string
+  itemsGroups: PanelItemsGroup[]
+}
+
+export interface ComponentPanelConfig {
+  tabGroup: PanelTabGroupItem[]
 }
 
 export interface ComponentPanelProps {
-  componentConfig: {
-    tabGroup: ({
-      title: string,
-      itemsGroups: ({
-        title: string
-        items: ComponentItem[]
-      })[]
-    })[]
-  }
+  /** 组件 panel 的配置 */
+  componentPanelConfig: ComponentPanelConfig
+  /** 可拖拽 item 的包装器 interface */
+  itemWrapper?: (item: EditorComponentClass) => React.ReactChild
+  /** 控制 DragItem 的 drag 配置的 interface，详情参考 react-dnd */
+  getDragItemConfig?: (item: EditorComponentClass) => DragItemConfig
 }
 
-const ComponentPanel: React.SFC<ComponentPanelProps> = ({
-  componentConfig
-}) => {
-  const { tabGroup } = componentConfig;
+const ComponentPanel = ({
+  componentPanelConfig,
+  itemWrapper,
+  getDragItemConfig
+}: ComponentPanelProps) => {
+  const { tabGroup } = componentPanelConfig;
+
+  /**
+   * 处理 Tabs 更改事件
+   */
   const handleChange = () => {
-    console.log('object');
+    console.log('handleChange');
   };
+
   return (
     <div>
       <Tabs
@@ -55,18 +64,21 @@ const ComponentPanel: React.SFC<ComponentPanelProps> = ({
                       <div key={`${idx}_${_idx}`}>
                         <h5>{igTitle}</h5>
                         {
-                          items.map((itm, __idx) => {
+                          items.map((componentClass, __idx) => {
                             const {
                               id, label
-                            } = itm;
+                            } = componentClass;
                             return (
                               <div key={id}>
                                 <DragItem
-                                  entityClass={{
-                                    ...itm,
+                                  dragConfig={getDragItemConfig ? getDragItemConfig(componentClass) : {}}
+                                  dragItemClass={{
+                                    ...componentClass,
                                   }}
                                 >
-                                  {label}
+                                  {
+                                    typeof itemWrapper === 'function' ? itemWrapper(componentClass) : label
+                                  }
                                 </DragItem>
                               </div>
                             );
@@ -86,7 +98,7 @@ const ComponentPanel: React.SFC<ComponentPanelProps> = ({
 };
 
 ComponentPanel.defaultProps = {
-  componentConfig: {
+  componentPanelConfig: {
     tabGroup: [
       {
         title: '控件类型',

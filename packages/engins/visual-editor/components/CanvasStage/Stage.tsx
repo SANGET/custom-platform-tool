@@ -8,10 +8,10 @@ import classnames from 'classnames';
 
 import LayoutParser from '@iub-dsl/parser/engin/layout';
 import { ItemTypes } from '../ComponentPanel/types';
-import { Dispatcher } from '../../core/actions';
-import { VisualEditorStore } from '../../core/store';
 import { increaseID, parseObjToTreeNode, wrapID } from './utils';
-import DragItem from '../ComponentPanel/DragItem';
+import { setNodeArrayInfo, isNodeInChild } from './utils/node-filter';
+import ContainerWrapperCom from './ContainerWrapperCom';
+import ComponentWrapperCom from './ComponentWrapperCom';
 
 const StageRender = styled.div`
   min-height: 50vh;
@@ -23,166 +23,6 @@ const StageRender = styled.div`
     }
   }
 `;
-
-const ContainerWrapper = styled.div`
-  padding: 20px;
-  background-color: rgba(0,0,0, 0.1);
-  margin: 10px;
-  &:hover {
-    background-color: rgba(0,0,0, 0.15);
-  }
-  &.overing {
-    background-color: rgba(48, 95, 144, 0.5);
-  }
-  &.selected {
-    box-shadow: 0 0 1px 3px rgba(127, 113, 185, 0.5);
-  }
-`;
-
-const ComponentWrapper = styled.div`
-  padding: 5px;
-  background-color: rgba(0,0,0, 0.8);
-  margin: 10px;
-  color: #FFF;
-  &:hover {
-    background-color: rgba(0,0,0, 0.7);
-  }
-  &.selected {
-    box-shadow: 0 0 1px 3px rgba(127, 113, 185, 0.5);
-  }
-`;
-
-export interface CanvasStageProps {
-  // selectEntity: Dispatcher['SelectEntity']
-  // layoutContent: VisualEditorStore['layoutContentState']
-}
-
-const layoutNodeNestingInfo = {};
-const setNodeArrayInfo = (nodeArray, layoutObj) => {
-  Object.keys(layoutObj).map((nodeID) => {
-    const node = layoutObj[nodeID];
-    const { parentID } = node;
-    if (parentID) {
-      if (!layoutNodeNestingInfo[parentID]) layoutNodeNestingInfo[parentID] = new Set();
-      layoutNodeNestingInfo[parentID].add(node.id);
-    }
-  });
-  // console.log(layoutNodeNestingInfo);
-};
-const isNodeInChild = (srcNodeID, targetNodeID) => {
-  // console.log(layoutNodeNestingInfo);
-  return !!layoutNodeNestingInfo[targetNodeID]
-    && layoutNodeNestingInfo[targetNodeID].has(srcNodeID);
-  // console.log(layoutNodeArray);
-};
-
-const ContainerWrapperCom = ({
-  children,
-  currEntity,
-  onClick,
-  id,
-  getSelectedState,
-  onDrop
-}) => {
-  const isSelected = getSelectedState(id);
-  const [{ isOverCurrent }, drop] = useDrop({
-    accept: ItemTypes.DragComponent,
-    /**
-     * TODO: Fix bug，父容器拖动到子容器会出现问题
-     *
-     * ref: https://react-dnd.github.io/react-dnd/docs/api/use-drop
-     */
-    drop: ({ entityClass: dropedEntityClass }) => {
-      /**
-       * @important 重要策略
-       *
-       * 1. isOverCurrent 判断是否拖动在容器内
-       * 2. isNodeInChild 判断自身是否拖到子容器中，避免嵌套
-       */
-      if (isOverCurrent) {
-        setTimeout(() => {
-          const isNodeInChildRes = isNodeInChild(id, dropedEntityClass.id);
-          // console.log(isNodeInChildRes);
-          if (!isNodeInChildRes) {
-            onDrop({ ...dropedEntityClass }, id);
-          }
-        });
-      }
-    },
-    canDrop: ({ entityClass: dropedEntityClass }, monitor) => {
-      /** 不允许放到自身 */
-      return dropedEntityClass.id !== id;
-    },
-    collect: (monitor) => {
-      return {
-        // isOver: !!monitor.isOver(),
-        isOverCurrent: monitor.isOver({ shallow: true }),
-      };
-    },
-  });
-
-  const classes = classnames([
-    isOverCurrent && 'overing',
-    isSelected && 'selected'
-  ]);
-
-  // TODO: 修复 flex 布局的问题
-  return (
-    <div
-      ref={drop}
-      onClick={(e) => {
-        e.stopPropagation();
-        onClick(e, { id, entity: currEntity });
-      }}
-    >
-      <DragItem
-        entityClass={currEntity}
-      >
-        <ContainerWrapper
-          className={classes}
-        >
-          <div>容器, ID: {id}</div>
-          {children}
-        </ContainerWrapper>
-      </DragItem>
-    </div>
-  );
-};
-
-const ComponentWrapperCom = ({
-  children,
-  currEntity,
-  componentConfig,
-  onClick,
-  id,
-  getSelectedState,
-}) => {
-  const isSelected = getSelectedState(componentConfig.id);
-  const classes = classnames([
-    isSelected && 'selected'
-  ]);
-
-  // TODO: 修复 flex 布局的问题
-  return (
-    <div
-      onClick={(e) => {
-        e.stopPropagation();
-        onClick(e, { id: componentConfig.id, entity: componentConfig });
-      }}
-    >
-      <DragItem
-        entityClass={currEntity}
-      >
-        <ComponentWrapper
-          className={classes}
-        >
-          <div>组件, ID: {id}</div>
-          {children}
-        </ComponentWrapper>
-      </DragItem>
-    </div>
-  );
-};
 
 interface ContainerWrapperFacActions {
   onDrop?: (entity, containerID?) => void;
@@ -210,6 +50,19 @@ const containerWrapperFac = (
   );
 };
 
+/**
+ * 实例化 componentClass
+ */
+const instantiation = (componentClass, entityID) => {
+  return Object.assign({}, componentClass, {
+    id: entityID,
+
+    /** 下划线前缀为内部字段 */
+    _classID: componentClass.id,
+    _state: 'active'
+  });
+};
+
 const stateOperatorFac = (state, setState) => {
   const update = (id, targetEntity) => {
     const nextState = {
@@ -220,28 +73,23 @@ const stateOperatorFac = (state, setState) => {
 
     return nextState;
   };
-  const add = (entityClass) => {
+  const add = (componentClass) => {
     /** 防止嵌套 */
-    if (!!entityClass.id && entityClass.id === entityClass.parentID) return entityClass;
+    if (!!componentClass.id && componentClass.id === componentClass.parentID) return componentClass;
 
     /** 外部可以通过 entityID 设置真正的 entity 的 id */
-    let entityRuntimeID = entityClass.entityID;
-    if (!entityRuntimeID) {
-      entityRuntimeID = increaseID();
+    let { entityID } = componentClass;
+    if (!entityID) {
+      entityID = increaseID();
     }
     /** 如果组件还没被实例化 */
     /** 实例化 */
-    const entity = Object.assign({}, entityClass, {
-      id: entityRuntimeID,
-
-      /** 下划线前缀为内部字段 */
-      _comID: entityClass.id,
-      _state: 'active'
-    });
+    const entity = instantiation(componentClass, entityID);
     const nextState = {
       ...state,
-      [entityRuntimeID]: entity
+      [entityID]: entity
     };
+
     setState(nextState);
 
     return entity;
@@ -262,15 +110,21 @@ const stateOperatorFac = (state, setState) => {
   };
 };
 
-const entityToComponentConfig = (entityClass, id) => {
+const componentInstantiation = (componentClass, id) => {
   return {
-    ...entityClass,
+    ...componentClass,
     entityID: id,
     component: {
-      type: entityClass.component
+      type: componentClass.component
     }
   };
 };
+
+export interface CanvasStageProps {
+  selectEntity
+  selectedEntities
+  children?: React.ReactChild
+}
 
 const CanvasStage = ({
   selectEntity,
@@ -300,31 +154,31 @@ const CanvasStage = ({
     del: delComponent
   } = stateOperatorFac(componentsCollection, setComponentsCollection);
 
-  const onDropFilter = (entityClass, parentID?) => {
-    const entityClassCopy = Object.assign({}, entityClass);
+  const onDropFilter = (componentClass, parentID?) => {
+    const itemClassCopy = Object.assign({}, componentClass);
     if (parentID) {
-      entityClassCopy.parentID = parentID;
+      itemClassCopy.parentID = parentID;
     }
 
     /** 如果已经实例化的组件 */
-    const isUpdate = entityClassCopy._state === 'active';
+    const isUpdate = itemClassCopy._state === 'active';
 
     /** 更新布局 */
     if (isUpdate) {
-      return updateContainer(entityClassCopy.id, entityClassCopy);
+      return updateContainer(itemClassCopy.id, itemClassCopy);
     }
 
-    switch (entityClassCopy.type) {
+    switch (itemClassCopy.type) {
       case 'container':
         const entityID = increaseID();
-        entityClassCopy.entityID = entityID;
-        const entity = addContainer(entityClassCopy);
+        itemClassCopy.entityID = entityID;
+        const entity = addContainer(itemClassCopy);
         onSelectEntityForOnce(null, { id: entityID, entity });
         break;
       case 'component':
         const componentRefID = increaseID();
         const componentID = `comp_id_${componentRefID}`;
-        const componentEntity = addComponent(entityToComponentConfig(entityClassCopy, componentID));
+        const componentEntity = addComponent(componentInstantiation(itemClassCopy, componentID));
         const componentRefConfig = {
           entityID: componentRefID,
           type: "componentRef",
@@ -341,12 +195,12 @@ const CanvasStage = ({
     isOverCurrent
   }, drop] = useDrop({
     accept: ItemTypes.DragComponent,
-    drop: ({ entityClass }) => {
+    drop: ({ dragItemClass }) => {
       // console.log('drop');
       if (isOverCurrent) {
-        const entity = Object.assign({}, entityClass);
-        delete entity.parentID;
-        onDropFilter(entity);
+        const _dragItemClass = Object.assign({}, dragItemClass);
+        delete _dragItemClass.parentID;
+        onDropFilter(_dragItemClass);
       }
     },
     collect: (monitor) => ({
@@ -368,19 +222,21 @@ const CanvasStage = ({
   const getSelectedState = (id) => {
     return !!selectedEntities[id];
   };
-
   const layoutNodeArray = parseObjToTreeNode(layoutContentCollection);
+
+  /** 设置 node 信息 */
   setNodeArrayInfo(layoutNodeArray, layoutContentCollection);
-  // console.log(parseObjToTreeNode(layoutContentCollection));
 
   return (
     <div className="canvas-stage-container">
-      CanvasStage
       <StageRender
         ref={drop}
         className={`canvas-stage renderer${isOverCurrent ? ' overing' : ''}`}
       >
         {
+          /**
+           * 通过 render prop 包装 layout 内部组件
+           */
           LayoutParser({
             layoutNode: layoutNodeArray,
             componentWrapper: containerWrapperFac(
