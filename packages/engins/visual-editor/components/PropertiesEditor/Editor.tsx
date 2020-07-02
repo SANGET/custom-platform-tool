@@ -3,8 +3,11 @@
  */
 import React, { useState, useEffect } from 'react';
 import { Input, Button } from '@infra/ui-interface';
-import { propertiesItemCollection } from '../../core/access/mock-data';
+import { propertiesItemCollection as PropertiesItemCollection } from '../../mock-data';
 import { mergeDeep } from '../CanvasStage/utils/deepmerge';
+import { EditorComponentEntity, EditorEntityProperties } from '../../types';
+import useUpdateState from './useUpdateState';
+import useFormState from './useFormState';
 
 export type SaveComponentPropStore = (id: string, formState: any) => void
 
@@ -47,14 +50,23 @@ const ComponentParser = ({
 };
 
 export interface PropertiesEditorProps {
-  selectedEntity: {}
-  defaultFormState: {}
+  /** 选中的 entity */
+  selectedEntity: EditorComponentEntity
+  /** 属性编辑器的配置，通过该配置生成有层级结构的属性编辑面板 */
+  editorConfig: {}
+  /** */
+  propertiesItemCollection: {}
+  /** 保存属性的回调 */
   saveComponentPropStore: SaveComponentPropStore
+  /** 默认的表单数据state */
+  defaultFormState?: EditorEntityProperties
 }
 
 const PropertiesEditor = ({
   selectedEntity,
   defaultFormState = {},
+  propertiesItemCollection,
+  editorConfig,
   saveComponentPropStore
 }: PropertiesEditorProps) => {
   // console.log(selectedEntity);
@@ -62,35 +74,8 @@ const PropertiesEditor = ({
   const hasProps = !!properties?.propRefs;
 
   /** 用于管理 Editor 中所有控件产生的值 */
-  const [formState, setFormState] = useState(defaultFormState);
-  const [updateState, setUpdateState] = useState(false);
-
-  const updateFormValues = (formID, value, propType) => {
-    setFormState({
-      ...formState,
-      [formID]: {
-        propType,
-        value
-      }
-    });
-  };
-
-  let timmer;
-
-  const clickToUpdate = () => {
-    clearTimeout(timmer);
-    setUpdateState(true);
-
-    timmer = setTimeout(() => {
-      setUpdateState(false);
-    }, 1000);
-  };
-
-  useEffect(() => {
-    return () => {
-      clearTimeout(timmer);
-    };
-  }, []);
+  const [formState, updateFormValues] = useFormState(defaultFormState);
+  const [updateState, clickToUpdate] = useUpdateState();
 
   return (
     <div>
@@ -140,6 +125,10 @@ const PropertiesEditor = ({
       </div>
     </div>
   );
+};
+
+PropertiesEditor.defaultProps = {
+  propertiesItemCollection: PropertiesItemCollection
 };
 
 export default PropertiesEditor;

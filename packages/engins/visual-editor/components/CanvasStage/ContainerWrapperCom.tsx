@@ -6,6 +6,7 @@ import classnames from 'classnames';
 import { ItemTypes } from '../ComponentPanel';
 import { isNodeInChild } from './utils/node-filter';
 import DragItem from '../ComponentPanel/DragItem';
+import { DragItemType, DropCollectType } from '../../types';
 
 const ContainerWrapper = styled.div`
   padding: 20px;
@@ -31,7 +32,7 @@ const ContainerWrapperCom = ({
   onDrop
 }) => {
   const isSelected = getSelectedState(id);
-  const [{ isOverCurrent }, drop] = useDrop({
+  const [{ isOverCurrent }, drop] = useDrop<DragItemType, void, DropCollectType>({
     accept: ItemTypes.DragComponent,
     /**
      * TODO: Fix bug，父容器拖动到子容器会出现问题

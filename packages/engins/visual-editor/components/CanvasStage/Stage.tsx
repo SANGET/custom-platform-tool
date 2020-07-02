@@ -9,9 +9,10 @@ import classnames from 'classnames';
 import LayoutParser from '@iub-dsl/parser/engin/layout';
 import { ItemTypes } from '../ComponentPanel/types';
 import { increaseID, parseObjToTreeNode, wrapID } from './utils';
-import { setNodeArrayInfo, isNodeInChild } from './utils/node-filter';
+import { setNodeArrayInfo } from './utils/node-filter';
 import ContainerWrapperCom from './ContainerWrapperCom';
 import ComponentWrapperCom from './ComponentWrapperCom';
+import { EditorComponentClass } from '../../types';
 
 const StageRender = styled.div`
   min-height: 50vh;
@@ -29,7 +30,11 @@ interface ContainerWrapperFacActions {
   onClick?: (event, id) => void;
 }
 
-// TODO: 性能优化
+/**
+ * wrapper 生成器
+ *
+ * TODO: 性能优化
+ */
 const containerWrapperFac = (
   WrapperComponent,
   { onDrop, onClick }: ContainerWrapperFacActions,
@@ -57,13 +62,21 @@ const instantiation = (componentClass, entityID) => {
   return Object.assign({}, componentClass, {
     id: entityID,
 
-    /** 下划线前缀为内部字段 */
+    /** 下划线前缀为内部字段，用于表示已经实例化 */
+    /** 备份 classID */
     _classID: componentClass.id,
+    /** 当前实例是激活的 */
     _state: 'active'
   });
 };
 
+/**
+ * 封装操作 componentClass 的工厂方法
+ */
 const stateOperatorFac = (state, setState) => {
+  /**
+   * 更新
+   */
   const update = (id, targetEntity) => {
     const nextState = {
       ...state,
@@ -73,7 +86,11 @@ const stateOperatorFac = (state, setState) => {
 
     return nextState;
   };
-  const add = (componentClass) => {
+
+  /**
+   * 添加 state
+   */
+  const add = (componentClass: EditorComponentClass) => {
     /** 防止嵌套 */
     if (!!componentClass.id && componentClass.id === componentClass.parentID) return componentClass;
 
@@ -94,6 +111,10 @@ const stateOperatorFac = (state, setState) => {
 
     return entity;
   };
+
+  /**
+   * 删除
+   */
   const del = (id) => {
     const nextState = {
       ...state,
@@ -154,6 +175,10 @@ const CanvasStage = ({
     del: delComponent
   } = stateOperatorFac(componentsCollection, setComponentsCollection);
 
+  /**
+   * 相应拖放的放的动作的过滤器
+   * 用于实例化 componentClass 或者更新 componentEntity
+   */
   const onDropFilter = (componentClass, parentID?) => {
     const itemClassCopy = Object.assign({}, componentClass);
     if (parentID) {
@@ -176,16 +201,19 @@ const CanvasStage = ({
         onSelectEntityForOnce(null, { id: entityID, entity });
         break;
       case 'component':
+        /**
+         * 如果是 component，添加一个组件引用，并且向 componentCollection 添加一个 component 实例
+         */
         const componentRefID = increaseID();
         const componentID = `comp_id_${componentRefID}`;
         const componentEntity = addComponent(componentInstantiation(itemClassCopy, componentID));
-        const componentRefConfig = {
+        const componentRefConfigClass = {
           entityID: componentRefID,
           type: "componentRef",
           componentID,
           parentID
         };
-        const entityRes = addContainer(componentRefConfig);
+        addContainer(componentRefConfigClass);
         onSelectEntityForOnce(null, { id: componentID, entity: componentEntity });
         break;
     }
@@ -198,7 +226,7 @@ const CanvasStage = ({
     drop: ({ dragItemClass }) => {
       // console.log('drop');
       if (isOverCurrent) {
-        const _dragItemClass = Object.assign({}, dragItemClass);
+        const _dragItemClass = { ...dragItemClass };
         delete _dragItemClass.parentID;
         onDropFilter(_dragItemClass);
       }
@@ -224,7 +252,9 @@ const CanvasStage = ({
   };
   const layoutNodeArray = parseObjToTreeNode(layoutContentCollection);
 
-  /** 设置 node 信息 */
+  /**
+   * 设置 node 信息
+   */
   setNodeArrayInfo(layoutNodeArray, layoutContentCollection);
 
   return (
@@ -235,7 +265,7 @@ const CanvasStage = ({
       >
         {
           /**
-           * 通过 render prop 包装 layout 内部组件
+           * 通过 render prop 包装 layout 内部组件，达到动态控制内部组件实现的效果
            */
           LayoutParser({
             layoutNode: layoutNodeArray,

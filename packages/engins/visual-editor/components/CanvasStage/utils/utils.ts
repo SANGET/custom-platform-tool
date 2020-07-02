@@ -1,11 +1,21 @@
 import { mergeDeep } from "./deepmerge";
 
+/**
+ * 生产自增 ID 的工厂类
+ */
 const increaseIDFac = (idCount = 0) => () => {
+  // eslint-disable-next-line no-param-reassign
   idCount += 1;
-  return idCount;
+  return String(idCount);
 };
+/**
+ * 生产自增 ID 具体实现
+ */
 export const increaseID = increaseIDFac(0);
 
+/**
+ * 生产 ID
+ */
 export const wrapID = (...args) => {
   return args.join('_');
 };
@@ -19,9 +29,15 @@ interface ParseObjToTreeNodeReturnSchema extends ParseObjToTreeNodeSchema {
 
 /**
  * 将扁平的对象结构转换成 treeNode 结构
+ *
+ * @important 基础算法，慎重修改
  */
 export const parseObjToTreeNode = (srcObj: ParseObjToTreeNodeSchema) => {
   const res: ParseObjToTreeNodeReturnSchema[] = [];
+
+  /**
+   * 需要切断 srcObj 的所有成员属性的原型链
+   */
   const srcCloneObj = mergeDeep({}, srcObj);
 
   Object.keys(srcCloneObj).map((colID) => {
@@ -30,6 +46,10 @@ export const parseObjToTreeNode = (srcObj: ParseObjToTreeNodeSchema) => {
       id: colID,
       ...currItem
     });
+
+    /**
+     * 通过原型链将子 node 挂载到父 node 上
+     */
     if (currItem.parentID) {
       const parentObj = srcCloneObj[currItem.parentID];
       if (!Array.isArray(parentObj.body)) parentObj.body = [];
