@@ -1,6 +1,7 @@
 import { useState } from "react";
+import { EditorComponentEntity } from "../types";
 
-type Entity = {}
+type Entity = EditorComponentEntity
 
 interface UseSelectEntityState {
   selectedList: {

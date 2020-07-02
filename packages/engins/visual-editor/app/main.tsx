@@ -12,7 +12,7 @@ import PropertiesEditor from '../components/PropertiesEditor';
 import { Dispatcher } from "../core/actions";
 import { VisualEditorStore } from "../core/store";
 import { useSelectEntity } from "./useSelectEntity";
-import { useComponentPropStore } from "./useComponentPropStore";
+import { useEntityPropsStore } from "./useEntityPropsStore";
 
 import '@deer-ui/core/default.css';
 
@@ -23,7 +23,7 @@ interface VisualEditorAppProps {
 
 const VisualEditorApp = (props: VisualEditorAppProps) => {
   const [selectedEntities, selectEntity] = useSelectEntity();
-  const [componentPropStore, saveComponentPropStore] = useComponentPropStore();
+  const [entityPropsStore, saveEntityPropsStore] = useEntityPropsStore();
 
   const { activeID } = selectedEntities;
 
@@ -89,8 +89,8 @@ const VisualEditorApp = (props: VisualEditorAppProps) => {
           <PropertiesEditor
             key={activeID}
             selectedEntity={selectedEntities.activeEntity}
-            defaultFormState={componentPropStore[activeID]}
-            saveComponentPropStore={saveComponentPropStore}
+            defaultFormState={entityPropsStore[activeID]}
+            saveEntityPropsStore={saveEntityPropsStore}
           />
         </Grid>
       </Grid>

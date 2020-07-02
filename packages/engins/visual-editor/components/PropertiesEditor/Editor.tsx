@@ -8,8 +8,7 @@ import { mergeDeep } from '../CanvasStage/utils/deepmerge';
 import { EditorComponentEntity, EditorEntityProperties } from '../../types';
 import useUpdateState from './useUpdateState';
 import useFormState from './useFormState';
-
-export type SaveComponentPropStore = (id: string, formState: any) => void
+import { SaveEntityPropsStore } from '../../app/useEntityPropsStore';
 
 const extractPropConfig = (propConfig, entity) => {
   if (typeof propConfig === 'function') return propConfig(mergeDeep({}, entity));
@@ -53,11 +52,11 @@ export interface PropertiesEditorProps {
   /** 选中的 entity */
   selectedEntity: EditorComponentEntity
   /** 属性编辑器的配置，通过该配置生成有层级结构的属性编辑面板 */
-  editorConfig: {}
+  editorConfig?: {}
   /** */
-  propertiesItemCollection: {}
+  propertiesItemCollection?: {}
   /** 保存属性的回调 */
-  saveComponentPropStore: SaveComponentPropStore
+  saveEntityPropsStore: SaveEntityPropsStore
   /** 默认的表单数据state */
   defaultFormState?: EditorEntityProperties
 }
@@ -67,7 +66,7 @@ const PropertiesEditor = ({
   defaultFormState = {},
   propertiesItemCollection,
   editorConfig,
-  saveComponentPropStore
+  saveEntityPropsStore
 }: PropertiesEditorProps) => {
   // console.log(selectedEntity);
   const { properties } = selectedEntity;
@@ -116,7 +115,7 @@ const PropertiesEditor = ({
         <Button
           color={updateState ? 'green' : 'blue'}
           onClick={(e) => {
-            saveComponentPropStore(selectedEntity.id, formState);
+            saveEntityPropsStore(selectedEntity.id, formState);
             clickToUpdate();
           }}
         >

@@ -8,11 +8,14 @@ import classnames from 'classnames';
 
 import LayoutParser from '@iub-dsl/parser/engin/layout';
 import { ItemTypes } from '../ComponentPanel/types';
-import { increaseID, parseObjToTreeNode, wrapID } from './utils';
-import { setNodeArrayInfo } from './utils/node-filter';
+import {
+  increaseID, parseFlatNodeToNestNode, wrapID, ENTITY_ID
+} from './utils';
+import { setNodeTreeNestingInfo } from './utils/node-filter';
 import ContainerWrapperCom from './ContainerWrapperCom';
 import ComponentWrapperCom from './ComponentWrapperCom';
 import { EditorComponentClass } from '../../types';
+import { stateOperatorFac } from './stateOperatorFac';
 
 const StageRender = styled.div`
   min-height: 50vh;
@@ -38,12 +41,12 @@ interface ContainerWrapperFacActions {
 const containerWrapperFac = (
   WrapperComponent,
   { onDrop, onClick }: ContainerWrapperFacActions,
-  { layoutContentCollection, getSelectedState }
+  { flatLayoutNodes, getSelectedState }
 ) => (children, { id, idx, ...other }) => {
   return (
     <WrapperComponent
       {...other}
-      currEntity={layoutContentCollection[id]}
+      currEntity={flatLayoutNodes[id]}
       onClick={onClick}
       onDrop={onDrop}
       getSelectedState={getSelectedState}
@@ -53,82 +56,6 @@ const containerWrapperFac = (
       {children}
     </WrapperComponent>
   );
-};
-
-/**
- * 实例化 componentClass
- */
-const instantiation = (componentClass, entityID) => {
-  return Object.assign({}, componentClass, {
-    id: entityID,
-
-    /** 下划线前缀为内部字段，用于表示已经实例化 */
-    /** 备份 classID */
-    _classID: componentClass.id,
-    /** 当前实例是激活的 */
-    _state: 'active'
-  });
-};
-
-/**
- * 封装操作 componentClass 的工厂方法
- */
-const stateOperatorFac = (state, setState) => {
-  /**
-   * 更新
-   */
-  const update = (id, targetEntity) => {
-    const nextState = {
-      ...state,
-    };
-    nextState[id] = targetEntity;
-    setState(nextState);
-
-    return nextState;
-  };
-
-  /**
-   * 添加 state
-   */
-  const add = (componentClass: EditorComponentClass) => {
-    /** 防止嵌套 */
-    if (!!componentClass.id && componentClass.id === componentClass.parentID) return componentClass;
-
-    /** 外部可以通过 entityID 设置真正的 entity 的 id */
-    let { entityID } = componentClass;
-    if (!entityID) {
-      entityID = increaseID();
-    }
-    /** 如果组件还没被实例化 */
-    /** 实例化 */
-    const entity = instantiation(componentClass, entityID);
-    const nextState = {
-      ...state,
-      [entityID]: entity
-    };
-
-    setState(nextState);
-
-    return entity;
-  };
-
-  /**
-   * 删除
-   */
-  const del = (id) => {
-    const nextState = {
-      ...state,
-    };
-    delete nextState[id];
-    setState(nextState);
-
-    return nextState;
-  };
-  return {
-    add,
-    update,
-    del,
-  };
 };
 
 const componentInstantiation = (componentClass, id) => {
@@ -152,12 +79,12 @@ const CanvasStage = ({
   selectedEntities,
   children
 }: CanvasStageProps) => {
-  const [layoutContentCollection, setLayoutContentCollection] = useState({});
+  const [flatLayoutNodes, setLayoutContentCollection] = useState({});
   const [componentsCollection, setComponentsCollection] = useState({});
   // const [selectState, setSelectState] = useState({});
 
   // console.log('componentsCollection', componentsCollection);
-  // console.log('layoutContentCollection', layoutContentCollection);
+  // console.log('flatLayoutNodes', flatLayoutNodes);
 
   const onSelectEntityForOnce = (clickEvent, { id, entity }) => {
     selectEntity(id, entity);
@@ -167,7 +94,7 @@ const CanvasStage = ({
     add: addContainer,
     update: updateContainer,
     del: delContainer
-  } = stateOperatorFac(layoutContentCollection, setLayoutContentCollection);
+  } = stateOperatorFac(flatLayoutNodes, setLayoutContentCollection);
 
   const {
     add: addComponent,
@@ -195,7 +122,7 @@ const CanvasStage = ({
 
     switch (itemClassCopy.type) {
       case 'container':
-        const entityID = increaseID();
+        const entityID = increaseID(ENTITY_ID);
         itemClassCopy.entityID = entityID;
         const entity = addContainer(itemClassCopy);
         onSelectEntityForOnce(null, { id: entityID, entity });
@@ -204,7 +131,7 @@ const CanvasStage = ({
         /**
          * 如果是 component，添加一个组件引用，并且向 componentCollection 添加一个 component 实例
          */
-        const componentRefID = increaseID();
+        const componentRefID = increaseID(ENTITY_ID);
         const componentID = `comp_id_${componentRefID}`;
         const componentEntity = addComponent(componentInstantiation(itemClassCopy, componentID));
         const componentRefConfigClass = {
@@ -250,12 +177,12 @@ const CanvasStage = ({
   const getSelectedState = (id) => {
     return !!selectedEntities[id];
   };
-  const layoutNodeArray = parseObjToTreeNode(layoutContentCollection);
+  const layoutNestingNodeTree = parseFlatNodeToNestNode(flatLayoutNodes);
 
   /**
    * 设置 node 信息
    */
-  setNodeArrayInfo(layoutNodeArray, layoutContentCollection);
+  setNodeTreeNestingInfo(layoutNestingNodeTree, flatLayoutNodes);
 
   return (
     <div className="canvas-stage-container">
@@ -268,14 +195,14 @@ const CanvasStage = ({
            * 通过 render prop 包装 layout 内部组件，达到动态控制内部组件实现的效果
            */
           LayoutParser({
-            layoutNode: layoutNodeArray,
+            layoutNode: layoutNestingNodeTree,
             componentWrapper: containerWrapperFac(
               ComponentWrapperCom,
               {
                 onClick: onSelectEntityForOnce,
               },
               {
-                layoutContentCollection,
+                flatLayoutNodes,
                 getSelectedState,
               }
             ),
@@ -286,7 +213,7 @@ const CanvasStage = ({
                 onClick: onSelectEntityForOnce,
               },
               {
-                layoutContentCollection,
+                flatLayoutNodes,
                 getSelectedState,
               }
             )

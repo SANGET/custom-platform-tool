@@ -1,10 +1,26 @@
 import React from 'react';
+import { Button } from '@infra/ui-interface';
 
 import Toolbar from '@engin/visual-editor/components/Toolbar';
 
-const ToolbarCustom = (props) => {
+interface ToolbarCustomProps {
+  onReleasePage?: () => void
+}
+
+const ToolbarCustom = ({
+  onReleasePage,
+  ...otherProps
+}) => {
   return (
-    <Toolbar {...props} />
+    <div>
+      <Button onClick={(e) => {
+        onReleasePage && onReleasePage();
+      }}
+      >
+        发布页面
+      </Button>
+      <Toolbar {...otherProps} />
+    </div>
   );
 };
 

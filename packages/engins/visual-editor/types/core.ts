@@ -37,23 +37,6 @@ export interface EditorComponentEntity extends EditorComponentClass {
   _classID: string
 }
 
-/**
- * 组件实例存储的单个属性数据
- */
-export interface EditorEntityPropertyStateItem {
-  /** 属性类型 */
-  propType: string
-  /** 属性的值 */
-  value: any
-}
-
-/**
- * 组件实例存储的所有属性数据集合
- */
-export interface EditorEntityProperties {
-  [stateID: string]: EditorEntityPropertyStateItem
-}
-
 /// //////////////// 属性 ///////////////////
 
 /**
@@ -88,6 +71,32 @@ export type PropertyItemClassConfig = PropertyItemClassConfigFunc | EditorProper
  */
 export interface EditorPropertyCollection {
   [colID: string]: PropertyItemClassConfig
+}
+
+/// //////////////// 实例的属性数据 ///////////////////
+
+/**
+ * 组件实例存储的单个属性数据
+ */
+export interface EditorEntityPropertyStateItem {
+  /** 属性类型 */
+  propType: string
+  /** 属性的值 */
+  value: any
+}
+
+/**
+ * 组件实例存储的所有属性数据集合
+ */
+export interface EditorEntityProperties {
+  [stateID: string]: EditorEntityPropertyStateItem
+}
+
+/**
+ * 存储属性
+ */
+export interface EntityPropertiesStore {
+  [entityID: string]: EditorEntityProperties
 }
 
 /// //////////////// 拖拽 ///////////////////

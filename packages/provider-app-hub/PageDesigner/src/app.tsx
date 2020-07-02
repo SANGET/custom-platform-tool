@@ -4,8 +4,9 @@ import { Grid } from '@infra/ui-interface';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 
-import { useComponentPropStore } from "@engin/visual-editor/app/useComponentPropStore";
+import { useEntityPropsStore } from "@engin/visual-editor/app/useEntityPropsStore";
 import { useSelectEntity } from "@engin/visual-editor/app/useSelectEntity";
+import { getLayoutNodeTree, getLayoutContentCollection } from "@engin/visual-editor/components/CanvasStage";
 import ToolBar from './components/Toolbar';
 import ComponentPanel from './components/ComponentPanel';
 import CanvasStage from './components/CanvasStage';
@@ -16,9 +17,33 @@ import { Prop2IUB } from './utils/prop-translater';
 
 import '@deer-ui/core/default.css';
 
+/**
+ * 模拟发布页面
+ *
+ * TODO: 完善逻辑
+ */
+const releasePage = ({
+  componentPropStore
+}) => {
+  const layoutNodeTree = getLayoutNodeTree();
+
+  Prop2IUB({
+    layoutNodeTree,
+    componentPropStore
+  });
+};
+
+/**
+ * 页面设计器 APP 入口
+ */
 const PageDesignerApp = (props) => {
+  /**
+   * 最终由 VisualEditor Engin 产出的数据
+   *
+   * TODO: 转换成 IUB-DSL
+   */
   const [selectedEntities, selectEntity] = useSelectEntity();
-  const [componentPropStore, saveComponentPropStore] = useComponentPropStore();
+  const [componentPropStore, saveEntityPropsStore] = useEntityPropsStore();
 
   const { activeID } = selectedEntities;
 
@@ -41,7 +66,13 @@ const PageDesignerApp = (props) => {
           className=""
           lg={10}
         >
-          <ToolBar />
+          <ToolBar
+            onReleasePage={(e) => {
+              releasePage({
+                componentPropStore
+              });
+            }}
+          />
         </Grid>
       </Grid>
       <Grid
@@ -85,7 +116,7 @@ const PageDesignerApp = (props) => {
             key={activeID}
             selectedEntity={selectedEntities.activeEntity}
             defaultFormState={componentPropStore[activeID]}
-            saveComponentPropStore={saveComponentPropStore}
+            saveEntityPropsStore={saveEntityPropsStore}
           />
         </Grid>
       </Grid>

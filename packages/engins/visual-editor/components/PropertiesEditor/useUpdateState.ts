@@ -23,7 +23,7 @@ const useUpdateState = (defaultState = false): [
     return () => {
       clearTimeout(timmer);
     };
-  });
+  }, [updateState]);
 
   return [
     updateState, toUpdate

@@ -6,7 +6,7 @@ export type UpdateFormValueCallback = (formID: any, value: any, propType: any) =
 /**
  * 存储属性编辑器产出的表单数据
  */
-const useFormState = (defaultFormState = {}): [
+const useFormState = (defaultFormState: EditorEntityProperties = {}): [
   EditorEntityProperties, UpdateFormValueCallback
 ] => {
   const [formState, setFormState] = useState<EditorEntityProperties>(defaultFormState);

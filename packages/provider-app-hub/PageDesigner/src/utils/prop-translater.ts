@@ -5,8 +5,14 @@
 /**
  * 属性 to IUB-DSL
  */
-export const Prop2IUB = () => {
-
+export const Prop2IUB = ({
+  layoutNodeTree,
+  componentPropStore
+}) => {
+  console.log({
+    layoutNodeTree,
+    componentPropStore
+  });
 };
 /**
  * IUB-DSL to 属性

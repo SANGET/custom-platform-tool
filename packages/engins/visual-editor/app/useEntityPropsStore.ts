@@ -1,20 +1,17 @@
 import { useState } from "react";
+import { EntityPropertiesStore } from "../types";
 
-interface ComponentPropStore {
-  [id: string]: {}
-}
-
-type SaveComponentPropStore = (id: string, formState: any) => void
+export type SaveEntityPropsStore = (id: string, formState: any) => void
 
 /**
  * React hook for store of component's props
  */
-export const useComponentPropStore = (defaultState = {}): [
-  ComponentPropStore, SaveComponentPropStore
+export const useEntityPropsStore = (defaultState = {}): [
+  EntityPropertiesStore, SaveEntityPropsStore
 ] => {
   const [componentPropStore, setComponentPropStore] = useState(defaultState);
 
-  const saveComponentPropStore: SaveComponentPropStore = (id: string, formState) => {
+  const saveComponentPropStore: SaveEntityPropsStore = (id: string, formState) => {
     setComponentPropStore({
       ...componentPropStore,
       [id]: {

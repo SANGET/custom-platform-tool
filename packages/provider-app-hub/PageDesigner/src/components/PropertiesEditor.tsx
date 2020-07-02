@@ -1,11 +1,17 @@
 import React from 'react';
-import Editor from '@engin/visual-editor/components/PropertiesEditor';
+import Editor, { PropertiesEditorProps } from '@engin/visual-editor/components/PropertiesEditor';
 
-const PropertiesEditor = (props) => {
+interface PropsEditorProps extends PropertiesEditorProps {
+  customConfig?: {}
+}
+
+const PropertiesEditor = ({
+  ...otherProps
+}: PropsEditorProps) => {
   return (
     <div>
       PropertiesEditor
-      <Editor {...props} />
+      <Editor {...otherProps} />
     </div>
   );
 };
