@@ -314,11 +314,10 @@ interface TypeOfIUBDSL {
 
 ## 13. 参考（Reference）
 
-- [前端系统架构](https://www.tapd.cn/41909965/documents/show/1141909965001000886?file_type=word&amp;amp;amp;amp;file_ext=0%20-%20%E5%89%8D%E7%AB%AF%E6%9E%B6%E6%9E%84%E8%AE%BE%E8%AE%A1v2)
+- [前端系统架构](https://www.tapd.cn/41909965/documents/show/1141909965001001142#target:toc4)
 - [IUB-DSL 项目结构](https://github.com/SANGET/custom-platform-tool/tree/master/packages/iub-dsl)
 - [真实业务场景 - 新增用户](https://github.com/SANGET/custom-platform-tool/blob/master/packages/iub-dsl/demo/business-case/create-user.ts)
 - [IUB-DSL 属性思维导图](https://www.tapd.cn/41909965/documents/view/1141909965001001059?file_type=mindmap&amp;amp;amp;amp;amp;file_ext=xmind)
-- [路由模块设计](https://www.tapd.cn/41909965/documents/show/1141909965001001066)
 
 -----
 
