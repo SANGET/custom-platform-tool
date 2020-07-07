@@ -1,3 +1,3 @@
-import { TypeOfIUBDSL } from "@iub-dsl/core/types";
+import { TypeOfIUBDSL } from "@iub-dsl/core";
 
 export { TypeOfIUBDSL };

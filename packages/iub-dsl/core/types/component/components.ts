@@ -4,7 +4,7 @@ type FieldHook = {
 };
 
 export interface BaseForm {
-  /** 对应 table 的 column 的 field */
+  /** 对应schemas的store */
   field: string;
   /** 对应 table column 的 field 在异步操作时的 hook */
   fieldHook?: FieldHook;
@@ -18,6 +18,8 @@ export interface BaseForm {
 
 export interface Selector extends BaseForm {
   type: "Selector";
+  /** 对应schemas的store, stroe必须是∂ */
+  dataSource: string;
 }
 
 export interface Input extends BaseForm {

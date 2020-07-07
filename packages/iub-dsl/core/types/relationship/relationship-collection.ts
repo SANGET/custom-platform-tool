@@ -1,4 +1,6 @@
 import TriggerEvents from "../actions/events";
+import { DataCollectionRelationship } from "./data-collection";
+import DataAndComponent from "./data-and-component";
 
 interface Trigger {
   when: TriggerEvents;
@@ -51,6 +53,10 @@ interface RelationshipsCollection {
     };
   };
   runAction?: {};
+
+  dataCollection?: DataCollectionRelationship
+
+  dataAndComponent?: DataAndComponent;
 }
 
 export default RelationshipsCollection;
