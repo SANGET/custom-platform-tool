@@ -12,7 +12,7 @@ import $R from '../services/req';
 import { initPageContext } from './context';
 import { Loading } from '../common';
 
-const SpecificParser = () => {
+const SpecificParser = (pageContext) => {
   return (
     <div></div>
   );
@@ -34,18 +34,21 @@ interface PageContainerProps {
 }
 
 const parserLoader = (type, appContext, { dsl, pageAuthInfo }) => {
+  const pageContext = initPageContext(appContext, dsl);
   switch (type) {
     case 'config':
+      pageContext.requestAPI = $R;
       return IUBDSLParser({
         // 接口反射，UI 验证
         context: {
           setContext: () => ({}),
         },
         authUI: (UIID) => AuthUIByUIID(UIID, pageAuthInfo),
-        dsl
+        dsl,
+        pageContext
       });
     case 'embed':
-      return SpecificParser();
+      return SpecificParser(pageContext);
     default:
       return <div></div>;
   }
@@ -71,15 +74,8 @@ const PageContainer = (props: PageContainerProps) => {
       dsl,
       pageAuthInfo
     });
-    // console.log(ParserResult);
-    return (<PageContainerWrapper
-      key={pageID}
-      id={pageID}
-      name={name}
-    >{
-        ParserResult.layoutParseRes
-      }</PageContainerWrapper>);
-    // return <div></div>;
+    console.log(ParserResult);
+    return (<PageContainerWrapper id={pageID} name={name}>{ParserResult.layoutParseRes}</PageContainerWrapper>);
   }
 
   return (<div>Not Permitted</div>);
