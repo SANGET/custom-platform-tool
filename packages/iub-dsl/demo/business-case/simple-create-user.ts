@@ -1,27 +1,5 @@
 import { TypeOfIUBDSL } from "..";
 
-/**
- * @description 整体运行链路
- * 1. 加载iub-dsl、解析并渲染页面绑定字段、用户输入触发校验、点击提交、查询校验、提交数据、反馈结果。
- * 2. 外部输入的处理、
- * 3. 导出和输出的处理。(提交至pageContext时)
- */
-
-/**
- * @description 完整创建用户的描述
- *  TODO: 输入、输出、引用、导出若存在冲突？
- * 1. 输入username或引用其他页面的username
- * 2. 输出user表单或导出user表单
- * 3. 数据间的引用。以及数据校验 [元数据默认校验规则、控件配置校验规则]
- * 4. 提交后的反馈和后续操作
- */
-
-/**
- * @description 问题
- * 1. 校验的rule放在哪
- * 2. schemas使用了input、refVar、defaultVal，哪个权重更高
- * 3.
- */
 const SimpleCreateUser: TypeOfIUBDSL = {
   id: "SimpleCreateUser",
   type: "config",
@@ -44,7 +22,82 @@ const SimpleCreateUser: TypeOfIUBDSL = {
             field: 'age',
             type: 'int',
             len: 3,
-            // rule ?
+          },
+          field_UUID3: {
+            field: 'deparmentId',
+            type: 'string',
+            len: 32
+          }
+        },
+      },
+      deparment_UUID: {
+        type: 'general',
+        database: '-',
+        tableName: 'deparment',
+        columns: {
+          field_UUID1: {
+            type: 'string',
+            len: 32,
+            field: 'id'
+          },
+          field_UUID2: {
+            type: 'string',
+            len: 32,
+            field: 'deparment_name'
+          },
+          field_UUID3: {
+            type: 'string',
+            len: 32,
+            field: 'pid'
+          },
+        }
+      },
+      location_UUID: {
+        type: 'general',
+        database: '-',
+        tableName: 'location',
+        columns: {
+          field_UUID1: {
+            type: 'string',
+            len: 32,
+            field: 'id'
+          },
+          field_UUID2: {
+            type: 'string',
+            len: 32,
+            field: 'location_name'
+          },
+          field_UUID3: {
+            type: 'string',
+            len: 32,
+            field: 'pid'
+          },
+          field_UUID4: {
+            type: 'string',
+            len: 2,
+            field: 'location_type'
+          },
+        }
+      },
+      dictionary_UUID: {
+        type: "general",
+        database: "-",
+        tableName: "dictionary",
+        columns: {
+          data_UUID0: {
+            field: 'id',
+            type: 'string',
+            len: 32
+          },
+          data_UUID1: {
+            field: 'dictionaryName',
+            type: 'string',
+            len: 6,
+          },
+          data_UUID2: {
+            field: 'dictionaryType',
+            type: 'string',
+            len: 6,
           },
         },
       },
@@ -81,49 +134,177 @@ const SimpleCreateUser: TypeOfIUBDSL = {
   },
 
   /** 数据模型 */
+  // 表单数据、输入展示数据、  TODO: 隐藏字段? 后台的冗余数据?、 与其他交互的数据结构
+  // 实际上是单个还是多个,都不知道的,但是都应该支持
+  // 回填的时候我怎么才能知道是哪个文本框,哪个dataUUID、
   schemas: {
-    page: {
-      // userFromKey如何定。这个应该也是唯一的
-      userFrom_UUID: {
-        type: "object",
-        struct: {
-          data_UUID1: {
-            type: 'string',
-            defaultVal: '张三',
-            fieldMapping: 'userTableId.field_UUID1', // metadataCollection.dataSource[userTableId].columns[field_UUID1]
-            // TODO: 数据关系？？交给配置人员
-            selectData: ["defaultVal", "@pageContextUUID1"],
-            rules: [
-              { require: true },
-              { minLength: 3 },
-              { maxLength: 32 },
-              { sysRules: "xxx" }, // ?
-            ],
-          },
-          data_UUID2: {
-            type: 'num',
-            fieldMapping: 'userTableId.field_UUID2',
+    // 实际数据、
+    // 1-6绑定输入框  「关系处理?」
+    // 姓名、年龄
+    // TODO: 结构解析? 结构扩展?
+    // struct: {
+    //   show: {
+    //     type: 'string',
+    //     fieldMapping: 'location_UUID.field_UUID2',
+    //   },
+    //   value: {
+    //     type: 'string',
+    //     fieldMapping: 'location_UUID.field_UUID1'
+    //   }
+    // }
+    data_UUID1: {
+      type: 'string',
+      defaultVal: '张三',
+      fieldMapping: 'userTable_UUID.field_UUID1',
+      rules: [
+        { require: true },
+        { maxLength: '32' },
+        { minLength: '3' }
+      ],
+    },
+    data_UUID2: {
+      type: 'num',
+      defaultVal: 0,
+      fieldMapping: 'userTable_UUID.field_UUID2',
+    },
+    data_UUID3: { // 部门
+      type: 'string',
+      fieldMapping: 'userTable_UUID.field_UUID3',
+    },
+    data_UUID4: { // 建筑物
+      type: 'structObject',
+      // 过滤、显示、实际值多个
+      struct: {
+        dataUUID_1: {
+          type: 'string',
+          alias: 'showValue',
+          fieldMapping: 'location_UUID.field_UUID2',
+        },
+        dataUUID_2: {
+          type: 'string',
+          alias: 'value',
+          fieldMapping: 'location_UUID.field_UUID1'
+        },
+      }
+    },
+    data_UUID5: { // 楼层
+      type: 'structObject',
+      struct: {
+        dataUUID_1: {
+          type: 'string',
+          alias: 'showValue',
+          fieldMapping: 'location_UUID.field_UUID2',
+        },
+        dataUUID_2: {
+          type: 'string',
+          alias: 'value',
+          fieldMapping: 'location_UUID.field_UUID1'
+        },
+      }
+    },
+    data_UUID6: { // 区域
+      type: 'structObject',
+      struct: {
+        dataUUID_1: {
+          type: 'string',
+          alias: 'showValue',
+          fieldMapping: 'location_UUID.field_UUID2',
+        },
+        dataUUID_2: {
+          type: 'string',
+          alias: 'value',
+          fieldMapping: 'location_UUID.field_UUID1'
+        },
+      }
+    },
+    // 单独的部门和区域... 一个部分划分了很多个区域「关系」.. 三张表
+    // 部门列表
+    data_UUID7: {
+      type: 'structArray',
+      struct: {
+        UUID_1: {
+          type: 'string',
+          fieldMapping: ''
+        },
+        UUID_2: {
+          type: 'string',
+          fieldMapping: ''
+        },
+        UUID_3: {
+          type: 'string',
+          fieldMapping: ''
+        }
+      }
+    },
+    // 运行时候的数据
+    data_UUID: {
+      type: 'boolean',
+      fieldMapping: 'userTableId.field_UUID2',
+      defaultVal: false
+    },
+    data_UUID8: {
+      type: 'structArray',
+      struct: {
+        UUID_1: { // 建筑物
+          type: 'structObject',
+          struct: {
+            dataUUID_1: {
+              type: 'string',
+              alias: 'showValue',
+              fieldMapping: 'location_UUID.field_UUID2',
+            },
+            dataUUID_2: {
+              type: 'string',
+              alias: 'value',
+              fieldMapping: 'location_UUID.field_UUID1'
+            },
+          }
+        },
+        UUID_2: { // 楼层
+          type: 'structObject',
+          struct: {
+            dataUUID_1: {
+              type: 'string',
+              alias: 'showValue',
+              fieldMapping: 'location_UUID.field_UUID2',
+            },
+            dataUUID_2: {
+              type: 'string',
+              alias: 'value',
+              fieldMapping: 'location_UUID.field_UUID1'
+            },
+          }
+        },
+        UUID_3: { // 区域
+          type: 'structObject',
+          struct: {
+            dataUUID_1: {
+              type: 'string',
+              alias: 'showValue',
+              fieldMapping: 'location_UUID.field_UUID2',
+            },
+            dataUUID_2: {
+              type: 'string',
+              alias: 'value',
+              fieldMapping: 'location_UUID.field_UUID1'
+            },
           }
         }
-      },
-      // TODO: 验证是分开还是一起。还是其他方式
-      // validUserFrom: {
-      //   type: 'object',
-      //   struct: {
-      //     data_UUID1: {
-      //       type: 'boolean',
-      //       rules: [
-      //         { require: true },
-      //         { minLength: 3 },
-      //         { maxLength: 32 },
-      //         { sysRules: 'xxx' }, // ?
-      //       ]
-      //     },
-      //     data_UUID2: 'boolean'
-      //   }
-      // },
+      }
     },
-    flow: {},
+    data_UUID9: {
+      type: 'structObject',
+      struct: {
+        label: {
+          type: 'string',
+          fieldMapping: ''
+        },
+        value: {
+          type: 'string',
+          fieldMapping: ''
+        }
+      }
+    }
   },
 
   /** 布局信息 */
@@ -158,6 +339,70 @@ const SimpleCreateUser: TypeOfIUBDSL = {
           },
         ],
       },
+      {
+        id: "containerUUID2",
+        type: "container",
+        layout: {
+          type: "flex",
+          props: {
+            justifyContent: "start",
+          },
+        },
+        // TODO: 布局解析？
+        body: [
+          {
+            id: "controlId1",
+            type: "componentRef",
+            componentID: "compUUID4",
+          },
+          {
+            id: "controlId2",
+            type: "componentRef",
+            componentID: "compUUID5",
+          },
+          {
+            id: "controlId3",
+            type: "componentRef",
+            componentID: "compUUID6",
+          },
+        ],
+      },
+      {
+        id: "containerUUID3",
+        type: "container",
+        layout: {
+          type: "flex",
+          props: {
+            justifyContent: "start",
+          },
+        },
+        body: [
+          {
+            id: "controlId1",
+            type: "componentRef",
+            componentID: "compUUID0",
+          },
+        ],
+      },
+      {
+        id: "containerUUID4",
+        type: "container",
+        runtimeField: 'data_UUID', // TODO: 测试先行,后面再想
+        layout: {
+          type: "flex",
+          props: {
+            justifyContent: "start",
+            visibility: false
+          },
+        },
+        body: [
+          {
+            id: "controlId1",
+            type: "componentRef",
+            componentID: "compUUID7",
+          },
+        ],
+      },
     ],
   },
 
@@ -169,20 +414,31 @@ const SimpleCreateUser: TypeOfIUBDSL = {
       type: "component",
       component: {
         type: 'Input',
-        field: '@userFrom_UUID.data_UUID1'
+        field: '@(schemas)data_UUID1',
+        label: '姓名'
       },
       props: {},
-      actions: {},
+      actions: {
+        onChange: {
+          type: "actionRef",
+          actionID: "changeUUID1",
+        }
+      },
     },
     compUUID2: {
       id: "compUUID2",
       type: "component",
       component: {
         type: 'Input',
-        field: '@userFrom_UUID.data_UUID2'
+        field: '@(schemas)data_UUID2',
+        label: '年龄'
       },
       props: {},
       actions: {
+        onChange: {
+          type: "actionRef",
+          actionID: "changeUUID1",
+        },
         onFocus: {
           type: "actionRef",
           actionID: "validAgeRules",
@@ -191,6 +447,62 @@ const SimpleCreateUser: TypeOfIUBDSL = {
     },
     compUUID3: {
       id: "compUUID3",
+      type: "component",
+      component: {
+        type: 'Input',
+        field: '@(schemas)data_UUID3',
+        label: '部门'
+      },
+      props: {
+        readOnly: true,
+        // disabled: true
+      },
+      actions: {
+        // onChange: {
+        //   type: "actionRef",
+        //   actionID: "changeUUID1",
+        // },
+        onClick: {
+          actionID: 'clickUUID1',
+          type: 'actionRef',
+        }
+      },
+    },
+    compUUID4: {
+      id: "compUUID4",
+      type: "component",
+      component: {
+        type: 'Input',
+        field: '@(schemas)data_UUID4',
+        label: '建筑物'
+      },
+      props: {},
+      actions: {},
+    },
+    compUUID5: {
+      id: "compUUID5",
+      type: "component",
+      component: {
+        type: 'Input',
+        field: '@(schemas)data_UUID5',
+        label: '楼层'
+      },
+      props: {},
+      actions: {},
+    },
+    compUUID6: {
+      id: "compUUID6",
+      type: "component",
+      component: {
+        type: 'Input',
+        field: '@(schemas)data_UUID6',
+        label: '区域'
+      },
+      props: {},
+      actions: {},
+    },
+    compUUID0: {
+      id: "compUUID0",
       type: "component",
       component: {
         type: "Button",
@@ -204,6 +516,17 @@ const SimpleCreateUser: TypeOfIUBDSL = {
         },
       },
     },
+    compUUID7: {
+      id: 'compUUID7',
+      type: 'component',
+      component: {
+        type: 'Selector',
+        dataSource: '@(schemas)data_UUID8',
+        field: '@(schemas)data_UUID9',
+      },
+      props: {},
+      actions: {}
+    }
   },
 
   /** 动作集合 */
@@ -275,6 +598,7 @@ const SimpleCreateUser: TypeOfIUBDSL = {
           expression: '@showTip.warn("表单校验失败！")'
         }
       },
+      flowCondition: {},
       flowControl: `
         if(#var1) {
           #f2;
@@ -284,18 +608,35 @@ const SimpleCreateUser: TypeOfIUBDSL = {
         }
       `,
     },
+    changeUUID1: {
+      flowCondition: {},
+      flowItems: {},
+      flowControl: ``
+    }
   },
 
   /** 关系集合 */
   relationshipsCollection: {
-    // ?
-    // rulesCollections: {
-    //   requiredRule: {
-    //     type: 'required',
-    //     comIds: ['cID'],
-    //   }
-    // }
+    dataCollection: {
+      user: {
+        group: [
+          {
+            schemasMapping: '@(schemas)data_UUID1',
+          },
+          {
+            schemasMapping: '@(schemas)data_UUID2',
+          },
+          {
+            schemasMapping: '@(schemas)data_UUID3',
+          },
+        ],
+      }
+    },
+    dataChanged: {}
   }
 };
 
 export default SimpleCreateUser;
+
+// 1. 打开隐藏页面、加载数据、选择数据、改变数据、数据变更关系
+// 2. 重新思考数据与组件关系的interface
