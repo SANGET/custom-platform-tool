@@ -5,7 +5,7 @@
   "workspaces": [
     "packages/provider-app-hub/*",
     "packages/iub-dsl/*",
-    "packages/engins/*",
+    "packages/engine/*",
     "packages/infrastructure/*",
     "packages/consumer-app/*"
   ],
@@ -14,11 +14,11 @@
     "lerna:bootstrap": "lerna bootstrap",
     "start:all": "lerna run --parallel --stream start",
     "start:provider-app": "cd ./packages/provider-app-hub/EntryHall && npm start",
-    "start:visual-editor": "cd ./packages/engins/visual-editor && npm start",
+    "start:visual-editor": "cd ./packages/engine/visual-editor && npm start",
     "start:page-designer": "cd ./packages/provider-app-hub/PageDesigner && npm start",
     "start:consumer-app": "cd ./packages/consumer-app/web-client && npm start",
     "build:provider-app": "minictl build",
-    "build:visual-editor-app": "cd ./packages/engins/visual-editor && npm run build",
+    "build:visual-editor-app": "cd ./packages/engine/visual-editor && npm run build",
     "prettier:base": "prettier --parser typescript",
     "format": "npm run prettier:base -- --write \"packages/**/*.{ts,tsx}\"",
     "test": "jest"
