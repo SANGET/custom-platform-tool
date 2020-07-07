@@ -11,9 +11,7 @@ interface WrapperContext {
 }
 
 export interface LayoutParserWrapper {
-  /** 容器渲染 wrapper，包装函数 */
   containerWrapper?: (child: React.ReactChild, WrapperContext) => React.ReactChild
-  /** 组件渲染 wrapper，包装函数 */
   componentWrapper?: (child: React.ReactChild, WrapperContext) => React.ReactChild
 }
 
@@ -24,9 +22,10 @@ export interface LayoutParserParams extends LayoutParserWrapper {
 /**
  * TODO: 完善布局
  */
-const containerLayoutParser = (layoutInfo): React.CSSProperties => {
+const containerLayoutParser = (layoutInfo, parseContext): React.CSSProperties => {
+  const visibility = typeof layoutInfo.props.visibility !== 'undefined' && parseContext.pageRuntimeState.data_UUID === false ? 'none' : 'flex';
   return {
-    display: 'flex'
+    display: visibility,
   };
 };
 
@@ -40,7 +39,7 @@ const containerLayoutParser = (layoutInfo): React.CSSProperties => {
 const renderLayout = (
   layoutNode: LayoutContentElement[],
   wrapper: LayoutParserWrapper,
-  parserContext: ParserContextGroup
+  parserContext
 ) => {
   return Array.isArray(layoutNode) && layoutNode.map((node, idx) => {
     const { id } = node;
@@ -51,7 +50,7 @@ const renderLayout = (
         // TODO: 加入布局UI隔离
         const childOfContainer = (
           <div
-            style={containerLayoutParser(layout)}
+            style={containerLayoutParser(layout, parserContext)}
             className="container"
             key={id + idx}
           >
@@ -65,17 +64,8 @@ const renderLayout = (
           ? containerWrapper(childOfContainer, { id, idx })
           : childOfContainer;
       case 'componentRef':
-        const componentConfig = parserContext.bindComponent(node.componentID);
-        console.log(node.componentID);
-        // TODO: 套这一层应该，放在布局容器，用其他方式解耦
-        const childOfComponent = (
-          <div className="component" key={id + idx || 'none'}>
-            {componentParser(componentConfig, parserContext)}
-          </div>
-        );
-        return typeof componentWrapper === 'function'
-          ? componentWrapper(childOfComponent, { id, idx, componentConfig })
-          : childOfComponent;
+        const Component = parserContext.bindComponent(node.componentID);
+        return Component;
     }
   });
 };

@@ -7,13 +7,12 @@ import {
 } from 'multiple-page-routing';
 
 /** Components */
-import IUBDSLParser from '@iub-dsl/parser/engin';
 import Nav from "./nav";
 import PageContainer from '../page-container';
 
 /** API */
 import { GetMenu } from '../services/menu';
-import { GetPageAuthConfig, AuthUIByUIID } from '../services/auth';
+import { GetPageAuthConfig } from '../services/auth';
 import { LoadPage } from '../services/access';
 
 interface AppContainerState extends RouterState {
@@ -76,15 +75,6 @@ class AppContainer extends RouterMultiple<AppContainerProps, AppContainerState> 
             LoadPage(pageID)
               .then((pageData) => {
                 pageCache[pageID] = pageData;
-                // pageCache[pageID] = IUBDSLParser({
-                //   // 接口反射，UI 验证
-                //   context: {
-                //     setContext: () => ({}),
-                //   },
-                //   authUI: (UIID) => AuthUIByUIID(UIID, pageAuthCache[pageID]),
-                //   dsl: pageData
-                // });
-                console.log(pageCache[pageID]);
                 // this.selectTab(pageID);
                 this.setState({
                   preparingPage: false
