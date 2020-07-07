@@ -1,19 +1,26 @@
-import parserDataChange from "./parserDataChange";
+import RelationshipsCollection from "@iub-dsl/core/types/relationship/relationship-collection";
+import { CommonObjStruct } from "@iub-dsl/core";
+import DataChangeParser from "./dataChangeParser";
+import DataCollectionParser from "./dataCollectionParser";
 
-const parseRelation = (opportunity, relcatonCollection) => {
+const RelationParser = (opportunity, relcatonCollection: RelationshipsCollection, parseContext) => {
+  const parseResult: CommonObjStruct = {};
   switch (opportunity) {
-    case 'schemasCreate':
-      if (relcatonCollection.dataChange) {
-        return parserDataChange(relcatonCollection.dataChange);
+    case 'DataSchemasParseEnd':
+      if (relcatonCollection.dataChanged) {
+        parseResult.dataChange = DataChangeParser(relcatonCollection.dataChanged, parseContext);
+      }
+      if (relcatonCollection.dataCollection) {
+        parseResult.dataCollection = DataCollectionParser(relcatonCollection.dataCollection, parseContext);
       }
       break;
-
     default:
       break;
   }
+  return parseResult;
 };
 
 export {
-  parseRelation,
-  parserDataChange
+  RelationParser,
+  DataChangeParser
 };
