@@ -4,15 +4,14 @@
     "plugin:@typescript-eslint/recommended",
     "react-app"
   ],
-  "plugins": [
-    "react", "@typescript-eslint"
-  ],
+  "plugins": ["react", "@typescript-eslint"],
   "rules": {
     "@typescript-eslint/indent": ["error", 2],
     // "@typescript-eslint/explicit-function-return-type": 0,
     "@typescript-eslint/explicit-member-accessibility": 0,
     "@typescript-eslint/explicit-module-boundary-types": 0,
     "indent": ["error", 2, { "SwitchCase": 1 }],
+    "linebreak-style": [0, "windows"],
     "semi": ["error", "always"],
     "no-unused-vars": [
       1,
@@ -59,14 +58,9 @@
     "import/resolver": {
       "node": {
         "extensions": [".js", ".jsx", ".ts", ".tsx"],
-        "moduleDirectory": [
-          "node_modules",
-          "./packages"
-        ]
+        "moduleDirectory": ["node_modules", "./packages"]
       }
     },
-    "import/external-module-folders": [
-      "./packages"
-    ]
+    "import/external-module-folders": ["./packages"]
   }
 }

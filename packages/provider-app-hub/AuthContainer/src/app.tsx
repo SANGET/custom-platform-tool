@@ -1,23 +1,40 @@
 import React, { FC } from 'react';
-import { Button } from 'antd';
 import './styles/App.less';
 
+import {
+  Switch, Route, Link, BrowserRouter
+} from 'react-router-dom';
+import Home from './features/Home';
+import EditTable from './features/EditTable';
+import TransferTree from './features/TransTree';
+
 const App: FC = () => (
-  <div className="App">
-    <Button type="primary">Button</Button>
-  </div>
+  <BrowserRouter>
+    <div className="flex-container">
+      <header>
+        <nav>
+          <ul>
+            <li>
+              <Link to="/">Home</Link>
+            </li>
+            <li>
+              <Link to="/editTable">editTable</Link>
+            </li>
+            <li>
+              <Link to="/transferTree">transferTree</Link>
+            </li>
+          </ul>
+        </nav>
+      </header>
+      <main>
+        <Switch>
+          <Route exact path="/" component={Home} />
+          <Route path="/editTable" component={EditTable} />
+          <Route path="/transferTree" component={TransferTree} />
+        </Switch>
+      </main>
+    </div>
+  </BrowserRouter>
 );
 
 export { App };
-
-// import React from 'react';
-
-// const CustomSubApp = () => {
-//   return (
-//     <div>
-//       <h3>自定义子应用模版</h3>
-//     </div>
-//   );
-// };
-
-// export { CustomSubApp };

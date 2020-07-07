@@ -2,5 +2,24 @@
   "name": "@provider-app/auth-container",
   "version": "0.0.1",
   "author": "SANGET",
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "antd": "^4.4.1"
+  },
+  "scripts": {
+    "start": "cross-env PORT=60000 minictl start",
+    "build": "minictl build"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  }
 }
