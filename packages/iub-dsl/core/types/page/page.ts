@@ -5,8 +5,9 @@ import SRCInterface from "./src-interface";
 import MetadataMapping from "../metadata/metadata-mapping";
 import RelationshipsCollection from "../relationship/relationship-collection";
 import { ActionFlow } from "../actions/action-collection";
-import { PageSchemas, FlowSchemas } from "../schemas";
+import { Schemas } from "../schemas";
 import { LayoutContent } from "../layout-content";
+import { MetadataMappingCollection } from "..";
 
 /**
  * 页面类型详细定义
@@ -21,6 +22,8 @@ type PageTypes =
  * 描述页面信息的 DSL
  *
  * 规则：一级属性存储描述页面的信息
+ *
+ * TODO: 增加依赖校验
  */
 export interface TypeOfIUBDSL {
   /**
@@ -39,10 +42,7 @@ export interface TypeOfIUBDSL {
   sysRtCxtInterface: SRCInterface;
 
   /** Schema 数据模型 */
-  schemas: {
-    page: PageSchemas;
-    flow: FlowSchemas;
-  };
+  schemas: Schemas;
 
   /**
    * 数据源关系枢纽
@@ -50,7 +50,7 @@ export interface TypeOfIUBDSL {
    * 规则：
    * 1. 子模版的 dataSourceHub 需要合并到最高层，
    */
-  metadataMapping: MetadataMapping;
+  metadataCollection: MetadataMappingCollection;
 
   /** 关系集合 */
   relationshipsCollection: RelationshipsCollection;

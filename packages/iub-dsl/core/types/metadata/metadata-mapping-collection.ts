@@ -26,6 +26,7 @@ export interface GeneralTableMapping {
 }
 
 // TODO: 商讨一下。是否这样。强引用主从表。弱引用
+// TODO: 经过商讨,关系目前的作用不大,如果要用上,逻辑太复杂牵扯太多
 export interface QuoteRef {
   connectKey: string; // tableId.filed
   key?: string; // tableId.id
@@ -38,12 +39,6 @@ export interface QuoteRef {
 export interface DataSourceRelation {
   [dataSourceId: string]: {
     type: string;
-    subTable?: string | QuoteRef;
-    parentTable?:
-    | string
-    | {
-      [dataUUID: string]: QuoteRef;
-    };
     quoteRef?: {
       // tableId.filed。 Object扩展预留
       [dataUUID: string]: string | QuoteRef;
