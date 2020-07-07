@@ -1,81 +1,93 @@
+import { CommonObjStruct } from "@iub-dsl/core";
 import { ParserParamsOfIUBDSL } from "../types/parser-interface";
-import LayoutParser from "./layout";
+import LayoutParser from "./layout-parser";
 import flowExecutor from "./flow";
-import parseMetaData from "./meta-data/metaData";
-import { parseRelation } from "./relation";
+import { RelationParser } from "./relation";
+import { ActionsCollectionParser } from "./actions/actions-parser";
+import ComponentCollectionParser from "./component/component-parser";
+import DataSchemasParser, { InitPageState } from "./schemas/schemas-parser";
 
+// 绑定数据、观察变化、局部优化
+// TODO: 每次都是重新解析渲染
 /**
- * 1. 页面运行上下文的生成、数据仓库、
- * 2. 事件绑定的时机？
- * 3. 每个时机都是可以独立解析的，可以使用接口反射  ??
- * 4. 绑定数据的时刻、钩子、反射？
+ * 预编译
+ * 实际使用
+ * dataChange
+ * vaild --> fn/view
+ * 由规则进行绑定事件~~~
+ * 流程控制
+ * context?
+ * 数据变更关系的解析、数据收集
+ * 弹窗、页面通信
+ * 校验: TODO
+ *
+ * Relation: 解决副作用、拦截、通用、动态插拔的关系??
  */
-
-const parseSchemas = (...args) => {};
-const parsesysInput = (...args) => {};
-const parsesysOutput = (...args) => {};
-
 const IUBDSLParser = ({
-  dsl, context, pageContext, appContext
+  dsl, context // 需要的上下文依赖
 }: ParserParamsOfIUBDSL) => {
   const {
     layoutContent, componentsCollection, actionsCollection,
-    metadataMapping, relationshipsCollection, schemas,
+    metadataCollection, relationshipsCollection, schemas,
     sysRtCxtInterface
   } = dsl;
+  const d = Date.now();
+  let parseRelationRes: CommonObjStruct = {};
+  let parseContext = {};
+  // 数据模型解析
+  const {
+    // pageRuntimeState, setPageRuntimeState
+    schemaStruct, mappingEntity
+  } = DataSchemasParser({ metadataCollection, schemas });
 
-  // parseMetaData 解析元数据映射，数据转换时调用、使用关系时候调用
-  pageContext.metadataEntity = parseMetaData(metadataMapping);
-  // schemas 页面渲染解析前调用
-  pageContext.store = parseSchemas(schemas);
-  // relationshipCollection 任何时候都可能调用
-  parseRelation('schemasCreate', relationshipsCollection);
-  parsesysInput(sysRtCxtInterface, pageContext.store, pageContext);
+  // TODO: 建立引用关系,动态获取其他页面引用的数据 ??
+  const { pageRuntimeState, setPageRuntimeState } = InitPageState(schemaStruct);
+  parseContext = {
+    mappingEntity,
+    pageRuntimeState,
+    setPageRuntimeState,
+  };
+  // action的依赖??
+  parseRelationRes = RelationParser('DataSchemasParseEnd', relationshipsCollection, parseContext);
+  console.log(parseRelationRes);
 
-  const parserContext = {
-    context,
-    // metaDataMapping,
-    bindAction: (actionID) => {
-      // console.log(actionID);
-      return actionsCollection[actionID];
-    },
-    bindComponent: (componentID) => {
-      // console.log(componentID);
-      return componentsCollection[componentID];
-    },
+  const parseActionResult = ActionsCollectionParser(actionsCollection);
+
+  parseContext = {
+    ...parseContext,
+    ...parseRelationRes,
+    bindAction: (actionID) => parseActionResult[actionID]
   };
 
-  try {
-    // TODO: general / custom
-    return LayoutParser({
-      layoutNode: layoutContent.content
-    }, parserContext);
-  } catch (e) {
-    return '';
-  } finally {
-    parsesysOutput();
-  }
+  // 验证依赖和时机是否满足、满足则执行
+  // parseRelation('', relationshipsCollection, parseContext);
+
+  const componentParseRes = ComponentCollectionParser(componentsCollection, parseContext);
+
+  parseContext = {
+    ...parseContext,
+    bindComponent: (compId) => componentParseRes[compId]
+  };
+
+  const layoutParseRes = LayoutParser({ layoutNode: layoutContent.content }, parseContext);
+
+  parseContext = {
+    ...parseContext,
+    layoutParseRes
+  };
+
+  console.log(Date.now() - d);
+
+  console.log(parseContext);
+
+  return parseContext;
 };
 
-//   try {
-//     switch (layoutContent.type) {
-//       case 'general':
-//         // TODO: 订阅其他页面的数据变化
-//         // context.subscribeDataChange(sysRtCxtInterface);
-//         return layoutParser({
-//           layoutNode: layoutContent,
-//         }, parserContext);
-//       case 'custom':
-//         return '';
-//       default:
-//         return '';
-//     }
-//   } catch (e) {
-//     return 'error';
-//   } finally {
-//     parsesysOutput();
-//   }
+/**
+ * 分开渲染有必要但不是现在重要的
+ */
+const IUBDSLRender = () => {
+
+};
 
 export default IUBDSLParser;
-
-// 行为与表现分离
