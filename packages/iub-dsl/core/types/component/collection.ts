@@ -21,7 +21,7 @@ type ActionRefType = {
   actionID: string;
 }
 
-type ActionTypes = ActionDirectType | ActionRefType;
+export type ActionTypes = ActionDirectType | ActionRefType;
 
 interface Events {
   onMount?: ActionTypes;
@@ -36,6 +36,7 @@ interface Events {
   onFocus?: ActionTypes;
 }
 
+export type ComponentType = Selector | Input | TreeSelector | Table | Button
 /**
  * 组件元素，行为载体
  */
@@ -46,7 +47,7 @@ export interface ComponentElement extends ElementAST {
    * 对应的 component
    * TODO: 完善所有 component 的 mapping
    */
-  component: Selector | Input | TreeSelector | Table | Button;
+  component: ComponentType;
   /** 存储通用 props 编辑后生成的数据 */
   props?: {
     /** 支持部分通用样式 */
