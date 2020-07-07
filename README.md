@@ -106,11 +106,11 @@ yarn start:consumer-app
 1. 新建文件夹 `CustomSubApp`
 2. 在 `CustomSubApp/` 添加 `package.json`
 3. 添加 `public/`，可以从模版中 copy
-4. 在 `package.json` 的 `scripts` 中添加 `"start": "PORT=9988 minictl start"`，端口可以自定义
+4. 在 `package.json` 的 `scripts` 中添加 `"start": "cross-env PORT=9988 minictl start"`，端口可以自定义
 5. 添加 `.mini-scripts.json` 工程化配置文件
 6. 添加 `src/app.tsx` 和 `src/index.tsx`，内容参考子应用模版
-7. 在最外层的 `package.json` 中添加启动 script: `"start:custom-sub-app": "cd ./package/CustomSubApp; npm start"`
-8. 打开命令后输入 `yarn; yarn start:custom-sub-app`，等待片刻即可
+7. 在最外层的 `package.json` 中添加启动 script: `"start:custom-sub-app": "cd ./package/CustomSubApp && npm start"`
+8. 打开命令后输入 `yarn && yarn start:custom-sub-app`，等待片刻即可
 
 ### 搭建自定义模块
 

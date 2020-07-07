@@ -3,15 +3,27 @@
  */
 import React, { useState, useEffect } from 'react';
 import { Input, Button } from '@infra/ui-interface';
-import { propertiesItemCollection } from '../../core/access/mock-data';
+import { propertiesItemCollection as PropertiesItemCollection } from '../../mock-data';
+import { mergeDeep } from '../CanvasStage/utils/deepmerge';
+import { EditorComponentEntity, EditorEntityProperties } from '../../types';
+import useUpdateState from './useUpdateState';
+import useFormState from './useFormState';
+import { SaveEntityPropsStore } from '../../app/useEntityPropsStore';
+
+const extractPropConfig = (propConfig, entity) => {
+  if (typeof propConfig === 'function') return propConfig(mergeDeep({}, entity));
+  return propConfig;
+};
 
 const ComponentParser = ({
+  entity,
   propConfig,
   componentState,
   onChange,
 }) => {
   // console.log(propConfig);
-  const { label, component } = propConfig;
+  const propConfigRes = extractPropConfig(propConfig, entity);
+  const { label, component, type } = propConfigRes;
   let Com;
   switch (component.type) {
     case 'Input':
@@ -20,7 +32,7 @@ const ComponentParser = ({
           value={componentState || ''}
           onChange={(value) => {
             // console.log(e.target.value);
-            onChange(value);
+            onChange(value, type);
           }}
         />
       );
@@ -36,63 +48,63 @@ const ComponentParser = ({
   );
 };
 
+export interface PropertiesEditorProps {
+  /** 选中的 entity */
+  selectedEntity: EditorComponentEntity
+  /** 属性编辑器的配置，通过该配置生成有层级结构的属性编辑面板 */
+  editorConfig?: {}
+  /** */
+  propertiesItemCollection?: {}
+  /** 保存属性的回调 */
+  saveEntityPropsStore: SaveEntityPropsStore
+  /** 默认的表单数据state */
+  defaultFormState?: EditorEntityProperties
+}
+
 const PropertiesEditor = ({
   selectedEntity,
   defaultFormState = {},
-  saveComponentPropStore
-}) => {
+  propertiesItemCollection,
+  editorConfig,
+  saveEntityPropsStore
+}: PropertiesEditorProps) => {
   // console.log(selectedEntity);
   const { properties } = selectedEntity;
   const hasProps = !!properties?.propRefs;
 
   /** 用于管理 Editor 中所有控件产生的值 */
-  const [formState, setFormState] = useState(defaultFormState);
-  const [updateState, setUpdateState] = useState(false);
-
-  const updateFormValues = (formID, value) => {
-    setFormState({
-      ...formState,
-      [formID]: value
-    });
-  };
-
-  let timmer;
-
-  const clickToUpdate = () => {
-    clearTimeout(timmer);
-    setUpdateState(true);
-
-    timmer = setTimeout(() => {
-      setUpdateState(false);
-    }, 2000);
-  };
-
-  useEffect(() => {
-    return () => {
-      clearTimeout(timmer);
-    };
-  }, []);
+  const [formState, updateFormValues] = useFormState(defaultFormState);
+  const [updateState, clickToUpdate] = useUpdateState();
 
   return (
     <div>
-      PropertiesEditor
       {
         hasProps && (
           Array.isArray(properties.propRefs)
           && properties.propRefs.map((propID) => {
+            const activeFormState = formState[propID];
+            const currValue = activeFormState?.value;
             const propConfig = propertiesItemCollection[propID];
             return (
               <div
                 key={propID}
               >
                 <ComponentParser
-                  componentState={formState[propID]}
-                  onChange={(nextValue, preValue) => {
-                    /** 性能优化部分 */
-                    if (nextValue === preValue) return;
-                    updateFormValues(propID, nextValue);
+                  componentState={currValue}
+                  onChange={(nextValue, propType) => {
+                    /**
+                     * 性能优化部分
+                     */
+                    const prevState = currValue;
+                    if (nextValue === prevState) return;
+
+                    /**
+                     * 更新数据
+                     */
+                    updateFormValues(propID, nextValue, propType);
                   }}
                   propConfig={propConfig}
+                  entity={selectedEntity}
                 />
               </div>
             );
@@ -103,7 +115,7 @@ const PropertiesEditor = ({
         <Button
           color={updateState ? 'green' : 'blue'}
           onClick={(e) => {
-            saveComponentPropStore(selectedEntity.id, formState);
+            saveEntityPropsStore(selectedEntity.id, formState);
             clickToUpdate();
           }}
         >
@@ -112,6 +124,10 @@ const PropertiesEditor = ({
       </div>
     </div>
   );
+};
+
+PropertiesEditor.defaultProps = {
+  propertiesItemCollection: PropertiesItemCollection
 };
 
 export default PropertiesEditor;

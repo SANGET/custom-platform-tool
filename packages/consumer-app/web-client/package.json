@@ -2,7 +2,7 @@
   "name": "@consumer-app/web-client",
   "version": "0.0.1",
   "scripts": {
-    "start": "PORT=6699 minictl start",
+    "start": "cross-env PORT=6699 minictl start",
     "build": "minictl build"
   },
   "devDependencies": {

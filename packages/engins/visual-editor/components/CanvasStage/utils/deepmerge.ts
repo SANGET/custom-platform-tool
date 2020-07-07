@@ -1,7 +1,16 @@
+/**
+ * 是否为对象
+ */
 export const isObject = (item) => {
   return (item && typeof item === 'object' && !Array.isArray(item));
 };
 
+/**
+ * @author 相杰
+ * @important 基础算法，慎重修改
+ *
+ * deep copy
+ */
 export const mergeDeep = (target, ...sources) => {
   if (!sources.length) return target;
   const source = sources.shift();

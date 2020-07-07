@@ -11,7 +11,9 @@ interface WrapperContext {
 }
 
 export interface LayoutParserWrapper {
+  /** 容器渲染 wrapper，包装函数 */
   containerWrapper?: (child: React.ReactChild, WrapperContext) => React.ReactChild
+  /** 组件渲染 wrapper，包装函数 */
   componentWrapper?: (child: React.ReactChild, WrapperContext) => React.ReactChild
 }
 

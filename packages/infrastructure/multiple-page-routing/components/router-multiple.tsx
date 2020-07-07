@@ -213,11 +213,17 @@ class RouterHelper<
   initRoute = () => {
     // let initRoute = resolvePath(location.hash)[0];
     const { defaultPath } = this;
-    // const initRoute = getUrlParams()[getRouteKey()];
+    const initRoute = getUrlParams(undefined, undefined, true)[getRouteKey()];
+
     defaultPath
       && onNavigate({
         type: "PUSH",
         route: defaultPath,
+      });
+    initRoute
+      && onNavigate({
+        type: "PUSH",
+        route: initRoute,
       });
     // if (!initRoute && defaultPath) {
     //   onNavigate({

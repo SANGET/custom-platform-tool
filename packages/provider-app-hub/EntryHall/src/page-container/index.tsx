@@ -16,7 +16,6 @@ const PageContainer = (props: PageContainerProps) => {
   // TODO: 数据的可用性统一管理
   return (
     <div className="page-container">
-      <h1>{pageID}</h1>
       {children}
     </div>
   );

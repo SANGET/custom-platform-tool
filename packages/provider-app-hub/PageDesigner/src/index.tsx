@@ -4,6 +4,6 @@
 import React from "react";
 import ReactDOM from "react-dom";
 
-import { PageDesignerApp } from "./app";
+import App from "./app";
 
-ReactDOM.render(<PageDesignerApp />, document.querySelector("#Main"));
+ReactDOM.render(<App />, document.querySelector("#Main"));

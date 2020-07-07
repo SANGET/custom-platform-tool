@@ -1,28 +1,52 @@
 import { mergeDeep } from "./deepmerge";
 
-const increaseIDFac = (idCount = 0) => () => {
+/**
+ * 生产自增 ID 的工厂类
+ */
+const increaseIDFac = (idCount = 0) => (perfix = '') => {
+  // eslint-disable-next-line no-param-reassign
   idCount += 1;
-  return idCount;
+  return perfix ? [perfix, idCount].join('_') : String(idCount);
 };
+/**
+ * 生产自增 ID 具体实现
+ */
 export const increaseID = increaseIDFac(0);
 
+/**
+ * 生产 ID
+ */
 export const wrapID = (...args) => {
   return args.join('_');
 };
 
-interface ParseObjToTreeNodeSchema {
-  parentID?: string | number;
-}
-interface ParseObjToTreeNodeReturnSchema extends ParseObjToTreeNodeSchema {
-  id: string | number;
+/**
+ * 扁平的 Node 数据结构，通过 parentID 关联自身
+ */
+interface FlatNode {
+  parentID?: string;
 }
 
 /**
- * 将扁平的对象结构转换成 treeNode 结构
+ * 有嵌套结构的 NodeTree 数据结构
  */
-export const parseObjToTreeNode = (srcObj: ParseObjToTreeNodeSchema) => {
-  const res: ParseObjToTreeNodeReturnSchema[] = [];
-  const srcCloneObj = mergeDeep({}, srcObj);
+interface NestingNode extends FlatNode {
+  id: string;
+}
+
+/**
+ * @author 相杰
+ * @important 基础算法，慎重修改
+ *
+ * 将扁平的对象结构转换成 nestingTreeNode 结构
+ */
+export const parseFlatNodeToNestNode = (flatNode: FlatNode) => {
+  const res: NestingNode[] = [];
+
+  /**
+   * 需要切断 flatNode 的所有成员属性的原型链
+   */
+  const srcCloneObj = mergeDeep({}, flatNode);
 
   Object.keys(srcCloneObj).map((colID) => {
     const currItem = srcCloneObj[colID];
@@ -30,6 +54,10 @@ export const parseObjToTreeNode = (srcObj: ParseObjToTreeNodeSchema) => {
       id: colID,
       ...currItem
     });
+
+    /**
+     * 通过原型链将子 node 挂载到父 node 上
+     */
     if (currItem.parentID) {
       const parentObj = srcCloneObj[currItem.parentID];
       if (!Array.isArray(parentObj.body)) parentObj.body = [];
@@ -60,4 +88,4 @@ export const parseObjToTreeNode = (srcObj: ParseObjToTreeNodeSchema) => {
 //   },
 // };
 
-// console.log(parseObjToTreeNode(exp));
+// console.log(parseFlatNodeToNestNode(exp));

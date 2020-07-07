@@ -1,5 +1,4 @@
 import React from "react";
-import ReactDOM from "react-dom";
 
 import {
   RouterMultiple, Link,
@@ -19,13 +18,13 @@ interface AppContainerState extends RouterState {
 }
 
 interface AppContainerProps extends RouterHelperProps {
-  onLoad: () => void;
+  onLoad?: () => void;
 }
 
 const pageCache = {};
 const pageAuthCache = {};
 
-class App extends RouterMultiple<AppContainerProps, AppContainerState> {
+export default class App extends RouterMultiple<AppContainerProps, AppContainerState> {
   state: AppContainerState = defaultRouteState
 
   constructor(props) {
@@ -123,5 +122,3 @@ class App extends RouterMultiple<AppContainerProps, AppContainerState> {
     );
   }
 }
-
-ReactDOM.render(<App />, document.querySelector("#Main"));

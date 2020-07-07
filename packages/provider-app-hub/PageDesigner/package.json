@@ -4,7 +4,7 @@
   "private": true,
   "main": "./index.js",
   "scripts": {
-    "start": "PORT=6689 minictl start"
+    "start": "cross-env PORT=6689 minictl start"
   },
   "devDependencies": {
     "@infra/env-scripts": "^0.0.1"
