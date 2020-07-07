@@ -10,6 +10,18 @@
 - 通过 lerna 管理工作区的包关系
 - 有多个独立应用模块，可以独立开发
 
+## 技术选型
+
+建议学习
+
+- react
+- redux
+- webpack
+- lerna
+- less
+- styled-components
+- node
+
 -----
 
 ## 工程结构（Architecture）

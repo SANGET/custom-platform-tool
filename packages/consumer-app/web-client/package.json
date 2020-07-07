@@ -10,8 +10,7 @@
   },
   "dependencies": {
     "react": "16.13.1",
-    "react-dom": "16.13.1",
-    "react-router-dom": "5.2.0"
+    "react-dom": "16.13.1"
   },
   "author": "SANGET",
   "license": "MIT",
