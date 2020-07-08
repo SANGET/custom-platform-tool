@@ -47,7 +47,7 @@
     - `parser/` - IUB-DSL 解析器集合
     - `demo/` - `{顾名思义}`
     - `docs/` - IUB-DSL 专属文档
-  - `engins/` - 核心引擎，用于驱动应用
+  - `engine/` - 核心引擎，用于驱动应用
     - `visual-editor/` - 可视化编辑器引擎
     - `admin-container/` - 管理应用的运行容器框架
   - `infrastructure/` - 基础设施支持
