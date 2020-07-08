@@ -201,7 +201,7 @@ export interface Grid {
 
 判断接入的组件的类型，做必须的继承，以下以自定义 Input 为例子：
 
-进入目录 `packages/infrastructure/ui-interface/form/`，创建 `CustomInput.tsx`：
+进入目录 `packages/infrastructure/ui/form/`，创建 `CustomInput.tsx`：
 
 ```ts
 interface CustomInputComponent extends FormComponent {

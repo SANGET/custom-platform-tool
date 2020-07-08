@@ -1,5 +1,5 @@
 import React, { Fragment } from "react";
-import { Input, Button, Dropdown } from "@infra/ui-interface";
+import { Input, Button, Dropdown } from "@infra/ui";
 import { UserBehavior, ComponentType } from "@iub-dsl/core";
 import * as Comps from '@iub-dsl/core/types/component/components';
 

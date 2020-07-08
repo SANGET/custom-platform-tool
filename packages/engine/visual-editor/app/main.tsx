@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-import { Grid } from '@infra/ui-interface';
+import { Grid } from '@infra/ui';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 
