@@ -1,6 +1,6 @@
 import React from "react";
 
-import { Row, Col } from '@infra/ui-interface/layout/row';
+import { Row, Col } from '@infra/ui/layout/row';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 

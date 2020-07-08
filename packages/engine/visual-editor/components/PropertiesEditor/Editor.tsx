@@ -2,7 +2,7 @@
  * PropEditor
  */
 import React, { useState, useEffect } from 'react';
-import { Input, Button } from '@infra/ui-interface';
+import { Input, Button } from '@infra/ui';
 import { propertiesItemCollection as PropertiesItemCollection } from '../../mock-data';
 import { mergeDeep } from '../CanvasStage/utils/deepmerge';
 import { EditorComponentEntity, EditorEntityProperties } from '../../types';

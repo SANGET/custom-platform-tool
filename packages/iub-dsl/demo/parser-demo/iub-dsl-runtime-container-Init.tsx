@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { getLayout, getComponent } from '@infra/ui-interface';
+import { getLayout, getComponent } from '@infra/ui';
 
 const parseData = {
   pageSchema1: {

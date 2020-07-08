@@ -57,7 +57,7 @@
     - `env-scripts/` - 项目工程化基础 scripts
     - `multiple-page-routing/` - 多页路由机制
     - `remote-communication-services/` - 远端通讯服务
-    - `ui-interface/` - UI 隔离层
+    - `ui/` - UI 隔离层
     - `utils/` - 通用工具
 - `.eslintignore` - eslint 中`需忽略的项`配置
 - `.eslintrc` - eslint 配置

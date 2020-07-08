@@ -1,5 +1,5 @@
 import React from "react";
-import { Input } from "@infra/ui-interface";
+import { Input } from "@infra/ui";
 import { ComponentElement } from "@iub-dsl/core/types/component/collection";
 import { ParserContextGroup } from "../types";
 import flowExecutor from "./flow";
