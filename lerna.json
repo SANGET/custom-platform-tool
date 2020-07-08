@@ -2,7 +2,7 @@
   "packages": [
     "packages/provider-app-hub/*",
     "packages/iub-dsl/*",
-    "packages/engins/*",
+    "packages/engine/*",
     "packages/infrastructure/*",
     "packages/consumer-app/*"
   ],
