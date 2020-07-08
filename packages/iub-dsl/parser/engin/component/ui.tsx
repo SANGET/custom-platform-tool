@@ -1,4 +1,6 @@
-import React, { Fragment } from "react";
+import React, {
+  Fragment, useState, useCallback, useMemo, useEffect
+} from "react";
 import { Input, Button, Dropdown } from "@infra/ui-interface";
 import { UserBehavior, ComponentType } from "@iub-dsl/core";
 import * as Comps from '@iub-dsl/core/types/component/components';
@@ -14,7 +16,7 @@ interface RenderUIParam {
 }
 interface EntityCompParserRef {
   // (param: GetUIParam)
-  renderComp(param: RenderUIParam): JSX.Element;
+  RenderComp(param: RenderUIParam): JSX.Element;
   parseCompProps(...args): any;
 }
 
@@ -28,7 +30,7 @@ const FnWrap = (fn) => {
 };
 
 const inputCompParser: EntityCompParserRef = {
-  renderComp: ({
+  RenderComp: ({
     compId, pubPropsRes, actions, componentConfig
   }) => {
     // 过滤组件支持的动作
@@ -56,7 +58,7 @@ const inputCompParser: EntityCompParserRef = {
 };
 
 const buttonCompParser: EntityCompParserRef = {
-  renderComp: ({
+  RenderComp: ({
     compId, pubPropsRes, actions, componentConfig
   }) => {
     const canUseActions = Object.keys(actions).reduce((useActions, action) => {
@@ -77,10 +79,19 @@ const buttonCompParser: EntityCompParserRef = {
 };
 
 const selectorCompParser: EntityCompParserRef = {
-  renderComp: () => {
-    return (<select key="select" value="" onChange={(e) => {
-      console.log(e.target.value);
-    }}
+  RenderComp: ({
+    compId, pubPropsRes, actions, componentConfig
+  }) => {
+    const canUseActions = Object.keys(actions).reduce((useActions, action) => {
+      // eslint-disable-next-line no-param-reassign
+      useActions[action] = FnWrap(actions[action]);
+      return useActions;
+    }, {});
+    console.log(componentConfig);
+    return (<select key={compId}
+      defaultValue={typeof componentConfig.field === 'undefined' ? '' : componentConfig.field}
+      {...canUseActions}
+      {...pubPropsRes}
     >
       <option key="test1" value="test1">测试数据1</option>
       <option key="test2" value="test2">测试数据2</option>
@@ -101,7 +112,7 @@ const GetUIParser = (compType: string): EntityCompParserRef => {
       return selectorCompParser;
     default:
       return {
-        renderComp: () => <div>组件获取异常</div>,
+        RenderComp: () => <div>组件获取异常</div>,
         parseCompProps: () => ({})
       };
   }

@@ -1,4 +1,6 @@
-import React from "react";
+import React, {
+  Fragment, useState, useCallback, useMemo, useEffect
+} from "react";
 import { ComponentElement, ActionTypes } from "@iub-dsl/core/types/component/collection";
 import { UserBehavior } from "@iub-dsl/core";
 import GetUIParser from "./ui";
@@ -59,7 +61,17 @@ const transformInputChange = (fn, compInfo, context) => {
 const transformInputClick = (fn, compInfo, context) => {
   // Demo: 1、显示页面、2、等待页面信号 3、值的改变  ==>  数据变更关系
   return (e: Event) => {
+    // 表达式解析的结果
+    context.setPageRuntimeState({
+      data_UUID: true
+    });
     console.log(fn, compInfo, context);
+  };
+};
+
+const transformSelectorChange = (fn, compInfo, context) => {
+  return (e) => {
+    console.log(e);
   };
 };
 
@@ -107,12 +119,14 @@ const parseComponent = (compId, componentElement: ComponentElement, parserContex
   const actions = Object.keys(compUseActions).reduce((r, actionType) => {
     temp = compUseActions[actionType];
     r[actionType] = temp.type === 'actionRef' ? parserContext.bindAction(temp.actionID) : () => {};
-    if (actionType === 'onChange') {
+    if (actionType === 'onChange' && componentElement.component.type === 'Input') {
       r[actionType] = transformInputChange(r[actionType], componentElement.component, parserContext);
     } else if (actionType === 'onClick' && componentElement.component.type === 'Button') {
       r[actionType] = transformButtonClick(r[actionType], componentElement.component, parserContext);
     } else if (actionType === 'onClick' && componentElement.component.type === 'Input') {
       r[actionType] = transformInputClick(r[actionType], componentElement.component, parserContext);
+    } else if (actionType === 'onChange' && componentElement.component.type === 'Selector') {
+      r[actionType] = transformSelectorChange(r[actionType], componentElement.component, parserContext);
     }
     return r;
   }, {} as ActionAnalysisResult);
@@ -126,7 +140,9 @@ const parseComponent = (compId, componentElement: ComponentElement, parserContex
     sysCompConfigParser(componentElement.component, parserContext)
   );
 
-  return UIParser.renderComp({
+  // TODO: 异步组件
+
+  return UIParser.RenderComp({
     pubPropsRes,
     actions,
     compId,

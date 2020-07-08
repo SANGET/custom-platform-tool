@@ -135,8 +135,8 @@ const SimpleCreateUser: TypeOfIUBDSL = {
 
   /** 数据模型 */
   // 表单数据、输入展示数据、  TODO: 隐藏字段? 后台的冗余数据?、 与其他交互的数据结构
+  // 思考上述这些方向是错的.
   // 实际上是单个还是多个,都不知道的,但是都应该支持
-  // 回填的时候我怎么才能知道是哪个文本框,哪个dataUUID、
   schemas: {
     // 实际数据、
     // 1-6绑定输入框  「关系处理?」
@@ -525,7 +525,12 @@ const SimpleCreateUser: TypeOfIUBDSL = {
         field: '@(schemas)data_UUID9',
       },
       props: {},
-      actions: {}
+      actions: {
+        onChange: {
+          type: 'actionRef',
+          actionID: ''
+        }
+      }
     }
   },
 
@@ -619,6 +624,7 @@ const SimpleCreateUser: TypeOfIUBDSL = {
   relationshipsCollection: {
     dataCollection: {
       user: {
+        // 新增、修改、详情
         group: [
           {
             schemasMapping: '@(schemas)data_UUID1',
