@@ -26,6 +26,11 @@ const GetMenu = () => {
         text: '页面设计器',
         id: 4,
       },
+      {
+        path: '/auth-manager',
+        text: '权限管理',
+        id: 5,
+      },
     ]);
   });
 };

@@ -3,6 +3,52 @@ import {
 } from 'antd';
 import React, { useState } from 'react';
 
+const treeData = [
+  {
+    title: '0-0',
+    key: '0-0',
+    children: [
+      {
+        title: '0-0-0',
+        key: '0-0-0',
+        children: [
+          { title: '0-0-0-0', key: '0-0-0-0' },
+          { title: '0-0-0-1', key: '0-0-0-1' },
+          { title: '0-0-0-2', key: '0-0-0-2' }
+        ]
+      },
+      {
+        title: '0-0-1',
+        key: '0-0-1',
+        children: [
+          { title: '0-0-1-0', key: '0-0-1-0' },
+          { title: '0-0-1-1', key: '0-0-1-1' },
+          { title: '0-0-1-2', key: '0-0-1-2' }
+        ]
+      },
+      {
+        title: '0-0-2',
+        key: '0-0-2'
+      }
+    ]
+  },
+  {
+    title: '0-1',
+    key: '0-1',
+    children: [
+      { title: '0-1-0-0', key: '0-1-0-0' },
+      { title: '0-1-0-1', key: '0-1-0-1' },
+      { title: '0-1-0-2', key: '0-1-0-2' }
+    ]
+  },
+  {
+    title: '0-2',
+    key: '0-2'
+  }
+];
+
+const { SHOW_PARENT } = Tree;
+
 // Customize Table Transfer
 const isChecked = (selectedKeys, eventKey) => {
   return selectedKeys.indexOf(eventKey) !== -1;
@@ -17,32 +63,32 @@ const generateTree = (treeNodes = [], checkedKeys = []) => {
   }));
 };
 
-const treeData = [
-  { key: '0-0', title: '0-0' },
-  {
-    key: '0-1',
-    title: '0-1',
-    children: [
-      { key: '0-1-0', title: '0-1-0' },
-      {
-        key: '0-1-1',
-        title: '0-1-1',
-        children: [
-          { key: '0-1-1-0', title: '0-1-1-0' },
-          { key: '0-1-1-1', title: '0-1-1-0' }
-        ]
-      }
-    ]
-  },
-  {
-    key: '0-2',
-    title: '0-2',
-    children: [
-      { key: '0-2-0', title: '0-2-0' },
-      { key: '0-2-1', title: '0-2-1' }
-    ]
-  }
-];
+// const treeData = [
+//   { key: '0-0', title: '0-0' },
+//   {
+//     key: '0-1',
+//     title: '0-1',
+//     children: [
+//       { key: '0-1-0', title: '0-1-0' },
+//       {
+//         key: '0-1-1',
+//         title: '0-1-1',
+//         children: [
+//           { key: '0-1-1-0', title: '0-1-1-0' },
+//           { key: '0-1-1-1', title: '0-1-1-1' }
+//         ]
+//       }
+//     ]
+//   },
+//   {
+//     key: '0-2',
+//     title: '0-2',
+//     children: [
+//       { key: '0-2-0', title: '0-2-0' },
+//       { key: '0-2-1', title: '0-2-1' }
+//     ]
+//   }
+// ];
 /**
  * 树过滤
  * @param {* 树形数据} tree
@@ -50,7 +96,7 @@ const treeData = [
  * @param {* 过滤键名} key
  */
 const treeFilter = ({ treeData = {}, filter = () => {}, copy = () => {} }) => {
-  return treeData.map((tree) => {
+  const rootNode = treeData.map((tree) => {
     const walkAndCopy = (tree, depth = 1) => {
       const queue = [];
       if (filter(tree)) {
@@ -88,6 +134,9 @@ const treeFilter = ({ treeData = {}, filter = () => {}, copy = () => {} }) => {
     };
     return walkAndCopy(tree);
   });
+
+  // 过滤掉根节点中为undefined
+  return rootNode.filter((item) => item);
 };
 
 // 递归实现
@@ -132,6 +181,30 @@ const TreeTransfer = ({
 
   // console.log('tree,dataSource', dataSource, generateTree(dataSource, targetKeys));
 
+  // const [expandedKeys, setExpandedKeys] = useState<string[]>(['0-0-0', '0-0-1']);
+  // // const [checkedKeys, setCheckedKeys] = useState<string[]>(['0-0-0']);
+  // const [selectedKeys, setSelectedKeys] = useState<string[]>([]);
+  // const [autoExpandParent, setAutoExpandParent] = useState<boolean>(true);
+
+  // const onExpand = (expandedKeys) => {
+  //   console.log('onExpand', expandedKeys);
+  //   // if not set autoExpandParent to false, if children expanded, parent can not collapse.
+  //   // or, you can remove all expanded children keys.
+  //   setExpandedKeys(expandedKeys);
+  //   setAutoExpandParent(false);
+  // };
+
+  // const onCheck = (checkedKeys, cb) => {
+  //   console.log('onCheck', checkedKeys);
+  //   setCheckedKeys(checkedKeys);
+  //   cb(checkedKeys);
+  // };
+
+  // const onSelect = (selectedKeys, info) => {
+  //   console.log('onSelect', info);
+  //   setSelectedKeys(selectedKeys);
+  // };
+
   return (
     <Transfer
       {...restProps}
@@ -139,66 +212,80 @@ const TreeTransfer = ({
       dataSource={dataSource}
       className="tree-transfer"
       render={(item) => item.title}
-      showSelectAll={false}
+      showSelectAll={true}
     >
       {({ direction, onItemSelect, selectedKeys }) => {
         if (direction === 'left') {
           const checkedKeys = [...selectedKeys, ...targetKeys];
           return (
             <Tree
-              blockNode
               checkable
-              checkStrictly
+              draggable
               defaultExpandAll
-              checkedKeys={checkedKeys}
-              treeData={dataSource}
+              // onExpand={onExpand}
+              // expandedKeys={expandedKeys}
+              // autoExpandParent={autoExpandParent}
               onCheck={(_, { node: { key } }) => {
+                // setCheckedKeys(checkedKeys);
                 onItemSelect(key, !isChecked(checkedKeys, key));
               }}
+              checkedKeys={checkedKeys}
               onSelect={(_, { node: { key } }) => {
                 onItemSelect(key, !isChecked(checkedKeys, key));
               }}
+              selectedKeys={selectedKeys}
+              treeData={dataSource}
             />
+            // <Tree
+            //   blockNode
+            //   checkable
+            //   checkStrictly
+            //   defaultExpandAll
+            //   checkedKeys={checkedKeys}
+            //   showCheckedStrategy={SHOW_PARENT}
+            //   treeData={dataSource}
+            //   onCheck={(_, { node: { key } }) => {
+            //     onItemSelect(key, !isChecked(checkedKeys, key));
+            //   }}
+            //   onSelect={(_, { node: { key } }) => {
+            //     onItemSelect(key, !isChecked(checkedKeys, key));
+            //   }}
+            // />
           );
         }
-        return <Tree blockNode checkStrictly defaultExpandAll treeData={selectTree} />;
+        return <Tree blockNode={true} defaultExpandAll treeData={selectTree} />;
       }}
     </Transfer>
   );
 };
 
 export default () => {
-  const [targetKeys, setTargetKeys] = useState([]);
-  const [selectTree, setSelectTree] = useState([]);
-  const [dataSource, setDataSource] = useState(treeData);
+  const [targetKeys, setTargetKeys] = useState<string[]>([]);
+  const [selectTree, setSelectTree] = useState<string[]>([]);
+  const [dataSource, setDataSource] = useState<string[]>(treeData);
 
   // 移动节点之后触发的事件
   const onChange = (targetKeys) => {
     console.log('Target Keys:', targetKeys);
     setTargetKeys(targetKeys);
-    setSelectTree([]);
 
-    targetKeys.map((key) => {
-      return console.log(findPathByLeafId(key, treeData));
+    // 根据选中的节点的key生成选中节点树
+    setSelectTree(chooseNode(treeData, targetKeys));
+
+    // 过滤掉选中的节点
+    const reserveTree = treeFilter({
+      treeData: dataSource,
+      copy: (src, dest) => {
+        dest.title = src.title;
+        dest.key = src.key;
+      },
+      filter: (node) => {
+        // 返回true的节点会被保留
+        return !targetKeys.includes(node.key);
+      }
     });
 
-    // setSelectTree([]);
-
-    // // 过滤掉选中的节点
-    // const reserveTree = treeFilter({
-    //   treeData: dataSource,
-    //   copy: (src, dest) => {
-    //     dest.title = src.title;
-    //     dest.key = src.key;
-    //   },
-    //   filter: (node) => {
-    //     return !targetKeys.includes(node.key);
-    //   }
-    // });
-
-    // console.log('filter:', reserveTree, generateTree(treeData, targetKeys));
-
-    // setDataSource(reserveTree);
+    setDataSource(reserveTree);
   };
 
   const filterParams = {
@@ -246,3 +333,35 @@ export default () => {
     </div>
   );
 };
+
+type UserInfo = {
+  name: string;
+  age: number;
+};
+
+function chooseNode(nodes: [], targetKeys: string[]) {
+  return nodes
+    .map((node) => {
+      // 若有子节点，递归处理
+      // 按上述规则，返回的数组如果有元素，说明子孙级有节点被选中
+      const children = node.children && node.children.length ? chooseNode(node.children, targetKeys) : [];
+
+      // - 如果子孙级有节点被先中：children.length 有值且 =>0
+      // - 或者当前节点在 keysSet 中：keysSet.has(...)
+      // ⇒ 那么当前节点被选中，生成对应的数据（新节点）
+      if (children.length || targetKeys.includes(node.key)) {
+        const newNode = {
+          key: node.key,
+          title: node.title
+        };
+        if (children.length) {
+          newNode.children = children;
+        }
+        return newNode;
+      }
+
+      // 否则当前节点不需要选中，返回 null
+      return null;
+    })
+    .filter((node) => node);
+}
