@@ -8,11 +8,11 @@ type CompType = CompPropsType & React.FC & React.Component
 /**
  * 基础组件的 HOC
  */
-export function basicComponentFac<T extends CompType>(Comp: T) {
+export function basicComponentFac<T>(Comp: T) {
   return <P extends CompPropsType>(props: P) => {
     const {
       onMount, onUnmount, wrapper,
-      classnames,
+      className, classnames,
       ...otherProps
     } = props;
 
@@ -26,9 +26,14 @@ export function basicComponentFac<T extends CompType>(Comp: T) {
       };
     }, []);
 
-    const classes = classNames(classnames);
+    const classes = classNames(className, classnames);
 
-    const child = <Comp {...otherProps} />;
+    const child = (
+      <Comp
+        className={classes}
+        {...otherProps}
+      />
+    );
     return typeof wrapper === 'function'
       ? wrapper(child) : child;
   };

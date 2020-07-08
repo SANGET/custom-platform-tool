@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button } from '@infra/ui-interface';
+import { Button } from '@infra/ui';
 
 import Toolbar from '@engin/visual-editor/components/Toolbar';
 

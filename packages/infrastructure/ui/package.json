@@ -1,5 +1,5 @@
 {
-  "name": "@infra/ui-interface",
+  "name": "@infra/ui",
   "version": "0.0.1",
   "description": "UI 隔离层",
   "devDependencies": {

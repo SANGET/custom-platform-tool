@@ -1,5 +1,5 @@
 import React from 'react';
-import { Tabs, Tab } from '@infra/ui-interface';
+import { Tabs, Tab } from '@infra/ui';
 
 import DragItem, { DragItemConfig } from './DragItem';
 import { EditorComponentClass } from '../../types';
