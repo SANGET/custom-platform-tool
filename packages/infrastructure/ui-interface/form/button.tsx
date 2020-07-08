@@ -1,14 +1,9 @@
-// import React from "react";
-import { Button } from '@deer-ui/core/button';
+import { Button as DButton } from '@deer-ui/core/button';
+import { basicComponentFac } from '../basic';
 
-// interface InputProps {
-//   onChange: ((event: React.ChangeEvent<HTMLInputElement>) => void);
-// }
-
-// const Input: React.SFC<InputProps> = ({
-//   onChange
-// }) => {
-//   return <input type="text" onChange={onChange} />;
-// };
+/**
+ * 生成符合 UI 接入标准的 Button
+ */
+const Button = basicComponentFac(DButton);
 
 export { Button };

@@ -4,17 +4,19 @@
 export interface BasicComponent {
   /// 通用属性
   /** 控制该组件的样式 */
-  style: React.CSSProperties | undefined;
+  style?: React.CSSProperties | undefined;
+  /** className */
+  className?: string;
   /** classnames，通过内置 classnames 支持 */
-  classnames: string[];
+  classnames?: string[];
   /** 所有组件都有的包装器，可以自由控制组件外层 */
-  wrapper: (child: React.ReactChild) => React.ReactChild
+  wrapper?: (child: React.ReactChild) => React.ReactChild
 
   /// 通用回调
   /** 组件完成 mount 后的回调 */
-  onMount: () => void;
+  onMount?: () => void;
   /** 组件 unmount 后的回调 */
-  onUnmount: () => void;
+  onUnmount?: () => void;
 }
 
 /**
@@ -23,15 +25,15 @@ export interface BasicComponent {
 export interface FormComponent<T = null> extends BasicComponent {
   /// 通用属性
   /** 指定的值，如果传入了，该组件为受控组件 */
-  value: any;
+  value?: any;
   /** 组件的默认值，如果只传入该属性，可不实现 onChange */
-  defaultValue: any;
+  defaultValue?: any;
   /** 可以让组件被引用，提供组件实例的引用 */
-  ref: React.Ref<T>;
+  ref?: React.Ref<T>;
 
   /// 通用回调
   /** 控件的值更改后触发的回调，如果指定了 value，则 onChange 为必填 */
-  onChange: (value, preValue, event) => void;
+  onChange?: (value, preValue, event) => void;
 }
 
 /**
@@ -56,7 +58,7 @@ export interface DataDisplayComponent<T = null> extends BasicComponent {
   /** 组件的数据来源 */
   dataSource: any;
   /** 可以让组件被引用，提供组件实例的引用 */
-  ref: React.Ref<T>;
+  ref?: React.Ref<T>;
 }
 
 /**
@@ -64,5 +66,5 @@ export interface DataDisplayComponent<T = null> extends BasicComponent {
  */
 export interface UIResponseComponent extends BasicComponent {
   /// 通用属性
-  onClose: () => void
+  onClose?: () => void
 }

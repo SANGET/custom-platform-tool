@@ -1,14 +1,9 @@
-// import React from "react";
-import { Input } from '@deer-ui/core/input';
+import { Input as DInput } from '@deer-ui/core/input';
+import { basicComponentFac } from '../basic';
 
-// interface InputProps {
-//   onChange: ((event: React.ChangeEvent<HTMLInputElement>) => void);
-// }
-
-// const Input: React.SFC<InputProps> = ({
-//   onChange
-// }) => {
-//   return <input type="text" onChange={onChange} />;
-// };
+/**
+ * 生成符合 UI 接入标准的 Input
+ */
+const Input = basicComponentFac(DInput);
 
 export { Input };
