@@ -1,10 +1,14 @@
-import { Transfer, Tree, Button } from 'antd';
+import {
+  Transfer, Tree, Button, Select
+} from 'antd';
 import React, { useState } from 'react';
+
 // Customize Table Transfer
 const isChecked = (selectedKeys, eventKey) => {
   return selectedKeys.indexOf(eventKey) !== -1;
 };
 
+// 设置禁用
 const generateTree = (treeNodes = [], checkedKeys = []) => {
   return treeNodes.map(({ children, ...props }) => ({
     ...props,
@@ -13,63 +17,21 @@ const generateTree = (treeNodes = [], checkedKeys = []) => {
   }));
 };
 
-const TreeTransfer = ({
-  dataSource, targetKeys, filterParams, treeFilter, ...restProps
-}) => {
-  const transferDataSource = [];
-  // function flatten(list = []) {
-  //   list.forEach((item) => {
-  //     transferDataSource.push(item)
-  //     flatten(item.children)
-  //   })
-  // }
-  // flatten(dataSource)
-
-  // console.log('tree', generateTree(dataSource, targetKeys))
-
-  return (
-    <Transfer
-      {...restProps}
-      targetKeys={targetKeys}
-      dataSource={dataSource}
-      className="tree-transfer"
-      render={(item) => item.title}
-      showSelectAll={false}
-    >
-      {({ direction, onItemSelect, selectedKeys }) => {
-        if (direction === 'left') {
-          const checkedKeys = [...selectedKeys, ...targetKeys];
-          return (
-            <Tree
-              blockNode
-              checkable
-              checkStrictly
-              defaultExpandAll
-              checkedKeys={checkedKeys}
-              treeData={generateTree(dataSource, targetKeys)}
-              onCheck={(_, { node: { key } }) => {
-                onItemSelect(key, !isChecked(checkedKeys, key));
-              }}
-              onSelect={(_, { node: { key } }) => {
-                onItemSelect(key, !isChecked(checkedKeys, key));
-              }}
-            />
-          );
-        }
-        return <Tree blockNode checkStrictly defaultExpandAll treeData={dataSource} />;
-      }}
-    </Transfer>
-  );
-};
-
 const treeData = [
   { key: '0-0', title: '0-0' },
   {
     key: '0-1',
     title: '0-1',
     children: [
-      { key: '0-1-0', title: '0-1-0', disabled: true },
-      { key: '0-1-1', title: '0-1-1' }
+      { key: '0-1-0', title: '0-1-0' },
+      {
+        key: '0-1-1',
+        title: '0-1-1',
+        children: [
+          { key: '0-1-1-0', title: '0-1-1-0' },
+          { key: '0-1-1-1', title: '0-1-1-0' }
+        ]
+      }
     ]
   },
   {
@@ -151,12 +113,92 @@ function findPathByLeafId(leafId, nodes, path) {
   }
 }
 
+const TreeTransfer = ({
+  dataSource,
+  selectTree,
+  targetKeys,
+  filterParams,
+  treeFilter,
+  ...restProps
+}) => {
+  // const transferDataSource = [];
+  // function flatten(list = []) {
+  //   list.forEach((item) => {
+  //     transferDataSource.push(item);
+  //     flatten(item.children);
+  //   });
+  // }
+  // flatten(dataSource);
+
+  // console.log('tree,dataSource', dataSource, generateTree(dataSource, targetKeys));
+
+  return (
+    <Transfer
+      {...restProps}
+      targetKeys={targetKeys}
+      dataSource={dataSource}
+      className="tree-transfer"
+      render={(item) => item.title}
+      showSelectAll={false}
+    >
+      {({ direction, onItemSelect, selectedKeys }) => {
+        if (direction === 'left') {
+          const checkedKeys = [...selectedKeys, ...targetKeys];
+          return (
+            <Tree
+              blockNode
+              checkable
+              checkStrictly
+              defaultExpandAll
+              checkedKeys={checkedKeys}
+              treeData={dataSource}
+              onCheck={(_, { node: { key } }) => {
+                onItemSelect(key, !isChecked(checkedKeys, key));
+              }}
+              onSelect={(_, { node: { key } }) => {
+                onItemSelect(key, !isChecked(checkedKeys, key));
+              }}
+            />
+          );
+        }
+        return <Tree blockNode checkStrictly defaultExpandAll treeData={selectTree} />;
+      }}
+    </Transfer>
+  );
+};
+
 export default () => {
   const [targetKeys, setTargetKeys] = useState([]);
+  const [selectTree, setSelectTree] = useState([]);
+  const [dataSource, setDataSource] = useState(treeData);
 
+  // 移动节点之后触发的事件
   const onChange = (targetKeys) => {
     console.log('Target Keys:', targetKeys);
     setTargetKeys(targetKeys);
+    setSelectTree([]);
+
+    targetKeys.map((key) => {
+      return console.log(findPathByLeafId(key, treeData));
+    });
+
+    // setSelectTree([]);
+
+    // // 过滤掉选中的节点
+    // const reserveTree = treeFilter({
+    //   treeData: dataSource,
+    //   copy: (src, dest) => {
+    //     dest.title = src.title;
+    //     dest.key = src.key;
+    //   },
+    //   filter: (node) => {
+    //     return !targetKeys.includes(node.key);
+    //   }
+    // });
+
+    // console.log('filter:', reserveTree, generateTree(treeData, targetKeys));
+
+    // setDataSource(reserveTree);
   };
 
   const filterParams = {
@@ -191,7 +233,8 @@ export default () => {
   return (
     <div>
       <TreeTransfer
-        dataSource={treeData}
+        dataSource={dataSource}
+        selectTree={selectTree}
         targetKeys={targetKeys}
         onChange={onChange}
         treeFilter={treeFilter}
