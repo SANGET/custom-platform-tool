@@ -68,19 +68,17 @@
 interface BasicComponent {
   /// 通用属性
   /** 控制该组件的样式 */
-  style: HTMLStyle;
-  /** classnames，可以通过内置 classnames 聚合支持，不需要再自己做 classNames 拼接 */
-  classnames: classnames;
+  style: React.CSSProperties | undefined;
+  /** classnames，通过内置 classnames 支持 */
+  classnames: string[];
   /** 所有组件都有的包装器，可以自由控制组件外层 */
-  wrapper: (child: React.Child) => React.Child
+  wrapper: (child: React.ReactChild) => React.ReactChild
 
   /// 通用回调
   /** 组件完成 mount 后的回调 */
   onMount: () => void;
   /** 组件 unmount 后的回调 */
   onUnmount: () => void;
-  /** 控件被点击后的回调 */
-  onClick: (clickEvent) => void;
 }
 ```
 
@@ -95,15 +93,17 @@ interface BasicComponent {
 ##### 4.2.2.1. 一般数据录入组件
 
 ```ts
-/** 一般数据录入组件 */
-interface FormComponent extends BasicComponent {
+/**
+ * 一般数据录入组件
+ */
+export interface FormComponent<T> extends BasicComponent {
   /// 通用属性
   /** 指定的值，如果传入了，该组件为受控组件 */
   value: any;
   /** 组件的默认值，如果只传入该属性，可不实现 onChange */
   defaultValue: any;
   /** 可以让组件被引用，提供组件实例的引用 */
-  ref: React.Ref;
+  ref: React.Ref<T>;
 
   /// 通用回调
   /** 控件的值更改后触发的回调，如果指定了 value，则 onChange 为必填 */
@@ -114,8 +114,10 @@ interface FormComponent extends BasicComponent {
 ##### 4.2.2.2. 数据录入选择器组件
 
 ```ts
-/** 数据录入选择器组件 */
-interface Selector extends FormComponent {
+/**
+ * 数据录入选择器组件
+ */
+export interface FormSelector<T = null> extends FormComponent<T> {
   /// Input 的 props
   /** 可选的值的集合 */
   values: {
@@ -132,12 +134,15 @@ interface Selector extends FormComponent {
 数据展示组件，主要目的是为了将已有数据展示给用户查看。
 
 ```ts
-interface DataDisplayComponent extends BasicComponent {
+/**
+ * 数据显示组件
+ */
+export interface DataDisplayComponent<T = null> extends BasicComponent {
   /// 通用属性
   /** 组件的数据来源 */
   dataSource: any;
   /** 可以让组件被引用，提供组件实例的引用 */
-  ref: React.Ref;
+  ref: React.Ref<T>;
 }
 ```
 
@@ -146,8 +151,12 @@ interface DataDisplayComponent extends BasicComponent {
 一般处理用户的操作，以及承载其他组件的组件，例如`弹框组件`、`提示框组件` etc。
 
 ```ts
-interface UIResponseComponent extends BasicComponent {
+/**
+ * 响应用户交互的组件，例如弹窗
+ */
+export interface UIResponseComponent extends BasicComponent {
   /// 通用属性
+  onClose: () => void
 }
 ```
 
@@ -156,12 +165,15 @@ interface UIResponseComponent extends BasicComponent {
 用于应用布局，参考 material ui 的布局系统：
 
 ```ts
-interface Grid {
+/**
+ * 布局
+ */
+export interface Grid {
   /** 是否为容器 */
   container: boolean;
   /** 是否为项 */
   item: boolean;
-  ...
+  // ...
 }
 ```
 
@@ -242,3 +254,37 @@ const App = () => {
   )
 }
 ```
+
+---
+
+## 7. 检查
+
+最后一步，我们需要检查接入的 UI 是否符合规范，所以我们需要通过`UI 规范测试`来检验接入的 UI。以下我们以 `jest` 为例子，检查`属性面板 UI 接入`：
+
+```ts
+import InputForPropEditorPanel from './path-to-com';
+
+describe('测试属性面板 UI 接入', () => {
+  test('输入组件', () => {
+    const params = {};
+    const expectRes = () => {
+      return {
+        label: string,
+        type: 'componentCollection',
+        component: {
+          type: 'Input'
+        }
+      }
+    };
+    expect(InputForPropEditorPanel(params)).toBe(expectRes());
+  });
+})
+```
+
+执行测试：
+
+```sh
+yarn test
+```
+
+最后查看测试报告即可。
