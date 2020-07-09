@@ -10,7 +10,7 @@ export interface BasicComponent {
   /** classnames，通过内置 classnames 支持 */
   classnames?: string[];
   /** 所有组件都有的包装器，可以自由控制组件外层 */
-  wrapper?: (child: React.ReactChild) => React.ReactChild
+  wrapper?: (child: React.ReactChild) => JSX.Element
 
   /// 通用回调
   /** 组件完成 mount 后的回调 */
