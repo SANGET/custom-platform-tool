@@ -14,7 +14,7 @@
 
 在工程开发中，我们需要使用到不同的组件。这里把组件分成两大类：
 
-1. 基础组件，提供通用的 UI 交互能力。
+1. 基础通用组件，提供通用的 UI 交互能力。
 2. 业务组件，根据实际业务要求，完成特定业务的组件。
 
 以下是上述两类组件的接入标准。
@@ -27,7 +27,7 @@
 
 ---
 
-## 4. 通用组件
+## 4. 基础通用组件
 
 组件基于 React，以及 react 的受控于非受控组件概念，需要学习相关知识。
 
@@ -46,11 +46,11 @@
 
 [TODOPic]
 
-### 4.2. 通用组件接入
+### 4.2. 基础通用组件接入
 
-在我们的工程中，需要用到`通用组件`的地方有很多，例如比较核心的`可视化编辑器引擎`，`应用平台运行容器`，`配置平台的各个管理工具`。
+在我们的工程中，需要用到`基础通用组件`的地方有很多，例如比较核心的`可视化编辑器引擎`，`应用平台运行容器`，`配置平台的各个管理工具`。
 
-通用组件也是有分类的，主要分为：
+`基础通用组件`也是有分类的，主要分为：
 
 1. 数据录入
    1. 输入框
@@ -60,25 +60,30 @@
 3. 交互响应
 4. 布局组件
 
-#### 4.2.1. 基础组件必须的接口
+#### 4.2.1. 基础通用组件必须的接口
 
 这里是所有由 UI 隔离层提供的组件都有的通用的属性：
 
 ```ts
-interface BasicComponent {
+/**
+ * 基础的组件
+ */
+export interface BasicComponent {
   /// 通用属性
   /** 控制该组件的样式 */
-  style: React.CSSProperties | undefined;
+  style?: React.CSSProperties | undefined;
+  /** className */
+  className?: string;
   /** classnames，通过内置 classnames 支持 */
-  classnames: string[];
+  classnames?: string[];
   /** 所有组件都有的包装器，可以自由控制组件外层 */
-  wrapper: (child: React.ReactChild) => React.ReactChild
+  wrapper?: (child: React.ReactChild) => React.ReactChild
 
   /// 通用回调
   /** 组件完成 mount 后的回调 */
-  onMount: () => void;
+  onMount?: () => void;
   /** 组件 unmount 后的回调 */
-  onUnmount: () => void;
+  onUnmount?: () => void;
 }
 ```
 
@@ -96,18 +101,18 @@ interface BasicComponent {
 /**
  * 一般数据录入组件
  */
-export interface FormComponent<T> extends BasicComponent {
+export interface FormComponent<T = null> extends BasicComponent {
   /// 通用属性
   /** 指定的值，如果传入了，该组件为受控组件 */
-  value: any;
+  value?: any;
   /** 组件的默认值，如果只传入该属性，可不实现 onChange */
-  defaultValue: any;
+  defaultValue?: any;
   /** 可以让组件被引用，提供组件实例的引用 */
-  ref: React.Ref<T>;
+  ref?: React.Ref<T>;
 
   /// 通用回调
   /** 控件的值更改后触发的回调，如果指定了 value，则 onChange 为必填 */
-  onChange: (value, preValue, event) => void;
+  onChange?: (value, preValue, event) => void;
 }
 ```
 
@@ -142,7 +147,7 @@ export interface DataDisplayComponent<T = null> extends BasicComponent {
   /** 组件的数据来源 */
   dataSource: any;
   /** 可以让组件被引用，提供组件实例的引用 */
-  ref: React.Ref<T>;
+  ref?: React.Ref<T>;
 }
 ```
 
@@ -156,7 +161,7 @@ export interface DataDisplayComponent<T = null> extends BasicComponent {
  */
 export interface UIResponseComponent extends BasicComponent {
   /// 通用属性
-  onClose: () => void
+  onClose?: () => void
 }
 ```
 
@@ -204,30 +209,43 @@ export interface Grid {
 进入目录 `packages/infrastructure/ui/form/`，创建 `CustomInput.tsx`：
 
 ```ts
-interface CustomInputComponent extends FormComponent {
+import { FormComponent, basicComponentFac } from '../basic';
 
+interface CustomInputComponent extends FormComponent {
+  /// ... 自定义的 props
 }
 
-export const CustomInput = (props: CustomInputComponent) => {
+/// 必须通过 React.FC 来确定该组件的类型，否则组件不能通过检查
+export const CustomInput: React.FC<CustomInputComponent> = (props) => {
   return (
     /// ...
   )
 }
+
+// 通过系统提供的`组件接入标准生成函数`包装
+export const Input = basicComponentFac(CustomInput)
 ```
 
 在 `form/index.ts` 中注册：
 
 ```ts
-...
-
+/// ... 其他组件的 export
 export * from './CustomInput';
 ```
 
 其他外部模块便可引用。
 
-### 6.2. 例子 2 - 可视化编辑器引擎组件接入
+```tsx
+import { Input } from '@infra/ui'
 
-对应的是`设计器组件接入标准`。
+const App = () => {
+  return (
+    <Input />
+  )
+}
+```
+
+### 6.2. 例子 2 - 业务组件 - 可视化编辑器引擎组件接入
 
 在`可视化编辑器引擎`项目中，声明需要用到的组件，由 UI 隔离层统一提供。`可视化编辑器引擎`中也可以在自定义专属于自身的`可视化编辑器业务组件`。
 
@@ -237,6 +255,7 @@ export * from './CustomInput';
 
 ```ts
 /// TestComponent.tsx
+import { FormComponent, basicComponentFac } from '../basic';
 
 interface TestComponentProps extends Selector {
   /// ...自定义 props
@@ -248,16 +267,18 @@ const TestComponent = (props: TestComponentProps) => {
   )
 }
 
+const TC = basicComponentFac(TestComponent);
+
 const App = () => {
   return (
-    <TestComponent {...props} />
+    <TC {...props} />
   )
 }
 ```
 
 ---
 
-## 7. 检查
+## 7. 测试
 
 最后一步，我们需要检查接入的 UI 是否符合规范，所以我们需要通过`UI 规范测试`来检验接入的 UI。以下我们以 `jest` 为例子，检查`属性面板 UI 接入`：
 
