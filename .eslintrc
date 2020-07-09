@@ -47,6 +47,7 @@
     "react/jsx-first-prop-new-line": 0,
     "react/jsx-one-expression-per-line": 0,
     "react/jsx-closing-bracket-location": [1, "line-aligned"],
+    "no-shadow": [0, { "hoist": "never" }],
     "react/jsx-filename-extension": [
       1,
       {

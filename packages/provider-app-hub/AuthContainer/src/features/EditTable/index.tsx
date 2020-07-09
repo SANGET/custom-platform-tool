@@ -1,5 +1,4 @@
 import React, { useState } from 'react'
-import 'antd/dist/antd.css'
 import { Table, Input, InputNumber, Form } from 'antd'
 
 const originData = []
@@ -49,6 +48,7 @@ const EditableCell = ({
 }
 
 const EditableTable = () => {
+  // 创建form 控制实例
   const [form] = Form.useForm()
   const [data, setData] = useState(originData)
   const [editingKey, setEditingKey] = useState('')
@@ -56,6 +56,7 @@ const EditableTable = () => {
   const isEditing = (record) => record.key === editingKey
 
   const edit = (record) => {
+    //form里面的控件值不能被 setState 动态更新，要用 setFieldsValue 来更新
     form.setFieldsValue({
       name: '',
       age: '',
@@ -71,6 +72,7 @@ const EditableTable = () => {
 
   const save = async (key) => {
     try {
+      // 触发表单校验
       const row = await form.validateFields()
       const newData = [...data]
       const index = newData.findIndex((item) => key === item.key)
@@ -95,7 +97,7 @@ const EditableTable = () => {
       title: 'name',
       dataIndex: 'name',
       width: '25%',
-      editable: true,
+      editable: true,   // 是否选择的标记,自定义的
     },
     {
       title: 'age',
@@ -109,38 +111,12 @@ const EditableTable = () => {
       width: '40%',
       editable: true,
     },
-    // {
-    //   title: 'operation',
-    //   dataIndex: 'operation',
-    //   render: (_, record) => {
-    //     const editable = isEditing(record)
-    //     return editable ? (
-    //       <span>
-    //         <button
-    //           onClick={() => save(record.key)}
-    //           style={{
-    //             marginRight: 8,
-    //           }}
-    //         >
-    //           Save
-    //         </button>
-    //         <Popconfirm title="Sure to cancel?" onConfirm={cancel}>
-    //           <button>Cancel</button>
-    //         </Popconfirm>
-    //       </span>
-    //     ) : (
-    //       <button disabled={editingKey !== ''} onClick={() => edit(record)}>
-    //         Edit
-    //       </button>
-    //     )
-    //   },
-    // },
   ]
   const mergedColumns = columns.map((col) => {
     if (!col.editable) {
       return col
     }
-
+    // 设置了onCell就可以自定义渲染
     return {
       ...col,
       onCell: (record) => ({
@@ -148,13 +124,14 @@ const EditableTable = () => {
         inputType: col.dataIndex === 'age' ? 'number' : 'text',
         dataIndex: col.dataIndex,
         title: col.title,
-        editing: isEditing(record),
+        editing: isEditing(record), // 自定义的判断标记
       }),
     }
   })
   return (
     <Form form={form} component={false}>
       <Table
+      // components 覆盖默认table元素，可以覆盖的属性有table header body, body属性下面有3个子属性wrapper,row,cell;
         components={{
           body: {
             cell: EditableCell,

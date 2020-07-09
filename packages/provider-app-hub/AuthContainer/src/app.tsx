@@ -15,26 +15,26 @@ const App: FC = () => (
         <nav>
           <ul>
             <li>
-              <Link to="/">Home</Link>
+              <Link to="/">树形穿梭</Link>
             </li>
             <li>
-              <Link to="/editTable">editTable</Link>
+              <Link to="/editTable">编辑表格</Link>
             </li>
-            <li>
+            {/* <li>
               <Link to="/transferTree">transferTree</Link>
-            </li>
+            </li> */}
           </ul>
         </nav>
       </header>
       <main>
         <Switch>
-          <Route exact path="/" component={Home} />
+          <Route exact path="/" component={TransferTree} />
           <Route path="/editTable" component={EditTable} />
-          <Route path="/transferTree" component={TransferTree} />
+          {/* <Route path="/transferTree" component={TransferTree} /> */}
         </Switch>
       </main>
     </div>
   </BrowserRouter>
 );
 
-export { App };
+export default App;
