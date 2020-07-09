@@ -7,6 +7,7 @@ import {
 import Home from './features/Home';
 import EditTable from './features/EditTable';
 import TransferTree from './features/TransTree';
+import DragTree from './features/DragTree';
 
 const App: FC = () => (
   <BrowserRouter>
@@ -20,9 +21,9 @@ const App: FC = () => (
             <li>
               <Link to="/editTable">编辑表格</Link>
             </li>
-            {/* <li>
-              <Link to="/transferTree">transferTree</Link>
-            </li> */}
+            <li>
+              <Link to="/dragTree">拖拽树</Link>
+            </li>
           </ul>
         </nav>
       </header>
@@ -30,7 +31,7 @@ const App: FC = () => (
         <Switch>
           <Route exact path="/" component={TransferTree} />
           <Route path="/editTable" component={EditTable} />
-          {/* <Route path="/transferTree" component={TransferTree} /> */}
+          <Route path="/dragTree" component={DragTree} />
         </Switch>
       </main>
     </div>

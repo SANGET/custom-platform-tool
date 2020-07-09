@@ -1,6 +1,5 @@
 import { Transfer, Tree } from 'antd';
 import React, { FC } from 'react';
-import { treeData } from '../../features/TransTree/tool';
 
 const TreeTransfer: FC = ({
   dataSource,
@@ -8,6 +7,8 @@ const TreeTransfer: FC = ({
   targetKeys,
   treeFilter,
   disTreeNode,
+  draggable
+  onDrop
   ...restProps
 }) => {
   const isChecked = (selectedKeys, eventKey) => {
@@ -33,10 +34,12 @@ const TreeTransfer: FC = ({
           return (
             <Tree
               checkable
+              draggable
               defaultExpandAll
               checkedKeys={checkedKeys}
               selectedKeys={selectedKeys}
-              treeData={treeData}
+              treeData={dataSource}
+              onDrop={onDrop}
               onCheck={(_, { node: { key } }) => {
                 onItemSelect(key, !isChecked(checkedKeys, key));
               }}
@@ -46,7 +49,7 @@ const TreeTransfer: FC = ({
             />
           );
         }
-        return <Tree blockNode={true} defaultExpandAll treeData={selectedTree} />;
+        return <Tree blockNode={true} defaultExpandedKeys={targetKeys} treeData={selectedTree} />;
       }}
     </Transfer>
   );
