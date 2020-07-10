@@ -2,14 +2,15 @@ import React, { useEffect } from 'react';
 import classNames from 'classnames';
 import { BasicComponent } from './types';
 
-type CompPropsType = BasicComponent;
-type CompType = CompPropsType & React.FC & React.Component
+type CompType<T> = React.ComponentType<T>
+type CompPropsType = BasicComponent
 
 /**
  * 基础组件的 HOC
+ * @param Comp 需要被包装的组件
  */
-export function basicComponentFac<T>(Comp: T) {
-  return <P extends CompPropsType>(props: P) => {
+export function basicComponentFac<C>(Comp: CompType<C>) {
+  return <P extends (CompPropsType & C)>(props: P): JSX.Element => {
     const {
       onMount, onUnmount, wrapper,
       className, classnames,
@@ -34,7 +35,9 @@ export function basicComponentFac<T>(Comp: T) {
         {...otherProps}
       />
     );
-    return typeof wrapper === 'function'
-      ? wrapper(child) : child;
+
+    return child;
+    // return typeof wrapper === 'function'
+    //   ? wrapper(child) : child;
   };
 }
