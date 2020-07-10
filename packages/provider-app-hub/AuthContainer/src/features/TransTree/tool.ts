@@ -76,64 +76,13 @@ const disTreeNode = (treeNodes, checkedKeys) => {
  * @param {* 过滤条件} filter
  * @param {* 过滤键名} key
  */
-const treeFilter = ({ treeData = {}, filter = () => {}, copy = () => {} }) => {
-  const rootNode = treeData.map((tree) => {
-    const walkAndCopy = (tree, depth = 1) => {
-      const queue = [];
-      if (filter(tree)) {
-        const copyObj = {};
-        copy(tree, copyObj);
-        if (tree.children) {
-          copyObj.children = [];
-          queue.push({
-            nodes: tree.children,
-            depth: depth + 1,
-            copyNodes: copyObj.children
-          });
-        }
-        while (queue.length) {
-          const item = queue.pop();
-          item.nodes
-            && item.nodes.forEach((node) => {
-              if (filter(node)) {
-                const copyNode = {};
-                copy(node, copyNode);
-                if (node.children) {
-                  copyNode.children = [];
-                  queue.push({
-                    nodes: node.children,
-                    depth: item.depth + 1,
-                    copyNodes: copyNode.children
-                  });
-                }
-                item.copyNodes.push(copyNode);
-              }
-            });
-        }
-        return copyObj;
-      }
-    };
-    return walkAndCopy(tree);
-  });
-
-  // 过滤掉根节点中为undefined
-  return rootNode.filter((item) => item);
-};
-
-/**
- * 树过滤--过滤掉选中的节点
- * @param {* 树形数据} tree
- * @param {* 过滤函数} filter
- * @param {* 过滤键名} key
- */
-// const treeFilter = ({ treeData, filter, copy }) => {
+// const treeFilter = ({ treeData = {}, filter = () => {}, copy = () => {} }) => {
 //   const rootNode = treeData.map((tree) => {
 //     const walkAndCopy = (tree, depth = 1) => {
 //       const queue = [];
 //       if (filter(tree)) {
-//         let copyObj = {};
-//         copyObj = Object.assign({}, copy(tree));
-
+//         const copyObj = {};
+//         copy(tree, copyObj);
 //         if (tree.children) {
 //           copyObj.children = [];
 //           queue.push({
@@ -148,8 +97,7 @@ const treeFilter = ({ treeData = {}, filter = () => {}, copy = () => {} }) => {
 //             && item.nodes.forEach((node) => {
 //               if (filter(node)) {
 //                 const copyNode = {};
-//                 // copyObj = { ...copy(node) };
-//                 copyObj = Object.assign({}, copy(node));
+//                 copy(node, copyNode);
 //                 if (node.children) {
 //                   copyNode.children = [];
 //                   queue.push({
@@ -172,6 +120,62 @@ const treeFilter = ({ treeData = {}, filter = () => {}, copy = () => {} }) => {
 //   return rootNode.filter((item) => item);
 // };
 
+/**
+ * 树过滤--过滤掉选中的节点
+ * @param {* 树形数据} tree
+ * @param {* 过滤函数} filter
+ * @param {* 过滤键名} key
+ */
+const treeFilter = ({ treeData, filter, copy }) => {
+  const rootNode = treeData.map((tree) => {
+    const walkAndCopy = (tree, depth = 1) => {
+      const queue = [];
+      if (filter(tree)) {
+        let copyObj = {};
+        copyObj = { ...copy(tree) };
+
+        if (tree.children) {
+          copyObj.children = [];
+          queue.push({
+            nodes: tree.children,
+            depth: depth + 1,
+            copyNodes: copyObj.children
+          });
+        }
+        while (queue.length) {
+          const item = queue.pop();
+          item.nodes
+            && item.nodes.forEach((node) => {
+              if (filter(node)) {
+                const copyNode = {};
+                copyObj = { ...copy(node) };
+                copyObj = Object.assign({}, copy(node));
+                if (node.children) {
+                  copyNode.children = [];
+                  queue.push({
+                    nodes: node.children,
+                    depth: item.depth + 1,
+                    copyNodes: copyNode.children
+                  });
+                }
+                item.copyNodes.push(copyNode);
+              }
+            });
+        }
+        return copyObj;
+      }
+    };
+    return walkAndCopy(tree);
+  });
+
+  // 过滤掉根节点中为undefined
+  return rootNode.filter((item) => item);
+};
+/**
+ * 生成选择树
+ * @param nodes 树形源数据
+ * @param targetKeys 选中的节点key集合
+ */
 const generateSelectedTree = (nodes, targetKeys) => {
   return nodes
     .map((node) => {

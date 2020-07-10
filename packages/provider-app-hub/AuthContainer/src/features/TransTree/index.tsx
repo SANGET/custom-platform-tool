@@ -1,3 +1,9 @@
+/*
+ * @Author: mikey.zhaopeng
+ * @Date: 2020-07-10 12:00:29
+ * @Last Modified by:   mikey.zhaopeng
+ * @Last Modified time: 2020-07-10 12:00:29
+ */
 import React, { useState } from 'react';
 import { Button } from 'antd';
 import TreeTransfer from '@provider-app/auth-manager/src/common/Components/TreeTransfer';
@@ -21,39 +27,48 @@ export default () => {
   };
   const filter = () => {
     // 过滤掉选中的节点
-    // const reserveTree = treeFilter({
-    //   treeData: dataSource,
-    //   copy: (src) => {
-    //     const { key, title } = src;
-    //     return {
-    //       key,
-    //       title
-    //     };
-    //   },
-    //   filter: (node) => {
-    //     // 返回true的节点会被保留
-    //     return !targetKeys.includes(node.key);
-    //   }
-    // });
     const reserveTree = treeFilter({
       treeData: dataSource,
-      copy: (src, dest) => {
-        dest.title = src.title;
-        dest.key = src.key;
+      copy: (src) => {
+        const { key, title } = src;
+        return {
+          key,
+          title
+        };
       },
-      filter: (node) => {
-        return !node.disabled;
-      }
+      filter: (node) => !node.disabled
+      // 返回true的节点会被保留
+      // return !targetKeys.includes(node.key);
     });
+    // const reserveTree = treeFilter({
+    //   treeData: dataSource,
+    //   copy: (src, dest) => {
+    //     dest.title = src.title;
+    //     dest.key = src.key;
+    //   },
+    //   filter: (node) => {
+    //     return !node.disabled;
+    //   }
+    // });
     console.log(reserveTree);
 
     setDataSource(reserveTree);
   };
+  /**
+   * 拖拽位置处理
+   * @param info ={event, node, dragNode, dragNodesKeys}
+   * @param node 拖拽放置位置的节点
+   * @param dragNode 被拖拽的节点
+   * @param dragNodesKeys 被拖拽节点的key
+   * @param event dom事件属性
+   * @param dropToGap: 代表连接到节点之间的缝隙中，相对 node 参数是前后邻居关系，而不是子节点关系。
+   * @param dropPosition 相对地址，相对于一级节点的index,在其上index-1,在其下index+1
+   */
   const onDrop = (info) => {
     const {
       event, node, dragNode, dragNodesKeys
     } = info;
-    console.log(event, node, dragNode, dragNodesKeys);
+    console.log(info, event, node, dragNode, dragNodesKeys);
     /** 放下的节点的key */
     const dropKey = node.key;
     /** 拖过来的节点的key */
@@ -128,7 +143,13 @@ export default () => {
         draggable={true}
         onDrop={onDrop}
       />
-      <Button type="primary" style={{ marginTop: '10px' }} onClick={filter}>
+      <Button
+        type="primary"
+        style={{ marginTop: '10px' }}
+        onClick={(targetKeys) => {
+          filter(targetKeys);
+        }}
+      >
         一键过滤
       </Button>
     </div>

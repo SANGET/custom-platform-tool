@@ -41,15 +41,20 @@ const TreeTransfer: FC = ({
               treeData={dataSource}
               onDrop={onDrop}
               onCheck={(_, { node: { key } }) => {
+                // 点击了树节点前面的复选框触发的事件
+                console.log('xxx',_,key);
+                /*  */
                 onItemSelect(key, !isChecked(checkedKeys, key));
               }}
               onSelect={(_, { node: { key } }) => {
-                onItemSelect(key, !isChecked(checkedKeys, key));
+                /**onSelect点击了树节点的文字触发的事件 */
+                console.log('onSelect',_);
+                // onItemSelect(key, !isChecked(checkedKeys, key));
               }}
             />
           );
         }
-        return <Tree blockNode={true} defaultExpandedKeys={targetKeys} treeData={selectedTree} />;
+        return <Tree blockNode={true}  treeDefaultExpandAll={true} treeData={selectedTree} />;
       }}
     </Transfer>
   );
