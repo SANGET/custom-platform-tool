@@ -44,7 +44,7 @@
     "react/no-unused-state": 0,
     "react/display-name": 0,
     "react/jsx-max-props-per-line": 0,
-    "react/jsx-first-prop-new-line": 0,
+    "react/jsx-first-prop-new-line": 1,
     "react/jsx-one-expression-per-line": 0,
     "react/jsx-closing-bracket-location": [1, "line-aligned"],
     "no-shadow": [0, { "hoist": "never" }],
