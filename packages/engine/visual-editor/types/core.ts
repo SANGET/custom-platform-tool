@@ -42,9 +42,9 @@ export interface EditorComponentEntity extends EditorComponentClass {
 /**
  * 属性类型
  */
-export interface EditorPropertyClass {
-  /** 属性类型 ID */
-  id: string
+export interface EditorPropertyItem {
+  /** 属性项 ID */
+  // id: string
   /** 显示的 label */
   label: string
   /** 属性的类型 */
@@ -59,18 +59,18 @@ export interface EditorPropertyClass {
 /**
  * 函数方式接入
  */
-export type PropertyItemClassConfigFunc = (entity: EditorComponentEntity) => EditorPropertyClass
+export type PropertyItemConfigFunc = (entity: EditorComponentEntity) => EditorPropertyItem
 
 /**
  * 属性组件接入方式
  */
-export type PropertyItemClassConfig = PropertyItemClassConfigFunc | EditorPropertyClass
+export type PropertyItemConfig = PropertyItemConfigFunc | EditorPropertyItem
 
 /**
  * 属性集合
  */
 export interface EditorPropertyCollection {
-  [colID: string]: PropertyItemClassConfig
+  [colID: string]: PropertyItemConfig
 }
 
 /// //////////////// 实例的属性数据 ///////////////////

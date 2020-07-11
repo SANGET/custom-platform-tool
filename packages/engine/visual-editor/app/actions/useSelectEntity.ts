@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { EditorComponentEntity } from "../types";
+import { EditorComponentEntity } from "../../types";
 
 type Entity = EditorComponentEntity
 

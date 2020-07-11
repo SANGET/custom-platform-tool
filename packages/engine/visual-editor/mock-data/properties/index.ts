@@ -1,4 +1,4 @@
-import { EditorPropertyCollection } from "../types";
+import { EditorPropertyCollection } from "../../types";
 
 export const propertiesItemCollection: EditorPropertyCollection = {
   'propID-1': (entity) => {

@@ -1,11 +1,11 @@
 import React, { useState } from "react";
 
-import { Grid } from '@infra/ui';
+import { Grid, Button } from '@infra/ui';
 import { DndProvider } from 'react-dnd';
+import { ShowModal } from '@deer-ui/core';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 
-import { useEntityPropsStore } from "@engin/visual-editor/app/useEntityPropsStore";
-import { useSelectEntity } from "@engin/visual-editor/app/useSelectEntity";
+import { useEntitiesStateStore, useSelectEntity } from "@engin/visual-editor/app/actions";
 import { getLayoutNodeTree, getLayoutContentCollection } from "@engin/visual-editor/components/CanvasStage";
 import ToolBar from './components/Toolbar';
 import ComponentPanel from './components/ComponentPanel';
@@ -23,13 +23,13 @@ import '@deer-ui/core/default.css';
  * TODO: 完善逻辑
  */
 const releasePage = ({
-  componentPropStore
+  entitiesStateStore
 }) => {
   const layoutNodeTree = getLayoutNodeTree();
 
   Prop2IUB({
     layoutNodeTree,
-    componentPropStore
+    entitiesStateStore
   });
 };
 
@@ -43,7 +43,7 @@ const PageDesignerApp = (props) => {
    * TODO: 转换成 IUB-DSL
    */
   const [selectedEntities, selectEntity] = useSelectEntity();
-  const [componentPropStore, saveEntityPropsStore] = useEntityPropsStore();
+  const [entitiesStateStore, saveEntitiesStateStore] = useEntitiesStateStore();
 
   const { activeID } = selectedEntities;
 
@@ -68,9 +68,25 @@ const PageDesignerApp = (props) => {
         >
           <ToolBar
             onReleasePage={(e) => {
-              releasePage({
-                componentPropStore
+              ShowModal({
+                onClose: () => {},
+                onConfirm: (context) => {
+                  console.log(context);
+                },
+                showFuncBtn: true,
+                title: '弹窗',
+                children: (context) => {
+                  return (
+                    <div>
+                      弹窗 123122
+                      <Button>撒的</Button>
+                    </div>
+                  );
+                }
               });
+              // releasePage({
+              //   entitiesStateStore
+              // });
             }}
           />
         </Grid>
@@ -115,8 +131,8 @@ const PageDesignerApp = (props) => {
           <PropertiesEditor
             key={activeID}
             selectedEntity={selectedEntities.activeEntity}
-            defaultFormState={componentPropStore[activeID]}
-            saveEntityPropsStore={saveEntityPropsStore}
+            defaultFormState={entitiesStateStore[activeID]}
+            saveEntitiesStateStore={saveEntitiesStateStore}
           />
         </Grid>
       </Grid>

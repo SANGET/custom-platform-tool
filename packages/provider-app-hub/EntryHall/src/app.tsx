@@ -107,8 +107,8 @@ export default class App extends RouterMultiple<AppContainerProps, AppContainerS
                         <PageContainer
                           pageID={pageID}
                           pageAuthInfo={pageAuthInfo}
-                          Child={C}
                         >
+                          <C />
                         </PageContainer>
                       </div>
                     );
