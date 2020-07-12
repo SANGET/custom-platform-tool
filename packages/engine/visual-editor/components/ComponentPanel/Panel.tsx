@@ -3,10 +3,11 @@ import { Tabs, Tab } from '@infra/ui';
 
 import DragItem, { DragItemConfig } from './DragItem';
 import { EditorComponentClass } from '../../types';
+import { componentClassCollection } from '../../mock-data';
 
 export interface PanelItemsGroup {
   title: string
-  items: EditorComponentClass[]
+  items: string[]
 }
 
 export interface PanelTabGroupItem {
@@ -64,7 +65,8 @@ const ComponentPanel = ({
                       <div key={`${idx}_${_idx}`}>
                         <h5>{igTitle}</h5>
                         {
-                          items.map((componentClass, __idx) => {
+                          items.map((componentClassID, __idx) => {
+                            const componentClass = componentClassCollection[componentClassID];
                             const {
                               id, label
                             } = componentClass;
@@ -106,31 +108,13 @@ ComponentPanel.defaultProps = {
           {
             title: '基础控件',
             items: [
-              {
-                id: 'com1',
-                component: 'Input',
-                label: '文本框',
-                type: 'component',
-                properties: {
-                  propRefs: ['propID-1', 'propID-2']
-                }
-              }
+              'component-1'
             ]
           },
           {
             title: '布局',
             items: [
-              {
-                id: 'con1',
-                layout: {
-                  type: 'flex',
-                },
-                label: 'Flex 布局',
-                type: 'container',
-                properties: {
-                  propRefs: ['propID-1', 'propID-2', 'propID-3', 'propID-4', 'propID-5']
-                }
-              }
+              'container-1'
             ]
           },
         ]

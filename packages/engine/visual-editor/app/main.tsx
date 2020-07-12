@@ -23,6 +23,7 @@ interface VisualEditorAppProps {
 const VisualEditorApp: React.FC<VisualEditorAppProps> = (props) => {
   const [selectedEntities, selectEntity] = useSelectEntity();
   const [entitiesStateStore, saveEntitiesStateStore] = useEntitiesStateStore();
+  console.log(entitiesStateStore);
 
   const { activeID } = selectedEntities;
 
@@ -73,6 +74,7 @@ const VisualEditorApp: React.FC<VisualEditorAppProps> = (props) => {
           >
             <CanvasStage
               selectedEntities={selectedEntities.selectedList}
+              entitiesStateStore={entitiesStateStore}
               selectEntity={selectEntity}
             />
           </Grid>
@@ -88,7 +90,7 @@ const VisualEditorApp: React.FC<VisualEditorAppProps> = (props) => {
           <PropertiesEditor
             key={activeID}
             selectedEntity={selectedEntities.activeEntity}
-            defaultFormState={entitiesStateStore[activeID]}
+            defaultEntityState={entitiesStateStore[activeID]}
             saveEntitiesStateStore={saveEntitiesStateStore}
           />
         </Grid>

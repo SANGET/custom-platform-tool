@@ -1,45 +1,22 @@
-import { EditorPropertyCollection } from "../../types";
+import { EditorPropertyItemsCollection } from "../../types";
 
-export const propertiesItemCollection: EditorPropertyCollection = {
-  'propID-1': (entity) => {
+/**
+ * TODO: 搞清楚属性如何影响组件实例，或者是说组件实例如何根据属性数据进行调整
+ */
+export const propertiesItemCollection: EditorPropertyItemsCollection = {
+  'prop-style-1': (entity) => {
     return {
-      label: '输入1',
+      id: 'prop-style-1',
+      label: '标题颜色',
       /**
        * 用于定位属性类型
        */
-      type: 'componentCollection',
+      type: 'style',
+      target: 'color',
       component: {
         type: 'Input'
       }
     };
-  },
-  'propID-2': {
-    label: '输入2',
-    type: 'componentCollection',
-    component: {
-      type: 'Input'
-    }
-  },
-  'propID-3': {
-    label: '输入3',
-    type: 'componentCollection',
-    component: {
-      type: 'Input'
-    }
-  },
-  'propID-4': {
-    label: '输入4',
-    type: 'componentCollection',
-    component: {
-      type: 'Input'
-    }
-  },
-  'propID-5': {
-    label: '输入5',
-    type: 'componentCollection',
-    component: {
-      type: 'Input'
-    }
   },
 };
 
