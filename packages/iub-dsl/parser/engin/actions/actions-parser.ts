@@ -19,3 +19,15 @@ export const ActionsCollectionParser = (actionsCollection: {
     return actionParseRes;
   }, {});
 };
+
+interface ActionsItem {
+
+  actionId: string;
+
+  doAction: string;
+
+}
+
+class Action {
+  actions: ActionsItem[] = []
+}
