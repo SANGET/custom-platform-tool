@@ -1,5 +1,5 @@
 import React from 'react';
-import CanvasStage from '@engin/visual-editor/components/CanvasStage';
+import CanvasStage from '@engine/visual-editor/components/CanvasStage';
 
 const CanvasStageCustom = (props) => {
   return (

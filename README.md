@@ -10,6 +10,18 @@
 - 通过 lerna 管理工作区的包关系
 - 有多个独立应用模块，可以独立开发
 
+## 技术选型
+
+建议学习
+
+- react
+- redux
+- webpack
+- lerna
+- less
+- styled-components
+- node
+
 -----
 
 ## 工程结构（Architecture）
@@ -35,7 +47,7 @@
     - `parser/` - IUB-DSL 解析器集合
     - `demo/` - `{顾名思义}`
     - `docs/` - IUB-DSL 专属文档
-  - `engins/` - 核心引擎，用于驱动应用
+  - `engine/` - 核心引擎，用于驱动应用
     - `visual-editor/` - 可视化编辑器引擎
     - `admin-container/` - 管理应用的运行容器框架
   - `infrastructure/` - 基础设施支持
@@ -45,7 +57,7 @@
     - `env-scripts/` - 项目工程化基础 scripts
     - `multiple-page-routing/` - 多页路由机制
     - `remote-communication-services/` - 远端通讯服务
-    - `ui-interface/` - UI 隔离层
+    - `ui/` - UI 隔离层
     - `utils/` - 通用工具
 - `.eslintignore` - eslint 中`需忽略的项`配置
 - `.eslintrc` - eslint 配置

@@ -1,7 +1,5 @@
-import React, {
-  Fragment, useState, useCallback, useMemo, useEffect
-} from "react";
-import { Input, Button, Dropdown } from "@infra/ui-interface";
+import React, { Fragment } from "react";
+import { Input, Button, Dropdown } from "@infra/ui";
 import { UserBehavior, ComponentType } from "@iub-dsl/core";
 import * as Comps from '@iub-dsl/core/types/component/components';
 
@@ -88,7 +86,8 @@ const selectorCompParser: EntityCompParserRef = {
       return useActions;
     }, {});
     console.log(componentConfig);
-    return (<select key={compId}
+    return (<select
+      key={compId}
       defaultValue={typeof componentConfig.field === 'undefined' ? '' : componentConfig.field}
       {...canUseActions}
       {...pubPropsRes}
