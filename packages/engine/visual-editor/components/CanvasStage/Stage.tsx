@@ -6,7 +6,7 @@ import { useDrop } from 'react-dnd';
 import styled from 'styled-components';
 import classnames from 'classnames';
 
-import LayoutParser from '@iub-dsl/parser/engin/layout';
+import LayoutRenderer from '@engine/layout-renderer';
 import { ItemTypes } from '../ComponentPanel/types';
 import {
   increaseID, parseFlatNodeToNestNode, wrapID, ENTITY_ID
@@ -41,7 +41,7 @@ interface ContainerWrapperFacActions {
 const containerWrapperFac = (
   WrapperComponent,
   { onDrop, onClick }: ContainerWrapperFacActions,
-  { flatLayoutNodes, getSelectedState }
+  { flatLayoutNodes, getSelectedState, getEntityProps }
 ) => (children, { id, idx, ...other }) => {
   return (
     <WrapperComponent
@@ -50,6 +50,7 @@ const containerWrapperFac = (
       onClick={onClick}
       onDrop={onDrop}
       getSelectedState={getSelectedState}
+      getEntityProps={getEntityProps}
       id={id}
       key={id}
     >
@@ -71,20 +72,17 @@ const componentInstantiation = (componentClass, id) => {
 export interface CanvasStageProps {
   selectEntity
   selectedEntities
+  entitiesStateStore
   children?: React.ReactChild
 }
 
-const CanvasStage = ({
+const CanvasStage: React.FC<CanvasStageProps> = ({
   selectEntity,
   selectedEntities,
+  entitiesStateStore,
   children
-}: CanvasStageProps) => {
+}) => {
   const [flatLayoutNodes, setLayoutContentCollection] = useState({});
-  const [componentsCollection, setComponentsCollection] = useState({});
-  // const [selectState, setSelectState] = useState({});
-
-  // console.log('componentsCollection', componentsCollection);
-  // console.log('flatLayoutNodes', flatLayoutNodes);
 
   const onSelectEntityForOnce = (clickEvent, { id, entity }) => {
     selectEntity(id, entity);
@@ -95,12 +93,6 @@ const CanvasStage = ({
     update: updateContainer,
     del: delContainer
   } = stateOperatorFac(flatLayoutNodes, setLayoutContentCollection);
-
-  const {
-    add: addComponent,
-    update: updateComponent,
-    del: delComponent
-  } = stateOperatorFac(componentsCollection, setComponentsCollection);
 
   /**
    * 相应拖放的放的动作的过滤器
@@ -117,32 +109,12 @@ const CanvasStage = ({
 
     /** 更新布局 */
     if (isUpdate) {
-      return updateContainer(itemClassCopy.id, itemClassCopy);
-    }
-
-    switch (itemClassCopy.type) {
-      case 'container':
-        const entityID = increaseID(ENTITY_ID);
-        itemClassCopy.entityID = entityID;
-        const entity = addContainer(itemClassCopy);
-        onSelectEntityForOnce(null, { id: entityID, entity });
-        break;
-      case 'component':
-        /**
-         * 如果是 component，添加一个组件引用，并且向 componentCollection 添加一个 component 实例
-         */
-        const componentRefID = increaseID(ENTITY_ID);
-        const componentID = `comp_id_${componentRefID}`;
-        const componentEntity = addComponent(componentInstantiation(itemClassCopy, componentID));
-        const componentRefConfigClass = {
-          entityID: componentRefID,
-          type: "componentRef",
-          componentID,
-          parentID
-        };
-        addContainer(componentRefConfigClass);
-        onSelectEntityForOnce(null, { id: componentID, entity: componentEntity });
-        break;
+      updateContainer(itemClassCopy.id, itemClassCopy);
+    } else {
+      const entityID = increaseID(ENTITY_ID);
+      itemClassCopy.entityID = entityID;
+      const entity = addContainer(itemClassCopy);
+      onSelectEntityForOnce(null, { id: entityID, entity });
     }
   };
 
@@ -164,25 +136,31 @@ const CanvasStage = ({
     }),
   });
 
-  const parserContext = {
-    context: {},
-    bindAction: (actionID) => {
-      // console.log(actionID);
-      return {};
-    },
-    bindComponent: (componentID) => {
-      return componentsCollection[componentID];
-    },
+  /**
+   * 查看组件实例是否被选中
+   * @param entityID entityID
+   */
+  const getSelectedState = (entityID: string) => {
+    return !!selectedEntities[entityID];
   };
-  const getSelectedState = (id) => {
-    return !!selectedEntities[id];
+
+  const getEntityProps = (entityID: string) => {
+    return entitiesStateStore[entityID];
   };
+
   const layoutNestingNodeTree = parseFlatNodeToNestNode(flatLayoutNodes);
 
   /**
+   * @important 必须信息
    * 设置 node 信息
    */
   setNodeTreeNestingInfo(layoutNestingNodeTree, flatLayoutNodes);
+
+  const wrapperContext = {
+    flatLayoutNodes,
+    getSelectedState,
+    getEntityProps
+  };
 
   return (
     <div className="canvas-stage-container">
@@ -194,17 +172,14 @@ const CanvasStage = ({
           /**
            * 通过 render prop 包装 layout 内部组件，达到动态控制内部组件实现的效果
            */
-          LayoutParser({
+          LayoutRenderer({
             layoutNode: layoutNestingNodeTree,
-            componentWrapper: containerWrapperFac(
+            componentRenderer: containerWrapperFac(
               ComponentWrapperCom,
               {
                 onClick: onSelectEntityForOnce,
               },
-              {
-                flatLayoutNodes,
-                getSelectedState,
-              }
+              wrapperContext
             ),
             containerWrapper: containerWrapperFac(
               ContainerWrapperCom,
@@ -212,12 +187,9 @@ const CanvasStage = ({
                 onDrop: onDropFilter,
                 onClick: onSelectEntityForOnce,
               },
-              {
-                flatLayoutNodes,
-                getSelectedState,
-              }
+              wrapperContext
             )
-          }, parserContext)
+          })
         }
         {children}
       </StageRender>

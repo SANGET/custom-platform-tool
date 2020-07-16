@@ -1,7 +1,7 @@
 import React from 'react';
 import { Button } from '@infra/ui';
 
-import Toolbar from '@engin/visual-editor/components/Toolbar';
+import Toolbar from '@engine/visual-editor/components/Toolbar';
 
 interface ToolbarCustomProps {
   onReleasePage?: () => void

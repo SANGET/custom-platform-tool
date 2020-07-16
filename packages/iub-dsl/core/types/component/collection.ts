@@ -1,4 +1,4 @@
-import { ElementAST } from "../layout-content/element";
+import { ElementBasic } from "../layout-content";
 import {
   Selector, TreeSelector, Table, Button, Input
 } from "./components";
@@ -40,7 +40,7 @@ export type ComponentType = Selector | Input | TreeSelector | Table | Button
 /**
  * 组件元素，行为载体
  */
-export interface ComponentElement extends ElementAST {
+export interface ComponentElement extends ElementBasic {
   id: string;
   type: "component";
   /**
@@ -69,15 +69,3 @@ export interface ComponentElement extends ElementAST {
   //   onFocus?: ActionTypes;
   // };
 }
-
-/**
- * 从 component collection 中引用组件
- */
-export type ComponentElementRefType = {
-  id: string;
-  type: "componentRef";
-  /** 引用的页面，如果没有，则代表当前页 */
-  pageID?: string;
-  /** 需要引用的组件 ID */
-  componentID: string;
-};

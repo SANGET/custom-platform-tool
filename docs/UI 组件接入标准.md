@@ -52,13 +52,13 @@
 
 `基础通用组件`也是有分类的，主要分为：
 
-1. 数据录入
-   1. 输入框
-   2. 选择器
-2. 数据展示
-   1. 表格
-3. 交互响应
-4. 布局组件
+1. 数据录入 FormComponent
+   1. 输入框 FormInput
+   2. 选择器 FormSelector
+2. 数据展示 DataDisplay
+   1. 表格 Table
+3. 交互响应 Feedback
+4. 布局组件 LayoutComponent
 
 #### 4.2.1. 基础通用组件必须的接口
 
@@ -159,7 +159,7 @@ export interface DataDisplayComponent<T = null> extends BasicComponent {
 /**
  * 响应用户交互的组件，例如弹窗
  */
-export interface UIResponseComponent extends BasicComponent {
+export interface FeedbackComponent extends BasicComponent {
   /// 通用属性
   onClose?: () => void
 }
@@ -278,7 +278,13 @@ const App = () => {
 
 ---
 
-## 7. 测试
+## 7. 接口 UML
+
+![图片描述](/tfl/pictures/202007/tapd_41909965_1594281549_12.png)
+
+---
+
+## 8. 测试
 
 最后一步，我们需要检查接入的 UI 是否符合规范，所以我们需要通过`UI 规范测试`来检验接入的 UI。以下我们以 `jest` 为例子，检查`属性面板 UI 接入`：
 
@@ -309,3 +315,5 @@ yarn test
 ```
 
 最后查看测试报告即可。
+
+## 接入文档

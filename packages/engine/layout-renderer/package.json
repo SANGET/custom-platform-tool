@@ -1,5 +1,5 @@
 {
-  "name": "@engine/admin-container",
+  "name": "@engine/layout-renderer",
   "version": "0.0.1",
   "devDependencies": {
   },

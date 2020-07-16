@@ -52,11 +52,12 @@ export default class App extends RouterMultiple<AppContainerProps, AppContainerS
       routers, routerInfo, activeRouteIdx, activeRoute,
       navStore, ready
     } = this.state;
+
     return (
       <div id="app-container">
         {
           ready ? (
-            <React.Fragment>
+            <>
               <Nav navConfig={navStore} />
               <div
                 className="router-tabs"
@@ -95,6 +96,7 @@ export default class App extends RouterMultiple<AppContainerProps, AppContainerS
 
                     // TODO: 优化加载页面
                     const C = router[activeRoute] || 'div';
+
                     return (
                       <div
                         key={pageKey}
@@ -113,7 +115,7 @@ export default class App extends RouterMultiple<AppContainerProps, AppContainerS
                   })
                 }
               </div>
-            </React.Fragment>
+            </>
           ) : (
             <div>Loading</div>
           )

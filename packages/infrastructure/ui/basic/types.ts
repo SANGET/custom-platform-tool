@@ -64,7 +64,7 @@ export interface DataDisplayComponent<T = null> extends BasicComponent {
 /**
  * 响应用户交互的组件，例如弹窗
  */
-export interface UIResponseComponent extends BasicComponent {
+export interface FeedbackComponent extends BasicComponent {
   /// 通用属性
   onClose?: () => void
 }

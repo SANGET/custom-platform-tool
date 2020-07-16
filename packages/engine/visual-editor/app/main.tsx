@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 
 import { Grid } from '@infra/ui';
 import { DndProvider } from 'react-dnd';
@@ -11,8 +11,7 @@ import PropertiesEditor from '../components/PropertiesEditor';
 
 import { Dispatcher } from "../core/actions";
 import { VisualEditorStore } from "../core/store";
-import { useSelectEntity } from "./useSelectEntity";
-import { useEntityPropsStore } from "./useEntityPropsStore";
+import { useSelectEntity, useEntitiesStateStore } from "./actions";
 
 import '@deer-ui/core/default.css';
 
@@ -21,9 +20,10 @@ interface VisualEditorAppProps {
   layoutContent: VisualEditorStore['layoutContentState']
 }
 
-const VisualEditorApp = (props: VisualEditorAppProps) => {
+const VisualEditorApp: React.FC<VisualEditorAppProps> = (props) => {
   const [selectedEntities, selectEntity] = useSelectEntity();
-  const [entityPropsStore, saveEntityPropsStore] = useEntityPropsStore();
+  const [entitiesStateStore, saveEntitiesStateStore] = useEntitiesStateStore();
+  console.log(entitiesStateStore);
 
   const { activeID } = selectedEntities;
 
@@ -74,6 +74,7 @@ const VisualEditorApp = (props: VisualEditorAppProps) => {
           >
             <CanvasStage
               selectedEntities={selectedEntities.selectedList}
+              entitiesStateStore={entitiesStateStore}
               selectEntity={selectEntity}
             />
           </Grid>
@@ -89,8 +90,8 @@ const VisualEditorApp = (props: VisualEditorAppProps) => {
           <PropertiesEditor
             key={activeID}
             selectedEntity={selectedEntities.activeEntity}
-            defaultFormState={entityPropsStore[activeID]}
-            saveEntityPropsStore={saveEntityPropsStore}
+            defaultEntityState={entitiesStateStore[activeID]}
+            saveEntitiesStateStore={saveEntitiesStateStore}
           />
         </Grid>
       </Grid>
