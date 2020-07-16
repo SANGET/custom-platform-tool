@@ -10,11 +10,12 @@ import {
 } from 'antd';
 import TreeTransfer from '@provider-app/auth-manager/src/common/Components/TreeTransfer';
 import BasicTree from '@provider-app/auth-manager/src/common/Components/Tree';
+import { treeData } from './mock';
 import CustomAuth from './CustomAuth';
 
 import EditTable from '../EditTable';
 import {
-  generateSelectedTree, treeFilter, disTreeNode, treeData, selectedTreeData
+  generateSelectedTree, treeFilter, disTreeNode, selectedTreeData
 } from './tool';
 import './authItem.less';
 
