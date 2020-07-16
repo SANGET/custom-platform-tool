@@ -1,7 +1,7 @@
 {
   "name": "@provider-app/auth-manager",
   "version": "0.0.1",
-  "author": "SANGET",
+  "author": "wph",
   "license": "MIT",
   "dependencies": {
     "antd": "^4.4.1",

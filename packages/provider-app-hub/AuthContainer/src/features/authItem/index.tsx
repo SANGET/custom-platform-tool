@@ -9,8 +9,9 @@ import {
   Menu, Dropdown, Button, Input, Modal
 } from 'antd';
 import TreeTransfer from '@provider-app/auth-manager/src/common/Components/TreeTransfer';
-import Tree from '@provider-app/auth-manager/src/common/Components/Tree';
+import BasicTree from '@provider-app/auth-manager/src/common/Components/Tree';
 import CustomAuth from './CustomAuth';
+
 import EditTable from '../EditTable';
 import {
   generateSelectedTree, treeFilter, disTreeNode, treeData, selectedTreeData
@@ -207,11 +208,11 @@ export default () => {
     <div className="flex b1px">
       <aside className="tree-box">
         <Search style={{ marginBottom: 8 }} placeholder="Search" onChange={onTreeSearch} />
-        <Tree
+        <BasicTree
           onExpand={onExpand}
           expandedKeys={expandedKeys}
           autoExpandParent={autoExpandParent}
-        ></Tree>
+        ></BasicTree>
       </aside>
       <main className="content bl1px">
         <Search

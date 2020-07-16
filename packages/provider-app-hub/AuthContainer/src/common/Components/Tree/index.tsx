@@ -29,7 +29,7 @@ const generateData = (_level, _preKey, _tns) => {
 };
 generateData(z);
 
-export default class DragTree extends React.Component {
+class BasicTree extends React.Component {
   constructor(props) {
     super(props);
     const { onExpand, expandedKeys, autoExpandParent } = props;
@@ -131,3 +131,5 @@ export default class DragTree extends React.Component {
     );
   }
 }
+
+export default BasicTree;
