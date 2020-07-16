@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import classnames from 'classnames';
 
 import DragItem from '../ComponentPanel/DragItem';
+import { ComponentTypeRenderer } from '../ComponentTypeRenderer';
 
 const ComponentWrapper = styled.div`
   padding: 5px;
@@ -18,24 +19,26 @@ const ComponentWrapper = styled.div`
 `;
 
 const ComponentWrapperCom = ({
-  children,
   currEntity,
-  componentConfig,
   onClick,
   id,
   getSelectedState,
+  getEntityProps,
 }) => {
-  const isSelected = getSelectedState(componentConfig.id);
+  const isSelected = getSelectedState(id);
   const classes = classnames([
     isSelected && 'selected'
   ]);
 
-  // TODO: 修复 flex 布局的问题
+  const entityState = getEntityProps(id) || {};
+  const { style } = entityState;
+  console.log(style);
+
   return (
     <div
       onClick={(e) => {
         e.stopPropagation();
-        onClick(e, { id: componentConfig.id, entity: componentConfig });
+        onClick(e, { id, entity: currEntity });
       }}
     >
       <DragItem
@@ -43,9 +46,12 @@ const ComponentWrapperCom = ({
       >
         <ComponentWrapper
           className={classes}
+          style={style}
         >
           <div>组件, ID: {id}</div>
-          {children}
+          <ComponentTypeRenderer
+            {...currEntity}
+          />
         </ComponentWrapper>
       </DragItem>
     </div>

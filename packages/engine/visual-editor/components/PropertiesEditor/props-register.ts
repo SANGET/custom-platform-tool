@@ -1,0 +1,5 @@
+const propsCollection = {};
+
+const registerProps = () => {
+
+};

@@ -6,7 +6,7 @@ import classnames from 'classnames';
 import { ItemTypes } from '../ComponentPanel';
 import { isNodeInChild } from './utils/node-filter';
 import DragItem from '../ComponentPanel/DragItem';
-import { DragItemType, DropCollectType } from '../../types';
+import { DragComponentClass, DropCollectType } from '../../types';
 
 const ContainerWrapper = styled.div`
   padding: 20px;
@@ -29,10 +29,11 @@ const ContainerWrapperCom = ({
   onClick,
   id,
   getSelectedState,
+  getEntityProps,
   onDrop
 }) => {
   const isSelected = getSelectedState(id);
-  const [{ isOverCurrent }, drop] = useDrop<DragItemType, void, DropCollectType>({
+  const [{ isOverCurrent }, drop] = useDrop<DragComponentClass, void, DropCollectType>({
     accept: ItemTypes.DragComponent,
     /**
      * TODO: Fix bug，父容器拖动到子容器会出现问题
@@ -73,6 +74,10 @@ const ContainerWrapperCom = ({
     isSelected && 'selected'
   ]);
 
+  const entityState = getEntityProps(id) || {};
+  const { style } = entityState;
+  console.log(style);
+
   // TODO: 修复 flex 布局的问题
   return (
     <div
@@ -87,6 +92,7 @@ const ContainerWrapperCom = ({
       >
         <ContainerWrapper
           className={classes}
+          style={style}
         >
           <div>容器, ID: {id}</div>
           {children}

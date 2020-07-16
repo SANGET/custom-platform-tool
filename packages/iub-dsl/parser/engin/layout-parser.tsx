@@ -1,12 +1,12 @@
 import React from 'react';
 import { LayoutContentElement } from '@iub-dsl/core';
-import { ElementAST } from '@iub-dsl/core/types/layout-content/element';
+import { ElementBasic } from '@iub-dsl/core/types/layout-content/element';
 
 import componentParser from "./component-parser";
 import { ParserContextGroup } from '../types';
 
 interface WrapperContext {
-  id: ElementAST['id'],
+  id: ElementBasic['id'],
   idx: number
 }
 

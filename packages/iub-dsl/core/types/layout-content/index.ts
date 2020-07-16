@@ -1,7 +1,4 @@
-import { ContainerElement } from "./container";
-import {
-  ComponentElementRefType,
-} from "../component/collection";
+import { ContainerElement, ComponentElementRefType } from "./container";
 
 export type LayoutContentElement = ContainerElement | ComponentElementRefType;
 
@@ -22,3 +19,5 @@ type LayoutContentCustom = {
 };
 
 export type LayoutContent = LayoutContentGeneral | LayoutContentCustom
+
+export * from './container';

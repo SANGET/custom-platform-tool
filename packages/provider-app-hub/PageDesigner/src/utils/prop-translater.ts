@@ -7,11 +7,11 @@
  */
 export const Prop2IUB = ({
   layoutNodeTree,
-  componentPropStore
+  entitiesStateStore
 }) => {
   console.log({
     layoutNodeTree,
-    componentPropStore
+    entitiesStateStore
   });
 };
 /**
