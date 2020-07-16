@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Table, Input, InputNumber, Form } from 'antd'
+import { Table, Input, InputNumber, Form,Tooltip } from 'antd'
 
 const originData = []
 
@@ -15,11 +15,11 @@ for (let i = 0; i < 100; i++) {
 const EditableCell = ({
   editing,
   dataIndex,
-  title,
   inputType,
   record,
   index,
   children,
+  title
   ...restProps
 }) => {
   const inputNode = inputType === 'number' ? <InputNumber /> : <Input />
@@ -47,7 +47,8 @@ const EditableCell = ({
   )
 }
 
-const EditableTable = () => {
+const EditableTable = (props) => {
+  const {title}=props
   // 创建form 控制实例
   const [form] = Form.useForm()
   const [data, setData] = useState(originData)
@@ -98,18 +99,42 @@ const EditableTable = () => {
       dataIndex: 'name',
       width: '25%',
       editable: true,   // 是否选择的标记,自定义的
+      ellipsis: {
+        showTitle: false,
+      },
+      render: address => (
+        <Tooltip placement="topLeft" title={address}>
+          {address}
+        </Tooltip>
+      ),
     },
     {
       title: 'age',
       dataIndex: 'age',
       width: '15%',
       editable: true,
+      ellipsis: {
+        showTitle: false,
+      },
+      render: address => (
+        <Tooltip placement="topLeft" title={address}>
+          {address}
+        </Tooltip>
+      ),
     },
     {
       title: 'address',
       dataIndex: 'address',
       width: '40%',
       editable: true,
+      ellipsis: {
+        showTitle: false,
+      },
+      render: address => (
+        <Tooltip placement="topLeft" title={address}>
+          {address}
+        </Tooltip>
+      ),
     },
   ]
   const mergedColumns = columns.map((col) => {
@@ -138,6 +163,7 @@ const EditableTable = () => {
           },
         }}
         bordered
+        title={title}
         dataSource={data}
         columns={mergedColumns}
         rowClassName="editable-row"

@@ -1,5 +1,6 @@
-import { Transfer, Tree } from 'antd';
+import { Transfer, Tree, ConfigProvider } from 'antd';
 import React, { FC } from 'react';
+import zhCN from 'antd/es/locale/zh_CN';
 
 const TreeTransfer: FC = ({
   dataSource,
@@ -16,21 +17,26 @@ const TreeTransfer: FC = ({
   };
 
   return (
+    <ConfigProvider locale={zhCN}>
     <Transfer
       {...restProps}
+      titles={['页面来源','生成权限项']}
+      locale={{ itemsUnit: '项',itemUnit: '项', }
       targetKeys={targetKeys}
       dataSource={dataSource}
       className="tree-transfer"
       render={(item) => item.title}
+      selectAllLabels={}
       oneWay
       showSelectAll={false}
     >
       {({
         direction, onItemSelect, selectedKeys, filteredItems
       }) => {
+        const checkedKeys = [...selectedKeys, ...targetKeys];
         // console.log('filteredItems=', filteredItems, selectedKeys);
         if (direction === 'left') {
-          const checkedKeys = [...selectedKeys, ...targetKeys];
+        
           return (
             <Tree
               checkable
@@ -54,9 +60,11 @@ const TreeTransfer: FC = ({
             />
           );
         }
-        return <Tree blockNode={true}  treeDefaultExpandAll={true} treeData={selectedTree} />;
+        // autoExpandParent 和 expandedKeys 必须同时设置
+        return <Tree  autoExpandParent={true}  expandedKeys={checkedKeys} defaultExpandAll treeData={selectedTree} />;
       }}
     </Transfer>
+    </ConfigProvider>
   );
 };
 export default TreeTransfer;
