@@ -4,7 +4,11 @@
  * @Last Modified by:   wangph
  * @Last Modified time: 2020-07-10 12:00:29
  */
-import React, { useState } from 'react';
+// 在 react 中我们经常面临一个子组件渲染优化的问题，在向子组件传递函数props时，
+// 每次 render 都会创建新函数，导致子组件不必要的渲染，浪费性能，这个时候，就是 useCallback 的用武之地了
+// useCallback 可以保证，无论 render 多少次，函数都是同一个函数，减小不断创建的开销，
+
+import React, { useCallback, useState } from 'react';
 import { Button } from 'antd';
 import TreeTransfer from '@provider-app/auth-manager/src/common/Components/TreeTransfer';
 import {
@@ -27,7 +31,7 @@ export default () => {
     setSelectedTree(generateSelectedTree(treeData, targetKeys));
     console.log(generateSelectedTree(treeData, targetKeys));
   };
-  const filter = () => {
+  const filter = useCallback(() => {
     // 过滤掉选中的节点
     const reserveTree = treeFilter({
       treeData: dataSource,
@@ -55,7 +59,7 @@ export default () => {
     console.log(reserveTree);
 
     setDataSource(reserveTree);
-  };
+  });
   /**
    * 拖拽位置处理
    * @param info ={event, node, dragNode, dragNodesKeys}
