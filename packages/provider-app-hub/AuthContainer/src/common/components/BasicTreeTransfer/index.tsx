@@ -1,14 +1,12 @@
 import { Transfer, Tree, ConfigProvider } from 'antd';
-import React, { FC } from 'react';
+import React from 'react';
 import zhCN from 'antd/es/locale/zh_CN';
 import './treeTransfer.less';
 
-const TreeTransfer: FC = ({
+const BasicTreeTransfer = ({
   dataSource,
   selectedTree,
   targetKeys,
-  treeFilter,
-  disTreeNode,
   ...restProps
 }) => {
   const isChecked = (selectedKeys, eventKey) => {
@@ -45,13 +43,7 @@ const TreeTransfer: FC = ({
                 onCheck={(_, { node: { key } }) => {
                   // 点击了树节点前面的复选框触发的事件
                   console.log('onCheck', key, checkedKeys);
-                  /*  */
                   onItemSelect(key, !isChecked(checkedKeys, key));
-                }}
-                onSelect={(_, { node: { key } }) => {
-                  /** onSelect点击了树节点的文字触发的事件 */
-                  console.log('onSelect', _);
-                  // onItemSelect(key, !isChecked(checkedKeys, key));
                 }}
               />
             );
@@ -70,4 +62,4 @@ const TreeTransfer: FC = ({
     </ConfigProvider>
   );
 };
-export default TreeTransfer;
+export default BasicTreeTransfer;

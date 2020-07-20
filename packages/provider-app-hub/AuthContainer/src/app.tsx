@@ -7,7 +7,7 @@ import {
 // import Home from './features/Home';
 // import EditTable from './features/EditTable';
 import authItem from './features/authItem';
-import authTree from './features/authTree';
+// import authTree from './features/authTree';
 // import TreeSelectTransfer from './features/TreeSelectTransfer';
 
 const App: FC = () => (
@@ -22,9 +22,9 @@ const App: FC = () => (
             {/* <li>
               <Link to="/editTable">编辑表格</Link>
             </li> */}
-            <li>
+            {/* <li>
               <Link to="/dragTree">权限树</Link>
-            </li>
+            </li> */}
             {/* <li>
               <Link to="/TreeSelectTransfer">穿梭树选择器</Link>
             </li> */}
@@ -35,7 +35,7 @@ const App: FC = () => (
         <Switch>
           <Route exact path="/" component={authItem} />
           {/* <Route path="/editTable" component={EditTable} /> */}
-          <Route path="/dragTree" component={authTree} />
+          {/* <Route path="/dragTree" component={authTree} /> */}
           {/* <Route path="/TreeSelectTransfer" component={TreeSelectTransfer} /> */}
         </Switch>
       </main>

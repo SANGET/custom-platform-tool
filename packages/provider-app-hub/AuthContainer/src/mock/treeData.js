@@ -56,6 +56,4 @@ const treeData = [
   }
 ];
 
-export {
-  treeData
-};
+export { treeData };

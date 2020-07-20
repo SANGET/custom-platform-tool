@@ -6,166 +6,217 @@
  */
 import React, { useState } from 'react';
 import {
-  Menu, Dropdown, Button, Input, Modal
+  Menu, Dropdown, Button, Input, Modal, Form
 } from 'antd';
 // 可复用组件
-import TreeTransfer from '@provider-app/auth-manager/src/common/Components/TreeTransfer';
-import BasicTree from '@provider-app/auth-manager/src/common/Components/Tree';
+import BasicTree from '@provider-app/auth-manager/src/common/components/BasicTree';
+import BasicTreeTransfer from '@provider-app/auth-manager/src/common/components/BasicTreeTransfer';
 
 // 业务组件
-import CustomAuth from './CustomAuth';
-import EditTable from '../EditTable';
+import AuthForm from '../../common/bizComps/AuthForm';
+import AuthTable from '../../common/bizComps/AuthTable';
 
 // 模拟数据
-import { treeData } from './mock';
+import { treeData, tableData } from '../../mock';
 
-// 不会改变state状态的方法,无生命周期的方法
+// 不会改变state状态的方法
 import { generateSelectedTree, treeFilter, disTreeNode } from './authItem';
 
 // 当前功能页样式
 import './authItem.less';
 
 export default () => {
+  // 模态框类型枚举
+  const ModalTypeEnum = {
+    custom: 'custom',
+    fast: 'fast'
+  };
+  // 搜索输入框
   const { Search } = Input;
   // 更新树形组件数据源
   const [dataSource, setDataSource] = useState(treeData);
   // 设置模块框的显示隐藏
   const [visible, setVisiable] = useState<boolean>(true);
   // 区分模态框展示的内容
-  const [modalType, setModalType] = useState<string>('快速');
+  const [modalType, setModalType] = useState<string>(ModalTypeEnum.custom);
   // 设置模态框的宽度
-  const [modalWidth, setModalWidth] = useState<string>('60%');
+  const [modalWidth, setModalWidth] = useState<string|number>(520);
   // 更新选择的树节点key集合
   const [targetKeys, setTargetKeys] = useState<string[]>([]);
   // 更新选中树数据源
   const [selectedTree, setSelectedTree] = useState([]);
+  // 创建可控表单实例
+  const [form] = Form.useForm();
 
-  // 穿梭框移动节点之后触发的事件
+  /**
+   * 穿梭框移动节点之后触发回调
+   * @param targetKeys  选中节点key的集合
+   */
   const onChange = (targetKeys) => {
     // console.log('Target Keys:', targetKeys);
     setTargetKeys(targetKeys);
+    // 禁用已选择的节点
     setDataSource(disTreeNode(dataSource, targetKeys));
     // 根据选中的节点的key生成选中节点树
     setSelectedTree(generateSelectedTree(treeData, targetKeys));
     // console.log(generateSelectedTree(treeData, targetKeys));
   };
-  // 过滤掉已选择的树节点
-  const filter = () => {
+  /**
+   * 过滤掉已选择的树节点
+   */
+  const filter = (dataSource) => {
     // 过滤掉选中的节点
-    // const reserveTree = treeFilter(dataSource);
     const reserveTree = treeFilter({
       treeData: dataSource,
-      // copy: (src) => {
-      //   const { key, title } = src;
-      //   return {
-      //     key,
-      //     title
-      //   };
-      // },
       filter: (node) => !node.disabled
     });
-    console.log(reserveTree);
+    // console.log(reserveTree);
     setDataSource(reserveTree);
   };
-  // 下拉菜单点击触发事件
-  const dropdownClick = (e) => {
-    const { key } = e;
-    console.log(e);
-    setModalType(key);
-    switch (key) {
-      case '自定义': {
-        setModalWidth(520);
-        setVisiable(true);
-        break;
-      }
-      case '快速': {
-        setModalWidth('60%');
-        setVisiable(true);
-        break;
-      }
-    }
-  };
-  // 弹框确定按钮回调
-  const handleOk = (e, { modalType, treeData, selectedTree }) => {
-    if (modalType === '快速') {
+
+  /**
+   * 弹框确定按钮回调
+   * @param e  点击按钮事件源
+   * @param { modalType-弹窗类型, treeData-源树, selectedTree-选中树 }
+   */
+  const handleOk = (e, {
+    modalType, treeData, selectedTree, form
+  }) => {
+    // 快速创建权限项
+    if (modalType === ModalTypeEnum.fast) {
       console.log({ treeData, selectedTree });
-    } else {
-      console.log(e);
+      setVisiable(false);
+    } else if (modalType === ModalTypeEnum.custom) {
+      // 自定义权限项
+      // 表单校验
+      form.validateFields().then((values) => {
+        console.log(values);
+        setVisiable(false);
+      }).catch((errorInfo) => {
+        // 校验未通过
+        console.log(errorInfo);
+      });
     }
-    setVisiable(false);
   };
   // 弹框取消按钮回调
   const handleCancel = (e) => {
-    console.log(e);
     setVisiable(false);
   };
-  // 下拉框选项
-  const menu = (
-    <Menu onClick={dropdownClick}>
-      <Menu.Item key="快速">快速创建权限项</Menu.Item>
-      <Menu.Item key="自定义">自定义创建权限项</Menu.Item>
-    </Menu>
-  );
-  // const onFinish = (values) => {
-  //   console.log('Received values of form: ', values);
-  // };
 
-  const TableHeadMenu = () => (
-    <section className="table-head-menu">
-      <div className="ant-table-title">权限项列表</div>
-      <Dropdown overlay={menu} placement="bottomRight" trigger={['click']}>
-        <Button type="primary" className="button">
+  const TableHeadMenu = () => {
+    /**
+   * 创建权限项下拉按钮菜单点击触发回调
+   * 执行模态框内容切换
+   * @param e 点击选项事件源
+   */
+    const dropdownClick = (e) => {
+      const { key } = e;
+      // console.log(e);
+      setModalType(key);
+      switch (key) {
+        case ModalTypeEnum.custom: {
+          setModalWidth(520);
+          setVisiable(true);
+          break;
+        }
+        case ModalTypeEnum.fast: {
+          setModalWidth('60%');
+          setVisiable(true);
+          break;
+        }
+      }
+    };
+
+    // 下拉框选项
+    const menu = (
+      <Menu onClick={dropdownClick}>
+        <Menu.Item key={ModalTypeEnum.fast}>快速创建权限项</Menu.Item>
+        <Menu.Item key={ModalTypeEnum.custom}>自定义创建权限项</Menu.Item>
+      </Menu>
+    );
+    return (
+      <section className="table-head-menu">
+        <div className="ant-table-title">权限项列表</div>
+        <Dropdown overlay={menu} placement="bottomRight" trigger={['click']}>
+          <Button type="primary" className="button">
           创建权限项
-        </Button>
-      </Dropdown>
-    </section>
-  );
+          </Button>
+        </Dropdown>
+      </section>
+    );
+  };
+
+  const treeProps = {
+    dataSource,
+    selectedTree,
+    targetKeys,
+    disTreeNode,
+    onChange
+  };
+
+  const modalProps = {
+    visible,
+    title: "创建权限项",
+    onOk: (e) => handleOk(e, {
+      modalType, treeData, selectedTree, form
+    }),
+    onCancel: handleCancel,
+    okText: '确定',
+    cancelText: '取消',
+    width: modalWidth
+  };
+
+  const btnProps = {
+    type: "primary",
+    style: { marginTop: '10px' },
+    onClick: () => {
+      filter(dataSource);
+    }
+  };
+  const searchProps = {
+    style: { width: '300px', marginBottom: '10px' },
+    placeholder: "请输入权限项名称或编码",
+    onSearch: (value) => {
+      console.log(value);
+    },
+    enterButton: true,
+  };
+
+  const formProps = {
+    form,
+    treeData: dataSource,
+    initialValues: { authName: 'Hi, man!' }
+  };
+
+  const basicTreeProps = {
+    draggable: true,
+    blockNode: true,
+    dataSource
+  };
+
+  const authTable = {
+    treeData,
+    tableData,
+  };
 
   return (
     <div className="auth-item flex b1px">
       <aside className="tree-box">
-        <BasicTree treeData={dataSource}></BasicTree>
+        <BasicTree {...basicTreeProps} />
       </aside>
       <main className="content bl1px">
-        <Search
-          style={{ width: '300px', marginBottom: '10px' }}
-          placeholder="请输入权限项名称或编码"
-          onSearch={(value) => console.log(value)}
-          enterButton
-        />
+        <Search {...searchProps}/>
         <TableHeadMenu />
-        <EditTable />
+        <AuthTable {...authTable}/>
       </main>
-      <Modal
-        title="创建权限项"
-        visible={visible}
-        onOk={(e) => handleOk(e, { modalType, treeData, selectedTree })}
-        onCancel={handleCancel}
-        okText={'确定'}
-        cancelText={'取消'}
-        width={modalWidth}
-      >
-        {modalType === '快速' ? (
+      <Modal {...modalProps}>
+        {modalType === ModalTypeEnum.fast ? (
           <div>
-            <TreeTransfer
-              dataSource={dataSource}
-              selectedTree={selectedTree}
-              targetKeys={targetKeys}
-              disTreeNode={disTreeNode}
-              onChange={onChange}
-            />
-            <Button
-              type="primary"
-              style={{ marginTop: '10px' }}
-              onClick={(targetKeys) => {
-                filter(targetKeys);
-              }}
-            >
-              一键过滤
-            </Button>
+            <BasicTreeTransfer {...treeProps} />
+            <Button {...btnProps}>一键过滤</Button>
           </div>
         ) : (
-          <CustomAuth onFinish />
+          <AuthForm {...formProps}/>
         )}
       </Modal>
     </div>
