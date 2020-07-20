@@ -36,7 +36,7 @@ export default () => {
   // 更新树形组件数据源
   const [dataSource, setDataSource] = useState(treeData);
   // 设置模块框的显示隐藏
-  const [visible, setVisiable] = useState<boolean>(true);
+  const [visible, setVisiable] = useState<boolean>(false);
   // 区分模态框展示的内容
   const [modalType, setModalType] = useState<string>(ModalTypeEnum.custom);
   // 设置模态框的宽度

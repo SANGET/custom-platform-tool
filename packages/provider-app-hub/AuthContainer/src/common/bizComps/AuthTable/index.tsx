@@ -19,12 +19,19 @@ const EditableCell = ({
 }) => {
   // 选择框组件
   const SelectNode = (() => {
-    const opts = [{ label: '隐藏', value: '0' }, { label: '禁用', value: '1' },];
-    return (<Select style={{ width: 120 }} value={0}>
-      {opts.map((item) => (
-        <Option key={item.value} value={item.value}>{item.label}</Option>
-      ))}
-    </Select>);
+    const opts = [
+      { label: '隐藏', value: '0' },
+      { label: '禁用', value: '1' }
+    ];
+    return (
+      <Select style={{ width: 120 }} value={0}>
+        {opts.map((item) => (
+          <Option key={item.value} value={item.value}>
+            {item.label}
+          </Option>
+        ))}
+      </Select>
+    );
   })();
 
   // 树选择组件
@@ -34,8 +41,8 @@ const EditableCell = ({
       value: '',
       placeholder: '请选择父级',
       style: {
-        width: '100%',
-      },
+        width: '100%'
+      }
     };
     return <TreeSelect {...tProps} />;
   })(treeData);
@@ -54,13 +61,13 @@ const EditableCell = ({
         <Form.Item
           name={dataIndex}
           style={{
-            margin: 0,
+            margin: 0
           }}
           rules={[
             {
               required: required !== undefined ? required : true,
-              message: `${title}不能为空!`,
-            },
+              message: `${title}不能为空!`
+            }
           ]}
         >
           {nodeType}
@@ -92,7 +99,7 @@ const EditableTable = (props) => {
       authName: '',
       parentId: '',
       displayType: '',
-      ...record,
+      ...record
     });
     setEditingKey(record.key);
   };
@@ -102,9 +109,9 @@ const EditableTable = (props) => {
     setEditingKey('');
   };
   /**
- * 保存编辑行数据
- * @param key 行号
- */
+   * 保存编辑行数据
+   * @param key 行号
+   */
   const save = async (key) => {
     try {
       // 触发表单校验
@@ -131,23 +138,24 @@ const EditableTable = (props) => {
       {
         title: '序号',
         dataIndex: 'key',
+        width: 50,
         // 复杂情况渲染函数
         render: (text, record, index) => {
           // console.log({ text, record, index });
-          return (<span>{(page - 1) * pageSize + index + 1}</span>);
+          return <span>{(page - 1) * pageSize + index + 1}</span>;
         }
       },
       {
         title: '权限项名称',
         dataIndex: 'authName',
         formItemType: 'text',
-        editable: true,
+        editable: true
       },
       {
         title: '权限编码',
         dataIndex: 'authCode',
         formItemType: 'text',
-        editable: true,
+        editable: true
       },
       {
         title: '上级',
@@ -159,7 +167,7 @@ const EditableTable = (props) => {
           if (!key) return;
           // 根据节点的key查找节点
           function treeQuery(tree, key) {
-            let queue:Array<{title:string, key:string, children ?:[]}> = [];
+            let queue: Array<{ title: string; key: string; children?: [] }> = [];
             queue = queue.concat(tree);
             while (queue.length) {
               const temp = queue.shift();
@@ -189,25 +197,30 @@ const EditableTable = (props) => {
       },
       {
         title: '创建方式',
-        dataIndex: 'createType',
+        dataIndex: 'createType'
       },
       {
         title: '最后修改时间',
         dataIndex: 'lastModified'
       },
+      {
+        title: '操作',
+        dataIndex: '',
+        render: () => <a>删除</a>
+      }
     ];
     return cols.map((col) => {
       return {
         width: '',
         ellipsis: {
-          showTitle: false,
+          showTitle: false
         },
         render: (text) => (
           <Tooltip placement="topLeft" title={text}>
             {text}
           </Tooltip>
         ),
-        ...col,
+        ...col
       };
     });
   })();
@@ -228,8 +241,8 @@ const EditableTable = (props) => {
         formItemType,
         required,
         treeData,
-        editing: isEidtCol(record), // 自定义的判断标记
-      }),
+        editing: isEidtCol(record) // 自定义的判断标记
+      })
     };
   });
   // 行多选配置
@@ -247,23 +260,22 @@ const EditableTable = (props) => {
      * record-行记录
      */
     getCheckboxProps: (record) => ({
-      disabled: record.key === '0', // 禁止选择配置
-    }),
+      disabled: record.key === '0' // 禁止选择配置
+    })
   };
   return (
     <Form form={form} component={false}>
       <Table
-      // components 覆盖默认table元素，可以覆盖的属性有table header body, body属性下面有3个子属性wrapper,row,cell;
+        // components 覆盖默认table元素，可以覆盖的属性有table header body, body属性下面有3个子属性wrapper,row,cell;
         components={{
           body: {
-            cell: EditableCell,
-          },
+            cell: EditableCell
+          }
         }}
         bordered
         rowSelection={{
           type: 'checkbox',
           ...rowSelection
-
         }}
         title={title}
         dataSource={data}
@@ -291,7 +303,7 @@ const EditableTable = (props) => {
             },
             onContextMenu: (event) => {},
             onMouseEnter: (event) => {}, // 鼠标移入行
-            onClick: (event) => {}, // 点击行
+            onClick: (event) => {} // 点击行
           };
         }}
       />
