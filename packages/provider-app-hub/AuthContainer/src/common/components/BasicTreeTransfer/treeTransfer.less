@@ -1,0 +1,12 @@
+// 隐藏穿梭框标题行下拉菜单,已选中数量
+.tree-transfer {
+  .ant-transfer-list-header {
+    & > span:not(:last-child) {
+      display: none;
+    }
+    .ant-transfer-list-header-title {
+      cursor: default;
+      text-align: left;
+    }
+  }
+}

@@ -16,6 +16,7 @@
     "start:provider-app": "cd ./packages/provider-app-hub/EntryHall && npm start",
     "start:visual-editor": "cd ./packages/engine/visual-editor && npm start",
     "start:page-designer": "cd ./packages/provider-app-hub/PageDesigner && npm start",
+    "start:auth": "cd ./packages/provider-app-hub/AuthContainer && npm start",
     "start:consumer-app": "cd ./packages/consumer-app/web-client && npm start",
     "build:provider-app": "minictl build",
     "build:visual-editor-app": "cd ./packages/engine/visual-editor && npm run build",

@@ -1,6 +1,21 @@
 {
-  "name": "@provider-app/auth-container",
+  "name": "@provider-app/auth-manager",
   "version": "0.0.1",
   "author": "SANGET",
-  "license": "MIT"
+  "license": "MIT",
+  "scripts": {
+    "start": "cross-env PORT=60000 minictl start"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  }
 }
