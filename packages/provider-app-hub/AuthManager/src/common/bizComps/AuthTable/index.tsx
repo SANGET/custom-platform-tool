@@ -42,6 +42,9 @@ const EditableCell = ({
       placeholder: '请选择父级',
       style: {
         width: '100%'
+      },
+      dropdownStyle: {
+        width: '200px'
       }
     };
     return <TreeSelect {...tProps} />;
@@ -134,11 +137,16 @@ const EditableTable = (props) => {
 
   // 单元格属性集合
   const columns = (() => {
+    // 行删除按钮触发回调
+    const onDel = (row) => {
+      console.log(`删除行=${row}`);
+    };
+
     const cols = [
       {
         title: '序号',
         dataIndex: 'key',
-        width: 50,
+        width: 80,
         // 复杂情况渲染函数
         render: (text, record, index) => {
           // console.log({ text, record, index });
@@ -149,13 +157,15 @@ const EditableTable = (props) => {
         title: '权限项名称',
         dataIndex: 'authName',
         formItemType: 'text',
-        editable: true
+        editable: true,
+        width: 200
       },
       {
         title: '权限编码',
         dataIndex: 'authCode',
         formItemType: 'text',
-        editable: true
+        editable: true,
+        width: 200
       },
       {
         title: '上级',
@@ -163,6 +173,7 @@ const EditableTable = (props) => {
         formItemType: 'TreeSelect',
         editable: true,
         required: false,
+        width: 400,
         render: (key) => {
           if (!key) return;
           // 根据节点的key查找节点
@@ -187,6 +198,7 @@ const EditableTable = (props) => {
         dataIndex: 'displayType',
         formItemType: 'select',
         editable: true,
+        width: 200,
         render: (text) => {
           // 将选项代码转换为文字
           return {
@@ -197,16 +209,25 @@ const EditableTable = (props) => {
       },
       {
         title: '创建方式',
-        dataIndex: 'createType'
+        dataIndex: 'createType',
+        width: 200
       },
       {
         title: '最后修改时间',
-        dataIndex: 'lastModified'
+        dataIndex: 'lastModified',
+        width: 160
+      },
+      {
+        title: '创建人',
+        dataIndex: 'creator',
+        width: 100
       },
       {
         title: '操作',
-        dataIndex: '',
-        render: () => <a>删除</a>
+        dataIndex: 'operCol',
+        fixed: 'right',
+        width: 100,
+        render: (row) => <a onClick={() => onDel(row)}>删除</a>
       }
     ];
     return cols.map((col) => {
@@ -247,6 +268,15 @@ const EditableTable = (props) => {
   });
   // 行多选配置
   const rowSelection = {
+    selections: [
+      {
+        key: 'batchDel',
+        text: '批量删除',
+        onSelect: (changableRowKeys) => {
+          console.log(changableRowKeys);
+        }
+      }
+    ],
     /**
      * 选中改变事件触发回调
      * selectedRowKeys 选中行的行号集合
