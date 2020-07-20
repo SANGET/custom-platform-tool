@@ -1,26 +1,6 @@
 {
-  "name": "@provider-app/auth-manager",
+  "name": "@provider-app/auth-container",
   "version": "0.0.1",
-  "author": "wph",
-  "license": "MIT",
-  "dependencies": {
-    "antd": "^4.4.1",
-    "react-router-dom": "^5.2.0"
-  },
-  "scripts": {
-    "start": "cross-env PORT=60000 minictl start",
-    "build": "minictl build"
-  },
-  "browserslist": {
-    "production": [
-      ">0.2%",
-      "not dead",
-      "not op_mini all"
-    ],
-    "development": [
-      "last 1 chrome version",
-      "last 1 firefox version",
-      "last 1 safari version"
-    ]
-  }
+  "author": "SANGET",
+  "license": "MIT"
 }
