@@ -4,11 +4,12 @@
  * @Last Modified by:   wangph
  * @Last Modified time: 2020-07-10 12:00:29
  */
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Menu, Dropdown, Button, Input, Modal, Form
 } from 'antd';
 // 可复用组件
+import Http from '@infra/utils/http';
 import BasicTree from '../../common/components/BasicTree';
 import BasicTreeTransfer from '../../common/components/BasicTreeTransfer';
 
@@ -47,6 +48,22 @@ export default () => {
   const [selectedTree, setSelectedTree] = useState([]);
   // 创建可控表单实例
   const [form] = Form.useForm();
+
+  useEffect(() => {
+    Http.request({
+      url: '/test',
+      method: 'post',
+      data: {
+        auth: 'tree'
+      },
+      headers: {
+        isLoading: true,
+        'Content-Type': 'application/json'
+      }
+    }).then((data) => {
+      console.log(data);
+    });
+  });
 
   /**
    * 穿梭框移动节点之后触发回调
@@ -200,9 +217,13 @@ export default () => {
     dataSource
   };
 
-  const authTable = {
+  const authTableProps = {
     treeData,
-    tableData
+    tableData,
+    scroll: {
+      x: 200,
+      y: 800
+    }
   };
 
   return (
@@ -213,7 +234,7 @@ export default () => {
       <main className="content bl1px">
         <Search {...searchProps} />
         <TableHeadMenu />
-        <AuthTable {...authTable} />
+        <AuthTable {...authTableProps} />
       </main>
       <Modal {...modalProps}>
         {modalType === ModalTypeEnum.fast ? (

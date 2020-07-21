@@ -4,10 +4,10 @@
 
 // layout
 body {
+  box-sizing: border-box;
   color: rgba(0, 0, 0, 0.85);
   font-size: 14px;
-  font-family: -apple-system, BlinkMacSystemFont, segoe ui, Roboto,
-    helvetica neue, Arial, noto sans, sans-serif, apple color emoji,
+  font-family: -apple-system, BlinkMacSystemFont, segoe ui, Roboto, helvetica neue, Arial, noto sans, sans-serif, apple color emoji,
     segoe ui emoji, segoe ui symbol, noto color emoji;
 }
 
@@ -33,6 +33,7 @@ body {
 
 .flex {
   display: flex;
+  width: calc(80% - 200px);
 }
 .tree-box {
   flex: 0 0 20%;

@@ -83,7 +83,11 @@ const EditableCell = ({
 };
 
 const EditableTable = (props) => {
-  const { title, tableData, treeData } = props;
+  const {
+    title, tableData, treeData, scroll
+  } = props;
+
+  console.log({ scroll });
   // 创建form 控制实例
   const [form] = Form.useForm();
   const [data, setData] = useState(tableData);
@@ -310,6 +314,7 @@ const EditableTable = (props) => {
         title={title}
         dataSource={data}
         columns={mergedColumns}
+        scroll={{ x: 500, y: 300 }}
         rowClassName="editable-row"
         pagination={{
           onChange: (page, pageSize) => {
