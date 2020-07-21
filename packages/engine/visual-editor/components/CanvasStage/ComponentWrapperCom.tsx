@@ -32,7 +32,6 @@ const ComponentWrapperCom = ({
 
   const entityState = getEntityProps(id) || {};
   const { style } = entityState;
-  console.log(style);
 
   return (
     <div
