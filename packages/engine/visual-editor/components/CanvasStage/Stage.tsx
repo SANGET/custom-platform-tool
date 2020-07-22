@@ -14,7 +14,7 @@ import {
 import { setNodeTreeNestingInfo } from './utils/node-filter';
 import ContainerWrapperCom from './ContainerWrapperCom';
 import ComponentWrapperCom from './ComponentWrapperCom';
-import { EditorComponentClass } from '../../types';
+import { EditorComponentClass, DragComponentClass, DropCollectType } from '../../types';
 import { stateOperatorFac } from './stateOperatorFac';
 
 const StageRender = styled.div`
@@ -120,7 +120,7 @@ const CanvasStage: React.FC<CanvasStageProps> = ({
 
   const [{
     isOverCurrent
-  }, drop] = useDrop({
+  }, drop] = useDrop<DragComponentClass, void, DropCollectType>({
     accept: ItemTypes.DragComponent,
     drop: ({ dragItemClass }) => {
       // console.log('drop');
