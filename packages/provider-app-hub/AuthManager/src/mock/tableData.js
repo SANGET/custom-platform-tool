@@ -13,6 +13,7 @@ const tableData = (() => {
         const timeStr = new Date().toJSON().replace('T', ' ');
         return timeStr.slice(0, timeStr.indexOf('.'));
       })(),
+      creator: ['张三', '李四', '管理员'][random(3)],
     });
   }
   return originData;

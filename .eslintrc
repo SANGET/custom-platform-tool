@@ -1,13 +1,9 @@
 {
-  "extends": [
-    "airbnb-base",
-    "plugin:@typescript-eslint/recommended",
-    "react-app"
-  ],
-  "plugins": [
-    "react", "@typescript-eslint"
-  ],
+  "extends": ["airbnb-base", "plugin:@typescript-eslint/recommended", "react-app"],
+  "plugins": ["react", "@typescript-eslint"],
   "rules": {
+    "no-param-reassign": ["error", { "props": false }],
+    "linebreak-style": ["off", "windows"],
     "@typescript-eslint/indent": ["error", 2],
     // "@typescript-eslint/explicit-function-return-type": 0,
     "@typescript-eslint/explicit-member-accessibility": 0,
@@ -59,14 +55,9 @@
     "import/resolver": {
       "node": {
         "extensions": [".js", ".jsx", ".ts", ".tsx"],
-        "moduleDirectory": [
-          "node_modules",
-          "./packages"
-        ]
+        "moduleDirectory": ["node_modules", "./packages"]
       }
     },
-    "import/external-module-folders": [
-      "./packages"
-    ]
+    "import/external-module-folders": ["./packages"]
   }
 }

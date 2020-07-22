@@ -16,6 +16,7 @@
     "start:provider-app": "cd ./packages/provider-app-hub/EntryHall && npm start",
     "start:visual-editor": "cd ./packages/engine/visual-editor && npm start",
     "start:page-designer": "cd ./packages/provider-app-hub/PageDesigner && npm start",
+    "start:auth": "cd ./packages/provider-app-hub/AuthManager && npm start",
     "start:consumer-app": "cd ./packages/consumer-app/web-client && npm start",
     "build:provider-app": "minictl build",
     "build:visual-editor-app": "cd ./packages/engine/visual-editor && npm run build",
@@ -25,9 +26,9 @@
     "commit": "git-cz"
   },
   "devDependencies": {
+    "cross-env": "^7.0.2",
     "lerna": "^3.21.0",
     "prettier": "^2.0.5",
-    "cross-env": "^7.0.2",
     "commitizen": "^4.1.2",
     "@commitlint/cli": "^7.4.0",
     "@commitlint/config-conventional": "^7.3.1",
@@ -52,5 +53,9 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/SANGET/custom-platform-tool.git"
+  },
+  "dependencies": {
+    "axios": "^0.19.2",
+    "react-router-dom": "^5.2.0"
   }
 }
