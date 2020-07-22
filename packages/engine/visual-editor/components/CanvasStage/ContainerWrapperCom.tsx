@@ -76,7 +76,6 @@ const ContainerWrapperCom = ({
 
   const entityState = getEntityProps(id) || {};
   const { style } = entityState;
-  console.log(style);
 
   // TODO: 修复 flex 布局的问题
   return (
