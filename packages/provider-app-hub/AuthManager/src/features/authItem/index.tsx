@@ -4,6 +4,7 @@
  * @Last Modified by:   wangph
  * @Last Modified time: 2020-07-10 12:00:29
  */
+import { useHistory } from 'react-router-dom';
 import React, { useState, useEffect } from 'react';
 import {
   Menu, Dropdown, Button, Input, Modal, Form
@@ -27,6 +28,8 @@ import { generateSelectedTree, treeFilter, disTreeNode } from './authItem';
 import './authItem.less';
 
 export default () => {
+  // react路由跳转
+  const history = useHistory();
   // 模态框类型枚举
   const ModalTypeEnum = {
     custom: 'custom',
@@ -158,7 +161,7 @@ export default () => {
       <section className="table-head-menu">
         <div className="ant-table-title">权限项列表</div>
         <Dropdown overlay={menu} placement="bottomRight" trigger={['click']}>
-          <Button type="primary" className="button">
+          <Button type="primary" className="button" style={{ marginRight: '16px' }}>
             创建权限项
           </Button>
         </Dropdown>
@@ -197,9 +200,10 @@ export default () => {
     }
   };
   const searchProps = {
-    style: { width: '300px', marginBottom: '10px' },
+    style: { width: '300px', margin: '20px' },
     placeholder: '请输入权限项名称或编码',
     onSearch: (value) => {
+      history.push('/home');
       console.log(value);
     },
     enterButton: true
@@ -223,11 +227,15 @@ export default () => {
     scroll: {
       x: 200,
       y: 800
+    },
+    style: {
+      width: 'calc(100% - 40px)',
+      margin: '0 20px'
     }
   };
 
   return (
-    <div className="auth-item flex b1px">
+    <div className="auth-item flex b1px " style={{ height: '100%' }}>
       <aside className="tree-box">
         <BasicTree {...basicTreeProps} />
       </aside>

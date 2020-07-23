@@ -149,11 +149,11 @@ const BasicTree = ({ dataSource, ...props }) => {
     // console.log(data);
     setTreeData(data);
   };
-    /**
-     * 与搜索框输入内容相匹配的节点
-     * @param searchValue 搜素值
-     * @param data treeNodes数据
-     */
+  /**
+   * 与搜索框输入内容相匹配的节点
+   * @param searchValue 搜素值
+   * @param data treeNodes数据
+   */
   const loop = (searchValue, data) => data.map((item) => {
     const index = item.title.indexOf(searchValue);
 
@@ -182,8 +182,8 @@ const BasicTree = ({ dataSource, ...props }) => {
 
   const inputProps = {
     onChange,
-    style: { margin: '48px 8px 20px 8px', width: 'calc(100% - 16px)' },
-    placeholder: "输入权限项名称",
+    style: { margin: '20px 8px 20px 8px', width: 'calc(100% - 16px)' },
+    placeholder: '输入权限项名称'
   };
 
   const tProps = {
@@ -192,7 +192,7 @@ const BasicTree = ({ dataSource, ...props }) => {
     onExpand,
     expandedKeys,
     autoExpandParent,
-    treeData: loop(searchValue, treeData),
+    treeData: loop(searchValue, treeData)
   };
   return (
     <div>

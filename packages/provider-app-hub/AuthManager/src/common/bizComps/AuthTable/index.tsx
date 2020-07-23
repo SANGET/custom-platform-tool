@@ -84,7 +84,7 @@ const EditableCell = ({
 
 const EditableTable = (props) => {
   const {
-    title, tableData, treeData, scroll
+    title, tableData, treeData, scroll, style
   } = props;
 
   console.log({ scroll });
@@ -314,7 +314,8 @@ const EditableTable = (props) => {
         title={title}
         dataSource={data}
         columns={mergedColumns}
-        scroll={{ x: 500, y: 300 }}
+        scroll={scroll}
+        style={style}
         rowClassName="editable-row"
         pagination={{
           onChange: (page, pageSize) => {

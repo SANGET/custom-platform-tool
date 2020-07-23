@@ -10,36 +10,37 @@ body {
   font-family: -apple-system, BlinkMacSystemFont, segoe ui, Roboto, helvetica neue, Arial, noto sans, sans-serif, apple color emoji,
     segoe ui emoji, segoe ui symbol, noto color emoji;
 }
+html,
+body,
+#root {
+  height: 100%;
+  box-sizing: border-box;
+}
 
 .app-container {
   box-sizing: border-box;
   display: flex;
+  height: 100%;
 
-  header {
-    flex: 0 0 200px;
-    padding: 50px 10px;
-    background-color: #4a4b4e;
+  & > .menu {
+    flex: 0 0 auto;
   }
-  main {
+  & > main {
     flex: 1 1 auto;
-    padding: 50px;
-  }
-
-  .menu > li {
-    padding: 20px 10px;
-    list-style: none;
   }
 }
 
 .flex {
   display: flex;
-  width: calc(80% - 200px);
 }
 .tree-box {
-  flex: 0 0 20%;
+  flex: 0 0 300px;
+  height: 100%;
 }
 .content {
-  flex: 1 1 auto;
+  flex: 1;
+  // 解决flex容器内容溢出的关键
+  width: 0;
 }
 
 // common
@@ -49,6 +50,10 @@ body {
 
 .bl1px {
   border-left: 1px solid @boderColor;
+}
+
+.pt20 {
+  padding-top: 20px;
 }
 
 // shadow
