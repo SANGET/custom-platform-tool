@@ -72,7 +72,7 @@ pipeline {
                         "-Dsonar.projectVersion=${env.GIT_COMMIT} " +
                         "-Dsonar.language=${language} " +
                         "-Dsonar.sourceEncoding=UTF-8 " +
-                        "-Dsonar.sources=**/src/**/*.js " +
+                        "-Dsonar.sources=${env.WORKSPACE} " +
                         "-Dsonar.eslint.eslintconfigpath=.eslintrc "
                     }
                 }    
