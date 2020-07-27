@@ -72,7 +72,7 @@ pipeline {
                         "-Dsonar.projectVersion=${env.GIT_COMMIT} " +
                         "-Dsonar.language=${language} " +
                         "-Dsonar.sourceEncoding=UTF-8 " +
-                        "-Dsonar.sources=${env.WORKSPACE}/packages/**/src/**/*.*,${env.WORKSPACE}/packages/iub-dsl/parser/**"
+                        "-Dsonar.sources=${env.WORKSPACE}/packages/**/src/**/*.js "
                     }
                 }    
             } 
