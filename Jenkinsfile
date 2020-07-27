@@ -77,7 +77,7 @@ pipeline {
                 }    
             } 
         }
-    }s
+    }
     post {
         success {
             // 发邮件通知
