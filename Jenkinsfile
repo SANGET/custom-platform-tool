@@ -102,7 +102,7 @@ pipeline {
                         "show_detail": "${sq_show_result}"   
                     ]
                     println(param_dict)
-                    response = httpRequest consoleLogResponseBody: true, contentType: 'APPLICATION_JSON', httpMode: 'POST', requestBody: toJson(param_dict), url: mail_succ_url, validResponseCodes: '200' 
+                    //response = httpRequest consoleLogResponseBody: true, contentType: 'APPLICATION_JSON', httpMode: 'POST', requestBody: toJson(param_dict), url: mail_succ_url, validResponseCodes: '200' 
                 }
             }            
         }
