@@ -50,7 +50,7 @@ pipeline {
        // }
         stage('print env') {
           steps {
-            sh 'tsc -v'
+            //sh 'tsc -v'
             sh 'npm list -g typescript'
             sh 'printenv'
           }
