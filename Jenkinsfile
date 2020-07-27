@@ -50,6 +50,7 @@ pipeline {
        // }
         stage('print env') {
           steps {
+            sh 'tsc -v'
             sh 'printenv'
           }
         }
