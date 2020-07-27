@@ -9,11 +9,9 @@ pipeline {
         project_name =  sh(returnStdout: true, script: 'echo ${GIT_URL#*/}|sed "s/.git//g"').trim()
         gitlab_branch = sh(returnStdout: true, script: 'echo ${GIT_BRANCH}|sed "s/\\//-/g"').trim()
         sq_id = "${project_name}_${gitlab_branch}"
-        
         //sq扫描代码开关 1代表开启,0代表关闭
         is_sonarqube_scan = "1"
         
-
     }
     
     // set triggers
