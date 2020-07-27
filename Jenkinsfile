@@ -5,7 +5,7 @@ pipeline {
     
     // set env
     environment {
-        language = "js"
+        language = "js,ts"
         project_name =  sh(returnStdout: true, script: 'echo ${GIT_URL#*/}|sed "s/.git//g"').trim()
         gitlab_branch = sh(returnStdout: true, script: 'echo ${GIT_BRANCH}|sed "s/\\//-/g"').trim()
         sq_id = "${project_name}_${gitlab_branch}"
@@ -72,7 +72,7 @@ pipeline {
                         "-Dsonar.projectVersion=${env.GIT_COMMIT} " +
                         "-Dsonar.language=${language} " +
                         "-Dsonar.sourceEncoding=UTF-8 " +
-                        "-Dsonar.sources=${env.WORKSPACE} "
+                        "-Dsonar.sources=${env.WORKSPACE}/packages "
                     }
                 }    
             } 
