@@ -71,7 +71,8 @@ pipeline {
                         "-Dsonar.language=${language} " +
                         "-Dsonar.sourceEncoding=UTF-8 " +
                         "-Dsonar.sources=${env.WORKSPACE} " +
-                        "-Dsonar.eslint.eslintconfigpath=.eslintrc "
+                        "-Dsonar.eslint.eslintconfigpath=.eslintrc "+
+                        "-Dsonar.eslint.ruleconfigs=.eslintrc "
                     }
                 }    
             } 
