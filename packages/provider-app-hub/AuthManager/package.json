@@ -6,7 +6,8 @@
   "author": "wph",
   "license": "MIT",
   "scripts": {
-    "start": "cross-env PORT=60000 minictl start"
+    "start": "cross-env PORT=60000 minictl start",
+    "test": "jest src --coverage"
   },
   "devDependencies": {},
   "dependencies": {},

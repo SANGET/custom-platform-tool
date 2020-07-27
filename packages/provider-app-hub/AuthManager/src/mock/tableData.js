@@ -1,3 +1,4 @@
+/** 权限管理列表 */
 const tableData = (() => {
   const originData = [];
   const random = (num) => (Math.floor(Math.random() * num) % num);

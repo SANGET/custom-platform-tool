@@ -84,7 +84,7 @@ const EditableCell = ({
 
 const EditableTable = (props) => {
   const {
-    title, tableData, treeData, scroll, style
+    title, tableData, treeData, scroll, style, operCol, pageId
   } = props;
 
   console.log({ scroll });
@@ -230,8 +230,8 @@ const EditableTable = (props) => {
         title: '操作',
         dataIndex: 'operCol',
         fixed: 'right',
-        width: 100,
-        render: (row) => <a onClick={() => onDel(row)}>删除</a>
+        width: operCol.width,
+        render: operCol.render
       }
     ];
     return cols.map((col) => {

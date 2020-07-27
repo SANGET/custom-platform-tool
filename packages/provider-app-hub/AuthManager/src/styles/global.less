@@ -1,8 +1,9 @@
-// color
+/** 颜色 */
 @boderColor: #f0f0f0;
-// font
 
-// layout
+/** 字体 */
+
+/** 布局 */
 body {
   box-sizing: border-box;
   color: rgba(0, 0, 0, 0.85);
@@ -17,14 +18,16 @@ body,
   box-sizing: border-box;
 }
 
+/** 应用容器 */
 .app-container {
   box-sizing: border-box;
   display: flex;
   height: 100%;
-
+  /** 路由导航 */
   & > .menu {
     flex: 0 0 auto;
   }
+  /** 路由内容  */
   & > main {
     flex: 1 1 auto;
   }
@@ -33,17 +36,32 @@ body,
 .flex {
   display: flex;
 }
+
+/** 权限树 */
 .tree-box {
   flex: 0 0 300px;
   height: 100%;
 }
+/** 内容区 */
 .content {
   flex: 1;
-  // 解决flex容器内容溢出的关键
+  /** 解决flex容器内容溢出的关键 */
   width: 0;
 }
 
-// common
+/** 菜单导航正常与高亮状态的颜色 */
+.ant-menu-item {
+  .icon {
+    color: rgba(255, 255, 255, 0.65);
+  }
+  font-size: 16px;
+}
+.ant-menu-item-active {
+  .icon {
+    color: #fff;
+  }
+}
+/** 公共 */
 .b1px {
   border: 1px solid @boderColor;
 }
@@ -56,4 +74,4 @@ body,
   padding-top: 20px;
 }
 
-// shadow
+/** 阴影 */

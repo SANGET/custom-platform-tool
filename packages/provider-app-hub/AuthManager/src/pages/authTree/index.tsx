@@ -1,0 +1,294 @@
+/*
+ * @Author: wph
+ * @Date: 2020-07-25 10:15:08
+ * @LastEditTime: 2020-07-27 21:27:48
+ * @LastEditors: Please set LastEditors
+ * @Description: 权限树主文件
+ * @FilePath: \custom-platform-v3-frontend\packages\provider-app-hub\AuthManager\src\pages\authTree\index.tsx
+ */
+
+import React, { useState, useEffect } from 'react';
+/** react-router 暴露出来的用程序切换路由的方法 */
+import { useHistory } from 'react-router-dom';
+import {
+  Menu, Dropdown, Button, Input, Modal, Form, Space
+} from 'antd';
+
+/** 发送请求 */
+import Http from '@infra/utils/http';
+
+/** 基础组件 */
+import BasicTree from '../../common/components/BasicTree';
+import BasicTreeTransfer from '../../common/components/BasicTreeTransfer';
+
+/** 业务组件 */
+import AuthForm from '../../common/bizComps/AuthForm';
+import AuthTable from '../../common/bizComps/AuthTable';
+
+/** 模拟数据 */
+import { treeData, tableData } from '../../mock';
+
+/** 不会操作页面状态的方法 */
+import { generateSelectedTree, treeFilter, disTreeNode } from './authTree';
+
+/** 当前功能页样式 */
+import './authTree.less';
+
+/** 权限树页面 */
+const AuthTree = () => {
+  /** react路由跳转 */
+  const history = useHistory();
+  /** 模态框类型枚举 */
+  const ModalTypeEnum = {
+    custom: 'custom',
+    fast: 'fast'
+  };
+  /** 搜索输入框 */
+  const { Search } = Input;
+  /** 更新树形组件数据源 */
+  const [dataSource, setDataSource] = useState(treeData);
+  /** 设置模块框的显示隐藏 */
+  const [visible, setVisiable] = useState<boolean>(false);
+  /** 区分模态框展示的内容 */
+  const [modalType, setModalType] = useState<string>(ModalTypeEnum.custom);
+  /** 设置模态框的宽度 */
+  const [modalWidth, setModalWidth] = useState<string | number>(520);
+  /** 更新选择的树节点key集合 */
+  const [targetKeys, setTargetKeys] = useState<string[]>([]);
+  /** 更新选中树数据源 */
+  const [selectedTree, setSelectedTree] = useState([]);
+
+  /** 创建可控表单实例 */
+  const [form] = Form.useForm();
+
+  useEffect(() => {
+    Http.request({
+      url: '/test',
+      method: 'post',
+      data: {
+        auth: 'tree'
+      },
+      headers: {
+        isLoading: true,
+        'Content-Type': 'application/json'
+      }
+    }).then((data) => {
+      console.log(data);
+    });
+  });
+
+  /**
+   * 穿梭框移动节点之后触发回调
+   * @param targetKeys  选中节点key的集合
+   */
+  const onChange = (targetKeys) => {
+    // console.log('Target Keys:', targetKeys);
+    setTargetKeys(targetKeys);
+    /** 禁用已选择的节点 */
+    setDataSource(disTreeNode(dataSource, targetKeys));
+    /** 根据选中的节点的key生成选中节点树 */
+    setSelectedTree(generateSelectedTree(treeData, targetKeys));
+    // console.log(generateSelectedTree(treeData, targetKeys));
+  };
+  /**
+   * 过滤掉已选择的树节点
+   */
+  const filter = (dataSource) => {
+    /** 过滤掉选中的节点 */
+    const reserveTree = treeFilter({
+      treeData: dataSource,
+      filter: (node) => !node.disabled
+    });
+    // console.log(reserveTree);
+    setDataSource(reserveTree);
+  };
+
+  /**
+   * 弹框确定按钮回调
+   * @param e  点击按钮事件源
+   * @param { modalType-弹窗类型, treeData-源树, selectedTree-选中树 }
+   */
+  const handleOk = (e, {
+    modalType, treeData, selectedTree, form
+  }) => {
+    /** 快速创建权限树 */
+    if (modalType === ModalTypeEnum.fast) {
+      console.log({ treeData, selectedTree });
+      setVisiable(false);
+    } else if (modalType === ModalTypeEnum.custom) {
+      /**  自定义权限树-表单校验 */
+      form
+        .validateFields()
+        .then((values) => {
+          console.log(values);
+          setVisiable(false);
+        })
+        .catch((errorInfo) => {
+          /** 校验未通过 */
+          console.log(errorInfo);
+        });
+    }
+  };
+
+  /** 弹框取消按钮回调 */
+  const handleCancel = (e) => {
+    setVisiable(false);
+  };
+
+  const TableHeadMenu = () => {
+    /**
+     * 创建权限树下拉按钮菜单点击触发回调
+     * 执行模态框内容切换
+     * @param e 点击选项事件源
+     */
+    const dropdownClick = (e) => {
+      const { key } = e;
+      // console.log(e);
+      setModalType(key);
+      switch (key) {
+        case ModalTypeEnum.custom: {
+          setModalWidth(520);
+          setVisiable(true);
+          break;
+        }
+        case ModalTypeEnum.fast: {
+          setModalWidth('60%');
+          setVisiable(true);
+          break;
+        }
+      }
+    };
+
+    /** 下拉框选项 */
+    const menu = (
+      <Menu onClick={dropdownClick}>
+        <Menu.Item key={ModalTypeEnum.fast}>快速创建权限树</Menu.Item>
+        <Menu.Item key={ModalTypeEnum.custom}>自定义创建权限树</Menu.Item>
+      </Menu>
+    );
+    return (
+      <section className="table-head-menu">
+        <div className="ant-table-title">权限树列表</div>
+        <Dropdown overlay={menu} placement="bottomRight" trigger={['click']}>
+          <Button type="primary" className="button" style={{ marginRight: '16px' }}>
+            创建权限树
+          </Button>
+        </Dropdown>
+      </section>
+    );
+  };
+
+  const treeProps = {
+    dataSource,
+    selectedTree,
+    targetKeys,
+    disTreeNode,
+    onChange
+  };
+
+  const modalProps = {
+    visible,
+    title: '创建权限树',
+    onOk: (e) => handleOk(e, {
+      modalType,
+      treeData,
+      selectedTree,
+      form
+    }),
+    onCancel: handleCancel,
+    okText: '确定',
+    cancelText: '取消',
+    width: modalWidth
+  };
+
+  const btnProps = {
+    // type: 'primary',
+    style: { marginTop: '10px' },
+    onClick: () => {
+      filter(dataSource);
+    }
+  };
+  const searchProps = {
+    style: { width: '300px', margin: '20px' },
+    placeholder: '请输入权限树名称或编码',
+    onSearch: (value) => {
+      history.push('/home');
+      console.log(value);
+    },
+    enterButton: true
+  };
+
+  const formProps = {
+    form,
+    treeData: dataSource,
+    initialValues: { authName: 'Hi, man!' }
+  };
+
+  const basicTreeProps = {
+    draggable: true,
+    blockNode: true,
+    dataSource
+  };
+
+  const onEdit = (row) => {
+    console.log(row);
+  };
+
+  const onDel = (row) => {
+    console.log(row);
+  };
+
+  const authTableProps = {
+    treeData,
+    tableData,
+    scroll: {
+      x: 200,
+      y: 800
+    },
+    style: {
+      width: 'calc(100% - 40px)',
+      margin: '0 20px'
+    },
+    operCol: {
+      width: 120,
+      render: (row) => (
+        <Space size="middle">
+          <Button type="link" onClick={() => onEdit(row)}>
+            编辑
+          </Button>
+          <Button type="link" onClick={() => onDel(row)}>
+            删除
+          </Button>
+        </Space>
+      )
+    }
+  };
+
+  return (
+    <div className="auth-item flex b1px " style={{ height: '100%' }}>
+      <aside className="tree-box">
+        <BasicTree {...basicTreeProps} />
+      </aside>
+      <main className="content bl1px">
+        <Search {...searchProps} />
+        <TableHeadMenu />
+        <AuthTable {...authTableProps} />
+      </main>
+      <Modal {...modalProps}>
+        {modalType === ModalTypeEnum.fast ? (
+          <div>
+            <BasicTreeTransfer {...treeProps} />
+            <Button type="primary" {...btnProps}>
+              一键过滤
+            </Button>
+          </div>
+        ) : (
+          <AuthForm {...formProps} />
+        )}
+      </Modal>
+    </div>
+  );
+};
+
+/** 直接使用export default导出组件,用React Inspector查看时会显示为Unknown,如果非要这么做, 使用命名函数定义组件 */
+export default AuthTree;

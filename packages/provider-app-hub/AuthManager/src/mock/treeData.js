@@ -1,3 +1,12 @@
+/*
+ * @Author: your name
+ * @Date: 2020-07-25 10:15:08
+ * @LastEditTime: 2020-07-27 14:47:31
+ * @LastEditors: your name
+ * @Description: In User Settings Edit
+ * @FilePath: \custom-platform-v3-frontend\packages\provider-app-hub\AuthManager\src\mock\treeData.js
+ */
+/** 权限管理 */
 const treeData = [
   {
     title: '基础模块',

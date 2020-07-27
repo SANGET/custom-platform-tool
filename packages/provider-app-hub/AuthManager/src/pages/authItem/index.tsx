@@ -7,10 +7,10 @@
 import { useHistory } from 'react-router-dom';
 import React, { useState, useEffect } from 'react';
 import {
-  Menu, Dropdown, Button, Input, Modal, Form
+  Menu, Dropdown, Button, Input, Modal, Form, Space
 } from 'antd';
 // 可复用组件
-import Http from '@infra/utils/http';
+// import Http from '@infra/utils/http';
 import BasicTree from '../../common/components/BasicTree';
 import BasicTreeTransfer from '../../common/components/BasicTreeTransfer';
 
@@ -27,7 +27,7 @@ import { generateSelectedTree, treeFilter, disTreeNode } from './authItem';
 // 当前功能页样式
 import './authItem.less';
 
-export default () => {
+const AuthItem = () => {
   // react路由跳转
   const history = useHistory();
   // 模态框类型枚举
@@ -53,19 +53,19 @@ export default () => {
   const [form] = Form.useForm();
 
   useEffect(() => {
-    Http.request({
-      url: '/test',
-      method: 'post',
-      data: {
-        auth: 'tree'
-      },
-      headers: {
-        isLoading: true,
-        'Content-Type': 'application/json'
-      }
-    }).then((data) => {
-      console.log(data);
-    });
+    // Http.request({
+    //   url: '/test',
+    //   method: 'post',
+    //   data: {
+    //     auth: 'tree'
+    //   },
+    //   headers: {
+    //     isLoading: true,
+    //     'Content-Type': 'application/json'
+    //   }
+    // }).then((data) => {
+    //   console.log(data);
+    // });
   });
 
   /**
@@ -193,7 +193,7 @@ export default () => {
   };
 
   const btnProps = {
-    type: 'primary',
+    // type: 'primary',
     style: { marginTop: '10px' },
     onClick: () => {
       filter(dataSource);
@@ -231,6 +231,16 @@ export default () => {
     style: {
       width: 'calc(100% - 40px)',
       margin: '0 20px'
+    },
+    operCol: {
+      width: 80,
+      render: (row) => (
+        <Space size="middle">
+          <Button type="link" onClick={() => onDel(row)}>
+            删除
+          </Button>
+        </Space>
+      )
     }
   };
 
@@ -257,3 +267,5 @@ export default () => {
     </div>
   );
 };
+
+export default AuthItem;

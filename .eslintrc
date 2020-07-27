@@ -2,6 +2,9 @@
   "extends": ["airbnb-base", "plugin:@typescript-eslint/recommended", "react-app"],
   "plugins": ["react", "@typescript-eslint"],
   "rules": {
+    "no-shadow": ["error", { "builtinGlobals": true, "hoist": "functions", "allow": ["resolve", "reject", "done", "cb"] }],
+    // 每行最大字符数
+    "max-len": ["error", { "code": 140 }],
     "no-param-reassign": ["error", { "props": false }],
     "linebreak-style": ["off", "windows"],
     "@typescript-eslint/indent": ["error", 2],

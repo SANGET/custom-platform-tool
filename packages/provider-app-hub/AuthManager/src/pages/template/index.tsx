@@ -9,7 +9,7 @@ import './template.less';
 function Template() {
   const [value, setValue] = useState('');
   const onClick = () => {
-    foo();
+    foo('tank');
     setValue('开始新功能的开发');
   };
 

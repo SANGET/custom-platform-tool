@@ -1,51 +1,31 @@
 /*
- * @Author: your name
+ * @Author: wph
  * @Date: 2020-07-23 10:29:08
- * @LastEditTime: 2020-07-23 10:34:10
+ * @LastEditTime: 2020-07-27 16:06:09
  * @LastEditors: Please set LastEditors
- * @Description: In User Settings Edit
+ * @Description: 添加注释
  * @FilePath: \custom-platform-v3-frontend\packages\provider-app-hub\AuthManager\src\routes\index.ts
  */
-import AsyncCompnent from './asyncComp';
 
-const authItem = AsyncCompnent(() => import('../features/authItem'));
+import AuthItem from '../pages/authItem';
+import AuthTree from '../pages/authTree';
 
 const ROUTES = [
   {
     key: 'authItem',
     link: '/',
-    iconType: 'home',
+    /** 注意:icon一定要是@ant-design/icons存在的icon */
+    icon: 'GoldOutlined',
     text: '权限项',
-    component: authItem
+    component: AuthItem
   },
   {
     key: 'authTree',
     link: '/authTree',
-    iconType: 'profile',
-    text: 'List',
-    component: authItem
+    icon: 'ClusterOutlined',
+    text: '权限树',
+    component: AuthTree
   }
-  // {
-  //   key: 'Marker',
-  //   link: '/marker',
-  //   iconType: 'edit',
-  //   text: 'Marker',
-  //   component: PageMarker
-  // },
-  // {
-  //   key: 'Label',
-  //   link: '/label',
-  //   iconType: 'tag',
-  //   text: 'Label',
-  //   component: PageLabel
-  // },
-  // {
-  //   key: 'Setting',
-  //   link: '/setting',
-  //   iconType: 'setting',
-  //   text: 'Setting',
-  //   component: PageSetting
-  // }
 ];
 
 export default ROUTES;

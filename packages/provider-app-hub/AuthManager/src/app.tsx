@@ -1,4 +1,4 @@
-import React, { FC } from 'react';
+import React, { FC, Fragment } from 'react';
 // 全局样式
 import './styles/index.less';
 
@@ -7,10 +7,10 @@ import {
 } from 'react-router-dom';
 
 import { Menu } from 'antd';
-import Icon from '@ant-design/icons';
 
 /** 导入路由 */
 import ROUTES from './routes';
+import IconComp from './routes/IconComp';
 
 const App: FC = () => {
   // 默认选中和打开的菜单
@@ -24,18 +24,19 @@ const App: FC = () => {
     <BrowserRouter>
       <div className="app-container">
         <Menu
+          theme="dark"
+          mode="inline"
           className="menu"
           onClick={handleClick}
           style={{ width: 256, paddingTop: 20 }}
-          theme="dark"
           defaultSelectedKeys={[defaultSelectedKeys]}
           defaultOpenKeys={[defaultSelectedKeys]}
-          mode="inline"
         >
           {ROUTES.map((route) => (
             <Menu.Item key={route.key}>
               <Link to={route.link}>
-                <Icon type={route.iconType} />
+                {/* 动态渲染图标 */}
+                <IconComp type={route.icon} className="icon" />
                 <b>{route.text}</b>
               </Link>
             </Menu.Item>
@@ -43,11 +44,14 @@ const App: FC = () => {
         </Menu>
         <main>
           <Switch>
-            <div style={{ background: '#fff', padding: 24, height: '100%' }}>
-              {ROUTES.map((route) => (
-                <Route exact key={route.key} path={route.link} component={route.component} />
-              ))}
-            </div>
+            {/* Switch里面不能直接嵌套div,因为渲染出来的不是HTML节点,需要用Fragment包裹一下 */}
+            <Fragment>
+              <div style={{ background: '#fff', padding: 24, height: '100%' }}>
+                {ROUTES.map((route) => (
+                  <Route exact key={route.key} path={route.link} component={route.component} />
+                ))}
+              </div>
+            </Fragment>
           </Switch>
         </main>
       </div>
