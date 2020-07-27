@@ -72,12 +72,12 @@ pipeline {
                         "-Dsonar.projectVersion=${env.GIT_COMMIT} " +
                         "-Dsonar.language=${language} " +
                         "-Dsonar.sourceEncoding=UTF-8 " +
-                        "-Dsonar.sources=${env.WORKSPACE}/packages "
+                        "-Dsonar.sources=${env.WORKSPACE}/packages/**/src/** "
                     }
                 }    
             } 
         }
-    }
+    }s
     post {
         success {
             // 发邮件通知
