@@ -6,6 +6,7 @@ pipeline {
     // set env
     environment {
         language = "js,ts"
+        NODE_PATH = '/home/deploy/node/lib/node_modules'
         project_name =  sh(returnStdout: true, script: 'echo ${GIT_URL#*/}|sed "s/.git//g"').trim()
         gitlab_branch = sh(returnStdout: true, script: 'echo ${GIT_BRANCH}|sed "s/\\//-/g"').trim()
         sq_id = "${project_name}_${gitlab_branch}"
@@ -50,6 +51,8 @@ pipeline {
        // }
         stage('print env') {
           steps {
+            //sh 'tsc -v'
+            //sh 'npm list -g typescript'
             sh 'printenv'
           }
         }
@@ -71,7 +74,8 @@ pipeline {
                         "-Dsonar.language=${language} " +
                         "-Dsonar.sourceEncoding=UTF-8 " +
                         "-Dsonar.sources=${env.WORKSPACE} " +
-                        "-Dsonar.eslint.eslintconfigpath=.eslintrc "
+                        "-Dsonar.eslint.eslintconfigpath=.eslintrc "+
+                        "-Dsonar.eslint.ruleconfigs=.eslintrc "
                     }
                 }    
             } 
