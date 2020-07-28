@@ -4,19 +4,19 @@ import {
 } from 'antd';
 import './authForm.less';
 
-// 表单项label和content的宽度
+/** 表单项label和content的宽度 */
 const formItemLayout = {
-  // label 标签布局
+  /** label 标签布局 */
   labelCol: {
     span: 6
   },
-  // 输入控件布局样式设置
+  /** 输入控件布局样式设置 */
   wrapperCol: {
     span: 14
   }
 };
 
-// 校验提示语
+/** 校验提示语 */
 const validateMessages = {
   required: "'${name}' 是必选字段"
   // ...
@@ -24,20 +24,20 @@ const validateMessages = {
 const AuthForm = ({
   form, treeData, initialValues, ...rest
 }) => {
-  // 表单初始化
+  /** 表单初始化 */
   form.setFieldsValue({
     authName: '',
     authCode: '',
     parentId: '',
-    noAuthShow: 'hide',
+    noAuthShow: 'hide'
   });
   const tProps = {
     treeData,
     value: '',
     placeholder: '请选择父级',
     style: {
-      width: '100%',
-    },
+      width: '100%'
+    }
   };
   return (
     <Form
@@ -58,7 +58,7 @@ const AuthForm = ({
       </Form.Item>
 
       <Form.Item label="上级" name="parentId" rules={[{ required: false, message: '请选择上级!' }]}>
-        <TreeSelect {...tProps}/>
+        <TreeSelect {...tProps} />
       </Form.Item>
 
       <Form.Item name="noAuthShow" label="无权限时显示方式">

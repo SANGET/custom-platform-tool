@@ -1,9 +1,9 @@
 <!--
  * @Author: wph
  * @Date: 2020-07-27 14:51:28
- * @LastEditTime: 2020-07-27 17:49:41
+ * @LastEditTime: 2020-07-28 14:44:17
  * @LastEditors: Please set LastEditors
- * @Description: 权限管理说明文档
+ * @Description: 权限管理子工程说明文档
  * @FilePath: \custom-platform-v3-frontend\packages\provider-app-hub\AuthManager\README.md
 --> 
 # 介绍
@@ -28,6 +28,7 @@ yarn
   - `commom/` - 公共文件
     - `bizComps` 业务组件--特定业务功能模块可以复用的组件
     - `components` 子项目通用组件
+    - `tools` 子项目工具类
   - `pages/` - 页面文件
     - `template/` - 页面模板
     - `xxx/` -xxx页面资源文件夹
@@ -65,7 +66,7 @@ yarn start:auth
 -----
 
 ## 部署
-
+通过jenkins部署,链接和账号是：
 http://192.168.14.101:8080/login?from=%2Fview%2F%2520frontend-project%2Fjob%2Fcustom-platform-v3-frontend_SQ_SCAN%2Fjob%2Ffeat-20200707-authInit%2F4%2Fconsole
 
 hydev/123456

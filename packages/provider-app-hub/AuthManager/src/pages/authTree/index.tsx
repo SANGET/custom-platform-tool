@@ -1,7 +1,7 @@
 /*
  * @Author: wph
  * @Date: 2020-07-25 10:15:08
- * @LastEditTime: 2020-07-27 21:27:48
+ * @LastEditTime: 2020-07-28 15:18:28
  * @LastEditors: Please set LastEditors
  * @Description: 权限树主文件
  * @FilePath: \custom-platform-v3-frontend\packages\provider-app-hub\AuthManager\src\pages\authTree\index.tsx
@@ -11,7 +11,7 @@ import React, { useState, useEffect } from 'react';
 /** react-router 暴露出来的用程序切换路由的方法 */
 import { useHistory } from 'react-router-dom';
 import {
-  Menu, Dropdown, Button, Input, Modal, Form, Space
+  Menu, Dropdown, Button, Input, Modal, Form, Space, Tooltip
 } from 'antd';
 
 /** 发送请求 */
@@ -25,11 +25,13 @@ import BasicTreeTransfer from '../../common/components/BasicTreeTransfer';
 import AuthForm from '../../common/bizComps/AuthForm';
 import AuthTable from '../../common/bizComps/AuthTable';
 
+/** 不会操作页面状态的方法 */
+import {
+  generateSelectedTree, treeFilter, disTreeNode, treeQuery
+} from '../../common/tools/tree';
+
 /** 模拟数据 */
 import { treeData, tableData } from '../../mock';
-
-/** 不会操作页面状态的方法 */
-import { generateSelectedTree, treeFilter, disTreeNode } from './authTree';
 
 /** 当前功能页样式 */
 import './authTree.less';
@@ -202,7 +204,6 @@ const AuthTree = () => {
   };
 
   const btnProps = {
-    // type: 'primary',
     style: { marginTop: '10px' },
     onClick: () => {
       filter(dataSource);
@@ -238,7 +239,113 @@ const AuthTree = () => {
     console.log(row);
   };
 
+  /** 单元格属性集合 */
+  const columns = (() => {
+    /** 行删除按钮触发回调 */
+    const onDel = (row) => {
+      console.log(`删除行=${row}`);
+    };
+
+    const cols = [
+      {
+        title: '序号',
+        dataIndex: 'key',
+        width: 80,
+        /** 复杂情况渲染函数 */
+        render: (text, record, index) => {
+          // console.log({ text, record, index });
+          // return <span>{(page - 1) * pageSize + index + 1}</span>;
+        }
+      },
+      {
+        title: '权限树名称',
+        dataIndex: 'authName',
+        formItemType: 'text',
+        editable: true,
+        width: 200
+      },
+      {
+        title: '权限编码',
+        dataIndex: 'authCode',
+        formItemType: 'text',
+        editable: true,
+        width: 200
+      },
+      {
+        title: '上级',
+        dataIndex: 'parentId',
+        formItemType: 'TreeSelect',
+        editable: true,
+        required: false,
+        width: 400,
+        render: (key) => {
+          if (!key) return '';
+          return treeQuery(treeData, key).title;
+        }
+      },
+      {
+        title: '无权限显示方式',
+        dataIndex: 'displayType',
+        formItemType: 'select',
+        editable: true,
+        width: 200,
+        render: (text) => {
+          /** 将选项代码转换为文字 */
+          return {
+            0: '隐藏',
+            1: '禁用'
+          }[text];
+        }
+      },
+      {
+        title: '创建方式',
+        dataIndex: 'createType',
+        width: 200
+      },
+      {
+        title: '最后修改时间',
+        dataIndex: 'lastModified',
+        width: 160
+      },
+      {
+        title: '创建人',
+        dataIndex: 'creator',
+        width: 100
+      },
+      {
+        title: '操作',
+        dataIndex: 'operCol',
+        fixed: 'right',
+        width: 120,
+        render: (row) => (
+          <Space size="middle">
+            <Button type="link" onClick={() => onEdit(row)}>
+              编辑
+            </Button>
+            <Button type="link" onClick={() => onDel(row)}>
+              删除
+            </Button>
+          </Space>
+        )
+      }
+    ];
+    return cols.map((col) => {
+      return {
+        ellipsis: {
+          showTitle: false
+        },
+        render: (text) => (
+          <Tooltip placement="topLeft" title={text}>
+            {text}
+          </Tooltip>
+        ),
+        ...col
+      };
+    });
+  })();
+
   const authTableProps = {
+    columns,
     treeData,
     tableData,
     scroll: {
@@ -248,19 +355,6 @@ const AuthTree = () => {
     style: {
       width: 'calc(100% - 40px)',
       margin: '0 20px'
-    },
-    operCol: {
-      width: 120,
-      render: (row) => (
-        <Space size="middle">
-          <Button type="link" onClick={() => onEdit(row)}>
-            编辑
-          </Button>
-          <Button type="link" onClick={() => onDel(row)}>
-            删除
-          </Button>
-        </Space>
-      )
     }
   };
 
@@ -278,9 +372,7 @@ const AuthTree = () => {
         {modalType === ModalTypeEnum.fast ? (
           <div>
             <BasicTreeTransfer {...treeProps} />
-            <Button type="primary" {...btnProps}>
-              一键过滤
-            </Button>
+            <Button {...btnProps}>一键过滤</Button>
           </div>
         ) : (
           <AuthForm {...formProps} />

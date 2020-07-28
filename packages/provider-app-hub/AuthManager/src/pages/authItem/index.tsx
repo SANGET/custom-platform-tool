@@ -7,49 +7,52 @@
 import { useHistory } from 'react-router-dom';
 import React, { useState, useEffect } from 'react';
 import {
-  Menu, Dropdown, Button, Input, Modal, Form, Space
+  Menu, Dropdown, Button, Input, Modal, Form, Space, Tooltip
 } from 'antd';
-// 可复用组件
+/** 可复用组件 */
 // import Http from '@infra/utils/http';
 import BasicTree from '../../common/components/BasicTree';
 import BasicTreeTransfer from '../../common/components/BasicTreeTransfer';
 
-// 业务组件
+/** 业务组件 */
 import AuthForm from '../../common/bizComps/AuthForm';
 import AuthTable from '../../common/bizComps/AuthTable';
 
-// 模拟数据
+/** 不会操作页面状态的方法 */
+import {
+  generateSelectedTree, treeFilter, disTreeNode, treeQuery
+} from '../../common/tools/tree';
+
+/** 模拟数据 */
 import { treeData, tableData } from '../../mock';
 
-// 不会改变state状态的方法
-import { generateSelectedTree, treeFilter, disTreeNode } from './authItem';
-
-// 当前功能页样式
+/** 当前功能页样式 */
 import './authItem.less';
 
 const AuthItem = () => {
-  // react路由跳转
+  /** react路由跳转 */
   const history = useHistory();
-  // 模态框类型枚举
+  /** 模态框类型枚举 */
   const ModalTypeEnum = {
     custom: 'custom',
     fast: 'fast'
   };
-  // 搜索输入框
+
+  /** 搜索输入框 */
   const { Search } = Input;
-  // 更新树形组件数据源
+  /** 更新树形组件数据源 */
   const [dataSource, setDataSource] = useState(treeData);
-  // 设置模块框的显示隐藏
+  /** 设置模块框的显示隐藏 */
   const [visible, setVisiable] = useState<boolean>(false);
-  // 区分模态框展示的内容
+  /** 区分模态框展示的内容 */
   const [modalType, setModalType] = useState<string>(ModalTypeEnum.custom);
-  // 设置模态框的宽度
+  /** 设置模态框的宽度 */
   const [modalWidth, setModalWidth] = useState<string | number>(520);
-  // 更新选择的树节点key集合
+  /** 更新选择的树节点key集合 */
   const [targetKeys, setTargetKeys] = useState<string[]>([]);
-  // 更新选中树数据源
+  /** 更新选中树数据源 */
   const [selectedTree, setSelectedTree] = useState([]);
-  // 创建可控表单实例
+  /** 创建可控表单实例 */
   const [form] = Form.useForm();
 
   useEffect(() => {
@@ -75,9 +78,9 @@ const AuthItem = () => {
   const onChange = (targetKeys) => {
     // console.log('Target Keys:', targetKeys);
     setTargetKeys(targetKeys);
-    // 禁用已选择的节点
+    /** 禁用已选择的节点 */
     setDataSource(disTreeNode(dataSource, targetKeys));
-    // 根据选中的节点的key生成选中节点树
+    /** 根据选中的节点的key生成选中节点树 */
     setSelectedTree(generateSelectedTree(treeData, targetKeys));
     // console.log(generateSelectedTree(treeData, targetKeys));
   };
@@ -85,7 +88,7 @@ const AuthItem = () => {
    * 过滤掉已选择的树节点
    */
   const filter = (dataSource) => {
-    // 过滤掉选中的节点
+    /** 过滤掉选中的节点 */
     const reserveTree = treeFilter({
       treeData: dataSource,
       filter: (node) => !node.disabled
@@ -102,13 +105,15 @@ const AuthItem = () => {
   const handleOk = (e, {
     modalType, treeData, selectedTree, form
   }) => {
-    // 快速创建权限项
+    /** 快速创建权限项 */
     if (modalType === ModalTypeEnum.fast) {
       console.log({ treeData, selectedTree });
       setVisiable(false);
     } else if (modalType === ModalTypeEnum.custom) {
-      // 自定义权限项
-      // 表单校验
+      /**
+       * 自定义权限项
+       * 表单校验
+       */
       form
         .validateFields()
         .then((values) => {
@@ -116,12 +121,12 @@ const AuthItem = () => {
           setVisiable(false);
         })
         .catch((errorInfo) => {
-          // 校验未通过
+          /** 校验未通过 */
           console.log(errorInfo);
         });
     }
   };
-  // 弹框取消按钮回调
+  /** 弹框取消按钮回调 */
   const handleCancel = (e) => {
     setVisiable(false);
   };
@@ -150,7 +155,7 @@ const AuthItem = () => {
       }
     };
 
-    // 下拉框选项
+    /** 下拉框选项 */
     const menu = (
       <Menu onClick={dropdownClick}>
         <Menu.Item key={ModalTypeEnum.fast}>快速创建权限项</Menu.Item>
@@ -221,9 +226,112 @@ const AuthItem = () => {
     dataSource
   };
 
+  /** 单元格属性集合 */
+  const columns = (() => {
+    /** 行删除按钮触发回调 */
+    const onDel = (row) => {
+      console.log(`删除行=${row}`);
+    };
+
+    const cols = [
+      {
+        title: '序号',
+        dataIndex: 'key',
+        width: 80,
+        /** 复杂情况渲染函数 */
+        render: (text, record, index) => {
+          // console.log({ text, record, index });
+          // return <span>{(page - 1) * pageSize + index + 1}</span>;
+        }
+      },
+      {
+        title: '权限项名称',
+        dataIndex: 'authName',
+        formItemType: 'text',
+        editable: true,
+        width: 200
+      },
+      {
+        title: '权限编码',
+        dataIndex: 'authCode',
+        formItemType: 'text',
+        editable: true,
+        width: 200
+      },
+      {
+        title: '上级',
+        dataIndex: 'parentId',
+        formItemType: 'TreeSelect',
+        editable: true,
+        required: false,
+        width: 400,
+        render: (key) => {
+          if (!key) return '';
+          /** 根据节点的key查找节点 */
+          return treeQuery(treeData, key).title;
+        }
+      },
+      {
+        title: '无权限显示方式',
+        dataIndex: 'displayType',
+        formItemType: 'select',
+        editable: true,
+        width: 200,
+        render: (text) => {
+          /** 将选项代码转换为文字 */
+          return {
+            0: '隐藏',
+            1: '禁用'
+          }[text];
+        }
+      },
+      {
+        title: '创建方式',
+        dataIndex: 'createType',
+        width: 200
+      },
+      {
+        title: '最后修改时间',
+        dataIndex: 'lastModified',
+        width: 160
+      },
+      {
+        title: '创建人',
+        dataIndex: 'creator',
+        width: 100
+      },
+      {
+        title: '操作',
+        dataIndex: 'operCol',
+        fixed: 'right',
+        width: 80,
+        render: (row) => (
+          <Space size="middle">
+            <Button type="link" onClick={() => onDel(row)}>
+              删除
+            </Button>
+          </Space>
+        )
+      }
+    ];
+    return cols.map((col) => {
+      return {
+        ellipsis: {
+          showTitle: false
+        },
+        render: (text) => (
+          <Tooltip placement="topLeft" title={text}>
+            {text}
+          </Tooltip>
+        ),
+        ...col
+      };
+    });
+  })();
   const authTableProps = {
     treeData,
     tableData,
+    columns,
     scroll: {
       x: 200,
       y: 800
@@ -231,16 +339,6 @@ const AuthItem = () => {
     style: {
       width: 'calc(100% - 40px)',
       margin: '0 20px'
-    },
-    operCol: {
-      width: 80,
-      render: (row) => (
-        <Space size="middle">
-          <Button type="link" onClick={() => onDel(row)}>
-            删除
-          </Button>
-        </Space>
-      )
     }
   };
 

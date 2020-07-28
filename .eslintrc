@@ -2,7 +2,8 @@
   "extends": ["airbnb-base", "plugin:@typescript-eslint/recommended", "react-app"],
   "plugins": ["react", "@typescript-eslint"],
   "rules": {
-    "no-shadow": ["error", { "builtinGlobals": true, "hoist": "functions", "allow": ["resolve", "reject", "done", "cb"] }],
+    // 这条规则会导致上层声明的变量不能用作方法的形参,因此关闭
+    "no-shadow": ["off", { "builtinGlobals": true, "hoist": "functions", "allow": ["resolve", "reject", "done", "cb"] }],
     // 每行最大字符数
     "max-len": ["error", { "code": 140 }],
     "no-param-reassign": ["error", { "props": false }],
