@@ -1,3 +1,11 @@
+/*
+ * @Author: your name
+ * @Date: 2020-07-28 15:23:17
+ * @LastEditTime: 2020-07-28 20:38:57
+ * @LastEditors: Please set LastEditors
+ * @Description: In User Settings Edit
+ * @FilePath: \custom-platform-v3-frontend\packages\infrastructure\utils\converter.ts
+ */
 // class Person {
 //   // 必须定义name的属性，public 共有，private 私有，protected 受保护 默认为public
 //   name: string;
