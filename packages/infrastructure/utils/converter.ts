@@ -177,7 +177,7 @@ class SendAPBRequest {
       const { code, params } = step.function;
       return !!(code
         && typeof code === 'string'
-        && Object.prototype.toString().call(params) === '[object Object]');
+        && Object.prototype.toString.call(params) === '[object Object]');
     });
     if (isInvalid) {
       return console.log('参数不合法,请检查入参');
