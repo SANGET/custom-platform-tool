@@ -1,60 +1,73 @@
 /*
  * @Author: your name
  * @Date: 2020-07-28 15:23:17
- * @LastEditTime: 2020-07-28 20:38:57
+ * @LastEditTime: 2020-07-29 21:38:04
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: \custom-platform-v3-frontend\packages\infrastructure\utils\converter.ts
  */
-// class Person {
-//   // 必须定义name的属性，public 共有，private 私有，protected 受保护 默认为public
-//   name: string;
-
-//   // 定义属性
-//   constructor(name: string) {
-//     this.name = name;
-//   }
-
-//   // 定义方法 切记中间没有逗号，没有返回值，指定方法类型为void
-//   print(): void {
-//     console.log(this.name);
-//   }
-// }
-
-// const p1: Person = new Person('小胖纸');
-// p1.print(); // hello ts
-/**  */
+/** 导入发http请求的方法 */
 import Http from './http';
-// 基本请求参数
+
+/** 基本请求参数 */
 const UrlBaseParams = {
   /** 基础url */
-  baseUrl: `http://localhost:90000`,
+  baseUrl: `http://dev.hy.com:9000`,
   /** 租户id */
-  lesseeCode: 'xxx',
+  lesseeCode: 'admin',
   /** 应用id */
-  appCode: 'xxx',
+  appCode: 'custom',
 };
 
-// // T 表示传入的类型，可以为number、string、boolean等
-// // 传入什么label就是什么类型
-// interface labelValue<T> {
-//   label: T;
-//   value: number;
-// }
-// interface labelValue {
-//   label: number;
-//   value: number;
-// }
+/** RESTful请求传参约束 */
+export interface ItoRESTfulFormatArgs {
+  method: 'get'|'delete'|'put'|'post'|'patch';
+  contentType: 'form'|'json'|'file';
+  path: string;
+  params?: Record<string, unknown>;
+  data?: Record<string, unknown> | FormData;
+}
 
-// interface httpParams{
-//   url:string;
-//   method: string;
-//   data: object;
-//   headers:object;
-// }
-
-// // 传入number类型
-// let obj: labelValue<number>;
+/**
+ * 将ItoRESTfulFormatArgs类型的参数转换成axios支持的请求参数
+ */
+export const toRESTfulFormat = (args:ItoRESTfulFormatArgs) => {
+  const {
+    method = 'post', contentType = 'application/json', params = {}, path = '', data = {}
+  } = args;
+  const { baseUrl, lesseeCode, appCode } = UrlBaseParams;
+  const preUrl = `${baseUrl}/paas/${lesseeCode}/${appCode}`;
+  const typeObj = {
+    json: 'application/json',
+    form: 'application/x-www-form-urlencoded',
+    file: 'multipart/form-data',
+  };
+  const reqParams = {
+    data,
+    params,
+    method,
+    url: `${preUrl}${path}`,
+    headers: {
+      'Content-Type': typeObj[contentType],
+    },
+  };
+  if (['post', 'put', 'patch'].includes(method)) {
+    /** get|delete参数字段名称是params,post|put|patch参数字段名称是data */
+    reqParams.data = params;
+    /** 文件上传参数要处理成formData格式 */
+    if (contentType === 'file') {
+      const data = new FormData();
+      Object.keys(params).forEach((curKey) => {
+        data.append(curKey, params[curKey] as Blob);
+      });
+      reqParams.data = data;
+    }
+    delete reqParams.params;
+  } else {
+    delete reqParams.data;
+  }
+  return reqParams;
+};
 
 /**
  * APB请求类
@@ -80,17 +93,21 @@ const UrlBaseParams = {
  * 后端接口参见https://www.tapd.cn/41909965/documents/show/1141909965001000509#target%3atoc31
  */
 
+/** steps中的参数约定 */
 interface IFunArgs{
-  code:string;
-  params:unknown;
+  function:{
+    code:string;
+    params:unknown;
+  }
 }
 
+/** 操作集合参数约定 */
 interface IAPBArgs{
   action:string;
   params:unknown;
 }
 
-class SendAPBRequest {
+export class SendAPBRequest {
   /** 业务功能码 */
   public bizCode:string;
 
@@ -100,17 +117,13 @@ class SendAPBRequest {
   /** 操作集合 */
   public steps:IAPBArgs[]=[];
 
-  constructor({ _bizCode, _table }) {
-    this.bizCode = _bizCode;
-    this.table = _table;
+  constructor({ bizCode, table }) {
+    /** 业务编码 */
+    this.bizCode = bizCode;
+    /** 数据表名称 */
+    this.table = table;
+    /** 操作集合 */
     this.steps = [];
-    // this.args = args;
-    // super(args);
-    // {
-    //   bizCode: '', // 业务编码
-    //   steps: [], // 动作步骤
-    //   table: '', // 数据表名称
-    // }
   }
 
   insert(params):SendAPBRequest {
@@ -149,33 +162,32 @@ class SendAPBRequest {
   }
 
   thirdParty(params):SendAPBRequest {
-    // 三方操作码中的action要传具体的功能码
+    /** 三方操作码中的action要传具体的功能码 */
     this.steps.push(params);
     return this;
   }
 
-  // send() {
-  //   return this.doRequest(this.toAPBFormat(this.args));
-  // }
+  send() {
+    return this.doRequest(this.toAPBFormat({ bizCode: this.bizCode, steps: this.steps }));
+  }
 
   record(obj) {
     const { action, params } = obj;
-    // 增改删查动作参数中没有传table字段的话,默认使用公共参数中的table
+    /** 增改删查动作参数中没有传table字段的话,默认使用公共参数中的table */
     if (!params.table && ['insert', 'update', 'del', 'query'].includes(action)) params.table = this.table;
     this.steps.push({ action, params });
   }
 
   doRequest(data) {
     const { baseUrl, lesseeCode, appCode } = UrlBaseParams;
-    // 发送APB-DSL请求方法
-    const { businesscode, steps } = data;
-    this.steps = [];
 
-    // 参数合法性检查
-    const isInvalid = steps.every((step) => {
+    const { businesscode, steps } = data;
+
+    /** 参数合法性检查 */
+    const isInvalid = steps.every((step:IFunArgs) => {
       if (!step.function) return false;
       const { code, params } = step.function;
-      return !!(code
+      return (code
         && typeof code === 'string'
         && Object.prototype.toString.call(params) === '[object Object]');
     });
@@ -184,6 +196,9 @@ class SendAPBRequest {
     }
 
     const url = `${baseUrl}/hy/saas/${lesseeCode}/${appCode}/business/${businesscode}`;
+    /** 请求发送之后,清空参数 */
+    this.steps = [];
+    /** 发送APB-DSL请求方法 */
     return Http({
       url,
       data,
@@ -207,13 +222,14 @@ class SendAPBRequest {
         import: 'IMPORT_DATA',
         export: 'EXPORT_TO_FILE',
       };
-      // 如果不是上面枚举的动作,则按第三方业务码处理
+      /** 如果不是上面枚举的动作,则按第三方业务码处理 */
       return actionMap[action] ? actionMap[action] : action;
     };
     const { bizCode, steps } = args;
     return steps.reduce(
       (prev, cur) => {
         const { action, params } = cur;
+        /** 参数名称转换 */
         prev.steps.push({
           function: {
             code: getActionCode(action),
@@ -226,5 +242,3 @@ class SendAPBRequest {
     );
   }
 }
-
-export { SendAPBRequest };

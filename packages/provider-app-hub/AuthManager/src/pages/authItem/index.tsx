@@ -5,12 +5,15 @@
  * @Last Modified time: 2020-07-10 12:00:29
  */
 import { useHistory } from 'react-router-dom';
-import React, { useState, useEffect } from 'react';
+import React, {
+  FC, useState, useEffect, useContext
+} from 'react';
 import {
   Menu, Dropdown, Button, Input, Modal, Form, Space, Tooltip
 } from 'antd';
 /** 可复用组件 */
 // import Http from '@infra/utils/http';
+import Http from '@infra/utils/http';
 import BasicTree from '../../common/components/BasicTree';
 import BasicTreeTransfer from '../../common/components/BasicTreeTransfer';
 
@@ -26,10 +29,13 @@ import {
 /** 模拟数据 */
 import { treeData, tableData } from '../../mock';
 
+/** 应用上下文 */
+import { AppContext as Context } from '../../app';
 /** 当前功能页样式 */
 import './authItem.less';
 
-const AuthItem = () => {
+const AuthItem: FC = () => {
+  const AppContext = useContext(Context);
   /** react路由跳转 */
   const history = useHistory();
   /** 模态框类型枚举 */
@@ -54,8 +60,13 @@ const AuthItem = () => {
   const [selectedTree, setSelectedTree] = useState([]);
   /** 创建可控表单实例 */
   const [form] = Form.useForm();
+  /** 不能定义在函数里面 */
 
   useEffect(() => {
+    Http.get('http://jsonplaceholder.typicode.com/users/1')
+      .then((res) => console.log(res.data.name))
+      .catch((err) => console.log(err));
+
     // Http.request({
     //   url: '/test',
     //   method: 'post',
@@ -208,8 +219,18 @@ const AuthItem = () => {
     style: { width: '300px', margin: '20px' },
     placeholder: '请输入权限项名称或编码',
     onSearch: (value) => {
-      history.push('/home');
-      console.log(value);
+      AppContext.dispatch({
+        type: 'show',
+        payload: {}
+      });
+      setTimeout(() => {
+        AppContext.dispatch({
+          type: 'hide',
+          payload: {}
+        });
+      }, 1000);
+      // history.push('/home');
+      // console.log(value);
     },
     enterButton: true
   };

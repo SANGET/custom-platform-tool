@@ -1,13 +1,13 @@
 /*
  * @Author: wph
  * @Date: 2020-07-25 10:15:08
- * @LastEditTime: 2020-07-28 15:18:28
+ * @LastEditTime: 2020-07-29 14:03:49
  * @LastEditors: Please set LastEditors
  * @Description: 权限树主文件
  * @FilePath: \custom-platform-v3-frontend\packages\provider-app-hub\AuthManager\src\pages\authTree\index.tsx
  */
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 /** react-router 暴露出来的用程序切换路由的方法 */
 import { useHistory } from 'react-router-dom';
 import {
@@ -36,8 +36,12 @@ import { treeData, tableData } from '../../mock';
 /** 当前功能页样式 */
 import './authTree.less';
 
+import { AppContext } from '../../app';
+
 /** 权限树页面 */
 const AuthTree = () => {
+  const { username } = useContext(AppContext);
+  console.log(username);
   /** react路由跳转 */
   const history = useHistory();
   /** 模态框类型枚举 */

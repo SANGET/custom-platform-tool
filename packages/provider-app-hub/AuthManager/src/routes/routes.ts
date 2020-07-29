@@ -1,7 +1,7 @@
 /*
  * @Author: wph
  * @Date: 2020-07-23 10:29:08
- * @LastEditTime: 2020-07-27 16:06:09
+ * @LastEditTime: 2020-07-29 13:59:11
  * @LastEditors: Please set LastEditors
  * @Description: 添加注释
  * @FilePath: \custom-platform-v3-frontend\packages\provider-app-hub\AuthManager\src\routes\index.ts

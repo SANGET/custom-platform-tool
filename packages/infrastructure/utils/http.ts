@@ -1,11 +1,14 @@
 import axios from 'axios';
-import { showLoading, hideLoading } from '@infra/ui/feedback/loading';
+/** 对比了一下全局loading和动态创建loading,全局loading有个缺点就是在每个子应用中都得写一遍loading动画元素 */
+/** 每个页面都得加上显示隐藏逻辑,不如动态创建loading灵活 */
+
+// import { showLoading, hideLoading } from '@infra/ui/feedback/loading';
 import { message as Msg } from 'antd';
 
 // const { CancelToken } = axios;
 
 // 当前正在请求的数量
-let requestCount = 0;
+// let requestCount = 0;
 /** 登陆超时编码 */
 const LoginTimeoutCode = [600];
 
@@ -27,13 +30,13 @@ const Http = axios.create({
   // `transformRequest` 允许在向服务器发送前，修改请求数据
   // 只能用在 'PUT', 'POST' 和 'PATCH' 这几个请求方法
   // 后面数组中的函数必须返回一个字符串，或 ArrayBuffer，或 Stream
-  transformRequest: [function (data) {
+  transformRequest: [(data) => {
     // 对 data 进行任意转换处理
     return data;
   }],
 
   // `transformResponse` 在传递给 then/catch 前，允许修改响应数据
-  transformResponse: [function (data) {
+  transformResponse: [(data) => {
     // 对 data 进行任意转换处理
     return data;
   }],
@@ -82,19 +85,20 @@ const Http = axios.create({
   xsrfHeaderName: 'X-XSRF-TOKEN', // 默认的
 
   // `onUploadProgress` 允许为上传处理进度事件
-  onUploadProgress(progressEvent) {
-    // 对原生进度事件的处理
-  },
+  // onUploadProgress(progressEvent) {
+  //   // 对原生进度事件的处理
+  // },
 
-  // `onDownloadProgress` 允许为下载处理进度事件
-  onDownloadProgress(progressEvent) {
-    // 对原生进度事件的处理
-  },
+  // // `onDownloadProgress` 允许为下载处理进度事件
+  // onDownloadProgress(progressEvent) {
+  //   // 对原生进度事件的处理
+  // },
 
   // `maxContentLength` 定义允许的响应内容的最大尺寸
   maxContentLength: 2000,
 
-  // `validateStatus` 定义对于给定的HTTP 响应状态码是 resolve 或 reject  promise 。如果 `validateStatus` 返回 `true` (或者设置为 `null` 或 `undefined`)，promise 将被 resolve; 否则，promise 将被 rejecte
+  // `validateStatus` 定义对于给定的HTTP 响应状态码是 resolve 或 reject  promise 。如果 `validateStatus` 返回 `true` (或者设置为 `null` 或
+  // `undefined`)，promise 将被 resolve; 否则，promise 将被 rejecte
   validateStatus(status) {
     return status >= 200 && status < 300; // 默认的
   },
@@ -125,17 +129,18 @@ const Http = axios.create({
 /** 请求拦截器 * */
 Http.interceptors.request.use(
   (config) => {
+    const { method } = config;
     // 发起请求时加载全局loading，请求失败或有响应时会关闭
     // requestCount为0，才创建loading, 避免重复创建
-    if (config.headers.isLoading) {
-      requestCount = showLoading(requestCount);
-    }
+    // if (config.headers.isLoading) {
+    //   requestCount = showLoading(requestCount);
+    // }
 
     // 给每个请求都加上token,让服务器判断请求是否过期
     config.headers.token = sessionStorage.getItem('token') || '';
 
     // 对请求参数进行加密
-    if (['get', 'delete'].includes(config.method)) {
+    if (['get', 'delete'].includes(method as string)) {
       // 默认是表单格式，可以配置成其它
       config.headers['Content-Type'] = config.headers['Content-Type'] || 'application/x-www-form-urlencoded';
       // 如果是表单格式
@@ -161,98 +166,97 @@ Http.interceptors.request.use(
   },
   (error) => {
     // 判断当前请求是否设置了不显示Loading
-    if (error.config.headers.isLoading) {
-      requestCount = hideLoading(requestCount);
-    }
+    // if (error.config.headers.isLoading) {
+    //   requestCount = hideLoading(requestCount);
+    // }
 
     return Promise.reject(error);
   }
 );
-/** 响应拦截器  * */
-Http.interceptors.response.use(
-  (response) => {
-    // 判断当前请求是否设置了不显示Loading
-    if (response.config.headers.isLoading) {
-      requestCount = hideLoading(requestCount);
-    }
+Http.interceptors.response.use((res) => {
+  const { status, data } = res;
+  // 判断当前请求是否设置了不显示Loading
+  // if (config.headers.isLoading) {
+  //   requestCount = hideLoading(requestCount);
+  // }
 
-    if (response.status === 200) {
-      const { data, config, status } = response;
-      if (!data) {
-        const errMsg = '数据不存在';
-        // fetchError(message, 200, config)
-        return Promise.reject(message);
-      }
-      const { result, code, msg } = data;
-      // 非正确业务码返回
-      if (code !== '00000') {
-        // fetchError({ msg, code, config })
-        return Promise.reject(msg);
-      }
-      // 进入正常流程
-      return Promise.resolve(data);
+  if (status === 200) {
+    if (!data) {
+      // const errMsg = '数据不存在';
+      // fetchError(message, 200, config)
+      return Promise.reject(status);
     }
-    return Promise.reject;
-  },
-  (error) => {
-    if (error.config.headers.isLoading) {
-      requestCount = hideLoading(requestCount);
+    const { code, msg } = data;
+    // 非正确业务码返回
+    if (code && code !== '00000') {
+      // fetchError({ msg, code, config })
+      return Promise.reject(msg);
     }
-    let errMsg = '';
-    if (error.response) {
-      const { status } = error.response;
-      switch (status) {
-        case 400:
-          errMsg = '错误请求';
-          break;
-        case 401:
-          errMsg = '未授权，请重新登录';
-          break;
-        case 403:
-          errMsg = '拒绝访问';
-          break;
-        case 404:
-          errMsg = '请求错误,未找到该资源';
-          break;
-        case 405:
-          errMsg = '请求方法未允许';
-          break;
-        case 408:
-          errMsg = '请求超时';
-          break;
-        case 500:
-          errMsg = '服务器端出错';
-          break;
-        case 501:
-          errMsg = '网络未实现';
-          break;
-        case 502:
-          errMsg = '网络错误';
-          break;
-        case 503:
-          errMsg = '服务不可用';
-          break;
-        case 504:
-          errMsg = '网络超时';
-          break;
-        case 505:
-          errMsg = 'http版本不支持该请求';
-          break;
-        default:
-          errMsg = `连接错误${status}`;
-      }
-      // 弹出错误提示
-      Msg.warning(errMsg);
-      /** 登录超时跳转到登陆页 */
-      if (LoginTimeoutCode.includes(status)) {
-        window.location.href = `${window.location.origin}/#/login`;
-      }
-    }
-    /** 捕获错误 */
-    fetchError(error);
-    return Promise.reject(error);
+    // console.log('res-xx进入正常流程', res);
+    // 进入正常流程
+    return Promise.resolve(res);
   }
-);
+  /** 必须有返回信息,这样写return Promise.reject会触发ts报警 */
+  return Promise.reject(res);
+},
+(error) => {
+  // if (error.config.headers.isLoading) {
+  //   requestCount = hideLoading(requestCount);
+  // }
+  let errMsg = '';
+  if (error.response) {
+    const { status } = error.response;
+    switch (status) {
+      case 400:
+        errMsg = '错误请求';
+        break;
+      case 401:
+        errMsg = '未授权，请重新登录';
+        break;
+      case 403:
+        errMsg = '拒绝访问';
+        break;
+      case 404:
+        errMsg = '请求错误,未找到该资源';
+        break;
+      case 405:
+        errMsg = '请求方法未允许';
+        break;
+      case 408:
+        errMsg = '请求超时';
+        break;
+      case 500:
+        errMsg = '服务器端出错';
+        break;
+      case 501:
+        errMsg = '网络未实现';
+        break;
+      case 502:
+        errMsg = '网络错误';
+        break;
+      case 503:
+        errMsg = '服务不可用';
+        break;
+      case 504:
+        errMsg = '网络超时';
+        break;
+      case 505:
+        errMsg = 'http版本不支持该请求';
+        break;
+      default:
+        errMsg = `连接错误${status}`;
+    }
+    // 弹出错误提示
+    Msg.warning(errMsg);
+    /** 登录超时跳转到登陆页 */
+    if (LoginTimeoutCode.includes(status)) {
+      window.location.href = `${window.location.origin}/#/login`;
+    }
+  }
+  /** 捕获错误 */
+  fetchError(error);
+  return Promise.reject(error);
+});
 
 /**
  * 捕获错误
