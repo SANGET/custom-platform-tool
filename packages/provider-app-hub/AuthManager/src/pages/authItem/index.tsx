@@ -44,6 +44,13 @@ const AuthItem: FC = () => {
     fast: 'fast'
   };
 
+  /**
+   * 如果 state 的类型为 Number, String, Boolean 建议使用 useState，如果 state 的类型 为 Object 或 Array，建议使用 useReducer
+   * 如果 state 变化非常多，也是建议使用 useReducer，集中管理 state 变化，便于维护
+   * 如果 state 关联变化，建议使用 useReducer
+   * 业务逻辑如果很复杂，也建议使用 useReducer
+   * 如果 state 只想用在 组件内部，建议使用 useState，如果想维护全局 state 建议使用 useReducer
+   *    */
   /** 搜索输入框 */
   const { Search } = Input;
   /** 更新树形组件数据源 */

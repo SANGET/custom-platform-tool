@@ -1,7 +1,7 @@
 /*
  * @Author: your name
  * @Date: 2020-07-28 15:23:17
- * @LastEditTime: 2020-07-29 21:38:04
+ * @LastEditTime: 2020-07-30 09:04:37
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: \custom-platform-v3-frontend\packages\infrastructure\utils\converter.ts
