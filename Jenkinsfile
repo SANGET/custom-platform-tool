@@ -112,6 +112,7 @@ pipeline {
     }
 }
 
+//test
 @NonCPS
 def get_change_author() {
     echo "Gathering SCM changes"
