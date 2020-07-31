@@ -13,7 +13,7 @@ import {
 } from 'antd';
 /** 可复用组件 */
 // import Http from '@infra/utils/http';
-import Http from '@infra/utils/http';
+import Http, { CancelToken } from '@infra/utils/http';
 import BasicTree from '../../common/components/BasicTree';
 import BasicTreeTransfer from '../../common/components/BasicTreeTransfer';
 
@@ -70,23 +70,30 @@ const AuthItem: FC = () => {
   /** 不能定义在函数里面 */
 
   useEffect(() => {
-    Http.get('http://jsonplaceholder.typicode.com/users/1')
-      .then((res) => console.log(res.data.name))
-      .catch((err) => console.log(err));
-
-    // Http.request({
-    //   url: '/test',
-    //   method: 'post',
-    //   data: {
-    //     auth: 'tree'
-    //   },
-    //   headers: {
-    //     isLoading: true,
-    //     'Content-Type': 'application/json'
-    //   }
-    // }).then((data) => {
-    //   console.log(data);
-    // });
+    // Http.get('http://jsonplaceholder.typicode.com/users/1')
+    //   .then((res) => console.log(res.data.name))
+    //   .catch((err) => console.log(err));
+    let cancelAjax;
+    Http.request({
+      url: '/test',
+      method: 'post',
+      data: {
+        auth: 'tree'
+      },
+      /** cancelToken 指定用于取消请求的 cancel token */
+      cancelToken: new CancelToken((c) => {
+        /** 获取取消请求的回调 */
+        cancelAjax = c;
+      }),
+      headers: {
+        isLoading: true,
+        'Content-Type': 'application/json'
+      }
+    }).then((data) => {
+      console.log(data);
+    });
+    /** 取消请求 */
+    cancelAjax();
   });
 
   /**

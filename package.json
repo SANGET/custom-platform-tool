@@ -24,7 +24,8 @@
     "format": "npm run prettier:base -- --write \"packages/**/*.{ts,tsx}\"",
     "test": "jest --coverage",
     "test:auth": "jest ./packages/provider-app-hub/AuthManager/src --coverage",
-    "commit": "git-cz"
+    "commit": "git-cz",
+    "local": "git add -A && git-cz"
   },
   "devDependencies": {
     "cross-env": "^7.0.2",
