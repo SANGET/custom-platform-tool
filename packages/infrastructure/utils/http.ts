@@ -1,7 +1,7 @@
 /*
  * @Author: your name
  * @Date: 2020-07-22 09:23:52
- * @LastEditTime: 2020-08-01 10:17:00
+ * @LastEditTime: 2020-08-01 18:30:23
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: \custom-platform-v3-frontend\packages\infrastructure\utils\http.ts
@@ -63,8 +63,7 @@ beforeEach.use(
 
 /** 响应拦截器-可以添加多个，先添加的响应拦截器会在响应后先执行 */
 afterEach.use((res) => {
-  return res;
-  // return resHandler(res);
+  return resHandler(res);
 },
 (error) => {
   return errHandler(error);
