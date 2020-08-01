@@ -1,8 +1,13 @@
 {
   "compilerOptions": {
-    "target": "esnext",
+    /** 不同node版本在使用ts-jest时，要求的配置不同*/
+    "lib": ["ES2019", "dom", "dom.iterable", "esnext"],
+    "module": "esnext",
+    "target": "ES2019",
+    // "lib": ["dom", "dom.iterable", "esnext"],
+    // "module": "esnext",
+    // "target": "esnext",
     "baseUrl": "./",
-    "lib": ["dom", "dom.iterable", "esnext"],
     "outDir": "./dist",
     "skipLibCheck": true,
     "esModuleInterop": true,
@@ -11,7 +16,6 @@
     "strict": true,
     "forceConsistentCasingInFileNames": true,
     "declaration": true,
-    "module": "esnext",
     "moduleResolution": "node",
     "importHelpers": true,
     "jsx": "react"

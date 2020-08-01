@@ -23,26 +23,37 @@
     "prettier:base": "prettier --parser typescript",
     "format": "npm run prettier:base -- --write \"packages/**/*.{ts,tsx}\"",
     "test": "jest --coverage",
-    "test:auth": "jest ./packages/provider-app-hub/AuthManager/src --coverage",
+    "test:auth": "cls && jest ./packages/provider-app-hub/AuthManager/src --coverage  --clearCache --runInBand --detectOpenHandles ",
+    "test:utils": "jest  ./packages/infrastructure/utils --coverage --verbose  --runInBand --detectOpenHandles ",
     "commit": "git-cz",
-    "local": "git add -A && git-cz"
+    "local": "git add -A && git-cz",
+    "sonar": "node sonar-project.js"
   },
   "devDependencies": {
-    "cross-env": "^7.0.2",
-    "@types/jest": "24.0.13",
-    "babel-jest": "^24.8.0",
-    "lerna": "^3.21.0",
-    "prettier": "^2.0.5",
-    "commitizen": "^4.1.2",
     "@commitlint/cli": "^7.4.0",
     "@commitlint/config-conventional": "^7.3.1",
+    "@types/jest": "24.0.13",
+    "babel-jest": "^24.8.0",
+    "commitizen": "^4.1.2",
+    "cross-env": "^7.0.2",
     "cz-customizable": "^6.2.1",
     "husky": "^1.3.1",
-    "jest": "24.7.1",
+    "jest": "^26.2.2",
     "jest-environment-jsdom-fourteen": "0.1.0",
+    "jest-express": "^1.12.0",
     "jest-resolve": "24.7.1",
+    "jest-sonar-reporter": "^2.0.0",
     "jest-watch-typeahead": "0.3.0",
+    "lerna": "^3.21.0",
+    "prettier": "^2.0.5",
+    "sonarqube-scanner": "^2.7.0",
+    "supertest": "^4.0.2",
     "ts-jest": "26.1.4"
+  },
+  "jestSonar": {
+    "reportPath": "coverage",
+    "reportFile": "test-reporter.xml",
+    "indent": 4
   },
   "husky": {
     "hooks": {

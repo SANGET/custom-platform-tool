@@ -16,7 +16,6 @@ module.exports = {
 
   // Automatically clear mock calls and instances between every test
   clearMocks: true,
-
   // Indicates whether the coverage information should be collected while executing the test
   // collectCoverage: false,
 
@@ -25,13 +24,11 @@ module.exports = {
 
   // The directory where Jest should output its coverage files
   coverageDirectory: "coverage",
-
   // An array of regexp pattern strings used to skip coverage collection
   coveragePathIgnorePatterns: [
     "/node_modules/",
     "/scripts/"
   ],
-
   // A list of reporter names that Jest uses when writing coverage reports
   // coverageReporters: [
   //   "json",
@@ -148,6 +145,25 @@ module.exports = {
   // The regexp pattern Jest uses to detect test files
   // testRegex: "",
   testRegex: '(/__tests__/.*|(\\.|/)(test|spec))\\.(jsx?|tsx?)$',
+  moduleFileExtensions: [
+    "js",
+    "json",
+    "ts",
+    "tsx"
+  ],
+  // "moduleNameMapper": {
+  //   "^@creative(.*)$": "<rootDir>/modules/creative$1",
+  //   "^@admin(.*)$": "<rootDir>/modules/admin$1",
+  //   "^@configuration(.*)$": "<rootDir>/modules/configuration$1",
+  //   "^@common(.*)$": "<rootDir>/common$1",
+  //   "^@auth(.*)$": "<rootDir>/modules/auth$1"
+  // },
+  // "rootDir": "src",
+  collectCoverageFrom: [
+    "**/*.(t|j)sx?"
+  ],
+  testResultsProcessor: "jest-sonar-reporter",
+  // "testEnvironment": "node",
 
   // This option allows the use of a custom results processor
   // testResultsProcessor: null,
@@ -166,6 +182,9 @@ module.exports = {
   transform: {
     "^.+\\.tsx?$": "ts-jest"
   },
+  // transform: {
+  //   "^.+\\.(t|j)s$": "ts-jest"
+  // },
 
   // An array of regexp pattern strings that are matched against all source file paths, matched files will skip transformation
   // transformIgnorePatterns: [

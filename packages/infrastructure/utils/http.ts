@@ -1,7 +1,7 @@
 /*
  * @Author: your name
  * @Date: 2020-07-22 09:23:52
- * @LastEditTime: 2020-07-30 22:21:40
+ * @LastEditTime: 2020-08-01 10:17:00
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: \custom-platform-v3-frontend\packages\infrastructure\utils\http.ts
@@ -53,7 +53,7 @@ export const afterEach = Http.interceptors.response;
 /** 请求拦截器-可以添加多个，后添加的请求拦截器会比先添加的请求拦截器在请求前的过程中先执行 */
 beforeEach.use(
   (config) => {
-    config.headers.token = sessionStorage.getItem('token') || '';
+    // config.headers.token = sessionStorage.getItem('token') || '';
     return config;
   },
   (error) => {
@@ -63,7 +63,8 @@ beforeEach.use(
 
 /** 响应拦截器-可以添加多个，先添加的响应拦截器会在响应后先执行 */
 afterEach.use((res) => {
-  return resHandler(res);
+  return res;
+  // return resHandler(res);
 },
 (error) => {
   return errHandler(error);

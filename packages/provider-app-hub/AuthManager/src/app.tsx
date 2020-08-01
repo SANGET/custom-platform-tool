@@ -13,7 +13,13 @@ import ROUTES from './routes/routes';
 import IconComp from './routes/IconComp';
 import { loadingReducer, defaultState } from './reducers/auth';
 
-export const AppContext = React.createContext({});
+/** 应用上下文,为了消除子页面引用时的告警,必须进行键值定义 */
+const AppContext = React.createContext({
+  state: {},
+  dispatch: (obj) => {
+    return obj;
+  }
+});
 
 const App: FC = () => {
   // 默认选中和打开的菜单
@@ -23,7 +29,6 @@ const App: FC = () => {
   };
 
   const [state, dispatch] = useReducer(loadingReducer, defaultState);
-
   return (
     <AppContext.Provider value={{ state, dispatch }}>
       {/** 在BrowserRouter定义样式无效 */}
@@ -31,6 +36,7 @@ const App: FC = () => {
         <div className={state.isShowLoading ? 'loading' : 'hide'}>
           <Spin tip="加载中..." size="large" />
         </div>
+
         <div className="app-container">
           <Menu
             theme="dark"
@@ -69,4 +75,5 @@ const App: FC = () => {
   );
 };
 
+export { AppContext };
 export default App;

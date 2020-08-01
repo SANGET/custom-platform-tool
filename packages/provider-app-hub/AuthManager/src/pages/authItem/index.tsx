@@ -36,6 +36,7 @@ import './authItem.less';
 
 const AuthItem: FC = () => {
   const AppContext = useContext(Context);
+
   /** react路由跳转 */
   const history = useHistory();
   /** 模态框类型枚举 */
@@ -69,31 +70,55 @@ const AuthItem: FC = () => {
   const [form] = Form.useForm();
   /** 不能定义在函数里面 */
 
+  // AppContext.dispatch({
+  //   type: 'show',
+  //   payload: {}
+  // });
   useEffect(() => {
-    // Http.get('http://jsonplaceholder.typicode.com/users/1')
-    //   .then((res) => console.log(res.data.name))
-    //   .catch((err) => console.log(err));
-    let cancelAjax;
-    Http.request({
-      url: '/test',
-      method: 'post',
-      data: {
-        auth: 'tree'
-      },
-      /** cancelToken 指定用于取消请求的 cancel token */
-      cancelToken: new CancelToken((c) => {
-        /** 获取取消请求的回调 */
-        cancelAjax = c;
-      }),
-      headers: {
-        isLoading: true,
-        'Content-Type': 'application/json'
-      }
-    }).then((data) => {
-      console.log(data);
-    });
-    /** 取消请求 */
-    cancelAjax();
+    // const fetchUser = () => {
+    //   //* * JSONPlaceholder上的一个mock地址，可以测试Http工具发送请求是否正常 */
+    //   return Http.post('http://xxxx/users/1')
+    //     .then((data) => {
+    //       return console.log(data);
+    //     })
+    //     .catch((err) => {
+    //       console.log(err.message);
+    //       throw Error(err.message);
+    //     });
+    // };
+    // fetchUser();
+    Http.get('http://jsonplaceholder.typicode.com/users/1')
+      .then((res) => console.log(res.data.name))
+      .catch((err) => console.log(err));
+    // let cancelAjax;
+    // Http.request({
+    //   url: 'http://jsonplaceholder.typicode.com/users/1',
+    //   method: 'get',
+    //   data: {
+    //     auth: 'tree'
+    //   },
+    //   /** cancelToken 指定用于取消请求的 cancel token */
+    //   cancelToken: new CancelToken((c) => {
+    //     /** 获取取消请求的回调 */
+    //     cancelAjax = c;
+    //   }),
+    //   headers: {
+    //     isLoading: true,
+    //     'Content-Type': 'application/json'
+    //   }
+    // })
+    //   .then((data) => {
+    //     console.log(data);
+    //   })
+    //   .catch((err) => {
+    //     console.log(err);
+    //     // AppContext.dispatch({
+    //     //   type: 'hide',
+    //     //   payload: {}
+    //     // });
+    //   });
+    // /** 取消请求 */
+    // cancelAjax();
   });
 
   /**
@@ -233,16 +258,6 @@ const AuthItem: FC = () => {
     style: { width: '300px', margin: '20px' },
     placeholder: '请输入权限项名称或编码',
     onSearch: (value) => {
-      AppContext.dispatch({
-        type: 'show',
-        payload: {}
-      });
-      setTimeout(() => {
-        AppContext.dispatch({
-          type: 'hide',
-          payload: {}
-        });
-      }, 1000);
       // history.push('/home');
       // console.log(value);
     },

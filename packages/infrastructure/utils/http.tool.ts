@@ -1,7 +1,7 @@
 /*
  * @Author: your name
  * @Date: 2020-07-30 15:44:00
- * @LastEditTime: 2020-07-30 17:03:12
+ * @LastEditTime: 2020-08-01 10:39:23
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: \custom-platform-v3-frontend\packages\infrastructure\utils\http.tool.ts
@@ -22,15 +22,16 @@ export const resHandler = (res) => {
     /** 数据不存在 */
     if (!data) {
     // fetchLog(res)
-      return Promise.reject(status);
+      const statusText = "数据不存在";
+      return Promise.reject(statusText);
     }
     const { code, msg } = data;
-    // 非正确业务码返回
+    /** 非正确业务码返回 */
     if (code && code !== '00000') {
-    // fetchLog(res)
+      fetchLog(res);
       return Promise.reject(msg);
     }
-    // 进入正常流程
+    /** 进入正常流程 */
     return Promise.resolve(res);
   }
   /** 必须有返回信息,这样写return Promise.reject()会触发ts报警 */
@@ -63,17 +64,16 @@ export const errHandler = (error) => {
 
   /** 捕获错误-为日志上报预留 */
   fetchLog(error);
-
   /** 登录超时跳转到登陆页 */
   if (logoutCode.includes(status)) {
     alertMsg({ type: 'error', title: '登录已过期，请重新登录' });
     /** 清除所有的登录态信息 */
-    window.sessionStorage.clear();
+    globalThis.sessionStorage.clear();
     // useHistory().replace('/login');
-    window.location.href = `${window.location.origin}/#/login`;
-    return Promise.reject(error);
+    globalThis.location.href = `${globalThis.location.origin}/#/login`;
+    return Promise.reject(errMsg);
   }
-  console.log(error);
+  // console.log(error);
   // 弹出网络错误提示框
   alertMsg({ type: 'error', title: `请求错误 ${status || ''}`, desc: errMsg });
 
@@ -83,5 +83,5 @@ export const errHandler = (error) => {
  * 捕获日志
  */
 export function fetchLog(log) {
-  console.log(log);
+  // console.log(log);
 }

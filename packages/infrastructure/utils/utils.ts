@@ -1,7 +1,7 @@
 /*
  * @Author: your name
  * @Date: 2020-07-06 15:44:28
- * @LastEditTime: 2020-07-30 14:47:57
+ * @LastEditTime: 2020-07-31 16:37:46
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: \custom-platform-v3-frontend\packages\infrastructure\utils\utils.ts
@@ -9,7 +9,7 @@
 import { notification } from 'antd';
 
 /** 弹窗参数类型约束 */
-type alertMsgArgs={
+export type alertMsgArgs={
   type?:'open'|'success'|'warning'|'info'|'error';
   title:string;
   desc?:string;
@@ -26,10 +26,13 @@ export function alertMsg(params:alertMsgArgs) {
   const {
     title, type, desc, duration
   } = params;
-  const args = Object.assign({}, {
+  const args = {
     message: title || '',
     description: desc || '',
-    duration: duration || 3 * 1000,
-  });
+    duration: duration || 3,
+    showIcon: true
+  };
+
   notification[type || 'open'](args);
+  return args;
 }

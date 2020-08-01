@@ -1,7 +1,7 @@
 /*
  * @Author: your name
  * @Date: 2020-07-28 15:23:17
- * @LastEditTime: 2020-07-30 09:04:37
+ * @LastEditTime: 2020-08-01 15:52:39
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: \custom-platform-v3-frontend\packages\infrastructure\utils\converter.ts
@@ -33,7 +33,7 @@ export interface ItoRESTfulFormatArgs {
  */
 export const toRESTfulFormat = (args:ItoRESTfulFormatArgs) => {
   const {
-    method = 'post', contentType = 'application/json', params = {}, path = '', data = {}
+    method = 'post', contentType = 'json', params = {}, path = '', data = {}
   } = args;
   const { baseUrl, lesseeCode, appCode } = UrlBaseParams;
   const preUrl = `${baseUrl}/paas/${lesseeCode}/${appCode}`;
@@ -185,14 +185,16 @@ export class SendAPBRequest {
 
     /** 参数合法性检查 */
     const isInvalid = steps.every((step:IFunArgs) => {
-      if (!step.function) return false;
+      if (!step.function) return true;
       const { code, params } = step.function;
-      return (code
+      return !(code
         && typeof code === 'string'
         && Object.prototype.toString.call(params) === '[object Object]');
     });
+    // console.log('isInvalid=', isInvalid);
     if (isInvalid) {
-      return console.log('参数不合法,请检查入参');
+      // console.log('参数不合法,请检查入参');
+      return isInvalid;
     }
 
     const url = `${baseUrl}/hy/saas/${lesseeCode}/${appCode}/business/${businesscode}`;
