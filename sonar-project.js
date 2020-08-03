@@ -1,15 +1,16 @@
 /*
  * @Author: your name
  * @Date: 2020-08-01 17:12:07
- * @LastEditTime: 2020-08-01 17:12:08
+ * @LastEditTime: 2020-08-01 18:39:49
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: \custom-platform-v3-frontend\sonar-project.js
  */
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const sonarqubeScanner = require('sonarqube-scanner');
 
 const parameters = {
-  serverUrl: 'http://localhost:9000',
+  serverUrl: 'http://localhost:6000',
   token: 'XXX',
   options: {
     'sonar.projectVersion': '1.1',
