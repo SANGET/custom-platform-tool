@@ -1,0 +1,26 @@
+{
+  "name": "@provider-app/data-designer",
+  "version": "0.0.1",
+  "private": true,
+  "main": "./index.js",
+  "author": "wph",
+  "license": "MIT",
+  "scripts": {
+    "start": "cross-env PORT=60001 minictl start",
+    "test": "jest src --coverage"
+  },
+  "devDependencies": {},
+  "dependencies": {},
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  }
+}
