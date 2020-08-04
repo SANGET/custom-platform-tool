@@ -7,11 +7,7 @@
     "start": "cross-env PORT=9988 minictl start"
   },
   "devDependencies": {
-    "@infra/env-scripts": "^0.0.1"
-  },
-  "dependencies": {
-    "react": "16.13.1",
-    "react-dom": "16.13.1"
+    "@infra/react-dev-env-scripts": "^0.0.1"
   },
   "author": "SANGET",
   "license": "MIT"

@@ -1,5 +1,5 @@
 {
-  "name": "@infra/env-scripts",
+  "name": "@infra/react-dev-env-scripts",
   "version": "0.0.1",
   "description": "工程化基础",
   "main": "index.js",
@@ -8,12 +8,16 @@
     "minictl": "./bin/scripts.js"
   },
   "dependencies": {
+    "@types/react": "^16.9.44",
+    "@types/react-dom": "^16.9.8",
     "@babel/core": "7.4.3",
     "@babel/plugin-proposal-export-default-from": "^7.2.0",
     "@svgr/webpack": "4.1.0",
     "@types/node": "12.0.2",
     "@typescript-eslint/eslint-plugin": "^3.4.0",
     "@typescript-eslint/parser": "^3.4.0",
+    "react": "16.13.1",
+    "react-dom": "16.13.1",
     "awesome-typescript-loader": "^5.2.1",
     "babel-eslint": "10.1.0",
     "babel-loader": "8.0.5",

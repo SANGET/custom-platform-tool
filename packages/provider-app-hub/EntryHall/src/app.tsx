@@ -6,9 +6,8 @@ import {
   RouterState, RouterHelperProps
 } from 'multiple-page-routing';
 
-import Nav from "./nav";
 import { GetMenu } from './services/menu';
-import PageContainer from './page-container';
+import { PageContainer, Nav } from './components';
 import router from './config/router';
 
 interface AppContainerState extends RouterState {

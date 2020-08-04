@@ -6,15 +6,13 @@
     "build": "minictl build"
   },
   "devDependencies": {
-    "@infra/env-scripts": "^0.0.1",
+    "@infra/react-dev-env-scripts": "^0.0.1",
     "@types/react-redux": "^7.1.9",
     "@types/redux": "^3.6.0",
     "@types/styled-components": "^5.1.0"
   },
   "dependencies": {
     "classnames": "2.2.6",
-    "react": "16.13.1",
-    "react-dom": "16.13.1",
     "redux": "^4.0.5",
     "react-redux": "^7.2.0",
     "react-dnd": "^11.1.3",
