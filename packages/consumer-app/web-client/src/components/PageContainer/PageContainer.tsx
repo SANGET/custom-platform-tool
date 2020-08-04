@@ -7,8 +7,7 @@ import React, { Children } from 'react';
 import { TypeOfIUBDSL } from "@iub-dsl/core/types";
 import IUBDSLParser from '@iub-dsl/parser/engin';
 
-import { AuthUIByUIID } from '../services/auth';
-import $R from '../services/req';
+import { AuthUIByUIID, $R } from '../../services';
 import { initPageContext } from './context';
 import { Loading } from '../common';
 
