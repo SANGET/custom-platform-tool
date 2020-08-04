@@ -8,13 +8,13 @@ import {
 
 /** Components */
 import IUBDSLParser from '@iub-dsl/parser/engin';
-import Nav from "./nav";
-import PageContainer from '../page-container';
+import { Nav } from "./Navigator";
+import { PageContainer } from '../PageContainer';
 
 /** API */
-import { GetMenu } from '../services/menu';
-import { GetPageAuthConfig, AuthUIByUIID } from '../services/auth';
-import { LoadPage } from '../services/access';
+import {
+  LoadPage, GetMenu, GetPageAuthConfig, AuthUIByUIID
+} from '../../services';
 
 interface AppContainerState extends RouterState {
   ready?: boolean;
@@ -31,7 +31,7 @@ const pageAuthCache = {};
 
 const appContext = {};
 
-class AppContainer extends RouterMultiple<AppContainerProps, AppContainerState> {
+export class AppContainer extends RouterMultiple<AppContainerProps, AppContainerState> {
   state: AppContainerState = defaultRouteState
 
   constructor(props) {
@@ -175,5 +175,3 @@ class AppContainer extends RouterMultiple<AppContainerProps, AppContainerState> 
     );
   }
 }
-
-export default AppContainer;

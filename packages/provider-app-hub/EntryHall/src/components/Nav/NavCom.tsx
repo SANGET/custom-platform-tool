@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'multiple-page-routing';
 
-const Nav = ({
+export const Nav = ({
   navConfig
 }) => {
   return (
@@ -22,5 +22,3 @@ const Nav = ({
     </div>
   );
 };
-
-export default Nav;

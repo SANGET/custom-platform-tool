@@ -51,7 +51,11 @@ const parserLoader = (type, appContext, { dsl, pageAuthInfo }) => {
   }
 };
 
-const PageContainer = (props: PageContainerProps) => {
+/**
+ * 1. appContext注入 、 数据调度器
+ * 2. pageContext包揽全局、数据可用性统一管理、初始化的时候的解析和IUB解析的关系、运行时候的仓库
+ */
+export const PageContainer = (props: PageContainerProps) => {
   const {
     dsl, pageAuthInfo, appContext, pageID, // type, pageID
   } = props;
@@ -92,10 +96,3 @@ const PageContainerWrapper = (props) => (
     {props.children}
   </div>
 );
-
-export default PageContainer;
-
-/**
- * 1. appContext注入 、 数据调度器
- * 2. pageContext包揽全局、数据可用性统一管理、初始化的时候的解析和IUB解析的关系、运行时候的仓库
- */

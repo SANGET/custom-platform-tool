@@ -1,7 +1,7 @@
-import Link from "./link";
-import RouterMultiple from "./router-multiple";
+import Link from "./Linker";
+import RouterMultiple from "./RouterManager";
 
-export * from "./router-multiple";
-export * from "./link";
+export * from "./RouterManager";
+export * from "./Linker";
 
 export { Link, RouterMultiple };

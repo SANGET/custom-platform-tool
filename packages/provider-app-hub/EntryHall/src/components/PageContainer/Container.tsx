@@ -9,7 +9,7 @@ interface PageContainerProps {
   pageAuthInfo?: {};
 }
 
-const PageContainer = (props: PageContainerProps) => {
+export const PageContainer = (props: PageContainerProps) => {
   const {
     pageID, pageAuthInfo, children
   } = props;
@@ -20,5 +20,3 @@ const PageContainer = (props: PageContainerProps) => {
     </div>
   );
 };
-
-export default PageContainer;
