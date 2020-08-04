@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 
 import { getUrlParams, UrlParamsRes } from "@mini-code/request/url-resolve";
-import { RemoveArrayItem, Call } from "@mini-code/base-func";
+import { Call } from "@mini-code/base-func";
 
 import {
   history,
@@ -57,19 +57,19 @@ const getAllUrlParams = () => {
   return nextRes;
 };
 
-class RouterHelper<
+class MultipleRouterManager<
   P extends RouterHelperProps,
   S extends RouterState
 > extends Component<P, S> {
   history = history;
 
-  wrapPushUrl: Function = wrapPushUrl;
+  wrapPushUrl = wrapPushUrl;
 
-  pushToHistory: Function = pushToHistory;
+  pushToHistory = pushToHistory;
 
-  onNavigate: Function = onNavigate;
+  onNavigate = onNavigate;
 
-  unlisten: Function | null = null;
+  unlisten;
 
   defaultPath: string | null = null;
 
@@ -236,4 +236,4 @@ class RouterHelper<
   };
 }
 
-export default RouterHelper;
+export default MultipleRouterManager;

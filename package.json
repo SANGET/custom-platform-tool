@@ -28,8 +28,7 @@
     "test:data": "jest ./packages/provider-app-hub/DataDesigner/src --coverage  --verbose  --runInBand --detectOpenHandles ",
     "test:utils": "jest  ./packages/infrastructure/utils --coverage --verbose  --runInBand --detectOpenHandles ",
     "commit": "git-cz",
-    "local": "git add -A && git-cz",
-    "sonar": "node sonar-project.js"
+    "local": "git add -A && git-cz"
   },
   "devDependencies": {
     "@commitlint/cli": "^7.4.0",
@@ -40,16 +39,10 @@
     "cross-env": "^7.0.2",
     "cz-customizable": "^6.2.1",
     "husky": "^1.3.1",
-    "jest": "^26.2.2",
-    "jest-environment-jsdom-fourteen": "0.1.0",
-    "jest-express": "^1.12.0",
-    "jest-resolve": "24.7.1",
-    "jest-sonar-reporter": "^2.0.0",
-    "jest-watch-typeahead": "0.3.0",
-    "lerna": "^3.21.0",
-    "prettier": "^2.0.5",
-    "sonarqube-scanner": "^2.7.0",
-    "supertest": "^4.0.2",
+    "jest": "26.2.2",
+    "jest-environment-jsdom-fourteen": "1.0.1",
+    "jest-resolve": "26.2.2",
+    "jest-watch-typeahead": "0.6.0",
     "ts-jest": "26.1.4"
   },
   "jestSonar": {

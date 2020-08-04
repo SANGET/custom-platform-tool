@@ -32,4 +32,9 @@ const $Request = (reqData: RequestParams): Promise<Response> => {
   });
 };
 
-export default $Request;
+const $R = $Request;
+
+export {
+  $Request,
+  $R
+};
