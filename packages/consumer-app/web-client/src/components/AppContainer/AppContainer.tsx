@@ -1,20 +1,21 @@
-import React from 'react';
+import React from "react";
 
 import {
-  RouterMultiple, Link,
+  RouterMultiple,
+  Link,
   defaultState as defaultRouteState,
-  RouterState, RouterHelperProps
-} from 'multiple-page-routing';
+  RouterState,
+  RouterHelperProps
+} from "multiple-page-routing";
 
 /** Components */
-import IUBDSLParser from '@iub-dsl/parser/engin';
 import { Nav } from "./Navigator";
-import { PageContainer } from '../PageContainer';
+import { PageContainer } from "../PageContainer";
 
 /** API */
 import {
   LoadPage, GetMenu, GetPageAuthConfig, AuthUIByUIID
-} from '../../services';
+} from "../../services";
 
 interface AppContainerState extends RouterState {
   ready?: boolean;
@@ -32,14 +33,14 @@ const pageAuthCache = {};
 const appContext = {};
 
 export class AppContainer extends RouterMultiple<AppContainerProps, AppContainerState> {
-  state: AppContainerState = defaultRouteState
+  state: AppContainerState = defaultRouteState;
 
   constructor(props) {
     super(props);
     this.state = {
       ...this.state,
       ready: false,
-      navStore: [],
+      navStore: []
     };
   }
 
@@ -56,7 +57,7 @@ export class AppContainer extends RouterMultiple<AppContainerProps, AppContainer
 
   handleHistoryChange = (pageID) => {
     this.loadPage(pageID);
-  }
+  };
 
   loadPage = (pageID) => {
     this.setState({
@@ -90,87 +91,78 @@ export class AppContainer extends RouterMultiple<AppContainerProps, AppContainer
                   preparingPage: false
                 });
               })
-              .catch((err) => {});
+              .catch((err) => {
+                console.log(err);
+              });
           }
         }
       })
-      .catch((err) => {});
-  }
+      .catch((err) => {
+        console.log(err);
+      });
+  };
 
   render() {
     const {
-      routers, routerInfo, activeRouteIdx, activeRoute,
-      navStore, ready
+      routers, routerInfo, activeRouteIdx, activeRoute, navStore, ready
     } = this.state;
     const { children } = this.props;
     return (
       <div id="app-container">
         {children}
-        {
-          ready ? (
-            <React.Fragment>
-              <Nav navConfig={navStore} />
-              <div
-                className="router-tabs"
-                style={{
-                  margin: 20
-                }}
-              >
-                <div>Tab container</div>
-                {
-                  routers.map((route, idx) => {
-                    return (
-                      <span
-                        key={route}
-                        className="label"
-                        style={{
-                          padding: 20
-                        }}
-                      >
-                        <Link
-                          to={route}
-                        >
-                          {route}
-                        </Link>
-                      </span>
-                    );
-                  })
-                }
-              </div>
-              <div className="pages-container">
-                {
-                  Object.keys(routerInfo).map((pageID, idx) => {
-                    const pageItemInfo = routerInfo[pageID];
-                    const currPage = pageCache[pageID];
-                    const pageAuthInfo = pageAuthCache[pageID];
-                    const isShow = pageID === activeRoute;
-                    const pageKey = pageID;
-                    return (
-                      <div
-                        key={pageKey}
-                        style={{
-                          display: isShow ? 'block' : 'none'
-                        }}
-                      >
-                        <PageContainer
-                          type='iub-dsl'
-                          pageID={pageID}
-                          dsl={currPage}
-                          pageAuthInfo={pageAuthInfo}
-                          appContext={appContext}
-                        >
-
-                        </PageContainer>
-                      </div>
-                    );
-                  })
-                }
-              </div>
-            </React.Fragment>
-          ) : (
-            <div>Loading</div>
-          )
-        }
+        {ready ? (
+          <React.Fragment>
+            <Nav navConfig={navStore} />
+            <div
+              className="router-tabs"
+              style={{
+                margin: 20
+              }}
+            >
+              <div>Tab container</div>
+              {routers.map((route, idx) => {
+                return (
+                  <span
+                    key={route}
+                    className="label"
+                    style={{
+                      padding: 20
+                    }}
+                  >
+                    <Link to={route}>{route}</Link>
+                  </span>
+                );
+              })}
+            </div>
+            <div className="pages-container">
+              {Object.keys(routerInfo).map((pageID, idx) => {
+                const pageItemInfo = routerInfo[pageID];
+                const currPage = pageCache[pageID];
+                const pageAuthInfo = pageAuthCache[pageID];
+                const isShow = pageID === activeRoute;
+                const pageKey = pageID;
+                return (
+                  <div
+                    key={pageKey}
+                    style={{
+                      display: isShow ? "block" : "none"
+                    }}
+                  >
+                    <PageContainer
+                      type="iub-dsl"
+                      pageID={pageID}
+                      dsl={currPage}
+                      pageAuthInfo={pageAuthInfo}
+                      appContext={appContext}
+                    ></PageContainer>
+                  </div>
+                );
+              })}
+            </div>
+          </React.Fragment>
+        ) : (
+          <div>Loading</div>
+        )}
       </div>
     );
   }
