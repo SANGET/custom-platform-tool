@@ -27,15 +27,15 @@ pipeline {
     }
     
     // parameters
-    parameters {
-        gitParameter name: 'BRANCH_TAG', 
-                     type: 'PT_BRANCH_TAG',
-                     branchFilter: 'origin/(.*)',
-                     defaultValue: 'master',
-                     selectedValue: 'DEFAULT',
-                     sortMode: 'DESCENDING_SMART',
-                     description: 'Select your branch or tag.'
-    }
+    //parameters {
+    //    gitParameter name: 'BRANCH_TAG', 
+    //                 type: 'PT_BRANCH_TAG',
+   //                  branchFilter: 'origin/(.*)',
+    //                 defaultValue: 'master',
+   //                  selectedValue: 'DEFAULT',
+   //                  sortMode: 'DESCENDING_SMART',
+    //                 description: 'Select your branch or tag.'
+    //}
     
     // set options
     options {
@@ -74,6 +74,7 @@ pipeline {
                         "-Dsonar.language=${language} " +
                         "-Dsonar.sourceEncoding=UTF-8 " +
                         "-Dsonar.sources=${env.WORKSPACE} " +
+                        "-Dsonar.exclusions=**/__test__/**/*.* " + 
                         "-Dsonar.eslint.eslintconfigpath=.eslintrc "+
                         "-Dsonar.eslint.ruleconfigs=.eslintrc "
                     }
@@ -117,9 +118,13 @@ pipeline {
 def get_change_author() {
     echo "Gathering SCM changes"
     def changeLogSets = currentBuild.changeSets
-    def last_idx = changeLogSets.size() - 1
-    def entries = changeLogSets[last_idx].items
-    def last_entries_idx = entries.length - 1
-    def entry = entries[last_entries_idx]
-    return entry.author.toString()
+    def author = "unKnow"
+    if (changeLogSets.size() > 0){
+        def last_idx = changeLogSets.size() - 1
+        def entries = changeLogSets[last_idx].items
+        def last_entries_idx = entries.length - 1
+        def entry = entries[last_entries_idx]  
+        author = entry.author.toString()
+    }
+    return author
 }
