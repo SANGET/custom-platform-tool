@@ -8,6 +8,7 @@ module.exports = {
     {value: 'docs',     name: 'docs:     修改文档'},
     {value: 'style',    name: 'style:    格式化、美化代码，不改变代码逻辑'},
     {value: 'refactor', name: 'refactor: 重构代码，不改变功能'},
+    {value: 'format',   name: 'format:   格式化代码'},
     {value: 'perf',     name: 'perf:     优化代码，性能调优'},
     {value: 'test',     name: 'test:     增加、修改测试用例'},
     {value: 'chore',    name: 'chore:    改变构建流程、或者增加依赖库、工具等'},
