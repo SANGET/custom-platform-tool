@@ -5,8 +5,8 @@ import { dependencyInspect } from "..";
 
 const generateDataSource = (dataSource) => {
   const mapping = {};
-  Object.keys(dataSource).map((tableId) => {
-    Object.keys(dataSource[tableId].columns).map((dataUUID) => {
+  Object.keys(dataSource).forEach((tableId) => {
+    Object.keys(dataSource[tableId].columns).forEach((dataUUID) => {
       mapping[`${tableId}.${dataUUID}`] = dataSource[tableId].columns[dataUUID];
     });
   });
@@ -28,7 +28,7 @@ const useStore = (initialState) => {
 const parseStruct = (struct: { [str: string]: FieldRef}) => {
   const initialState = {};
   let temp: FieldRef;
-  Object.keys(struct).map((dataUUID) => {
+  Object.keys(struct).forEach((dataUUID) => {
     temp = struct[dataUUID];
     switch (temp.type) {
       case 'boolean':
@@ -52,7 +52,7 @@ const createStore = (schemasRef: DefaultSchemas) => {
   let tempRef: StructRef;
   let initialState;
   let newStore;
-  Object.keys(schemasRef).map((schemasUUID) => {
+  Object.keys(schemasRef).forEach((schemasUUID) => {
     tempRef = schemasRef[schemasUUID];
     switch (tempRef.type) {
       case 'array':

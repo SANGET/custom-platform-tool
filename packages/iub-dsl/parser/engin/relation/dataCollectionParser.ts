@@ -5,7 +5,7 @@ const DataCollectionParser = (dataCollection: DataCollectionRelationship, contex
   // dataCollection.key.group[0].schemasMapping
   // dataCollection.key.group[0].collectionCondition
   const dataCollectionMappingResult: CommonObjStruct = {};
-  collectionKey.map((k) => {
+  collectionKey.forEach((k) => {
     dataCollectionMappingResult[k] = context.mappingEntity.structMapToFiled(
       dataCollection[k].group.reduce((res, groupItem) => {
         res[groupItem.schemasMapping.replace('@(schemas)', '')] = '';

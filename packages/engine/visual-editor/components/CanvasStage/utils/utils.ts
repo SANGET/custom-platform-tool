@@ -48,7 +48,7 @@ export const parseFlatNodeToNestNode = (flatNode: FlatNode) => {
    */
   const srcCloneObj = mergeDeep({}, flatNode);
 
-  Object.keys(srcCloneObj).map((colID) => {
+  Object.keys(srcCloneObj).forEach((colID) => {
     const currItem = srcCloneObj[colID];
     const resObj = Object.assign(currItem, {
       id: colID,
