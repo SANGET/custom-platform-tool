@@ -5,7 +5,7 @@ const iub = {
 const toRestful = () => {};
 
 const api = (params) => {
-  fetch(toRestful(params));
+  toRestful();
 };
 
 const parser = (iub) => {

@@ -176,7 +176,7 @@ const DataSchemasParser = ({
   const schemaStruct: SchemaStruct = {};
   const dataUUIDMapToMetadata: CommonObjStruct = {};
 
-  schemaKey.map((key) => {
+  schemaKey.forEach((key) => {
     schemaItem = schemas[key];
     switch (schemaItem.type) {
       case 'structArray':

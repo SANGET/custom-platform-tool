@@ -33,7 +33,7 @@ export const setNodeTreeNestingInfo = (nodeTree, flatNodeTree) => {
   setNodeTree(nodeTree, flatNodeTree);
 
   /** 处理 nodeTree */
-  Object.keys(flatNodeTree).map((nodeID) => {
+  Object.keys(flatNodeTree).forEach((nodeID) => {
     const node = flatNodeTree[nodeID];
     const { parentID } = node;
     if (parentID) {
