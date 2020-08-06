@@ -7,7 +7,7 @@
  * @FilePath: \custom-platform-v3-frontend\packages\provider-app-hub\AuthManager\src\routes\index.ts
  */
 
-import TableStruct from '@data-design/pages/TableStruct';
+import TableStruct from '@provider-app/data-design/src/pages/TableStruct';
 // import TableKey from '../pages/tableKey';
 // import Label from '../pages/label';
 

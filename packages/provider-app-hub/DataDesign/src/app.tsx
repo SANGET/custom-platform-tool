@@ -1,8 +1,9 @@
 import React, { FC } from 'react';
+/** 通过useMappedState在store 和组件之间，建立起连接 */
 import { useMappedState } from 'redux-react-hook';
 
-// 全局样式
-import '@data-design/styles/index.less';
+// 全局样式入口
+import '@provider-app/data-design/src/styles/index.less';
 
 /** react-router工具暴露方法 */
 import {
@@ -11,10 +12,9 @@ import {
 
 import { Menu, Spin } from 'antd';
 /** 路由配置 */
-import ROUTES from '@data-design/routes';
-import IconComp from '@data-design/routes/IconComp';
-
-// console.log();
+import ROUTES from '@provider-app/data-design/src/routes';
+/** 动态渲染图标组件 */
+import IconComp from '@provider-app/data-design/src/routes/IconComp';
 
 /** 全局加载动画控制变量 */
 const mapState = (state) => ({
@@ -22,12 +22,13 @@ const mapState = (state) => ({
 });
 
 const App: FC = () => {
-  // 默认选中和打开的菜单
+  /** 设置默认选中和打开的菜单 */
   const defaultSelectedKeys = ROUTES[0].key;
+  /** 全局加载动画设置 */
   const { isShowLoading } = useMappedState(mapState);
   /** 点击菜单绑定事件 */
   const handleClick = (e) => {
-    console.log('click ', e);
+    console.log('占位 click ', e.key);
   };
 
   return (

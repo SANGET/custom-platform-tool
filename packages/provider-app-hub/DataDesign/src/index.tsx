@@ -1,17 +1,18 @@
 /**
  * 数据设计子应用入口
  */
-
 import React from 'react';
 import ReactDOM from 'react-dom';
 
-import App from '@data-design/app';
-/** 因为app.tsx中也要用到state状态,所以要在app.tsx的上一层index.tsx中,创建仓库 */
-/** 导出仓库上下文 */
+/** 数据设计子应用容器 */
+import App from '@provider-app/data-design/src/app';
+
+/** 导出数据仓库上下文 */
 import { StoreContext } from 'redux-react-hook';
-import { makeStore } from '@data-design/store';
-/** 创建仓库 */
+import { makeStore } from '@provider-app/data-design/src/store';
+/** 创建数据仓库 */
 const store = makeStore();
+/** 因为App中也要用到state状态,所以要将数据仓库创建在App的上一层index.tsx中 */
 ReactDOM.render(
   <StoreContext.Provider value={store}>
     <App />

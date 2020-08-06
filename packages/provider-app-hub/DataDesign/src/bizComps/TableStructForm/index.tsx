@@ -4,8 +4,8 @@ import {
 } from 'antd';
 import './tableStructForm.less';
 
-import { BasicSelect } from '@data-design/components/BasicSelect';
-import { TableTypeEnum } from '@data-design/tools/constant';
+import { BasicSelect } from '@provider-app/data-design/src/components/BasicSelect';
+import { TableTypeEnum } from '@provider-app/data-design/src/tools/constant';
 
 const { TextArea } = Input;
 

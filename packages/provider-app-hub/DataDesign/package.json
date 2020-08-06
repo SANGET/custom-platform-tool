@@ -8,7 +8,8 @@
   "scripts": {
     "start": "cross-env PORT=60001 minictl start",
     "build": "minictl build",
-    "test": "jest src --coverage"
+    "test": "jest src --coverage",
+    "cp":"xcopy .\\src\\mock  .\\build\\mock /y/i/e/q"
   },
   "devDependencies": {},
   "dependencies": {},

@@ -15,29 +15,29 @@ import { DownOutlined } from '@ant-design/icons';
 // import Http from '@infra/utils/http';
 import Http from '@infra/utils/http';
 import { useMappedState } from 'redux-react-hook';
-import BasicTree from '@data-design/components/BasicTree';
-import BasicTreeTransfer from '@data-design/components/BasicTreeTransfer';
-import { BasicSelect } from '@data-design/components/BasicSelect';
-import { TableTypeEnum } from '@data-design/tools/constant';
+import BasicTree from '@provider-app/data-design/src/components/BasicTree';
+import BasicTreeTransfer from '@provider-app/data-design/src/components/BasicTreeTransfer';
+import { BasicSelect } from '@provider-app/data-design/src/components/BasicSelect';
+import { TableTypeEnum } from '@provider-app/data-design/src/tools/constant';
 
 /** 业务组件 */
-import TableStructForm from '@data-design/bizComps/TableStructForm';
-import StructTable from '@data-design/bizComps/StructTable';
+import TableStructForm from '@provider-app/data-design/src/bizComps/TableStructForm';
+import StructTable from '@provider-app/data-design/src/bizComps/StructTable';
 
 /** 不会操作页面状态的方法 */
 import {
   generateSelectedTree, treeFilter, disTreeNode, listToTree
-} from '@data-design/tools/tree';
+} from '@provider-app/data-design/src/tools/tree';
 
 /** 模拟数据 */
-import { treeData } from '@data-design/mock';
+import { treeData } from '@provider-app/data-design/src/mock';
 
 /** 应用上下文 */
-// import { AppContext as Context } from '@data-design/app';
+// import { AppContext as Context } from '@provider-app/data-design/src/app';
 /** 当前功能页样式 */
 import './tableStruct.less';
 
-// import { IPager } from '@data-design/store';
+// import { IPager } from '@provider-app/data-design/src/store';
 const mapState = (state) => ({
   structPager: state.structPager,
 });
@@ -92,7 +92,7 @@ const AuthItem: FC = () => {
       },
     })
       .then((res) => {
-        // console.log(res.data.result.data)
+        // console.log(res.data.result.data);
         /** 列表数据--每行记录必需有key字段 */
         setTableData(res.data.result.data.map((col) => {
           col.key = col.id;
@@ -357,13 +357,6 @@ const AuthItem: FC = () => {
         },
       },
       {
-        //       module_id	String|归属模块
-        // module_name	String	归属模块名称
-        // species	String	业务字段类型，SYS(系统元数据)BIS(业务元数据)，用户填写的表默认BIS即可
-        // description	String	备注
-        // aux_table	AuxTableVO	附属表对象,如果表类型是附属表，则必填
-        // tree_table	TreeTableVO	树型表对象,如果表类型是树型表，则必填
-
         title: '归属模块',
         dataIndex: 'module_id',
         formItemType: 'tree-select',

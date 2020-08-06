@@ -1,7 +1,7 @@
 /*
  * @Author: your name
  * @Date: 2020-07-22 09:23:52
- * @LastEditTime: 2020-08-01 18:30:23
+ * @LastEditTime: 2020-08-06 16:25:27
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: \custom-platform-v3-frontend\packages\infrastructure\utils\http.ts
@@ -30,6 +30,8 @@ const Http = axios.create({
       'Content-Type': 'application/json'
     }
   },
+  /** 默认返回数据格式设置为json */
+  responseType: 'json',
   /**
    * transformRequest 允许在向服务器发送前，修改请求数据
    * 只能用在 'PUT', 'POST' 和 'PATCH' 这几个请求方法中

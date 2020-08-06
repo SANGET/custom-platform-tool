@@ -1,13 +1,13 @@
 /*
  * @Author: your name
  * @Date: 2020-08-03 12:24:31
- * @LastEditTime: 2020-08-06 10:26:51
+ * @LastEditTime: 2020-08-06 15:59:39
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: \custom-platform-v3-frontend\packages\provider-app-hub\DataManager\src\reducers\index.ts
  */
 /** 导入状态值接口定义 */
-import { Action, IState } from '@data-design/store/initState';
+import { Action, IState } from '@provider-app/data-design/src/store/initState';
 /** 动作定义 */
 const reducer = (
   state: IState | null | undefined,
@@ -18,6 +18,14 @@ const reducer = (
   }
 
   switch (action.type) {
+    /** 设置树形数据 */
+    case 'setTreeData': {
+      // console.log(action.structPager);
+      return {
+        ...state,
+        setTreeData: action.treeData
+      };
+    }
     /** 改变表结构页码 */
     case 'triggerStructPager': {
       // console.log(action.structPager);
