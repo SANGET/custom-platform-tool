@@ -9,7 +9,7 @@ const { Option } = Select;
 /** 后续可以扩展 */
 export const BasicSelect = (props) => {
   return (
-    <Select defaultValue="" style={{ width: 220 }} allowClear>
+    <Select defaultValue="" style={{ width: props.width || '' }} allowClear>
       {props.enum.map((item) => (
         <Option key={item.text} value={item.value}>
           {item.text}

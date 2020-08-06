@@ -1,7 +1,7 @@
 /*
  * @Author: wph
  * @Date: 2020-07-22 09:23:52
- * @LastEditTime: 2020-08-06 12:06:21
+ * @LastEditTime: 2020-08-06 17:13:01
  * @LastEditors: Please set LastEditors
  * @Description: 权限功能单元与页面状态无关的方法
  * @FilePath: \custom-platform-v3-frontend\packages\provider-app-hub\AuthManager\src\features\authItem\authItem.ts
@@ -124,6 +124,9 @@ const listToTree = (list) => {
   }
   for (i = 0; i < list.length; i += 1) {
     node = list[i];
+    /** antd-tree组件这两个键值必须有 */
+    node.title = node.name;
+    node.key = node.id;
     /** 叶子节点 */
     if (node.pid !== null) {
       map[node.pid].children.push(node);

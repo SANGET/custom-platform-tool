@@ -14,7 +14,7 @@ import { DownOutlined } from '@ant-design/icons';
 /** 可复用组件 */
 // import Http from '@infra/utils/http';
 import Http from '@infra/utils/http';
-import { useMappedState } from 'redux-react-hook';
+import { useMappedState, useDispatch } from 'redux-react-hook';
 import BasicTree from '@provider-app/data-design/src/components/BasicTree';
 import BasicTreeTransfer from '@provider-app/data-design/src/components/BasicTreeTransfer';
 import { BasicSelect } from '@provider-app/data-design/src/components/BasicSelect';
@@ -40,12 +40,15 @@ import './tableStruct.less';
 // import { IPager } from '@provider-app/data-design/src/store';
 const mapState = (state) => ({
   structPager: state.structPager,
+  // treeData: state.treeData
 });
+
 const AuthItem: FC = () => {
+  const dispatch = useDispatch();
   // const AppContext = useContext(Context);
   const { structPager } = useMappedState(mapState);
   const { page, pageSize } = structPager;
-  // console.log(page, pageSize)
+  console.log(page, pageSize);
 
   /** react路由跳转 */
   // const history = useHistory();
@@ -71,7 +74,7 @@ const AuthItem: FC = () => {
   /** 区分模态框展示的内容 */
   const [modalType, setModalType] = useState<string>(ModalTypeEnum.custom);
   /** 设置模态框的宽度 */
-  const [modalWidth, setModalWidth] = useState<string | number>(520);
+  const [modalWidth, setModalWidth] = useState<string | number>(800);
   /** 更新选择的树节点key集合 */
   const [targetKeys, setTargetKeys] = useState<string[]>([]);
   /** 更新选中树数据源 */
@@ -86,6 +89,10 @@ const AuthItem: FC = () => {
   //   payload: {}
   // });
   useEffect(() => {
+    // console.log('xxx');
+    // setDataSource(treeData);
+    // console.log('xxx', dataSource, treeData);
+    /** 请求表结构数据 */
     Http.get('http://localhost:60001/mock/structList.json', {
       headers: {
         'Content-Type': 'application/json',
@@ -101,14 +108,19 @@ const AuthItem: FC = () => {
       })
       .catch((err) => console.log(err));
 
+    /** 获取左侧树形数据 */
     Http.get('http://localhost:60001/mock/menu.json', {
       headers: {
         'Content-Type': 'application/json',
       },
     })
       .then((res) => {
-        console.log(listToTree(res.data.result));
-        setDataSource(listToTree(res.data.result));
+        const data = listToTree(res.data.result);
+
+        console.log(data);
+
+        // dispatch({ type: 'setTreeData', treeData: data });
+        // setDataSource(treeData);
       })
       .catch((err) => console.log(err));
   }, []);
@@ -121,7 +133,7 @@ const AuthItem: FC = () => {
     // console.log('Target Keys:', targetKeys);
     setTargetKeys(targetKeys);
     /** 禁用已选择的节点 */
-    setDataSource(disTreeNode(dataSource, targetKeys));
+    // setDataSource(disTreeNode(dataSource, targetKeys));
     /** 根据选中的节点的key生成选中节点树 */
     setSelectedTree(generateSelectedTree(treeData, targetKeys));
     // console.log(generateSelectedTree(treeData, targetKeys));
@@ -205,7 +217,7 @@ const AuthItem: FC = () => {
       // setModalType(key)
       // switch (key) {
       //   case ModalTypeEnum.custom: {
-      //     setModalWidth(520)
+      //     setModalWidth(800)
       //     setVisiable(true)
       //     break
       //   }
@@ -218,7 +230,7 @@ const AuthItem: FC = () => {
     };
     console.log();
     const openModal = () => {
-      setModalWidth(520);
+      setModalWidth(800);
       setVisiable(true);
     };
 
@@ -458,7 +470,7 @@ const AuthItem: FC = () => {
       </aside>
       <main className="content bl1px">
         <div className="flex v-center ml20">
-          <BasicSelect enum={TableTypeEnum} />
+          <BasicSelect enum={TableTypeEnum} width={220}/>
           <Search {...searchProps} />
         </div>
         <TableHeadMenu />

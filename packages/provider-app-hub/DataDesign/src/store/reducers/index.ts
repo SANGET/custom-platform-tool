@@ -1,7 +1,7 @@
 /*
  * @Author: your name
  * @Date: 2020-08-03 12:24:31
- * @LastEditTime: 2020-08-06 15:59:39
+ * @LastEditTime: 2020-08-06 17:52:46
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: \custom-platform-v3-frontend\packages\provider-app-hub\DataManager\src\reducers\index.ts
@@ -23,7 +23,7 @@ const reducer = (
       // console.log(action.structPager);
       return {
         ...state,
-        setTreeData: action.treeData
+        treeData: action.treeData
       };
     }
     /** 改变表结构页码 */
