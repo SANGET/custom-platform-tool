@@ -74,7 +74,7 @@ pipeline {
                         "-Dsonar.language=${language} " +
                         "-Dsonar.sourceEncoding=UTF-8 " +
                         "-Dsonar.sources=${env.WORKSPACE} " +
-                        "-Dsonar.exclusions=__test__/**, demo/**, .bak/**, .template/** " + 
+                        "-Dsonar.exclusions=__test__/** " + 
                         "-Dsonar.eslint.eslintconfigpath=.eslintrc "+
                         "-Dsonar.eslint.ruleconfigs=.eslintrc "
                     }
