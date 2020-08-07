@@ -39,7 +39,9 @@ const getParentKey = (key, tree) => {
 
 const BasicTree = ({ dataSource, ...props }) => {
   generateList(dataSource);
-  const [treeData, setTreeData] = useState(dataSource);
+  // console.log({ dataSource });
+  // const { searchValue } = props;
+  // const [treeData, setTreeData] = useState(dataSource);
   const [expandedKeys, setExpandedKeys] = useState([]);
   const [searchValue, setSearchValue] = useState('');
   const [autoExpandParent, setAutoExpandParent] = useState(true);
@@ -61,7 +63,7 @@ const BasicTree = ({ dataSource, ...props }) => {
     const loop = (dataList) => dataList
       .map((item) => {
         if (item.title.indexOf(value) > -1) {
-          return getParentKey(item.key, treeData);
+          return getParentKey(item.key, dataSource);
         }
         return null;
       })
@@ -184,10 +186,22 @@ const BasicTree = ({ dataSource, ...props }) => {
     onExpand,
     expandedKeys,
     autoExpandParent,
-    treeData: loop(searchValue, treeData)
+    treeData: loop(searchValue, dataSource),
+    onSelect: (selectedKeys, e:{selected: bool, selectedNodes, node, event}) => {
+      console.log(selectedKeys, e);
+    }
   };
+  const inputProps = {
+    onChange,
+    style: { margin: '16px 8px', width: 'calc(100% - 16px)' },
+    placeholder: '输入模块名称'
+  };
+  // treeData={loop(searchValue, treeData)}
+  // console.log(treeData);
   return (
     <div>
+      <Input {...inputProps} />
+      {/* <Tree  treeData={loop(searchValue, dataSource)} /> */}
       <Tree {...tProps} />
     </div>
   );

@@ -1,7 +1,7 @@
 /*
  * @Author: your name
  * @Date: 2020-08-03 12:24:31
- * @LastEditTime: 2020-08-07 14:21:14
+ * @LastEditTime: 2020-08-07 17:08:46
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: \custom-platform-v3-frontend\packages\provider-app-hub\DataManager\src\reducers\index.ts
@@ -20,7 +20,7 @@ const reducer = (
   switch (action.type) {
     /** 设置树形数据 */
     case 'setTreeData': {
-      console.log({ treeD: action.treeData });
+      // console.log({ treeData: action.treeData });
       return {
         ...state,
         treeData: action.treeData

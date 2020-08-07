@@ -8,7 +8,7 @@
 // , useContext
 import React, { FC, useState, useEffect } from 'react';
 import {
-  Menu, Dropdown, Button, Input, Modal, Form, Space, Tooltip, Popconfirm
+  Menu, Dropdown, Button, Input, Modal, Form, Space, Tooltip, Popconfirm, Tree
 } from 'antd';
 import { DownOutlined } from '@ant-design/icons';
 /** 可复用组件 */
@@ -295,8 +295,8 @@ const AuthItem: FC = () => {
     },
   };
   const searchProps = {
-    style: { width: '300px', margin: '20px' },
-    placeholder: '请输入权限项名称或编码',
+    style: { width: 224, margin: '16px' },
+    placeholder: '请输入表名称',
     onSearch: (value) => {
       // history.push('/home');
       // console.log(value);
@@ -313,7 +313,6 @@ const AuthItem: FC = () => {
   const basicTreeProps = {
     draggable: true,
     blockNode: true,
-    dataSource,
   };
 
   /** 单元格属性集合 */
@@ -462,21 +461,26 @@ const AuthItem: FC = () => {
       margin: '0 20px',
     },
   };
-  const inputProps = {
-    onChange,
-    style: { margin: '20px 8px 20px 8px', width: 'calc(100% - 16px)' },
-    placeholder: '输入模块名称'
+  const basicSelect = {
+    enum: TableTypeEnum,
+    style: { width: 224 },
+    placeholder: "请选择表类型",
+    onChange: (value) => {
+      console.log(value);
+    }
   };
+
   return (
     <div className="auth-item flex b1px " style={{ height: '100%' }}>
       <aside className="tree-box">
         {/* 按照单一职责拆分组件,比直接组合更灵活 */}
-        <Input {...inputProps} />
-        <BasicTree {...basicTreeProps} />
+        {/* <Input {...inputProps} /> */}
+        {/* <Tree treeData={treeData} /> */}
+        <BasicTree {...basicTreeProps} dataSource={treeData} />
       </aside>
       <main className="content bl1px">
         <div className="flex v-center ml20">
-          <BasicSelect enum={TableTypeEnum} width={220}/>
+          <BasicSelect {...basicSelect} />
           <Search {...searchProps} />
         </div>
         <TableHeadMenu />
