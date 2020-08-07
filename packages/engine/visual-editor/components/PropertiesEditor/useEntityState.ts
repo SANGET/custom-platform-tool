@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { EditorEntityState, EditorPropertyItem } from "../../types";
-import { increaseID } from "../CanvasStage";
+import { increaseID } from "../../utils";
 
 export type UpdateEntityStateCallback = (
   propItemConfig: EditorPropertyItem,

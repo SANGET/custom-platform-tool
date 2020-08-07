@@ -4,7 +4,7 @@ import { useDrop } from 'react-dnd';
 import classnames from 'classnames';
 
 import { ItemTypes } from '../ComponentPanel';
-import { isNodeInChild } from './utils/node-filter';
+import { isNodeInChild } from '../../utils/node-filter';
 import DragItem from '../ComponentPanel/DragItem';
 import { DragComponentClass, DropCollectType } from '../../types';
 
@@ -30,6 +30,7 @@ const ContainerWrapperCom = ({
   id,
   getSelectedState,
   getEntityProps,
+  node,
   onDrop
 }) => {
   const isSelected = getSelectedState(id);

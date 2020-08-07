@@ -3,12 +3,12 @@
  */
 import React, { useState, useEffect } from 'react';
 import { Input, Button } from '@infra/ui';
+import { mergeDeep } from '@infra/utils/tools';
 import { propertiesItemCollection } from '../../mock-data';
-import { mergeDeep } from '../CanvasStage/utils/deepmerge';
 import { EditorComponentEntity, EditorEntityState, EditorPropertyItem } from '../../types';
 import useUpdateState from './useUpdateState';
 import useEntityState from './useEntityState';
-import { SaveEntitiesStateStore } from '../../app/actions';
+import { SaveEntitiesStateStore } from '../../core/actions-hook';
 
 const extractPropConfig = (propItemConfig, entity) => {
   if (typeof propItemConfig === 'function') return propItemConfig(mergeDeep({}, entity));
@@ -101,7 +101,9 @@ const PropertiesEditor: React.FC<PropertiesEditorProps> = ({
             /**
              * 将实例状态回填到属性项
              */
-            const activeState = entityState?.propOriginState ? entityState.propOriginState[propID] : undefined;
+            const activeState = entityState?.propOriginState
+              ? entityState.propOriginState[propID]
+              : undefined;
             const currValue = activeState?.value;
             const propItemConfig = propertiesItemCollection[propID];
             return (
