@@ -178,12 +178,6 @@ const BasicTree = ({ dataSource, ...props }) => {
     };
   });
 
-  const inputProps = {
-    onChange,
-    style: { margin: '20px 8px 20px 8px', width: 'calc(100% - 16px)' },
-    placeholder: '输入权限项名称'
-  };
-
   const tProps = {
     ...props,
     onDrop,
@@ -194,7 +188,6 @@ const BasicTree = ({ dataSource, ...props }) => {
   };
   return (
     <div>
-      <Input {...inputProps} />
       <Tree {...tProps} />
     </div>
   );

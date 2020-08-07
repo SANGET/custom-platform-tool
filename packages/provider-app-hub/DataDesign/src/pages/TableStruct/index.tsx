@@ -30,7 +30,7 @@ import {
 } from '@provider-app/data-design/src/tools/tree';
 
 /** 模拟数据 */
-import { treeData } from '@provider-app/data-design/src/mock';
+// import { treeData } from '@provider-app/data-design/src/mock';
 
 /** 应用上下文 */
 // import { AppContext as Context } from '@provider-app/data-design/src/app';
@@ -40,15 +40,15 @@ import './tableStruct.less';
 // import { IPager } from '@provider-app/data-design/src/store';
 const mapState = (state) => ({
   structPager: state.structPager,
-  // treeData: state.treeData
+  treeData: state.treeData
 });
 
 const AuthItem: FC = () => {
   const dispatch = useDispatch();
   // const AppContext = useContext(Context);
-  const { structPager } = useMappedState(mapState);
+  const { structPager, treeData } = useMappedState(mapState);
   const { page, pageSize } = structPager;
-  console.log(page, pageSize);
+  // console.log(page, pageSize);
 
   /** react路由跳转 */
   // const history = useHistory();
@@ -117,9 +117,9 @@ const AuthItem: FC = () => {
       .then((res) => {
         const data = listToTree(res.data.result);
 
-        console.log(data);
+        console.log({ data });
 
-        // dispatch({ type: 'setTreeData', treeData: data });
+        dispatch({ type: 'setTreeData', treeData: data });
         // setDataSource(treeData);
       })
       .catch((err) => console.log(err));
@@ -462,10 +462,16 @@ const AuthItem: FC = () => {
       margin: '0 20px',
     },
   };
-
+  const inputProps = {
+    onChange,
+    style: { margin: '20px 8px 20px 8px', width: 'calc(100% - 16px)' },
+    placeholder: '输入模块名称'
+  };
   return (
     <div className="auth-item flex b1px " style={{ height: '100%' }}>
       <aside className="tree-box">
+        {/* 按照单一职责拆分组件,比直接组合更灵活 */}
+        <Input {...inputProps} />
         <BasicTree {...basicTreeProps} />
       </aside>
       <main className="content bl1px">

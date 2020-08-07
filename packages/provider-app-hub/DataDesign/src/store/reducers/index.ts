@@ -1,7 +1,7 @@
 /*
  * @Author: your name
  * @Date: 2020-08-03 12:24:31
- * @LastEditTime: 2020-08-06 17:52:46
+ * @LastEditTime: 2020-08-07 14:21:14
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: \custom-platform-v3-frontend\packages\provider-app-hub\DataManager\src\reducers\index.ts
@@ -20,7 +20,7 @@ const reducer = (
   switch (action.type) {
     /** 设置树形数据 */
     case 'setTreeData': {
-      // console.log(action.structPager);
+      console.log({ treeD: action.treeData });
       return {
         ...state,
         treeData: action.treeData
@@ -30,12 +30,6 @@ const reducer = (
     case 'triggerStructPager': {
       // console.log(action.structPager);
       const { page, pageSize } = action.structPager;
-      // console.log(Object.assign({}, { ...state }, {
-      //   strcutPager: {
-      //     page,
-      //     pageSize
-      //   }
-      // }));
       return {
         ...state,
         strcutPager: {

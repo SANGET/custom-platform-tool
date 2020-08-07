@@ -37,12 +37,12 @@ body,
   display: flex;
 }
 /** 弹性布局垂直居中 */
-.v-center{
+.v-center {
   align-items: center;
 }
 
 /** 弹性布局水平居中 */
-.h-center{
+.h-center {
   justify-content: center;
 }
 
@@ -69,6 +69,33 @@ body,
   .icon {
     color: #fff;
   }
+}
+
+.ant-modal {
+  top: 32px;
+  min-width: 800px;
+}
+/** 感觉没有多大必要修改antd的弹窗样式 */
+/** UI规范上的弹窗标题,按钮行高度 */
+.ant-modal-header,
+.ant-modal-footer {
+  display: flex;
+  align-items: center;
+}
+/** UI规范上的弹窗标题高度 */
+.ant-modal-header {
+  height: 48px;
+  /** 关闭图标尺寸 */
+  .ant-modal-close-x {
+    width: 48px;
+    height: 48px;
+    line-height: 48px;
+  }
+}
+/** UI规范上的弹窗底部按钮行高度 */
+.ant-modal-footer {
+  height: 64px;
+  justify-content: flex-end;
 }
 /** 加载遮罩 */
 .loading {
@@ -100,7 +127,7 @@ body,
   padding-top: 20px;
 }
 
-.ml20{
+.ml20 {
   margin-left: 20px;
 }
 
