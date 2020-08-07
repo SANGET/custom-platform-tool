@@ -8,7 +8,8 @@
     "packages/iub-dsl/*",
     "packages/engine/*",
     "packages/infrastructure/*",
-    "packages/consumer-app/*"
+    "packages/consumer-app/*",
+    "packages/spec/*"
   ],
   "scripts": {
     "pull:all": "git pull origin master --rebase",
