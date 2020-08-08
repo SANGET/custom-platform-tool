@@ -115,9 +115,10 @@ export interface EditorComponentEntity extends EditorComponentClass {
   /** 组件实例状态数据 */
   // entityState: EditorEntityState
   /** 实例化后的状态 */
-  _state: 'active' | 'disable'
+  _state: string
+  // _state: 'active' | 'disable'
   /** 实例化后的 class id */
-  _classID: string
+  _classID: EditorComponentClass['id']
 }
 
 /**

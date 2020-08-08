@@ -1,8 +1,8 @@
-import { EditorComponentClass, EditorComponentEntity } from "../../types";
+import { EditorComponentEntity } from "../../types";
 
 interface AddElementAction {
   type: 'add'
-  entity: EditorComponentClass
+  entity: EditorComponentEntity
 }
 interface UpdateElementAction {
   type: 'update'
@@ -16,7 +16,7 @@ interface DelElementAction {
 /**
  * action types
  */
-type LayoutInfoActionReducerAction =
+export type LayoutInfoActionReducerAction =
   AddElementAction |
   UpdateElementAction |
   DelElementAction
@@ -24,14 +24,14 @@ type LayoutInfoActionReducerAction =
 /**
  * state 的数据结构
  */
-interface LayoutInfoActionReducerState {
-  [entityID: string]: EditorComponentClass
+export interface LayoutInfoActionReducerState {
+  [entityID: string]: EditorComponentEntity
 }
 
 /**
  * 布局信息 reducer 的类型
  */
-type LayoutInfoActionReducer = (
+export type LayoutInfoActionReducer = (
   state: LayoutInfoActionReducerState,
   action: LayoutInfoActionReducerAction
 ) => LayoutInfoActionReducerState

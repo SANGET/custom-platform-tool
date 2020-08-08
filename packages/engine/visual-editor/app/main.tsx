@@ -25,7 +25,6 @@ const VisualEditorApp: React.FC = (props) => {
   const [entitiesStateStore, saveEntitiesStateStore] = useEntitiesStateStore();
 
   const { activeID, activeEntity } = selectedEntities;
-  const hasActiveEntity = !!activeEntity;
 
   return (
     <div>
@@ -80,7 +79,7 @@ const VisualEditorApp: React.FC = (props) => {
           </Grid>
         </DndProvider>
         {
-          hasActiveEntity && (
+          !!activeEntity && (
             <Grid
               lg={2}
               md={2}

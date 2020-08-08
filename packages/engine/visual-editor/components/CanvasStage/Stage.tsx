@@ -7,18 +7,20 @@ import styled from 'styled-components';
 import classnames from 'classnames';
 
 import {
-  LayoutRenderer, LayoutNodeInfo, parseFlatNodeToNestNode, LayoutWrapperContext
+  LayoutRenderer, LayoutNodeInfo, parseFlatNodeToNestNode
 } from '@engine/layout-renderer';
-import { SelectEntity } from '@engine/visual-editor/core/actions-hook';
+import { SelectEntity, SelectEntityState } from '@engine/visual-editor/core/actions-hook';
 import {
   setNodeTreeNestingInfo, ENTITY_ID,
   increaseID, wrapID
 } from '@engine/visual-editor/utils';
 import { layoutInfoActionReducer } from '@engine/visual-editor/core/reducers/layout-info';
-import { ItemTypes } from '../ComponentPanel/types';
-import ContainerWrapperCom from './ContainerWrapperCom';
-import ComponentWrapperCom from './ComponentWrapperCom';
-import { DragComponentClass, DropCollectType } from '../../types';
+import { ItemTypes } from '@engine/visual-editor/spec/types';
+import ContainerWrapperCom from '@engine/visual-editor/spec/template/ContainerWrapperCom';
+import ComponentWrapperCom from '@engine/visual-editor/spec/template/ComponentWrapperCom';
+import { DragComponentClass, DropCollectType, EntitiesStateStore } from '@engine/visual-editor/types';
+import { containerWrapperFac, FacToComponentProps } from '@engine/visual-editor/spec/wrapper-fac';
+
 import { constructCompClass } from './utils/component-constructor';
 
 const StageRender = styled.div`
@@ -32,63 +34,37 @@ const StageRender = styled.div`
   }
 `;
 
-interface WrapperFacOptions {
-  onDrop?: (entity, containerID?) => void;
-  onClick?: (event, id) => void;
-  flatLayoutNodes
-  getSelectedState
-  getEntityProps
+/**
+ * 中央舞台组件的 props
+ */
+export interface CanvasStageProps {
+  /** 组件包装器，提供标准接口，详情查看 @engine/visual-editor/spec/template/ComponentWrapperCom  */
+  ComponentWrapper?: React.ElementType<FacToComponentProps>
+  /** 容器组件包装器，提供标准接口，详情查看 @engine/visual-editor/spec/template/ContainerWrapperCom  */
+  ContainerWrapper?: React.ElementType<FacToComponentProps>
+  /** 选中组件实例的方法 */
+  selectEntity: SelectEntity
+  /** 选中的组件实例 */
+  selectedEntities: SelectEntityState['selectedList']
+  /** 组件实例的状态集合 */
+  entitiesStateStore: EntitiesStateStore
 }
-
-type ContainerWrapperFac = (
-  wrapperComponent: React.ElementType,
-  wrapperFacOptions: WrapperFacOptions
-) => (
-  props: LayoutWrapperContext
-) => JSX.Element
 
 /**
- * wrapper 生成器
+ * 中央舞台组件
  */
-const containerWrapperFac: ContainerWrapperFac = (
-  WrapperComponent,
-  {
-    onDrop, onClick,
-    flatLayoutNodes, getSelectedState, getEntityProps
-  },
-) => (propsForChild) => {
-  const { id, children } = propsForChild;
-  return (
-    <WrapperComponent
-      {...propsForChild}
-      onClick={onClick}
-      onDrop={onDrop}
-      currEntity={flatLayoutNodes[id]}
-      getSelectedState={getSelectedState}
-      getEntityProps={getEntityProps}
-      key={id}
-    >
-      {children}
-    </WrapperComponent>
-  );
-};
-
-export interface CanvasStageProps {
-  selectEntity: SelectEntity
-  selectedEntities
-  entitiesStateStore
-}
-
 const CanvasStage: React.FC<CanvasStageProps> = ({
   selectEntity,
   selectedEntities,
   entitiesStateStore,
+  ComponentWrapper = ComponentWrapperCom,
+  ContainerWrapper = ContainerWrapperCom,
 }) => {
   const [
     flatLayoutNodes, layoutInfoDispatcher
   ] = useReducer(layoutInfoActionReducer, {});
 
-  const onSelectEntityForClick = (clickEvent, { id, entity }) => {
+  const onSelectEntityForClick = (clickEvent, entity) => {
     selectEntity(entity);
   };
 
@@ -165,10 +141,15 @@ const CanvasStage: React.FC<CanvasStageProps> = ({
    */
   setNodeTreeNestingInfo(layoutNestingNodeTree, flatLayoutNodes);
 
+  /**
+   * 布局包装渲染器的上下文
+   */
   const wrapperContext = {
     flatLayoutNodes,
     getSelectedState,
-    getEntityProps
+    getEntityProps,
+    onDrop: dropDispatcher,
+    onClick: onSelectEntityForClick,
   };
 
   const stageClasses = classnames([
@@ -193,19 +174,12 @@ const CanvasStage: React.FC<CanvasStageProps> = ({
         <LayoutRenderer
           layoutNode={layoutNestingNodeTree}
           componentRenderer={containerWrapperFac(
-            ComponentWrapperCom,
-            {
-              ...wrapperContext,
-              onClick: onSelectEntityForClick,
-            },
+            ComponentWrapper,
+            wrapperContext,
           )}
           containerWrapper={containerWrapperFac(
-            ContainerWrapperCom,
-            {
-              ...wrapperContext,
-              onDrop: dropDispatcher,
-              onClick: onSelectEntityForClick,
-            },
+            ContainerWrapper,
+            wrapperContext,
           )}
         />
       </StageRender>

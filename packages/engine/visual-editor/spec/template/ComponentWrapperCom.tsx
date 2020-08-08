@@ -1,9 +1,14 @@
+/**
+ * 具体 component 实现的地方
+ */
+
 import React from 'react';
 import styled from 'styled-components';
 import classnames from 'classnames';
 
-import DragItem from '../ComponentPanel/DragItem';
-import { ComponentTypeRenderer } from '../ComponentTypeRenderer';
+import DragItem from '../DragItem';
+import { ComponentTypeRenderer } from './ComponentTypeRenderer';
+import { FacToComponentProps } from '../wrapper-fac';
 
 const ComponentWrapper = styled.div`
   padding: 5px;
@@ -18,10 +23,14 @@ const ComponentWrapper = styled.div`
   }
 `;
 
-const ComponentWrapperCom = ({
+type ComponentWrapperComProps = FacToComponentProps
+
+const ComponentWrapperCom: React.FC<ComponentWrapperComProps> = ({
   currEntity,
-  onClick,
   id,
+  node,
+  onDrop,
+  onClick,
   getSelectedState,
   getEntityProps,
 }) => {
@@ -37,7 +46,7 @@ const ComponentWrapperCom = ({
     <div
       onClick={(e) => {
         e.stopPropagation();
-        onClick(e, { id, entity: currEntity });
+        onClick(e, currEntity);
       }}
     >
       <DragItem

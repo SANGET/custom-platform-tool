@@ -1,12 +1,17 @@
+/**
+ * 具体 container 实现的地方
+ */
+
 import React from 'react';
 import styled from 'styled-components';
 import { useDrop } from 'react-dnd';
 import classnames from 'classnames';
 
-import { ItemTypes } from '../ComponentPanel';
-import { isNodeInChild } from '../../utils/node-filter';
-import DragItem from '../ComponentPanel/DragItem';
-import { DragComponentClass, DropCollectType } from '../../types';
+import { isNodeInChild } from '@engine/visual-editor/utils/node-filter';
+import { DragComponentClass, DropCollectType } from '@engine/visual-editor/types';
+import { ItemTypes } from '../types';
+import DragItem from '../DragItem';
+import { FacToComponentProps } from '../wrapper-fac';
 
 const ContainerWrapper = styled.div`
   padding: 20px;
@@ -23,14 +28,16 @@ const ContainerWrapper = styled.div`
   }
 `;
 
-const ContainerWrapperCom = ({
+type ContainerWrapperComProps = FacToComponentProps
+
+const ContainerWrapperCom: React.FC<ContainerWrapperComProps> = ({
   children,
   currEntity,
-  onClick,
   id,
+  node,
+  onClick,
   getSelectedState,
   getEntityProps,
-  node,
   onDrop
 }) => {
   const isSelected = getSelectedState(id);
@@ -84,7 +91,7 @@ const ContainerWrapperCom = ({
       ref={drop}
       onClick={(e) => {
         e.stopPropagation();
-        onClick(e, { id, entity: currEntity });
+        onClick(e, currEntity);
       }}
     >
       <DragItem

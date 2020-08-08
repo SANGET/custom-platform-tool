@@ -6,7 +6,7 @@ type Entity = EditorComponentEntity
 /**
  * useSelectEntity 管理的 state 结构
  */
-interface UseSelectEntityState {
+export interface SelectEntityState {
   activeID: string,
   activeEntity?: Entity
   selectedList: {
@@ -22,7 +22,7 @@ export type SelectEntity = (selectEntityParam: Entity) => void
 /**
  * useSelectEntity 的返回值类型
  */
-type RtnType = [UseSelectEntityState, SelectEntity]
+type RtnType = [SelectEntityState, SelectEntity]
 
 const defaultState = {
   selectedList: {},
@@ -36,7 +36,7 @@ const defaultState = {
 export const useSelectEntity = (
   initState = defaultState
 ): RtnType => {
-  const [selectedEntities, setSelectedEntity] = useState<UseSelectEntityState>(initState);
+  const [selectedEntities, setSelectedEntity] = useState<SelectEntityState>(initState);
 
   const selectEntity: SelectEntity = (entity) => {
     const { id } = entity;
