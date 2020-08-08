@@ -4,19 +4,18 @@
  * @Last Modified by:   wangph
  * @Last Modified time: 2020-07-10 12:00:29
  */
-// import { useHistory } from 'react-router-dom';
-// , useContext
+
 import React, { FC, useState, useEffect } from 'react';
 import {
-  Menu, Dropdown, Button, Input, Modal, Form, Space, Tooltip, Popconfirm, Tree
+  Menu, Dropdown, Button, Input, Modal, Form, Space, Tooltip, Popconfirm
 } from 'antd';
+/** 向下的箭头 */
 import { DownOutlined } from '@ant-design/icons';
-/** 可复用组件 */
-// import Http from '@infra/utils/http';
+import { useHistory } from 'react-router-dom';
+/** 网络请求工具 */
 import Http from '@infra/utils/http';
 import { useMappedState, useDispatch } from 'redux-react-hook';
 import BasicTree from '@provider-app/data-design/src/components/BasicTree';
-import BasicTreeTransfer from '@provider-app/data-design/src/components/BasicTreeTransfer';
 import { BasicSelect } from '@provider-app/data-design/src/components/BasicSelect';
 import { TableTypeEnum } from '@provider-app/data-design/src/tools/constant';
 
@@ -29,11 +28,11 @@ import {
   generateSelectedTree, treeFilter, disTreeNode, listToTree
 } from '@provider-app/data-design/src/tools/tree';
 
-/** 模拟数据 */
-// import { treeData } from '@provider-app/data-design/src/mock';
+/** 不会操作页面状态的方法 */
+import {
+  formatGMT
+} from '@provider-app/data-design/src/tools/format';
 
-/** 应用上下文 */
-// import { AppContext as Context } from '@provider-app/data-design/src/app';
 /** 当前功能页样式 */
 import './tableStruct.less';
 
@@ -44,19 +43,11 @@ const mapState = (state) => ({
 });
 
 const AuthItem: FC = () => {
+  /** react路由跳转方法,必须定义在react 组件中 */
+  const History = useHistory();
   const dispatch = useDispatch();
-  // const AppContext = useContext(Context);
   const { structPager, treeData } = useMappedState(mapState);
   const { page, pageSize } = structPager;
-  // console.log(page, pageSize);
-
-  /** react路由跳转 */
-  // const history = useHistory();
-  /** 模态框类型枚举 */
-  const ModalTypeEnum = {
-    custom: 'custom',
-    fast: 'fast',
-  };
 
   /**
    * 如果 state 的类型为 Number, String, Boolean 建议使用 useState，如果 state 的类型 为 Object 或 Array，建议使用 useReducer
@@ -70,9 +61,9 @@ const AuthItem: FC = () => {
   /** 更新树形组件数据源 */
   const [dataSource, setDataSource] = useState([]);
   /** 设置模块框的显示隐藏 */
-  const [visible, setVisiable] = useState<boolean>(false);
+  const [visible, setVisiable] = useState<boolean>(true);
   /** 区分模态框展示的内容 */
-  const [modalType, setModalType] = useState<string>(ModalTypeEnum.custom);
+  // const [modalType, setModalType] = useState<string>(ModalTypeEnum.custom);
   /** 设置模态框的宽度 */
   const [modalWidth, setModalWidth] = useState<string | number>(800);
   /** 更新选择的树节点key集合 */
@@ -82,26 +73,21 @@ const AuthItem: FC = () => {
   const [tableData, setTableData] = useState([]);
   /** 创建可控表单实例 */
   const [form] = Form.useForm();
-  /** 不能定义在函数里面 */
 
-  // AppContext.dispatch({
-  //   type: 'show',
-  //   payload: {}
-  // });
   useEffect(() => {
-    // console.log('xxx');
-    // setDataSource(treeData);
-    // console.log('xxx', dataSource, treeData);
-    /** 请求表结构数据 */
+    /** 请求表结构列表数据 */
     Http.get('http://localhost:60001/mock/structList.json', {
       headers: {
         'Content-Type': 'application/json',
       },
     })
       .then((res) => {
+        /** setTableData之后不能立刻获取最新值 */
         // console.log(res.data.result.data);
         /** 列表数据--每行记录必需有key字段 */
         setTableData(res.data.result.data.map((col) => {
+          col.gmt_create = formatGMT(col.gmt_create);
+          col.gmt_modified = formatGMT(col.gmt_modified);
           col.key = col.id;
           return col;
         }));
@@ -117,7 +103,7 @@ const AuthItem: FC = () => {
       .then((res) => {
         const data = listToTree(res.data.result);
 
-        console.log({ data });
+        // console.log({ data });
 
         dispatch({ type: 'setTreeData', treeData: data });
         // setDataSource(treeData);
@@ -156,29 +142,24 @@ const AuthItem: FC = () => {
    * @param e  点击按钮事件源
    * @param { modalType-弹窗类型, treeData-源树, selectedTree-选中树 }
    */
-  const handleOk = (e, {
-    modalType, treeData, selectedTree, form
-  }) => {
-    /** 快速创建权限项 */
-    if (modalType === ModalTypeEnum.fast) {
-      console.log({ treeData, selectedTree });
-      setVisiable(false);
-    } else if (modalType === ModalTypeEnum.custom) {
-      /**
-       * 自定义权限项
-       * 表单校验
-       */
-      form
-        .validateFields()
-        .then((values) => {
-          console.log(values);
+  const handleOk = (e, { form }) => {
+    form
+      .validateFields() /** 表单校验 */
+      .then((values) => {
+        // console.log(values);
+        /** 新建表数据提交 */
+        Http.post('http://{ip}:{port}/paas/{lesseeCode}/{applicationCode}/data/v1/tables/', {
+          data: values
+        }).then(() => {
+          /** 关闭弹窗 */
           setVisiable(false);
-        })
-        .catch((errorInfo) => {
-          /** 校验未通过 */
-          console.log(errorInfo);
         });
-    }
+      })
+      .catch((errorInfo) => {
+        /** 校验未通过 */
+        console.log(errorInfo);
+      });
+    // }
   };
   /** 弹框取消按钮回调 */
   const handleCancel = (e) => {
@@ -211,24 +192,9 @@ const AuthItem: FC = () => {
         export: () => { },
         dict: () => { }
       };
-
       keyAction[key] && keyAction[key]();
-      // console.log(e);
-      // setModalType(key)
-      // switch (key) {
-      //   case ModalTypeEnum.custom: {
-      //     setModalWidth(800)
-      //     setVisiable(true)
-      //     break
-      //   }
-      //   case ModalTypeEnum.fast: {
-      //     setModalWidth('60%')
-      //     setVisiable(true)
-      //     break
-      //   }
-      // }
     };
-    console.log();
+
     const openModal = () => {
       setModalWidth(800);
       setVisiable(true);
@@ -237,11 +203,7 @@ const AuthItem: FC = () => {
     /** 下拉框选项 */
     const menu = (
       <Menu onClick={dropdownClick}>
-        {
-
-          moreButs.map((item) => (<Menu.Item key={item.key}>{item.menu}</Menu.Item>))
-        }
-
+        { moreButs.map((item) => (<Menu.Item key={item.key}>{item.menu}</Menu.Item>))}
       </Menu>
     );
     return (
@@ -275,39 +237,17 @@ const AuthItem: FC = () => {
   const modalProps = {
     visible,
     title: '新建数据表',
-    onOk: (e) => handleOk(e, {
-      modalType,
-      treeData,
-      selectedTree,
-      form,
-    }),
+    onOk: (e) => handleOk(e, { form, }),
     onCancel: handleCancel,
     okText: '确定',
     cancelText: '取消',
-    width: modalWidth,
+    width: 800,
   };
-
-  const btnProps = {
-    // type: 'primary',
-    style: { marginTop: '10px' },
-    onClick: () => {
-      filter(dataSource);
-    },
-  };
-  const searchProps = {
-    style: { width: 224, margin: '16px' },
-    placeholder: '请输入表名称',
-    onSearch: (value) => {
-      // history.push('/home');
-      // console.log(value);
-    },
-    enterButton: true,
-  };
-
+  /** 新建表表单属性 */
   const formProps = {
     form,
-    treeData: dataSource,
-    initialValues: { authName: 'Hi, man!' },
+    treeData,
+    initialValues: { name: '回显测试' },
   };
 
   const basicTreeProps = {
@@ -323,7 +263,7 @@ const AuthItem: FC = () => {
     // };
     const operButs = [
       { text: '编辑', onClick: (row) => { } },
-      { text: '删除', onClick: (row) => { } },
+      { text: '删除', onClick: (row) => { History.push('/home'); } },
       { text: '复制', onClick: (row) => { } },
       { text: '表关系图', onClick: (row) => { } },
     ];
@@ -417,7 +357,7 @@ const AuthItem: FC = () => {
                 {
                   item.text === '删除'
 
-                    ? (<Popconfirm placement="topLeft" title={'你确定要删除这条记录吗?'} onConfirm={item.onClick(row)} okText="删除" cancelText="取消">
+                    ? (<Popconfirm placement="topLeft" title={'你确定要删除这条记录吗?'} onConfirm={() => item.onClick(row)} okText="删除" cancelText="取消">
                       <Button type="link" >
                         {item.text}
                       </Button>
@@ -469,6 +409,14 @@ const AuthItem: FC = () => {
       console.log(value);
     }
   };
+  const searchProps = {
+    style: { width: 224, margin: '16px' },
+    placeholder: '请输入表名称',
+    onSearch: (value) => {
+      console.log(value);
+    },
+    enterButton: true,
+  };
 
   return (
     <div className="auth-item flex b1px " style={{ height: '100%' }}>
@@ -479,23 +427,20 @@ const AuthItem: FC = () => {
         <BasicTree {...basicTreeProps} dataSource={treeData} />
       </aside>
       <main className="content bl1px">
+        {/* 搜索条件框 */}
         <div className="flex v-center ml20">
           <BasicSelect {...basicSelect} />
           <Search {...searchProps} />
         </div>
+        {/* 表头菜单--新建表 标签管理 更多按钮 */}
         <TableHeadMenu />
+        {/* 表结构列表 */}
         <StructTable {...authTableProps} />
-        {/* <Table dataSource={tableData} columns={columns} />; */}
       </main>
+      {/* 新建表弹窗 */}
       <Modal {...modalProps}>
-        {modalType === ModalTypeEnum.fast ? (
-          <div>
-            <BasicTreeTransfer {...treeProps} />
-            <Button {...btnProps}>一键过滤</Button>
-          </div>
-        ) : (
-          <TableStructForm {...formProps} />
-        )}
+        {/* 新建表表单 */}
+        <TableStructForm {...formProps} />
       </Modal>
     </div>
   );

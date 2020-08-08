@@ -9,10 +9,12 @@
     "start": "cross-env PORT=60001 minictl start",
     "build": "minictl build",
     "test": "jest src --coverage",
-    "cp":"xcopy .\\src\\mock  .\\build\\mock /y/i/e/q"
+    "cp": "xcopy .\\src\\mock  .\\build\\mock /y/i/e/q"
   },
   "devDependencies": {},
-  "dependencies": {},
+  "dependencies": {
+    "js-pinyin": "^0.1.9"
+  },
   "browserslist": {
     "production": [
       ">0.2%",

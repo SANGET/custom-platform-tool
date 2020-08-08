@@ -14,7 +14,9 @@ import { makeStore } from '@provider-app/data-design/src/store';
 const store = makeStore();
 /** 因为App中也要用到state状态,所以要将数据仓库创建在App的上一层index.tsx中 */
 ReactDOM.render(
+  /** 设置store全局上下文 */
   <StoreContext.Provider value={store}>
+    {/* 主应用 */}
     <App />
   </StoreContext.Provider>,
   document.querySelector('#root')

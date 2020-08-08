@@ -215,6 +215,9 @@ const EditableTable = (props) => {
         style={style}
         rowClassName="editable-row"
         pagination={{
+          showTotal: ((total) => {
+            return `共 ${total} 条`;
+          }),
           onChange: (page, pageSize) => {
             setPage(page);
             setPageSize(pageSize);
@@ -223,6 +226,7 @@ const EditableTable = (props) => {
             dispatch({ type: 'triggerLoading', isShowLoading: true });
           }
         }}
+
         onRow={(record) => {
           return {
             onDoubleClick: (event) => {

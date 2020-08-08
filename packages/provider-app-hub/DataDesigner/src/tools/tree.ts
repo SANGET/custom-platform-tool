@@ -1,7 +1,7 @@
 /*
  * @Author: wph
  * @Date: 2020-07-22 09:23:52
- * @LastEditTime: 2020-08-06 17:13:01
+ * @LastEditTime: 2020-08-08 18:11:11
  * @LastEditors: Please set LastEditors
  * @Description: 权限功能单元与页面状态无关的方法
  * @FilePath: \custom-platform-v3-frontend\packages\provider-app-hub\AuthManager\src\features\authItem\authItem.ts
@@ -110,8 +110,8 @@ const generateSelectedTree = (nodes, targetKeys) => {
 };
 
 /**
- * 列表转嵌套
- * @param list 列表数据
+ * 扁平转嵌套
+ * @param list 扁平列表数据
  */
 const listToTree = (list) => {
   const map = {}; /** 根节点对象 */
@@ -124,9 +124,11 @@ const listToTree = (list) => {
   }
   for (i = 0; i < list.length; i += 1) {
     node = list[i];
-    /** antd-tree组件这两个键值必须有 */
+    /** antd-tree组件必须有title和key这两个值 */
     node.title = node.name;
     node.key = node.id;
+    /** antd TreeSelect组件每个节点需要value字段 */
+    node.value = node.id;
     /** 叶子节点 */
     if (node.pid !== null) {
       map[node.pid].children.push(node);
