@@ -1,4 +1,4 @@
-import React, { useReducer } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Form, TreeSelect, Input
 } from 'antd';
@@ -7,8 +7,8 @@ import './tableStruct.less';
 
 /** 导出基础选择框及其枚举数据 */
 /** 内聚和单一职责,有时候令人感觉边界不清,枚举值和选择框组件放在一起貌似也不错 */
-import { BasicSelect } from '@provider-app/data-design/src/components/BasicSelect';
-import { TableTypeEnum } from '@provider-app/data-design/src/tools/constant';
+import { BasicSelect } from '@provider-app/data-designer/src/components/BasicSelect';
+import { TableTypeEnum } from '@provider-app/data-designer/src/tools/constant';
 /** 中文转拼音工具 */
 import PinYin from 'js-pinyin';
 
@@ -50,19 +50,19 @@ const formItemLayout = {
   }
 };
 
-function init(formItemsConfig) {
-  return { formItemsConfig };
-}
+// function init(formItemsConfig) {
+//   return { formItemsConfig };
+// }
 
-const reducer = (state, action) => {
-  const { formItemsConfig } = action;
-  switch (action.type) {
-    case 'setFormItemsConfig':
-      return { formItemsConfig };
-    default:
-      throw new Error();
-  }
-};
+// const reducer = (state, action) => {
+//   const { formItemsConfig } = action;
+//   switch (action.type) {
+//     case 'setFormItemsConfig':
+//       return { formItemsConfig };
+//     default:
+//       throw new Error();
+//   }
+// };
 
 const StructForm = ({
   form, treeData, initialValues, ...rest
@@ -79,7 +79,7 @@ const StructForm = ({
     /** 是 归属模块 */
     module_id: '',
     /** 否 业务字段类型，SYS(系统元数据)BIS(业务元数据)，用户填写的表默认BIS即可 */
-    species: '',
+    species: 'BIS',
     /** 否 备注  */
     description: '',
     /** 否 附属表对象,如果表类型是附属表，则必填 */
@@ -113,13 +113,17 @@ const StructForm = ({
     // const { primary_table: primaryTable } = state;
     // const primaryTableCopy = JSON.parse(JSON.stringify(state.primary_table));
 
-    if (form.getFieldValue('type') === 'aux_table') {
-      state.formItemsConfig.primary_table.hide = false;
+    console.log(form.getFieldValue('type'));
+
+    if (form.getFieldValue('type') === 'auxTable') {
+      formItemsConfig.primary_table.hide = false;
+      setFormItemsConfig(formItemsConfig);
     } else {
-      state.formItemsConfig.primary_table.hide = true;
+      formItemsConfig.primary_table.hide = true;
+      setFormItemsConfig(formItemsConfig);
       // dispatch({ type: 'setFormItemsConfig', primary_table: primaryTableCopy });
     }
-    dispatch({ type: 'setFormItemsConfig', formItemsConfig: state.formItemsConfig });
+    // dispatch({ type: 'setFormItemsConfig', formItemsConfig: state.formItemsConfig });
   };
   /** 表单配置项 */
   const formItemsConfigInitValue = {
@@ -176,7 +180,7 @@ const StructForm = ({
       }
     },
     primary_table: {
-      hide: true,
+      hide: false,
       itemAttr: {
         name: "primay_table",
         label: "主表"
@@ -221,8 +225,12 @@ const StructForm = ({
     }
   };
 
-  const [state, dispatch] = useReducer(reducer, formItemsConfigInitValue, init);
-  console.log(state);
+  const [formItemsConfig, setFormItemsConfig] = useState(formItemsConfigInitValue);
+  useEffect(() => {
+    console.log('xxx', formItemsConfig.primary_table.hide);
+  }, [formItemsConfig.primary_table.hide]);
+  // const [state, dispatch] = useReducer(reducer, formItemsConfigInitValue, init);
+  // console.log(state);
   // const {
   //   name, code, type, primary_table: primaryTable, module_id: moduleId, tag, description
   // } = formItemsConfigInitValue;
@@ -238,10 +246,10 @@ const StructForm = ({
       {...rest}
     >{
 
-        Object.keys(state.formItemsConfig).map((key) => (
-          !state.formItemsConfig[key].hide
-            ? (<Form.Item key={key} {...state.formItemsConfig[key].itemAttr}>
-              <Story {...state.formItemsConfig[key].compAttr} />
+        Object.keys(formItemsConfig).map((key) => (
+          !formItemsConfig[key].hide
+            ? (<Form.Item key={key} {...formItemsConfig[key].itemAttr}>
+              <Story {...formItemsConfig[key].compAttr} />
             </Form.Item>) : ''
         ))
       }

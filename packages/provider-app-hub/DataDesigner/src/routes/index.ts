@@ -7,7 +7,7 @@
  * @FilePath: \custom-platform-v3-frontend\packages\provider-app-hub\AuthManager\src\routes\index.ts
  */
 /** 表结构容器 */
-import TableStructContainer from '@provider-app/data-design/src/pages/TableStruct';
+import TableStructContainer from '@provider-app/data-designer/src/pages/TableStruct';
 // import TableKey from '../pages/tableKey';
 // import Label from '../pages/label';
 

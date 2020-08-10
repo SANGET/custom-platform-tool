@@ -7,7 +7,7 @@
  * @FilePath: \custom-platform-v3-frontend\packages\provider-app-hub\DataManager\src\reducers\index.ts
  */
 /** 导入状态值接口定义 */
-import { Action, IState } from '@provider-app/data-design/src/store/initState';
+import { Action, IState } from '@provider-app/data-designer/src/store/initState';
 /** 动作定义 */
 const reducer = (
   state: IState | null | undefined,

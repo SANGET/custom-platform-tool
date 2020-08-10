@@ -13,22 +13,24 @@ import Http from '@infra/utils/http';
 /** 状态管理方法 */
 import { useMappedState, useDispatch } from 'redux-react-hook';
 /** 自定义基础组件 */
-/** 树形组件 */
-import BasicTree from '@provider-app/data-design/src/components/BasicTree';
+
 /** 选择框组件 */
-import { BasicSelect } from '@provider-app/data-design/src/components/BasicSelect';
+import { BasicSelect } from '@provider-app/data-designer/src/components/BasicSelect';
 /** 表类型枚举--表格列代码转文字时也要用 */
-import { TableTypeEnum } from '@provider-app/data-design/src/tools/constant';
+import { TableTypeEnum } from '@provider-app/data-designer/src/tools/constant';
 
 /** 树操作方法 */
 import {
   treeQuery, listToTree
-} from '@provider-app/data-design/src/tools/tree';
+} from '@provider-app/data-designer/src/tools/tree';
 
 /** GMT时间格式化 */
 import {
   formatGMT
-} from '@provider-app/data-design/src/tools/format';
+} from '@provider-app/data-designer/src/tools/format';
+
+/** 菜单树业务组件 */
+import MenuTree from '@provider-app/data-designer/src/bizComps/MenuTree';
 
 /** 表单业务组件 */
 import StructForm from './StructForm';
@@ -172,7 +174,7 @@ const TableStructContainer: FC = () => {
     initialValues: { name: '回显测试' },
   };
 
-  const basicTreeProps = {
+  const treeProps = {
     draggable: true,
     blockNode: true,
   };
@@ -201,7 +203,7 @@ const TableStructContainer: FC = () => {
         {/* 按照单一职责拆分组件,比直接组合更灵活 */}
         {/* <Input {...inputProps} /> */}
         {/* <Tree treeData={treeData} /> */}
-        <BasicTree {...basicTreeProps} dataSource={treeData} />
+        <MenuTree {...treeProps} dataSource={treeData} />
       </aside>
       <main className="content bl1px">
         {/* 搜索条件框 */}

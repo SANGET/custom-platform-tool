@@ -9,8 +9,8 @@
 
 import { createStore } from 'redux';
 /** 导入reducer */
-import reducer from '@provider-app/data-design/src/store/reducers';
-import { defaultState } from '@provider-app/data-design/src/store/initState';
+import reducer from '@provider-app/data-designer/src/store/reducers';
+import { defaultState } from '@provider-app/data-designer/src/store/initState';
 
 /**
  * 创建数据仓库
