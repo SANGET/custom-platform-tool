@@ -30,6 +30,19 @@ const getStyle = ({ value, propItemConfig }: EntityStateItemParams) => {
 };
 
 /**
+ * 合并通用属性
+ */
+const mergeGeneralProp = ({ value, propItemConfig }: EntityStateItemParams) => {
+  if (propItemConfig.type === 'general') {
+    const { target } = propItemConfig;
+    return {
+      [target]: value
+    };
+  }
+};
+
+/**
+ * @author zxj
  * @important 重要模块
  *
  * 合并实例状态的规则
@@ -37,8 +50,11 @@ const getStyle = ({ value, propItemConfig }: EntityStateItemParams) => {
  * @param srcState
  * @param param1
  */
-const entityStateMergeRule: EntityStateMergeRule = (srcEntityState, entityStateItemParams) => {
+export const entityStateMergeRule: EntityStateMergeRule = (
+  srcEntityState, entityStateItemParams
+) => {
   const { value, propItemConfig } = entityStateItemParams;
+  console.log(propItemConfig);
   const srcEntityStateCopy = srcEntityState || {};
   const propID = propItemConfig.id;
 
@@ -52,7 +68,7 @@ const entityStateMergeRule: EntityStateMergeRule = (srcEntityState, entityStateI
       }),
       style: Object.assign({}, srcEntityState.style, getStyle(entityStateItemParams)),
       dataID: srcEntityStateCopy.dataID ? srcEntityStateCopy.dataID : increaseID()
-    });
+    }, mergeGeneralProp(entityStateItemParams));
 
   return resState;
 };
@@ -66,16 +82,11 @@ const useEntityState = (defaultEntityState: EditorEntityState = {
   const [entityState, setFormState] = useState<EditorEntityState>(defaultEntityState);
 
   const updateEntityState: UpdateEntityStateCallback = (propItemConfig, value) => {
+    /**
+     * 属性合并规则
+     */
     const nextState = entityStateMergeRule(entityState, { propItemConfig, value });
-    // console.log(propItemConfig);
     setFormState(nextState);
-    // setFormState({
-    //   ...entityState,
-    //   [propItemID]: {
-    //     propType,
-    //     value
-    //   }
-    // });
   };
 
   return [

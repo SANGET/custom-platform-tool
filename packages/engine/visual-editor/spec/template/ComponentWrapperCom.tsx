@@ -11,15 +11,20 @@ import { ComponentTypeRenderer } from './ComponentTypeRenderer';
 import { FacToComponentProps } from '../wrapper-fac';
 
 const ComponentWrapper = styled.div`
-  padding: 5px;
-  background-color: rgba(0,0,0, 0.8);
-  margin: 10px;
-  color: #FFF;
-  &:hover {
+  position: relative;
+  padding: 0.1px;
+  /* background-color: rgba(0,0,0, 0.8); */
+  /* margin: 10px; */
+  /* color: #FFF; */
+  /* &:hover {
     background-color: rgba(0,0,0, 0.7);
-  }
+  } */
   &.selected {
-    box-shadow: 0 0 1px 3px rgba(127, 113, 185, 0.5);
+    /* box-shadow: 0 0 1px 3px rgba(127, 113, 185, 0.5); */
+    >.state-mark {
+      /* pointer-events: none; */
+      border-color: blue;
+    }
   }
 `;
 
@@ -48,6 +53,7 @@ const ComponentWrapperCom: React.FC<ComponentWrapperComProps> = ({
         e.stopPropagation();
         onClick(e, currEntity);
       }}
+      className="relative"
     >
       <DragItem
         dragItemClass={currEntity}
@@ -56,10 +62,11 @@ const ComponentWrapperCom: React.FC<ComponentWrapperComProps> = ({
           className={classes}
           style={style}
         >
-          <div>组件, ID: {id}</div>
           <ComponentTypeRenderer
-            {...currEntity}
+            entityState={entityState}
+            entity={currEntity}
           />
+          <div className="state-mark fill"></div>
         </ComponentWrapper>
       </DragItem>
     </div>

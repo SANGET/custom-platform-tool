@@ -158,7 +158,7 @@ const CanvasStage: React.FC<CanvasStageProps> = ({
     isOverCurrent && 'overing'
   ]);
 
-  console.log(layoutNestingNodeTree);
+  // console.log(layoutNestingNodeTree);
 
   return (
     <div

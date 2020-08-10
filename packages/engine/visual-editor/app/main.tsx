@@ -13,7 +13,7 @@ import PropertiesEditor from '../components/PropertiesEditor';
 // import { Dispatcher } from "../core/actions";
 // import { VisualEditorStore } from "../core/store";
 
-import '@deer-ui/core/default.css';
+import { GlobalStyle } from '../style/global-style';
 
 // interface VisualEditorAppProps {
 //   dispatcher: Dispatcher
@@ -98,6 +98,7 @@ const VisualEditorApp: React.FC = (props) => {
           )
         }
       </Grid>
+      <GlobalStyle />
     </div>
   );
 };

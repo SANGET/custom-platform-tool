@@ -1,23 +1,21 @@
 import { useState } from "react";
 import { EditorComponentEntity } from "../../types";
 
-type Entity = EditorComponentEntity
-
 /**
  * useSelectEntity 管理的 state 结构
  */
 export interface SelectEntityState {
   activeID: string,
-  activeEntity?: Entity
+  activeEntity?: EditorComponentEntity
   selectedList: {
-    [id: string]: Entity
+    [id: string]: EditorComponentEntity
   }
 }
 
 /**
  * SelectEntity 函数说明
  */
-export type SelectEntity = (selectEntityParam: Entity) => void
+export type SelectEntity = (selectEntityParam: EditorComponentEntity) => void
 
 /**
  * useSelectEntity 的返回值类型

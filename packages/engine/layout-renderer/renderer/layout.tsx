@@ -13,9 +13,9 @@ export interface LayoutWrapperContext {
 
 export interface LayoutParserWrapper {
   /** 容器渲染 wrapper 包装函数 */
-  containerWrapper?: (ctx: LayoutWrapperContext) => React.ReactChild
+  containerWrapper?: (ctx: LayoutWrapperContext) => React.ElementType
   /** 组件渲染器，由调用方实现 */
-  componentRenderer?: (ctx: LayoutWrapperContext) => React.ReactChild
+  componentRenderer?: (ctx: LayoutWrapperContext) => React.ElementType
 }
 
 export interface LayoutRendererProps extends LayoutParserWrapper {
@@ -42,35 +42,36 @@ const renderLayout = (
   layoutNode: LayoutNodeInfo[],
   wrapper: LayoutParserWrapper,
 ) => {
-  return Array.isArray(layoutNode) && layoutNode.map((node, idx) => {
-    const { id } = node;
-    const { containerWrapper, componentRenderer } = wrapper;
-    const wrapperContext: LayoutWrapperContext = { id, idx, node };
-    switch (node.type) {
-      case 'container':
-        // const { layout } = node;
-        // TODO: 加入布局UI隔离
-        const childOfContainer = renderLayout(node.body, wrapper);
-        // const childOfContainer = (
-        //   <div
-        //     style={containerLayoutParser(layout)}
-        //     className="container"
-        //     key={id + idx}
-        //   >
-        //     {
-        //       renderLayout(node.body, wrapper)
-        //     }
-        //   </div>
-        // );
-        wrapperContext.children = childOfContainer;
+  const res: React.ElementType[] = [];
+  if (Array.isArray(layoutNode)) {
+    for (let i = 0; i < layoutNode.length; i++) {
+      const node = layoutNode[i];
 
-        return typeof containerWrapper === 'function'
-          ? containerWrapper(wrapperContext)
-          : childOfContainer;
-      case 'component':
-        return componentRenderer && componentRenderer(wrapperContext);
+      const { id } = node;
+      const { containerWrapper, componentRenderer } = wrapper;
+      const wrapperContext: LayoutWrapperContext = { id, idx: i, node };
+      switch (node.type) {
+        case 'container':
+          // const { layout } = node;
+          // TODO: 加入布局UI隔离
+          const childOfContainer = renderLayout(node.body, wrapper);
+          let child;
+          if (typeof containerWrapper === 'function') {
+            wrapperContext.children = childOfContainer;
+            child = containerWrapper(wrapperContext);
+          } else {
+            child = childOfContainer;
+          }
+
+          res.push(child);
+          break;
+        case 'component':
+          res.push(componentRenderer && componentRenderer(wrapperContext));
+          break;
+      }
     }
-  });
+  }
+  return res;
 };
 
 const LayoutRenderer: React.FC<LayoutRendererProps> = (
