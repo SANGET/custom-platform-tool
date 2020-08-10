@@ -1,28 +1,29 @@
 /**
  * PropEditor
  */
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { Input, Button } from '@infra/ui';
-import { mergeDeep } from '@infra/utils/tools';
 import { propertiesItemCollection } from '../../mock-data';
 import {
   EditorComponentEntity, EditorEntityState, EditorPropertyItem,
-  PropertyItemConfig, PropertyItemConfigFunc
 } from '../../types';
 import useUpdateState from './useUpdateState';
-import useEntityState, { entityStateMergeRule } from './useEntityState';
-import { SaveEntitiesStateStore } from '../../core/actions-hook';
 import { PropItemRenderer } from './PropItemRenderer';
+import { Dispatcher } from '../../core/actions';
+import { extractPropConfig } from './extractPropConfig';
+import { entityStateMergeRule } from './entityStateMergeRule';
 
 export interface PropertiesEditorProps {
   /** 选中的 entity */
   selectedEntity: EditorComponentEntity
   /** 属性编辑器的配置，通过该配置生成有层级结构的属性编辑面板 */
   editorConfig?: any
-  /** 保存属性的回调 */
-  saveEntitiesStateStore: SaveEntitiesStateStore
   /** 默认的表单数据state */
   defaultEntityState?: EditorEntityState
+  /** 保存属性的回调 */
+  updateEntitiesStateStore: Dispatcher['UpdateEntityState']
+  /** 初始化实例的回调 */
+  initEntityState: Dispatcher['InitEntityState']
 }
 
 const StateBtn = ({
@@ -44,8 +45,6 @@ const StateBtn = ({
 
 /**
  * 设置实例状态的默认值
- *
- * TODO: 合并下方的渲染，提高性能
  */
 class DefaultEntityStateManager {
   private state = {}
@@ -59,7 +58,7 @@ class DefaultEntityStateManager {
     propItemConfig
   ) => {
     const { defaultValue } = propItemConfig;
-    this.state[propItemConfig.id] = entityStateMergeRule({}, {
+    this.state = entityStateMergeRule({}, {
       propItemConfig,
       value: defaultValue
     });
@@ -69,39 +68,76 @@ class DefaultEntityStateManager {
 
 const defaultEntityStateManager = new DefaultEntityStateManager();
 
-/**
- * 提取 prop config
- */
-const extractPropConfig = (
-  propItemConfig: PropertyItemConfigFunc,
-  entity: EditorComponentEntity
-): EditorPropertyItem => {
-  if (typeof propItemConfig === 'function') {
-    return propItemConfig(mergeDeep(entity));
-  }
-  return propItemConfig;
-};
+interface PropertiesEditorState {
+  entityState: EditorEntityState
+}
 
 /**
  * 属性编辑器面板
+ *
+ * @description 由于此业务逻辑略复杂，React.FC 并不能满足，所以采用 ClassComponent，更好的组织优化逻辑
  */
-const PropertiesEditor: React.FC<PropertiesEditorProps> = ({
-  selectedEntity,
-  defaultEntityState,
-  editorConfig,
-  saveEntitiesStateStore
-}) => {
-  // console.log(selectedEntity);
-  const { bindProperties } = selectedEntity;
-  const hasProps = !!bindProperties?.propRefs;
+class PropertiesEditor extends React.Component<
+PropertiesEditorProps, PropertiesEditorState
+> {
+  state = {
+    entityState: {}
+  }
+
+  /** 是否已经初始化过默认属性 */
+  hasDefaultEntityState = false
+
+  constructor(props) {
+    super(props);
+    const { defaultEntityState } = props;
+    this.hasDefaultEntityState = !!defaultEntityState;
+    if (this.hasDefaultEntityState) {
+      this.state.entityState = defaultEntityState;
+    }
+  }
+
+  componentDidMount() {
+    if (!this.hasDefaultEntityState) {
+      const {
+        selectedEntity,
+        initEntityState,
+      } = this.props;
+      const _defaultEntityState = defaultEntityStateManager.getState();
+      console.log(_defaultEntityState);
+      initEntityState(selectedEntity, _defaultEntityState);
+
+      this.hasDefaultEntityState = true;
+      this.setState({
+        entityState: _defaultEntityState
+      });
+    }
+  }
 
   /**
-   * 用于管理 Editor 中所有控件产生的值
+   * 更新此组件内部的表单状态
+   *
+   * TODO: 更强的状态管理工具
    */
-  const [entityState, updateEntityState] = useEntityState(defaultEntityState || {});
+  updateEntityState = (propItemConfig, value) => {
+    this.setState(({ entityState }) => {
+      const nextState = entityStateMergeRule(entityState, { propItemConfig, value });
+      return {
+        entityState: nextState
+      };
+    });
+  }
 
-  const propFormDOM = hasProps && (
-    Array.isArray(bindProperties.propRefs)
+  /**
+   * 渲染每个属性项
+   */
+  renderPropItem = () => {
+    const {
+      selectedEntity,
+    } = this.props;
+    const { entityState } = this.state;
+    const { bindProperties } = selectedEntity;
+
+    return Array.isArray(bindProperties.propRefs)
     && bindProperties.propRefs.map((propID) => {
       /**
        * 将实例状态回填到属性项
@@ -121,8 +157,20 @@ const PropertiesEditor: React.FC<PropertiesEditorProps> = ({
       /** 通过传入 entity 来提取 propItemConfig */
       const propItemConfig = extractPropConfig(propItemConfigOrigin, selectedEntity);
 
-      /** 设置初始化状态的实例状态初始值 */
-      defaultEntityStateManager.setState(selectedEntity, propItemConfig);
+      /** 确保 propItemConfig 的 ID 与集合中的 ID 一致 */
+      propItemConfig.id = propID;
+
+      if (!this.hasDefaultEntityState) {
+        /**
+         * 设置初始化状态的实例状态初始值
+         *
+         * 如果没有被初始化，则返回空的组件节点，等待组件属性的值被初始化后再做下一步渲染
+         */
+        defaultEntityStateManager.setState(selectedEntity, propItemConfig);
+        return (
+          <div key={propID}></div>
+        );
+      }
 
       return (
         <div
@@ -140,7 +188,7 @@ const PropertiesEditor: React.FC<PropertiesEditorProps> = ({
               /**
                * 更新数据
                */
-              updateEntityState(propConfigRes, nextValue);
+              this.updateEntityState(propConfigRes, nextValue);
             }}
             propID={propID}
             propItemConfig={propItemConfig}
@@ -148,32 +196,34 @@ const PropertiesEditor: React.FC<PropertiesEditorProps> = ({
           />
         </div>
       );
-    })
-  );
+    });
+  }
 
-  /**
-   * 初始化组件类时，绑定组件类的默认值
-   */
-  useEffect(() => {
-    if (!defaultEntityState) {
-      const _defaultEntityState = defaultEntityStateManager.getState();
-      saveEntitiesStateStore(selectedEntity.id, _defaultEntityState);
-    }
-  }, []);
+  render() {
+    const {
+      selectedEntity,
+      updateEntitiesStateStore
+    } = this.props;
+    const { entityState } = this.state;
+    const { bindProperties } = selectedEntity;
+    const hasProps = !!bindProperties?.propRefs;
 
-  return (
-    <div>
-      <div className="action-area mb10">
-        <StateBtn onClick={(e) => {
-          saveEntitiesStateStore(selectedEntity.id, entityState);
-        }}
-        />
+    const propFormDOM = hasProps && this.renderPropItem();
+
+    return (
+      <div>
+        <div className="action-area mb10">
+          <StateBtn onClick={(e) => {
+            updateEntitiesStateStore(selectedEntity, entityState);
+          }}
+          />
+        </div>
+        {
+          propFormDOM
+        }
       </div>
-      {
-        propFormDOM
-      }
-    </div>
-  );
-};
+    );
+  }
+}
 
 export default PropertiesEditor;

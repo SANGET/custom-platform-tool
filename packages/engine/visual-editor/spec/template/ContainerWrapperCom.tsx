@@ -17,7 +17,7 @@ const ContainerWrapper = styled.div`
   position: relative;
   padding: 20px;
   background-color: rgba(0,0,0, 0.1);
-  margin: 10px;
+  /* margin: 10px; */
   &:hover {
     background-color: rgba(0,0,0, 0.15);
   }

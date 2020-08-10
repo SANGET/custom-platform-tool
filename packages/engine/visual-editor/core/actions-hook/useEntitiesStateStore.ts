@@ -4,17 +4,19 @@ import { EntitiesStateStore, EditorEntityState } from "../../types";
 export type SaveEntitiesStateStore = (id: string, formState: EditorEntityState) => void
 
 /**
- * React hook for store of component's props
+ * 用于存储组件实例的状态集合
+ *
+ * TODO: 添加增删查改的类型
  */
 export const useEntitiesStateStore = (defaultState: EntitiesStateStore = {}): [
   EntitiesStateStore, SaveEntitiesStateStore
 ] => {
   const [entitiesStateStore, setComponentPropStore] = useState(defaultState);
 
-  const saveComponentPropStore: SaveEntitiesStateStore = (id: string, formState) => {
+  const saveComponentPropStore: SaveEntitiesStateStore = (entityID, formState) => {
     setComponentPropStore({
       ...entitiesStateStore,
-      [id]: {
+      [entityID]: {
         ...formState
       }
     });
@@ -23,4 +25,11 @@ export const useEntitiesStateStore = (defaultState: EntitiesStateStore = {}): [
   return [
     entitiesStateStore, saveComponentPropStore
   ];
+};
+
+/**
+ * 获取组件实例的默认属性
+ */
+export const getEntityDefaultState: EditorEntityState = (entity) => {
+  return {};
 };
