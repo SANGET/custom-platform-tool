@@ -61,7 +61,7 @@ const App: FC = () => {
           <Switch>
             {/* Switch里面不能直接嵌套div,因为渲染出来的不是HTML节点,需要用<>包裹 */}
             <>
-              <div style={{ background: '#fff', padding: 24, height: '100%' }}>
+              <div style={{ background: '#fff', padding: 12, height: '100%' }}>
                 {ROUTES.map((route) => (
                   /** 路径匹配时才会显示对应的组件 */
                   <Route exact key={route.key} path={route.link} component={route.component} />

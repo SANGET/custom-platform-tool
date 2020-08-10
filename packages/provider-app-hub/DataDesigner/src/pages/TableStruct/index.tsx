@@ -7,238 +7,164 @@
 
 import React, { FC, useState, useEffect } from 'react';
 import {
-  Menu, Dropdown, Button, Input, Modal, Form, Space, Tooltip, Popconfirm
+  Menu, Dropdown, Button, Input, Modal, Form
 } from 'antd';
-/** 向下的箭头 */
+/** icon图标--向下的箭头 */
 import { DownOutlined } from '@ant-design/icons';
-import { useHistory } from 'react-router-dom';
+
 /** 网络请求工具 */
 import Http from '@infra/utils/http';
+/** 状态管理方法 */
 import { useMappedState, useDispatch } from 'redux-react-hook';
+/** 自定义基础组件 */
+/** 树形组件 */
 import BasicTree from '@provider-app/data-design/src/components/BasicTree';
+/** 选择框组件 */
 import { BasicSelect } from '@provider-app/data-design/src/components/BasicSelect';
+/** 表类型枚举--表格列代码转文字时也要用 */
 import { TableTypeEnum } from '@provider-app/data-design/src/tools/constant';
 
-/** 业务组件 */
-import TableStructForm from '@provider-app/data-design/src/bizComps/TableStructForm';
-import StructTable from '@provider-app/data-design/src/bizComps/StructTable';
-
-/** 不会操作页面状态的方法 */
+/** 树操作方法 */
 import {
-  generateSelectedTree, treeFilter, disTreeNode, listToTree
+  treeQuery, listToTree
 } from '@provider-app/data-design/src/tools/tree';
 
-/** 不会操作页面状态的方法 */
+/** GMT时间格式化 */
 import {
   formatGMT
 } from '@provider-app/data-design/src/tools/format';
 
+/** 表单业务组件 */
+import StructForm from './StructForm';
+
+/** 表头菜单组件 */
+import TableHeadMenu from './TableHeadMenu';
+
+/** 表格业务组件 */
+import List from './List';
+
 /** 当前功能页样式 */
 import './tableStruct.less';
 
-// import { IPager } from '@provider-app/data-design/src/store';
+/** 搜索输入框 */
+const { Search } = Input;
+
+/** 共享状态值--表结构分页和树形源数据 */
 const mapState = (state) => ({
-  structPager: state.structPager,
   treeData: state.treeData
 });
-
-const AuthItem: FC = () => {
-  /** react路由跳转方法,必须定义在react 组件中 */
-  const History = useHistory();
+/** 给你一些使用react hook的理由  */
+/** 理由一： hook使你无需更改页面结构,也能在不同的组件间复用状态,为了在组件间复用状态,providers,consumers,render Props、高阶组件这类方案需要更改页面结构
+ *         通过抽象层组成的组件解决将可复用状态附加到组件路径的做法会形成嵌套地狱,
+ */
+/** 理由二： 复杂组件更易理解  状态逻辑和副作用充斥在组件中,使简单组件变得复杂,在hook中可以用内置暴露的reduces管理这些状态,此外,相互关联且需要对照修改的代码被拆分到不同的生命周期中 */
+/**         hook将相互关联的拆分成更小的函数，而并非强制按照生命周期划分 */
+/**  理由三 函数式组件比class组件更容易理解, 在函数组件中,很好理解props，state 和自顶向下的数据流，但在class组件中却一筹莫展，class组件中this的工作方式也不好理解 */
+/**  理由四 从概念上来讲React组件更像函数,而hook拥抱了函数,class组件不能很好的压缩,热重载不稳定,class组件会使component folding优化措施无效 */
+const TableStructContainer: FC = () => {
+  /** 在网络请求工具中,要用dispatch更改共享状态 */
   const dispatch = useDispatch();
-  const { structPager, treeData } = useMappedState(mapState);
-  const { page, pageSize } = structPager;
+  /** structPager显示列表序号的时候要用 treeData 左侧菜单树要用 */
+  const { treeData } = useMappedState(mapState);
 
   /**
+   *  useState和useReducer该如何选择
    * 如果 state 的类型为 Number, String, Boolean 建议使用 useState，如果 state 的类型 为 Object 或 Array，建议使用 useReducer
    * 如果 state 变化非常多，也是建议使用 useReducer，集中管理 state 变化，便于维护
    * 如果 state 关联变化，建议使用 useReducer
    * 业务逻辑如果很复杂，也建议使用 useReducer
    * 如果 state 只想用在 组件内部，建议使用 useState，如果想维护全局 state 建议使用 useReducer
    *    */
-  /** 搜索输入框 */
-  const { Search } = Input;
-  /** 更新树形组件数据源 */
-  const [dataSource, setDataSource] = useState([]);
+
   /** 设置模块框的显示隐藏 */
-  const [visible, setVisiable] = useState<boolean>(true);
-  /** 区分模态框展示的内容 */
-  // const [modalType, setModalType] = useState<string>(ModalTypeEnum.custom);
-  /** 设置模态框的宽度 */
-  const [modalWidth, setModalWidth] = useState<string | number>(800);
-  /** 更新选择的树节点key集合 */
-  const [targetKeys, setTargetKeys] = useState<string[]>([]);
-  /** 更新选中树数据源 */
-  const [selectedTree, setSelectedTree] = useState([]);
+  const [visible, setVisiable] = useState<boolean>(false);
+
   const [tableData, setTableData] = useState([]);
-  /** 创建可控表单实例 */
-  const [form] = Form.useForm();
 
   useEffect(() => {
-    /** 请求表结构列表数据 */
-    Http.get('http://localhost:60001/mock/structList.json', {
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    })
-      .then((res) => {
-        /** setTableData之后不能立刻获取最新值 */
-        // console.log(res.data.result.data);
-        /** 列表数据--每行记录必需有key字段 */
-        setTableData(res.data.result.data.map((col) => {
-          col.gmt_create = formatGMT(col.gmt_create);
-          col.gmt_modified = formatGMT(col.gmt_modified);
-          col.key = col.id;
-          return col;
-        }));
-      })
-      .catch((err) => console.log(err));
+    const getPageData = async () => {
+      /** 请求菜单树,表结构的表类型列依赖菜单树数据 */
+      const menuTreeRes = await Http.get('http://localhost:60001/mock/menu.json', {});
+      const tData = listToTree(menuTreeRes.data.result);
+      dispatch({ type: 'setTreeData', treeData: tData });
 
-    /** 获取左侧树形数据 */
-    Http.get('http://localhost:60001/mock/menu.json', {
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    })
-      .then((res) => {
-        const data = listToTree(res.data.result);
+      /** 请求表结构列表数据 */
+      const tableRes = await Http.get('http://localhost:60001/mock/structList.json', {});
 
-        // console.log({ data });
+      /** 表格数据格式转换-注意setTableData之后不能立刻获取最新值 */
+      setTableData(tableRes.data.result.data.map((col) => {
+        /** 根据节点的key查找节点完整信息 */
+        /** 返回节点的名称 */
+        col.module_id = treeQuery(tData, col.module_id).title;
+        // console.log(col.module_id);
+        /** 将表类型代码转换为文字 */
+        const showText = TableTypeEnum.find((item) => item.value === col.type);
+        col.type = showText ? showText.text : '';
+        /** gmt时间格式转yyyy-MM-dd hh:mm:ss */
+        col.gmt_create = formatGMT(col.gmt_create);
+        col.gmt_modified = formatGMT(col.gmt_modified);
+        /** antd table每行记录必需有key字段 */
+        col.key = col.id;
+        return col;
+      }));
+    };
 
-        dispatch({ type: 'setTreeData', treeData: data });
-        // setDataSource(treeData);
-      })
-      .catch((err) => console.log(err));
+    getPageData();
+
+    // window.onresize = function () {
+    //   console.log('log');
+    // };
   }, []);
 
-  /**
-   * 穿梭框移动节点之后触发回调
-   * @param targetKeys  选中节点key的集合
-   */
-  const onChange = (targetKeys) => {
-    // console.log('Target Keys:', targetKeys);
-    setTargetKeys(targetKeys);
-    /** 禁用已选择的节点 */
-    // setDataSource(disTreeNode(dataSource, targetKeys));
-    /** 根据选中的节点的key生成选中节点树 */
-    setSelectedTree(generateSelectedTree(treeData, targetKeys));
-    // console.log(generateSelectedTree(treeData, targetKeys));
-  };
-  /**
-   * 过滤掉已选择的树节点
-   */
-  const filter = (dataSource) => {
-    /** 过滤掉选中的节点 */
-    const reserveTree = treeFilter({
-      treeData: dataSource,
-      filter: (node) => !node.disabled,
-    });
-    // console.log(reserveTree);
-    setDataSource(reserveTree);
+  /** 表格属性 */
+  const tableProps = {
+    treeData,
+    tableData,
+    scroll: {
+      /** 必须设置，不然表格列过多时内容会撑开容器,并且不能设置成true,要设置成数字,不然列宽设置无效 */
+      x: 200,
+      /** 设置之后 ,表格头就会被固定 */
+      y: document.documentElement.clientHeight - 200,
+    },
+    style: {
+      margin: '0 20px',
+    },
   };
 
-  /**
-   * 弹框确定按钮回调
-   * @param e  点击按钮事件源
-   * @param { modalType-弹窗类型, treeData-源树, selectedTree-选中树 }
-   */
-  const handleOk = (e, { form }) => {
-    form
-      .validateFields() /** 表单校验 */
-      .then((values) => {
-        // console.log(values);
-        /** 新建表数据提交 */
-        Http.post('http://{ip}:{port}/paas/{lesseeCode}/{applicationCode}/data/v1/tables/', {
-          data: values
-        }).then(() => {
-          /** 关闭弹窗 */
-          setVisiable(false);
-        });
-      })
-      .catch((errorInfo) => {
-        /** 校验未通过 */
-        console.log(errorInfo);
-      });
-    // }
-  };
-  /** 弹框取消按钮回调 */
-  const handleCancel = (e) => {
-    setVisiable(false);
-  };
-
-  const TableHeadMenu = () => {
-    /** 更多按钮菜单 */
-    const moreButs = [
-      { key: 'tpl', menu: '表结构模板' },
-      { key: 'import', menu: '导入表结构' },
-      { key: 'export', menu: '导出表结构' },
-      { key: 'dict', menu: '字典管理' },
-    ];
-
-    /**
-     * 创建权限项下拉按钮菜单点击触发回调
-     * 执行模态框内容切换
-     * @param e 点击选项事件源
-     */
-    const dropdownClick = (e) => {
-      const { key } = e;
-      const keyAction = {
-        tpl: () => {
-
-        },
-        import: () => {
-
-        },
-        export: () => { },
-        dict: () => { }
-      };
-      keyAction[key] && keyAction[key]();
-    };
-
-    const openModal = () => {
-      setModalWidth(800);
-      setVisiable(true);
-    };
-
-    /** 下拉框选项 */
-    const menu = (
-      <Menu onClick={dropdownClick}>
-        { moreButs.map((item) => (<Menu.Item key={item.key}>{item.menu}</Menu.Item>))}
-      </Menu>
-    );
-    return (
-      <section className="table-head-menu">
-        <div className="ant-table-title">数据表列表</div>
-        <div>
-          <Button type="primary" className="button" style={{ marginRight: '16px' }} onClick={() => openModal()}>
-            新建表
-          </Button>
-          <Button type="primary" className="button" style={{ marginRight: '16px' }}>
-            标签管理
-          </Button>
-          <Dropdown overlay={menu} placement="bottomRight" trigger={['click']}>
-            <Button type="primary" className="button" style={{ marginRight: '16px' }}>
-              更多按钮 <DownOutlined />
-            </Button>
-          </Dropdown>
-        </div>
-      </section>
-    );
-  };
-  /** 树组件属性 */
-  const treeProps = {
-    dataSource,
-    selectedTree,
-    targetKeys,
-    disTreeNode,
-    onChange,
-  };
+  /** 创建可控表单实例--用于新建表 */
+  const [form] = Form.useForm();
   /** 模态框属性 */
   const modalProps = {
     visible,
     title: '新建数据表',
-    onOk: (e) => handleOk(e, { form, }),
-    onCancel: handleCancel,
+    /**
+   * 弹框确定按钮回调
+   * @param e  点击按钮事件源
+   * @param { form-新建表可控表单实例 }
+   */
+    onOk: (e) => {
+      form
+        .validateFields() /** 表单校验 */
+        .then((values) => {
+          // console.log(values);
+          /** 新建表数据提交 */
+          Http.post('http://{ip}:{port}/paas/{lesseeCode}/{applicationCode}/data/v1/tables/', {
+            data: values
+          }).then(() => {
+            /** 关闭弹窗 */
+            setVisiable(false);
+          });
+        })
+        .catch((errorInfo) => {
+          /** 校验未通过 */
+          console.log(errorInfo);
+        });
+      // }
+    },
+    /** 弹框取消按钮回调 */
+    onCancel: (e) => {
+      setVisiable(false);
+    },
     okText: '确定',
     cancelText: '取消',
     width: 800,
@@ -254,154 +180,8 @@ const AuthItem: FC = () => {
     draggable: true,
     blockNode: true,
   };
-
-  /** 单元格属性集合 */
-  const columns = (() => {
-    /** 行删除按钮触发回调 */
-    // const onDel = (row) => {
-    //   console.log(`删除行=${row}`);
-    // };
-    const operButs = [
-      { text: '编辑', onClick: (row) => { } },
-      { text: '删除', onClick: (row) => { History.push('/home'); } },
-      { text: '复制', onClick: (row) => { } },
-      { text: '表关系图', onClick: (row) => { } },
-    ];
-
-    const cols = [
-      {
-        title: '序号',
-        dataIndex: 'rowIndex',
-        width: 80,
-        /** 复杂情况渲染函数 */
-        render: (text, record, index) => {
-          // console.log({ text, record, index });
-          /** 与后端协商,行号由前端计算 */
-          return <span>{(page - 1) * pageSize + index + 1}</span>;
-        },
-      },
-      {
-        title: '数据表名称',
-        dataIndex: 'name',
-        formItemType: 'text',
-        editable: true,
-        width: 200,
-      },
-      {
-        title: '数据表编码',
-        dataIndex: 'code',
-        formItemType: 'text',
-        editable: true,
-        width: 200,
-      },
-      {
-        title: '表类型',
-        dataIndex: 'type',
-        formItemType: 'select',
-        editable: true,
-        required: false,
-        width: 400,
-        render: (val) => {
-          /** 将选项代码转换为文字 */
-          const showText = TableTypeEnum.find((item) => item.value === val);
-          return showText ? showText.text : '';
-        },
-      },
-      {
-        title: '归属模块',
-        dataIndex: 'module_id',
-        formItemType: 'tree-select',
-        editable: true,
-        width: 200,
-        // render: (key) => {
-        //   if (!key) return ''
-        //   /** 根据节点的key查找节点 */
-        //   return treeQuery(treeData, key).title
-        // },
-      },
-      {
-        title: '创建时间',
-        dataIndex: 'gmt_create',
-        width: 200,
-      },
-      // {
-      //   title: '版本',
-      //   dataIndex: 'createType',
-      //   width: 200
-      // },
-      // {
-      //   title: '标签',
-      //   dataIndex: 'createType',
-      //   width: 200
-      // },
-      {
-        title: '最后修改时间',
-        dataIndex: 'gmt_modified',
-        width: 160,
-      },
-      {
-        title: '最后修改人员',
-        dataIndex: 'modified_by',
-        width: 200,
-      },
-      {
-        title: '操作',
-        dataIndex: 'operCol',
-        fixed: 'right',
-        width: operButs.length * 80,
-        render: (row) => {
-          return operButs.map((item) => {
-            return (
-
-              <Space size="middle" key={item.text}>
-                {
-                  item.text === '删除'
-
-                    ? (<Popconfirm placement="topLeft" title={'你确定要删除这条记录吗?'} onConfirm={() => item.onClick(row)} okText="删除" cancelText="取消">
-                      <Button type="link" >
-                        {item.text}
-                      </Button>
-                    </Popconfirm>)
-
-                    : (<Button type="link" onClick={() => item.onClick(row)}>
-                      {item.text}
-                    </Button>)
-                }
-              </Space>
-            );
-          });
-        },
-      },
-    ];
-    return cols.map((col) => {
-      return {
-        ellipsis: {
-          showTitle: false,
-        },
-        render: (text) => (
-          <Tooltip placement="topLeft" title={text}>
-            {text}
-          </Tooltip>
-        ),
-        ...col,
-        key: col.dataIndex
-      };
-    });
-  })();
-  const authTableProps = {
-    treeData,
-    tableData,
-    columns,
-    scroll: {
-      x: 200,
-      y: 800,
-    },
-    style: {
-      width: 'calc(100% - 40px)',
-      margin: '0 20px',
-    },
-  };
-  const basicSelect = {
+  /** 搜索条件-表类型 */
+  const basicSelectProps = {
     enum: TableTypeEnum,
     style: { width: 224 },
     placeholder: "请选择表类型",
@@ -409,6 +189,7 @@ const AuthItem: FC = () => {
       console.log(value);
     }
   };
+  /** 搜索条件-表名称 */
   const searchProps = {
     style: { width: 224, margin: '16px' },
     placeholder: '请输入表名称',
@@ -429,21 +210,21 @@ const AuthItem: FC = () => {
       <main className="content bl1px">
         {/* 搜索条件框 */}
         <div className="flex v-center ml20">
-          <BasicSelect {...basicSelect} />
+          <BasicSelect {...basicSelectProps} />
           <Search {...searchProps} />
         </div>
         {/* 表头菜单--新建表 标签管理 更多按钮 */}
-        <TableHeadMenu />
+        <TableHeadMenu openModal={() => setVisiable(true)}/>
         {/* 表结构列表 */}
-        <StructTable {...authTableProps} />
+        <List {...tableProps} />
       </main>
       {/* 新建表弹窗 */}
       <Modal {...modalProps}>
         {/* 新建表表单 */}
-        <TableStructForm {...formProps} />
+        <StructForm {...formProps} />
       </Modal>
     </div>
   );
 };
 
-export default AuthItem;
+export default TableStructContainer;

@@ -1,0 +1,198 @@
+/*
+ * @Author: wangph
+ * @Date: 2020-07-10 12:00:29
+ * @Last Modified by:   wangph
+ * @Last Modified time: 2020-07-10 12:00:29
+ */
+
+import React, { useEffect } from 'react';
+import {
+  Table, Button, Space, Tooltip, Popconfirm
+} from 'antd';
+
+/** react路由暴露出来的页面跳转方法 */
+import { useHistory } from 'react-router-dom';
+
+/** 状态管理方法 */
+import { useMappedState, useDispatch } from 'redux-react-hook';
+
+/** 共享状态值--表结构分页和树形源数据 */
+const mapState = (state) => ({
+  structPager: state.structPager,
+});
+const List = (props) => {
+  const {
+    tableData, scroll, style, title
+  } = props;
+
+  /** react路由跳转方法,必须定义在react 组件中,跳转到编辑表页面时要用 */
+  const History = useHistory();
+  /** 在网络请求工具中,要用dispatch更改共享状态 */
+  const dispatch = useDispatch();
+  /** structPager显示列表序号的时候要用 treeData 左侧菜单树要用 */
+  const { structPager } = useMappedState(mapState);
+  const { page, pageSize } = structPager;
+
+  /**
+   *  useState和useReducer该如何选择
+   * 如果 state 的类型为 Number, String, Boolean 建议使用 useState，如果 state 的类型 为 Object 或 Array，建议使用 useReducer
+   * 如果 state 变化非常多，也是建议使用 useReducer，集中管理 state 变化，便于维护
+   * 如果 state 关联变化，建议使用 useReducer
+   * 业务逻辑如果很复杂，也建议使用 useReducer
+   * 如果 state 只想用在 组件内部，建议使用 useState，如果想维护全局 state 建议使用 useReducer
+   *    */
+  useEffect(() => {
+
+    // window.onresize = function () {
+    //   console.log('log');
+    // };
+  }, []);
+
+  /** 单元格属性集合 */
+  const columns = (() => {
+    /** 操作按钮 */
+    const operButs = [
+      { text: '编辑', onClick: (row) => { History.push('/home'); } },
+      { text: '删除', onClick: (row) => { } },
+      { text: '复制', onClick: (row) => { } },
+      { text: '表关系图', onClick: (row) => { } },
+    ];
+
+    const cols = [
+      {
+        title: '序号',
+        dataIndex: 'rowIndex',
+        width: 80,
+        /** 自定义渲染函数 */
+        render: (text, record, index) => {
+          // console.log({ text, record, index });
+          /** 与后端协商,行号由前端计算 */
+          return <span>{(page - 1) * pageSize + index + 1}</span>;
+        },
+      },
+      {
+        title: '数据表名称',
+        dataIndex: 'name',
+        width: 140,
+      },
+      {
+        title: '数据表编码',
+        dataIndex: 'code',
+        width: 140,
+      },
+      {
+        title: '表类型',
+        dataIndex: 'type',
+        width: 100,
+      },
+      {
+        title: '归属模块',
+        dataIndex: 'module_id',
+        width: 140,
+      },
+      {
+        title: '创建时间',
+        dataIndex: 'gmt_create',
+        width: 160,
+      },
+      // {
+      //   title: '版本',
+      //   dataIndex: 'version',
+      //   width: 100
+      // },
+      // {
+      //   title: '标签',
+      //   dataIndex: 'tag',
+      //   width: 100
+      // },
+      {
+        title: '最后修改时间',
+        dataIndex: 'gmt_modified',
+        width: 160,
+      },
+      {
+        title: '最后修改人员',
+        dataIndex: 'modified_by',
+        width: 140,
+      },
+      {
+        title: '操作',
+        dataIndex: 'operCol',
+        /** fixed属性会引起eslint告警, 需要使用断言 */
+        fixed: 'right' as const,
+        /** 每个文本的宽度应设置为80,是通过调整样式得出的合理值 */
+        width: operButs.length * 80,
+        render: (row) => {
+          return operButs.map((item) => {
+            return (
+              <Space size="middle" key={item.text}>
+                {
+                  /** 删除需要弹出二次确认框 */
+                  item.text === '删除'
+                    ? (<Popconfirm placement="topLeft" title={'你确定要删除这条记录吗?'} onConfirm={() => item.onClick(row)} okText="删除" cancelText="取消">
+                      <Button type="link" >
+                        {item.text}
+                      </Button>
+                    </Popconfirm>)
+
+                    : (<Button type="link" onClick={() => item.onClick(row)}>
+                      {item.text}
+                    </Button>)
+                }
+              </Space>
+            );
+          });
+        },
+      },
+    ];
+    /**  公共设置 */
+    return cols.map((col) => {
+      return Object.assign({}, {
+        key: col.dataIndex,
+        ellipsis: {
+          showTitle: true
+        },
+        render: (text) => (
+          <Tooltip placement="topLeft" title={text}>
+            {text}
+          </Tooltip>
+        ),
+
+      }, { ...col });
+    });
+  })();
+
+  return (
+    <Table
+      bordered
+      title={title}
+      dataSource={tableData}
+      columns={columns}
+      scroll={scroll}
+      style={style}
+      rowClassName="editable-row"
+      pagination={{
+        showTotal: ((total) => {
+          return `共 ${total} 条`;
+        }),
+        onChange: (page, pageSize) => {
+          dispatch({ type: 'triggerStructPager', structPager: { page, pageSize } });
+        }
+      }}
+
+      onRow={(record) => {
+        return {
+          onDoubleClick: (event) => {
+          },
+          onMouseLeave: (event) => {
+          },
+          onContextMenu: (event) => { },
+          onMouseEnter: (event) => { },
+          onClick: (event) => { }
+        };
+      }}
+    ></Table>
+  );
+};
+
+export default List;

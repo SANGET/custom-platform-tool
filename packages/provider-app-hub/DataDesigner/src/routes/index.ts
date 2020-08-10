@@ -6,8 +6,8 @@
  * @Description: 添加注释
  * @FilePath: \custom-platform-v3-frontend\packages\provider-app-hub\AuthManager\src\routes\index.ts
  */
-
-import TableStruct from '@provider-app/data-design/src/pages/TableStruct';
+/** 表结构容器 */
+import TableStructContainer from '@provider-app/data-design/src/pages/TableStruct';
 // import TableKey from '../pages/tableKey';
 // import Label from '../pages/label';
 
@@ -15,12 +15,12 @@ import TableStruct from '@provider-app/data-design/src/pages/TableStruct';
 /**  URL请求中不采用大小写混合的驼峰命名方式，尽量采用全小写单词，如果需要连接多个单词，则采用连接符“_”连接单词 */
 const ROUTES = [
   {
-    key: 'TableStruct',
+    key: 'TableStructContainer',
     link: '/',
-    /** 注意:icon一定要是@ant-design/icons存在的icon */
+    /** 注意:icon的名称一定要是@ant-design/icons存在的icon名称 */
     icon: 'GoldOutlined',
     text: '表结构管理',
-    component: TableStruct
+    component: TableStructContainer
   },
   // {
   //   key: 'TableKey',

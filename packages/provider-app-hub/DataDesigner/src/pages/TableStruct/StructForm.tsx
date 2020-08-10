@@ -1,9 +1,9 @@
-import React from 'react';
+import React, { useReducer } from 'react';
 import {
   Form, TreeSelect, Input
 } from 'antd';
 /** 当前页面样式 */
-import './tableStructForm.less';
+import './tableStruct.less';
 
 /** 导出基础选择框及其枚举数据 */
 /** 内聚和单一职责,有时候令人感觉边界不清,枚举值和选择框组件放在一起貌似也不错 */
@@ -50,7 +50,21 @@ const formItemLayout = {
   }
 };
 
-const AuthForm = ({
+function init(formItemsConfig) {
+  return { formItemsConfig };
+}
+
+const reducer = (state, action) => {
+  const { formItemsConfig } = action;
+  switch (action.type) {
+    case 'setFormItemsConfig':
+      return { formItemsConfig };
+    default:
+      throw new Error();
+  }
+};
+
+const StructForm = ({
   form, treeData, initialValues, ...rest
 }) => {
   // console.log({ treeData });
@@ -93,8 +107,22 @@ const AuthForm = ({
       width: '100%'
     }
   };
+
+  const onTypeChange = () => {
+    // dispatch({ type: 'increment' });
+    // const { primary_table: primaryTable } = state;
+    // const primaryTableCopy = JSON.parse(JSON.stringify(state.primary_table));
+
+    if (form.getFieldValue('type') === 'aux_table') {
+      state.formItemsConfig.primary_table.hide = false;
+    } else {
+      state.formItemsConfig.primary_table.hide = true;
+      // dispatch({ type: 'setFormItemsConfig', primary_table: primaryTableCopy });
+    }
+    dispatch({ type: 'setFormItemsConfig', formItemsConfig: state.formItemsConfig });
+  };
   /** 表单配置项 */
-  const formItemsConfigs = {
+  const formItemsConfigInitValue = {
     name: {
       /** 表单项属性 */
       itemAttr: {
@@ -143,7 +171,18 @@ const AuthForm = ({
       },
       compAttr: {
         type: 'BasicSelect',
-        enum: TableTypeEnum
+        enum: TableTypeEnum,
+        onChange: onTypeChange
+      }
+    },
+    primary_table: {
+      hide: true,
+      itemAttr: {
+        name: "primay_table",
+        label: "主表"
+      },
+      compAttr: {
+        type: 'Input',
       }
     },
     module_id: {
@@ -181,6 +220,12 @@ const AuthForm = ({
       }
     }
   };
+
+  const [state, dispatch] = useReducer(reducer, formItemsConfigInitValue, init);
+  console.log(state);
+  // const {
+  //   name, code, type, primary_table: primaryTable, module_id: moduleId, tag, description
+  // } = formItemsConfigInitValue;
   return (
     <Form
       name="auth-form"
@@ -192,15 +237,15 @@ const AuthForm = ({
       initialValues={initialValues}
       {...rest}
     >{
-      /** 动态遍历生成表单 */
-        Object.keys(formItemsConfigs).map((key) => (
-          <Form.Item key={key} {...formItemsConfigs[key].itemAttr}>
-            <Story {...formItemsConfigs[key].compAttr} />
-          </Form.Item>
+
+        Object.keys(state.formItemsConfig).map((key) => (
+          !state.formItemsConfig[key].hide
+            ? (<Form.Item key={key} {...state.formItemsConfig[key].itemAttr}>
+              <Story {...state.formItemsConfig[key].compAttr} />
+            </Form.Item>) : ''
         ))
       }
-    </Form>
-  );
+    </Form>);
 };
 
-export default AuthForm;
+export default StructForm;
