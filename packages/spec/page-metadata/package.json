@@ -1,0 +1,7 @@
+{
+  "name": "@spec/page-metadata",
+  "description": "页面元数据，页面接入规格",
+  "version": "0.0.1",
+  "author": "SANGET",
+  "license": "MIT"
+}

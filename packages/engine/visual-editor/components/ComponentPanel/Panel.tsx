@@ -1,8 +1,8 @@
 import React from 'react';
 import { Tabs, Tab } from '@infra/ui';
 
-import DragItem, { DragItemConfig } from './DragItem';
-import { EditorComponentClass } from '../../types';
+import DragItem, { DragItemConfig } from '@engine/visual-editor/spec/DragItem';
+import { EditorComponentClass } from '@engine/visual-editor/types';
 import { componentClassCollection } from '../../mock-data';
 
 export interface PanelItemsGroup {

@@ -12,19 +12,29 @@ export const componentClassCollection: ComponentClassCollection = {
     component: {
       type: 'Input'
     },
-    properties: {
-      propRefs: ['prop-style-1']
+    bindProperties: {
+      propRefs: [
+        'prop-style-1',
+        'prop-label-1'
+      ]
     }
   },
   'container-1': {
     id: 'con1',
+    type: 'container',
     layout: {
-      type: 'flex',
+      type: 'flex', // 布局方式
+      props: {
+        justifyContent: 'start',
+        justifyItems: 'start'
+      }
     },
     label: 'Flex 布局',
-    type: 'container',
-    properties: {
-      propRefs: ['prop-style-1']
+    bindProperties: {
+      propRefs: [
+        'prop-style-1',
+        'prop-flex-config-1'
+      ]
     }
   },
 };
