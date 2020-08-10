@@ -4,12 +4,16 @@
 
 /// //////////////// 组件 ///////////////////
 
+interface GenericComponentType {
+  type: string
+}
+
 /**
  * 可拖动的组件的 class
  */
-export interface EditorComponentClass {
+export interface EditorBasicComponentClass {
   /** 组件类型 */
-  type: 'container' | 'component'
+  type: string
   /** 组件类型 id */
   id: string
   /** 父级 ID */
@@ -18,16 +22,47 @@ export interface EditorComponentClass {
   entityID?: string
   /** 显示的标签 */
   label: string;
-  /** 组件类型 */
-  component: {
-    type: string
-  }
   /** 绑定可编辑的属性 */
-  properties: {
+  bindProperties: {
     /** 绑定的属性的 id */
     propRefs: string[]
   }
 }
+
+/**
+ * 容器组件类
+ */
+export interface EditorContainerClass<C> extends EditorBasicComponentClass {
+  /** 容器组件 */
+  type: 'container'
+  /** 组件类型 */
+  component?: C
+  /** 布局容器特有的类型 */
+  layout: {
+    type: 'flex'
+    props: {
+      justifyContent
+      justifyItems
+    }
+  }
+}
+
+/**
+ * 一般组件类
+ */
+export interface EditorCompClass<C> extends EditorBasicComponentClass {
+  /** 一般组件 */
+  type: 'component'
+  /** 组件类型 */
+  component: C
+}
+
+/**
+ * 可拖动的组件的 class
+ */
+export type EditorComponentClass<C = GenericComponentType> =
+  EditorContainerClass<C> |
+  EditorCompClass<C>
 
 /// //////////////// 属性 ///////////////////
 
@@ -42,11 +77,13 @@ export interface EditorPropertyItem {
   /** 属性的类型 */
   type: string
   /** 属性作用于组件实例的某种属性 */
-  target: 'style' | 'data'
+  target: string
+  /** 默认值 */
+  defaultValue?: any
   /** 用于渲染该属性组件的配置信息 */
   component: {
     /** 用于找到具体组件 */
-    type: 'Input'
+    type: string
   }
 }
 
@@ -58,7 +95,7 @@ export type PropertyItemConfigFunc = (entity: EditorComponentEntity) => EditorPr
 /**
  * 属性项接入方式
  */
-export type PropertyItemConfig = PropertyItemConfigFunc | EditorPropertyItem
+export type PropertyItemConfig = PropertyItemConfigFunc
 
 /**
  * 属性项集合
@@ -106,19 +143,22 @@ export interface EntitiesStateStore {
 
 /// //////////////// 实例状态 ///////////////////
 
-/**
- * 组件实例
- */
-export interface EditorComponentEntity extends EditorComponentClass {
+export interface EditorComponentEntityProps {
   /** 实例 id */
   id: string;
   /** 组件实例状态数据 */
   // entityState: EditorEntityState
   /** 实例化后的状态 */
-  _state: 'active' | 'disable'
+  _state: string
+  // _state: 'active' | 'disable'
   /** 实例化后的 class id */
-  _classID: string
+  _classID: EditorComponentClass['id']
 }
+
+/**
+ * 组件实例
+ */
+export type EditorComponentEntity = EditorComponentClass & EditorComponentEntityProps
 
 /**
  * 组件实例

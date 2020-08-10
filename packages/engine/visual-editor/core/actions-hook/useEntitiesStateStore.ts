@@ -1,7 +1,7 @@
 import { useState } from "react";
-import { EntitiesStateStore } from "../../types";
+import { EntitiesStateStore, EditorEntityState } from "../../types";
 
-export type SaveEntitiesStateStore = (id: string, formState: any) => void
+export type SaveEntitiesStateStore = (id: string, formState: EditorEntityState) => void
 
 /**
  * React hook for store of component's props

@@ -11,7 +11,7 @@ export const isObject = (item) => {
  *
  * deep copy
  */
-export const mergeDeep = (target, ...sources) => {
+export const mergeDeep = <T>(target: T, ...sources): T => {
   if (!sources.length) return target;
   const source = sources.shift();
 

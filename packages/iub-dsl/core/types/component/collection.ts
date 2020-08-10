@@ -1,4 +1,4 @@
-import { ElementBasic } from "../layout-content";
+import { ElementBasic } from "@engine/layout-renderer/types";
 import {
   Selector, TreeSelector, Table, Button, Input
 } from "./components";

@@ -1,7 +1,7 @@
 import React from 'react';
 import { Tabs, Tab } from '@infra/ui';
 
-import DragItem, { DragItemConfig } from './DragItem';
+import DragItem, { DragItemConfig } from '@engine/visual-editor/spec/DragItem';
 import { EditorComponentClass } from '../../types';
 
 export interface PanelItemsGroup {
@@ -111,7 +111,7 @@ ComponentPanel.defaultProps = {
                 component: 'Input',
                 label: '文本框',
                 type: 'component',
-                properties: {
+                bindProperties: {
                   propRefs: ['propID-1', 'propID-2']
                 }
               }
@@ -123,11 +123,15 @@ ComponentPanel.defaultProps = {
               {
                 id: 'con1',
                 layout: {
-                  type: 'flex',
+                  type: 'flex', // 布局方式
+                  props: {
+                    justifyContent: 'start',
+                    justifyItems: 'start'
+                  }
                 },
                 label: 'Flex 布局',
                 type: 'container',
-                properties: {
+                bindProperties: {
                   propRefs: ['propID-1', 'propID-2', 'propID-3', 'propID-4', 'propID-5']
                 }
               }

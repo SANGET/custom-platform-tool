@@ -1,14 +1,20 @@
+/**
+ * 具体 container 实现的地方
+ */
+
 import React from 'react';
 import styled from 'styled-components';
 import { useDrop } from 'react-dnd';
 import classnames from 'classnames';
 
-import { ItemTypes } from '../ComponentPanel';
-import { isNodeInChild } from './utils/node-filter';
-import DragItem from '../ComponentPanel/DragItem';
-import { DragComponentClass, DropCollectType } from '../../types';
+import { isNodeInChild } from '@engine/visual-editor/utils/node-filter';
+import { DragComponentClass, DropCollectType } from '@engine/visual-editor/types';
+import { ItemTypes } from '../types';
+import DragItem from '../DragItem';
+import { FacToComponentProps } from '../wrapper-fac';
 
 const ContainerWrapper = styled.div`
+  position: relative;
   padding: 20px;
   background-color: rgba(0,0,0, 0.1);
   margin: 10px;
@@ -19,15 +25,29 @@ const ContainerWrapper = styled.div`
     background-color: rgba(48, 95, 144, 0.5);
   }
   &.selected {
-    box-shadow: 0 0 1px 3px rgba(127, 113, 185, 0.5);
+    /* box-shadow: 0 0 1px 3px rgba(127, 113, 185, 0.5); */
+    >.state-mark {
+      /* pointer-events: none; */
+      border-color: blue;
+    }
   }
 `;
 
-const ContainerWrapperCom = ({
+const containerLayoutParser = (layoutInfo): React.CSSProperties => {
+  return {
+    display: 'flex',
+    flex: 1
+  };
+};
+
+type ContainerWrapperComProps = FacToComponentProps
+
+const ContainerWrapperCom: React.FC<ContainerWrapperComProps> = ({
   children,
   currEntity,
-  onClick,
   id,
+  node,
+  onClick,
   getSelectedState,
   getEntityProps,
   onDrop
@@ -76,6 +96,8 @@ const ContainerWrapperCom = ({
 
   const entityState = getEntityProps(id) || {};
   const { style } = entityState;
+  const { layout: layoutProps } = node;
+  // const _style = Object.assign({}, style, containerLayoutParser(layoutProps));
 
   // TODO: 修复 flex 布局的问题
   return (
@@ -83,18 +105,22 @@ const ContainerWrapperCom = ({
       ref={drop}
       onClick={(e) => {
         e.stopPropagation();
-        onClick(e, { id, entity: currEntity });
+        onClick(e, currEntity);
       }}
+      className="relative"
     >
       <DragItem
         dragItemClass={currEntity}
       >
         <ContainerWrapper
           className={classes}
-          style={style}
         >
-          <div>容器, ID: {id}</div>
-          {children}
+          <div
+            style={containerLayoutParser(layoutProps)}
+          >
+            {children}
+          </div>
+          <div className="state-mark fill"></div>
         </ContainerWrapper>
       </DragItem>
     </div>

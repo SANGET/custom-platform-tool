@@ -5,9 +5,9 @@ import { ItemTypes } from './types';
 /**
  * 作用于 dragItem 传递到 drop 容器的参数配置
  */
-export type DragItemConfig = {}
+export type DragItemConfig = any
 
-export interface DragItemProps {
+export interface DragItemProps extends React.HTMLAttributes<HTMLDivElement> {
   children: any;
   dragItemClass: any;
   dragConfig?: DragItemConfig

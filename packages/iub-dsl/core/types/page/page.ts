@@ -1,3 +1,5 @@
+import PageMetadata from '@spec/page-metadata';
+
 import {
   ComponentElement,
 } from "../component";
@@ -10,34 +12,11 @@ import { LayoutContent } from "../layout-content";
 import { MetadataMappingCollection } from "..";
 
 /**
- * 页面类型详细定义
- */
-type PageTypes =
-  /** 通过配置生成 */
-  | "config"
-  /** 嵌入页面 */
-  | "embed";
-
-/**
  * 描述页面信息的 DSL
- *
- * 规则：一级属性存储描述页面的信息
  *
  * TODO: 增加依赖校验
  */
-export interface TypeOfIUBDSL {
-  /**
-   * 页面 ID，用于给其他页面引用
-   * TODO: 创建页面时需要获取
-   */
-  id: string;
-
-  /** 页面类型 */
-  type: PageTypes;
-
-  /** 页面名称 */
-  name: string;
-
+export interface TypeOfIUBDSL extends PageMetadata {
   /** 与 system runtime context 的接口 */
   sysRtCxtInterface: SRCInterface;
 
