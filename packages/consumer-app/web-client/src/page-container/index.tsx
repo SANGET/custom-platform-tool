@@ -7,6 +7,7 @@ import React, { Children } from 'react';
 import { TypeOfIUBDSL } from "@iub-dsl/core/types";
 import IUBDSLParser from '@iub-dsl/parser/engin';
 
+import IUBDSLRuntimeContainer from '@iub-dsl/parser/engin/IUBDSLRuntimeContainer';
 import { AuthUIByUIID } from '../services/auth';
 import $R from '../services/req';
 import { initPageContext } from './context';
@@ -36,13 +37,13 @@ interface PageContainerProps {
 const parserLoader = (type, appContext, { dsl, pageAuthInfo }) => {
   switch (type) {
     case 'config':
-      return IUBDSLParser({
+      return IUBDSLRuntimeContainer({
         // 接口反射，UI 验证
-        context: {
-          setContext: () => ({}),
-        },
-        authUI: (UIID) => AuthUIByUIID(UIID, pageAuthInfo),
-        dsl
+        // context: {
+        //   setContext: () => ({}),
+        // },
+        // authUI: (UIID) => AuthUIByUIID(UIID, pageAuthInfo),
+        dslParseRes: dsl
       });
     case 'embed':
       return SpecificParser();
@@ -77,7 +78,7 @@ const PageContainer = (props: PageContainerProps) => {
       id={pageID}
       name={name}
     >{
-        ParserResult.layoutParseRes
+        ParserResult
       }</PageContainerWrapper>);
     // return <div></div>;
   }
