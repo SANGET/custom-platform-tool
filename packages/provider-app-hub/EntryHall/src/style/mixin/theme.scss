@@ -1,0 +1,92 @@
+$colorsMap: (
+  (name: 'theme', color: $themeColor, text: #FFF),
+  (name: 'blue', color: $blue, text: #FFF),
+  (name: 'light-blue', color: $light-blue, text: #FFF),
+  (name: 'red', color: $red, text: #FFF),
+  (name: 'green', color: $green-4, text: #FFF),
+  (name: 'cyan', color: $cyan-4, text: #FFF),
+  (name: 'purple', color: $purple, text: #FFF),
+  (name: 'orange', color: $orange, text: #FFF),
+);
+
+$darkBgColor: #33404e;
+$darkTextColor: #EEE;
+
+@mixin themeGen() {
+  &.vertical {
+    
+  }
+  &.dark {
+    .nav-menu-wrapper {
+      background-color: $darkBgColor;
+    }
+    .flow-menu-container {
+      background-color: $darkBgColor;
+    }
+    .admin-status-bar {
+      background-color: $darkBgColor;
+      color: $darkTextColor;
+    }
+    .nav-menu-tree {
+      .menu {
+        color: $darkTextColor;
+      }
+      .fold {
+        color: $darkTextColor;
+        &.active, &.hover, &:hover {
+          color: $darkTextColor;
+        }
+      }
+    }
+    .menu-header {
+      color: $darkTextColor;
+      border-color: darken($darkBgColor, 5%);
+      hr {
+        border-color: darken($darkBgColor, 5%);
+      }
+      .action-group,.title {
+        color: $darkTextColor;
+      }
+    }
+    .tabs-for-multiple-router .tab-item {
+      border-color: darken($darkBgColor, 10%);
+    }
+  }
+  // &.light {
+
+  // }
+  @for $i from 1 through length($colorsMap) {
+    $item: nth($colorsMap, $i);
+    
+    &.#{map-get($item, name)} {
+      @include mixinTheme(map-get($item, color));
+    }
+  }
+}
+@mixin mixinTheme($basicBgColor, $basicTextColor: #777) {
+  border-top-color: $basicBgColor;
+  .btn.theme {
+    background-color: $basicBgColor;
+    border-color: $basicBgColor;
+  }
+  .link,.link-btn,.tab-item.active {
+    color: $basicBgColor;
+  }
+  .menu-header {
+    border-top-color: $basicBgColor;
+  }
+  .nav-menu-tree {
+    .menu {
+      &.active {
+        color: $basicBgColor;
+      }
+    }
+  }
+  .tabs-for-multiple-router .tab-item {
+    &.active, &:hover {
+      ._btn {
+        color: $basicBgColor;
+      }
+    }
+  }
+}

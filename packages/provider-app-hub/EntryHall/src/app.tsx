@@ -59,12 +59,11 @@ export default class App extends RouterMultiple<AppContainerProps, AppContainerS
             <>
               <Nav navConfig={navStore} />
               <div
-                className="router-tabs"
+                className="tabs-for-multiple-router"
                 style={{
                   margin: 20
                 }}
               >
-                <div>Tab container</div>
                 {
                   routers.map((route, idx) => {
                     return (
