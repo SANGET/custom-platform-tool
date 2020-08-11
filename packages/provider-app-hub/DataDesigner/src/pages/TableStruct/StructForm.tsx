@@ -7,10 +7,14 @@ import './tableStruct.less';
 
 /** 导出基础选择框及其枚举数据 */
 /** 内聚和单一职责,有时候令人感觉边界不清,枚举值和选择框组件放在一起貌似也不错 */
-import { BasicSelect } from '@provider-app/data-designer/src/components/BasicSelect';
 import { TableTypeEnum } from '@provider-app/data-designer/src/tools/constant';
 /** 中文转拼音工具 */
 import PinYin from 'js-pinyin';
+
+/**
+ * 在antd Select组件基础上封装的选择框组件
+ */
+import BasicStory from '@provider-app/data-designer/src/components/BasicStory';
 
 /** 中文转换为拼音工具设置选项 */
 PinYin.setOptions({
@@ -19,24 +23,6 @@ PinYin.setOptions({
   /** 将汉字首字母转换为大写拼音 */
   charCase: 0,
 });
-
-/** 文本域组件是Input的一个衍生类型 */
-const { TextArea } = Input;
-
-/** 组件列表 */
-const components = {
-  Input,
-  TextArea,
-  BasicSelect,
-  TreeSelect,
-};
-
-/** 组件仓库-动态渲染组件 */
-const Story = (props) => {
-  // type是组件类型
-  const SpecificStory = components[props.type];
-  return <SpecificStory {...props} />;
-};
 
 /** 表单项label和content的宽度 */
 const formItemLayout = {
@@ -114,13 +100,22 @@ const StructForm = ({
     // const primaryTableCopy = JSON.parse(JSON.stringify(state.primary_table));
 
     console.log(form.getFieldValue('type'));
-
     if (form.getFieldValue('type') === 'auxTable') {
       formItemsConfig.primary_table.hide = false;
-      setFormItemsConfig(formItemsConfig);
+      const { primary_table } = formItemsConfig;
+      setFormItemsConfig({ ...formItemsConfig, primary_table });
+      // setFormItemsConfig((prevState) => ({
+      //   ...prevState,
+      //   primary_table: { hide: false }
+
+      // }));
+      console.log(form.getFieldValue('type'), formItemsConfig.primary_table);
     } else {
       formItemsConfig.primary_table.hide = true;
-      setFormItemsConfig(formItemsConfig);
+      const { primary_table } = formItemsConfig;
+      setFormItemsConfig({ ...formItemsConfig, primary_table });
+      // setFormItemsConfig(formItemsConfig);
+      // console.log(form.getFieldValue('type'), formItemsConfig.primary_table);
       // dispatch({ type: 'setFormItemsConfig', primary_table: primaryTableCopy });
     }
     // dispatch({ type: 'setFormItemsConfig', formItemsConfig: state.formItemsConfig });
@@ -180,7 +175,7 @@ const StructForm = ({
       }
     },
     primary_table: {
-      hide: false,
+      hide: true,
       itemAttr: {
         name: "primay_table",
         label: "主表"
@@ -247,10 +242,9 @@ const StructForm = ({
     >{
 
         Object.keys(formItemsConfig).map((key) => (
-          !formItemsConfig[key].hide
-            ? (<Form.Item key={key} {...formItemsConfig[key].itemAttr}>
-              <Story {...formItemsConfig[key].compAttr} />
-            </Form.Item>) : ''
+          <Form.Item key={key} {...formItemsConfig[key].itemAttr} style={{ display: formItemsConfig[key].hide ? 'none' : '' }}>
+            <BasicStory {...formItemsConfig[key].compAttr} />
+          </Form.Item>
         ))
       }
     </Form>);

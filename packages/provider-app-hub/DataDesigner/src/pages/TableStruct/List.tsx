@@ -44,7 +44,7 @@ const List = (props) => {
   const columns = (() => {
     /** 操作按钮 */
     const operButs = [
-      { text: '编辑', onClick: (row) => { History.push('/home'); } },
+      { text: '编辑', onClick: (row) => { History.push('/EditStruct'); } },
       { text: '删除', onClick: (row) => { } },
       { text: '复制', onClick: (row) => { } },
       { text: '表关系图', onClick: (row) => { } },
