@@ -2,39 +2,36 @@
 // import PageSchemas from "./page-schemas";
 // import FlowSchemas from "./flow-schemas";
 
-type StructType = 'structArray' | 'structObject'
-type FoundationType = 'num' | 'string' | 'boolean'
-
-interface Rule {
-  require?: boolean;
-  minLength?: string;
-  maxLength?: string;
-  [rule: string]: unknown;
-}
+export type StructType = 'structArray' | 'structObject'
+export type FoundationType = 'number' | 'string' | 'boolean'
 
 interface BaseScheams {
-  rules?: Rule[]; // 规则也应该是属于关系的扩展来的,因为他是有多方的依赖
-  defaultVal?: string | number | boolean; // 默认值
+  // rules?: Rule[]; // 规则也应该是属于关系的扩展来的,因为他是有多方的依赖
   // group?: string[]; // 是关系使用模型仓库,关系依赖他.. 所以放在关系上扩展
-  inputDataWeight?: unknown[]; // 多个来源的值共同作用于同一个模型
+  // inputDataWeight?: unknown[]; // 多个来源的值共同作用于同一个模型
 
-  alias?: string; // 别名描述 // TODO: 以后会修改的
+  /** 默认值 */
+  defaultVal?: string | number | boolean; // 默认值
+  /** 别名key */
+  alias?: string;
+  /** 字段描述 */
+  desc?: string;
+  tag?: string;
 }
-
 export interface FoundationTypeSchemas extends BaseScheams {
   type: FoundationType
-  // TODO: 存疑关系型数据库,对应的是基础类型的,有结构的数据类型应该没有fieldMapping
-  fieldMapping?: string; // 元数据到数据模型的字段映射
+  /** 仅有和元数据映射有关的才有: 元数据到数据模型的字段映射 */
+  fieldMapping?: string;
 }
 
-export interface StructTypeSchemas extends BaseScheams {
+export interface ComplexTypeSchemas extends BaseScheams {
   type: StructType;
   struct: {
-    [UUID: string]: FoundationTypeSchemas | StructTypeSchemas
+    [UUID: string]: SchemaItem
   }
 }
 
-export type SchemaItem = FoundationTypeSchemas | StructTypeSchemas
+export type SchemaItem = FoundationTypeSchemas | ComplexTypeSchemas
 
 export interface Schemas {
   [dataUUID: string]: SchemaItem;
