@@ -69,21 +69,24 @@ const VisualEditorApp: React.FC<VisualEditorAppProps> = (props) => {
             <ComponentPanel />
           </Grid>
           <Grid
-            lg={8}
-            md={8}
-            sm={8}
-            xs={8}
+            lg={10}
+            md={10}
+            sm={10}
+            xs={10}
             item
             className="canvas-container"
           >
             <CanvasStage
-              selectedEntities={selectedEntities.selectedList}
+              selectedEntities={selectedEntities}
               entitiesStateStore={entitiesStateStore}
               selectEntity={SelectEntity}
+              initEntityState={InitEntityState}
+              updateEntityState={UpdateEntityState}
+              PropEditorRenderer={PropertiesEditor}
             />
           </Grid>
         </DndProvider>
-        {
+        {/* {
           !!activeEntity && (
             <Grid
               lg={2}
@@ -102,7 +105,7 @@ const VisualEditorApp: React.FC<VisualEditorAppProps> = (props) => {
               />
             </Grid>
           )
-        }
+        } */}
       </Grid>
       <GlobalStyle />
     </div>

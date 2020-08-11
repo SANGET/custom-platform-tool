@@ -80,7 +80,7 @@ interface PropertiesEditorState {
 class PropertiesEditor extends React.Component<
 PropertiesEditorProps, PropertiesEditorState
 > {
-  state = {
+  state: PropertiesEditorState = {
     entityState: {}
   }
 

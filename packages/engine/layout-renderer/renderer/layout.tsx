@@ -13,9 +13,9 @@ export interface LayoutWrapperContext {
 
 export interface LayoutParserWrapper {
   /** 容器渲染 wrapper 包装函数 */
-  containerWrapper?: (ctx: LayoutWrapperContext) => React.ElementType
+  containerWrapper?: (ctx: LayoutWrapperContext) => JSX.Element
   /** 组件渲染器，由调用方实现 */
-  componentRenderer?: (ctx: LayoutWrapperContext) => React.ElementType
+  componentRenderer?: (ctx: LayoutWrapperContext) => JSX.Element
 }
 
 export interface LayoutRendererProps extends LayoutParserWrapper {
@@ -74,6 +74,9 @@ const renderLayout = (
   return res;
 };
 
+/**
+ * 布局渲染引擎入口
+ */
 const LayoutRenderer: React.FC<LayoutRendererProps> = (
   props,
 ) => {

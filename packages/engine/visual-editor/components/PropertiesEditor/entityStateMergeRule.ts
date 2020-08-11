@@ -14,25 +14,33 @@ type EntityStateMergeRule = (
 /**
  * 提取属性中的 style
  */
-export const getStyle = ({ value, propItemConfig }: EntityStateItemParams) => {
+export const getStyle = ({
+  value,
+  propItemConfig
+}: EntityStateItemParams) => {
   if (propItemConfig.type === 'style') {
     const { target } = propItemConfig;
     return {
       [target]: value
     };
   }
+  return undefined;
 };
 
 /**
  * 合并通用属性
  */
-export const mergeGeneralProp = ({ value, propItemConfig }: EntityStateItemParams) => {
+export const mergeGeneralProp = ({
+  value,
+  propItemConfig
+}: EntityStateItemParams) => {
   if (propItemConfig.type === 'general') {
     const { target } = propItemConfig;
     return {
       [target]: value
     };
   }
+  return undefined;
 };
 
 /**
