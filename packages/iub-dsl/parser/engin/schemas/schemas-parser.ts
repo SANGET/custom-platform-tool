@@ -1,223 +1,192 @@
-import { useState, useEffect } from 'react';
+/* eslint-disable no-param-reassign */
 import {
-  MetadataMappingCollection,
   Schemas, SchemaItem,
   FoundationTypeSchemas,
-  StructTypeSchemas,
-  CommonObjStruct
+  ComplexTypeSchemas,
+  CommonObjStruct,
+  StructType, FoundationType
 } from "@iub-dsl/core";
+import { Enhancer } from "../utils/enhancer";
+import { complexStructParserMiddleware, foundationParserMiddleware } from "./test-middleware";
+import {
+  FiledKey, DefaultFoundationTypeParser,
+  GenerateParseResult, DefaultSchemasParserContext,
+  SchedulerBasicContext, ReduceExtraContext
+} from "./i-schemas-parser";
 
-interface ParseSchemasDependency { schemas: Schemas, metadataCollection: MetadataMappingCollection }
-
-interface ParseSchemasResult {
-  mappingEntity: unknown;
-  schemaStruct: unknown;
-
-  // pageRuntimeState: SchemaStruct;
-  // setPageRuntimeState(newState): void;
+// namespace Core {
+interface Send {
+  (data): unknown;
+}
+interface Complete {
+  (d): unknown
+}
+interface Next {
+  (d): unknown
 }
 
-interface SchemaStruct {
-  [str: string]: unknown
-}
+// 同步数据、 异步数据
 
-type LocaltionPath = string; // localtionPath
+// 流控数据
+// ? 自定义业务逻辑?
+// }
 
-// TODO: 修改类似的Interface
-interface DataUUIDMapToMetadata {
-  [dataUUID: string]:
-  LocaltionPath |
-  {
-    key: LocaltionPath;
-    value: LocaltionPath;
-  } |
-  (
-    LocaltionPath |
-    {
-      key: LocaltionPath;
-      value: LocaltionPath;
-    }
-  )[];
-}
+const defaultCtxFn = (ctx) => ctx;
 
-interface resStruct {
-  tableName: string;
-  field: string;
-}
-
-// TODO: 递归结构好像不好描述
-// type transformResult =
-//   resStruct |
-//   (
-//     resStruct |
-//     {
-//       [str: string]: resStruct
-//     }
-//   )[] |
-//   {
-//     [str: string]: resStruct
-//   }
-
-const parseMetaDataMapping = (
-  metadataCollection: MetadataMappingCollection,
-  dataUUIDMapToMetadata: DataUUIDMapToMetadata
-) => {
-  const mappingEntity = metadataCollection.dataSource;
-
-  // 目前只有一个库 就先写简单点
-  const locationStrToField = (locationStr: string): resStruct => {
-    if (locationStr === '') {
-      return {
-        tableName: '', field: ''
-      };
-    }
-    const locationArr = locationStr.split('.');
-    const { field } = mappingEntity[locationArr[0]].columns[locationArr[1]];
-    return {
-      tableName: locationArr[0],
-      field
-    };
-  };
-
-  const locationMapToField = (location) => {
-    if (typeof location === 'string') {
-      return locationStrToField(location);
-    }
-    if (Array.isArray(location)) {
-      return location.map(locationMapToField);
-    }
-    if (typeof location === 'object') {
-      return Object.keys(location).reduce((result, key) => {
-        result[key] = typeof location[key] === 'object' ? locationMapToField(location[key]) : locationStrToField(location[key]);
-        return result;
-      }, {} as any);
-    }
-    return {
-      tableName: '', field: ''
-    };
-  };
-
-  const dataUUIDMapToField = (dataUUID: string) => {
-    const location = dataUUIDMapToMetadata[dataUUID];
-    return locationMapToField(location).field; // 现在还没定先只取field
-  };
-  /**
-   * 1. 只会转换结构
-   * 多重复合结构还真挺复杂
-   * @param struct any
-   */
-  const structMapToFiled = (struct) => {
-    if (typeof struct === 'string') {
-      return dataUUIDMapToField(struct);
-    }
-    if (Array.isArray(struct)) {
-      return struct.map(structMapToFiled);
-    }
-    if (typeof struct === 'object') {
-      return Object.keys(struct).reduce((result, key) => {
-        // result[key] = typeof struct[key] === 'object' ? locationMapToField(struct[key]) : locationStrToField(struct[key]);
-        result[key] = dataUUIDMapToField(key);
-        return result;
-      }, {} as any);
-    }
-    return false;
-  };
-
-  return {
-    locationStrToField,
-    locationMapToField,
-    dataUUIDMapToField,
-    structMapToFiled
-  };
-};
-
-interface ParseFoundationTypeSchemasRes {
-  mapping: string;
-  value: string | boolean | number;
-  rules?: unknown;
-}
-
-const parseFoundationTypeSchemas = (parseParam: FoundationTypeSchemas) => {
-  const parseRes: ParseFoundationTypeSchemasRes = {
-    mapping: parseParam.fieldMapping,
-    value: ''
-  };
-  switch (parseParam.type) {
-    case 'boolean':
-      parseRes.value = parseParam.defaultVal || false;
-      break;
-    case 'num':
-      parseRes.value = parseParam.defaultVal || 0;
-      break;
-    case 'string':
-      parseRes.value = parseParam.defaultVal || '';
-      break;
-    default:
-      break;
-  }
-  return parseRes;
-};
-
-const parseStruct = (parseParam: StructTypeSchemas, dataUUIDMapToMetadata: CommonObjStruct) => {
-  // const struct = parseParam.struct
-  return Object.keys(parseParam.struct).reduce((res, key) => {
-    res[key] = '';
-    dataUUIDMapToMetadata[key] = parseParam.struct[key].fieldMapping;
-    return res;
-  }, {} as any);
-};
-
-const DataSchemasParser = ({
-  schemas, metadataCollection
-} : ParseSchemasDependency): ParseSchemasResult => {
-  const schemaKey = Object.keys(schemas);
+/**
+ * 生成内部默认字段解析器
+ */
+const defaultFieldParser = (key: string) => (schemaItem: FoundationTypeSchemas) => (schemaItem[key] !== undefined ? schemaItem[key] : '');
+const defaultParserKey: FiledKey[] = ['type', 'defaultVal', 'fieldMapping'];
+const defaultParserCollection = defaultParserKey.reduce((parser, key) => {
+  parser[key] = defaultFieldParser(key);
+  return parser;
+}, {} as Record<FiledKey, DefaultFoundationTypeParser>);
+/**
+ * 针对固定的schemas结构调度解析器进行解析
+ * @param schemas Schemas
+ * @param param1 { foundationParser: 基本元素结构解析器, complexStructParser: 复杂结构解析器 }
+ * @emits 发送/暴露所有内部数据
+ * @returns async parseResult
+ *  <T>(s: Schemas, { foundationParser, complexStructParser }) => Promise<T>
+ */
+const structParserScheduler = async (schemas: Schemas, {
+  foundationParser,
+  complexStructParser
+}) => {
+  const schemasKeys = Object.keys(schemas);
+  const result: any = {};
   let schemaItem: SchemaItem;
-  let parseTemp: ParseFoundationTypeSchemasRes;
-  const schemaStruct: SchemaStruct = {};
-  const dataUUIDMapToMetadata: CommonObjStruct = {};
-
-  schemaKey.map((key) => {
+  await Promise.all(schemasKeys.map((key) => {
     schemaItem = schemas[key];
     switch (schemaItem.type) {
-      case 'structArray':
-        schemaStruct[key] = []; // TODO: ? 数组怎么玩?
-        break;
       case 'structObject':
-        dataUUIDMapToMetadata[key] = {};
-        schemaStruct[key] = parseStruct(schemaItem, dataUUIDMapToMetadata[key]);
-        break;
-      case 'string':
-      case 'num':
+      case 'structArray':
+        return complexStructParser({
+          schemaItem, schemas, result, key
+        });
       case 'boolean':
+      case 'number':
+      case 'string':
       default:
-        parseTemp = parseFoundationTypeSchemas(schemaItem);
-        schemaStruct[key] = parseTemp.value;
-        dataUUIDMapToMetadata[key] = parseTemp.mapping;
-        break;
+        return foundationParser({
+          schemaItem, schemas, result, key
+        });
+    }
+  }));
+  return result;
+};
+
+/** otherparam是外部给到的ctx, 而2个parser是内部需要的param, 如果这样想第二个参数就是ctx */
+const structParserScheduler2 = (schemas: Schemas, {
+  foundationParser,
+  complexStructParser,
+  ...otherParams
+}) => {
+  const schemasKeys = Object.keys(schemas);
+  let schemaItem: SchemaItem;
+  return schemasKeys.map((key) => {
+    schemaItem = schemas[key];
+    switch (schemaItem.type) {
+      case 'structObject':
+      case 'structArray':
+        return complexStructParser({
+          schemaItem, schemas, key, ...otherParams
+        });
+      case 'boolean':
+      case 'number':
+      case 'string':
+      default:
+        return foundationParser({
+          schemaItem, schemas, key, ...otherParams
+        });
     }
   });
-
-  const mappingEntity = parseMetaDataMapping(metadataCollection, dataUUIDMapToMetadata);
-
-  return {
-    mappingEntity,
-    schemaStruct
-  };
 };
 
-export const InitPageState = (schemaStruct) => {
-  const [pageRuntimeState, setState] = useState(schemaStruct);
+/**
+ * 针对调度器的统一处理, 处理解析结果, 生成统一标准的上下文
+ * @param {Function} f 外部传入的字段的解析器
+ */
+const generateParseResult: GenerateParseResult = (f) => async ({
+  result, key, schemas, schemaItem
+}) => result[key] = await f({ schemas, schemaItem });
 
-  function setPageRuntimeState(newState) {
-    setState({
-      ...pageRuntimeState,
-      ...newState
-    });
-  }
+/**
+ * 根据使用增强器的标准 + 上下文标准实现Parser
+ */
+const defaultValParser: (
+  ctx: DefaultSchemasParserContext,
+) => unknown = async (
+  { schemaItem }
+) => {
+  // 默认解开方式
+  return defaultParserCollection.defaultVal(schemaItem as FoundationTypeSchemas);
+};
+
+/**
+ * 数据模型解析器
+ * @param schemas 数据模型
+ */
+const SchemasParser = (originSchemas: Schemas) => {
+  const baseStruct = { };
+  /**  */
+  const paramContext: (ReduceExtraContext & SchedulerBasicContext<ReduceExtraContext>) = {
+    foundationParser: ({ payload, schemaItem, key }) => {
+      payload[key] = schemaItem.type;
+    },
+    complexStructParser: ({ payload, schemaItem, key }) => {
+      paramContext.payload = {};
+      if (schemaItem.type === 'structArray') {
+        payload[key] = [paramContext.payload];
+      } else {
+        payload[key] = paramContext.payload;
+      }
+      structParserScheduler2(schemaItem.struct, paramContext);
+    },
+    payload: baseStruct
+  };
+
+  structParserScheduler2(originSchemas, paramContext);
+  console.log(paramContext);
+  console.log(baseStruct);
+
+  const getSchemasInitValue = async () => {
+    /** 增强 默认值解析器 */
+    const { generateEnhancer } = Enhancer(
+      foundationParserMiddleware,
+      defaultValParser
+    );
+
+    const structParserParams = {
+      foundationParser: generateParseResult(generateEnhancer()),
+      complexStructParser: defaultCtxFn
+    };
+
+    /** 根据标准实现的默认的复杂结构解析器 */
+    const defaultComplexStructParser = async (ctx) => {
+      const { schemaItem } = ctx;
+      // 默认解开方式
+      return await structParserScheduler(schemaItem.struct, structParserParams);
+    };
+
+    /** 增强默认复杂结构解析器 */
+    const enhancedComplexStructParser = Enhancer(
+      complexStructParserMiddleware,
+      defaultComplexStructParser
+    ).generateEnhancer();
+
+    /** 使用增强器 */
+    structParserParams.complexStructParser = generateParseResult(enhancedComplexStructParser);
+    /** 不使用增强器 */
+    return await structParserScheduler(
+      originSchemas,
+      structParserParams
+    );
+  };
 
   return {
-    pageRuntimeState,
-    setPageRuntimeState
+    getSchemasInitValue
   };
 };
-export default DataSchemasParser;
+export default SchemasParser;

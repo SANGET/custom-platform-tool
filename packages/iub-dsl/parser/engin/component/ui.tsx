@@ -3,117 +3,55 @@ import { Input, Button, Dropdown } from "@infra/ui";
 import { UserBehavior, ComponentType } from "@iub-dsl/core";
 import * as Comps from '@iub-dsl/core/types/component/components';
 
+/**
+ * @description 直接对接UI隔离层, 提供统一标准
+ */
+
 type ActionAnalysisResult = {
   [action in UserBehavior]: (any) => unknown;
 };
-interface RenderUIParam {
-  compId: string;
-  componentConfig: ComponentType;
-  pubPropsRes: any;
-  actions: ActionAnalysisResult;
-}
-interface EntityCompParserRef {
-  // (param: GetUIParam)
-  RenderComp(param: RenderUIParam): JSX.Element;
-  parseCompProps(...args): any;
-}
 
-// UI隔离层
-
-const FnWrap = (fn) => {
-  return (...args) => {
-    // console.log('包裹一层内部处理,处理成标准的输入');
-    return fn(...args);
-  };
+const InputCompParser: React.FC<Comps.Input> = ({ label, ...args }): React.ReactElement => {
+  console.log(args);
+  return (<Fragment>
+    {label} :
+    <input
+      {...args}
+    />
+  </Fragment>);
 };
 
-const inputCompParser: EntityCompParserRef = {
-  RenderComp: ({
-    compId, pubPropsRes, actions, componentConfig
-  }) => {
-    // 过滤组件支持的动作
-    const canUseActions = Object.keys(actions).reduce((useActions: any, action) => {
-      useActions[action] = FnWrap(actions[action]);
-      // if (action === 'onChange') {
-      //   useActions[action] = tramsformInputChange(useActions[action]);
-      // }
-      return useActions;
-    }, {});
+const ButtonCompParser: React.FC<Comps.Button> = ({
+  text, type, ...args
+}) => {
+  return (<button>{text}</button>);
+};
 
-    return (<Fragment key={compId}>
-      {componentConfig.label}: <input
-        key={compId}
-        defaultValue={typeof componentConfig.field === 'undefined' ? '' : componentConfig.field}
-        {...pubPropsRes}
-        {...canUseActions}
-      />
-    </Fragment>);
-  },
-  parseCompProps: (param) => {
-    return param;
+// 在外部应该有一个结构转换的描述
+const SelectorCompParser: React.FC<Comps.Selector> = ({ label, type, dataSource }) => {
+  if (!Array.isArray(dataSource)) {
+    dataSource = [];
   }
-
+  return (<Fragment>
+    {label} :
+    <select>
+      {dataSource.map((_) => <option key={_.value} value={_.value}>{_.label}</option>)}
+    </select>
+  </Fragment>);
 };
 
-const buttonCompParser: EntityCompParserRef = {
-  RenderComp: ({
-    compId, pubPropsRes, actions, componentConfig
-  }) => {
-    const canUseActions = Object.keys(actions).reduce((useActions, action) => {
-      // eslint-disable-next-line no-param-reassign
-      useActions[action] = FnWrap(actions[action]);
-      return useActions;
-    }, {});
+const DefaultComp = (props) => <div>组件获取异常</div>;
 
-    return (<Button
-      key={compId}
-      {...pubPropsRes}
-      {...canUseActions}
-    >{componentConfig.text}</Button>);
-  },
-  parseCompProps: (param) => {
-    return param;
-  }
-};
-
-const selectorCompParser: EntityCompParserRef = {
-  RenderComp: ({
-    compId, pubPropsRes, actions, componentConfig
-  }) => {
-    const canUseActions = Object.keys(actions).reduce((useActions, action) => {
-      // eslint-disable-next-line no-param-reassign
-      useActions[action] = FnWrap(actions[action]);
-      return useActions;
-    }, {});
-    console.log(componentConfig);
-    return (<select
-      key={compId}
-      defaultValue={typeof componentConfig.field === 'undefined' ? '' : componentConfig.field}
-      {...canUseActions}
-      {...pubPropsRes}
-    >
-      <option key="test1" value="test1">测试数据1</option>
-      <option key="test2" value="test2">测试数据2</option>
-    </select>);
-  },
-  parseCompProps: (param) => {
-    return param;
-  }
-};
-
-const GetUIParser = (compType: string): EntityCompParserRef => {
+const GetUIParser = (compType: string) => {
   switch (compType) {
     case "Input":
-      return inputCompParser;
+      return InputCompParser;
     case "Button":
-      return buttonCompParser;
+      return ButtonCompParser;
     case "Selector":
-      return selectorCompParser;
+      return SelectorCompParser;
     default:
-      return {
-        RenderComp: () => <div>组件获取异常</div>,
-        parseCompProps: () => ({})
-      };
+      return DefaultComp;
   }
 };
 
