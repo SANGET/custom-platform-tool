@@ -119,7 +119,6 @@ export class AppContainer extends RouterMultiple<AppContainerProps, AppContainer
                 margin: 20
               }}
             >
-              <div>Tab container</div>
               {routers.map((route, idx) => {
                 return (
                   <span

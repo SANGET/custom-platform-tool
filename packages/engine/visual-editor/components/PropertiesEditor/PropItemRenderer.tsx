@@ -59,8 +59,8 @@ export const PropItemRenderer: React.FC<PropItemRendererProps> = ({
   }
   return (
     <div className="mb10">
-      <span className="label mr5">{label}</span>
-      <span className="content">{Com}</span>
+      <div className="label mb5">{label}</div>
+      <div className="content">{Com}</div>
     </div>
   );
 };

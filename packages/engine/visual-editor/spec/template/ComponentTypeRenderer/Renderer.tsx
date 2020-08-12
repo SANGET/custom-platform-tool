@@ -26,7 +26,7 @@ export const ComponentTypeRenderer: React.FC<ComponentTypeRendererProps> = ({
     case 'Input':
       Com = (
         <div className="">
-          <span className="control-label">{label}</span>
+          <div className="control-label">{label}</div>
           <Input
             {...props}
           />

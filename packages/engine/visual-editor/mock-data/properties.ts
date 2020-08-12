@@ -22,7 +22,7 @@ export const propertiesItemCollection: EditorPropertyItemsCollection = {
     // console.log(entity);
     const { label = '标题' } = entity;
     return {
-      id: 'prop-style-1',
+      id: 'prop-label-1',
       label: '标题',
       /**
        * 用于定位属性类型

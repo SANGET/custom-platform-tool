@@ -16,7 +16,7 @@ export interface RouterHelperProps {
   /** 是否缓存 state */
   cacheState?: boolean;
   /** 最大共存路由 */
-  maxRouters: number;
+  maxRouters?: number;
 }
 
 export interface RouteParams {

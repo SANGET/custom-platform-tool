@@ -12,6 +12,7 @@
     "packages/spec/*"
   ],
   "scripts": {
+    "preinstall": "npm run setup:registry",
     "pull:all": "git pull origin master --rebase",
     "lerna:bootstrap": "lerna bootstrap",
     "start:all": "lerna run --parallel --stream start",
@@ -27,6 +28,7 @@
     "format": "npm run prettier:base -- --write \"packages/**/*.{ts,tsx}\"",
     "test": "jest --coverage",
     "lint": "eslint packages",
+    "setup:registry": "sh scripts/set-npm-yarn-registry.sh",
     "commit": "git-cz"
   },
   "devDependencies": {
