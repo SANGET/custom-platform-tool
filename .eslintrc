@@ -2,6 +2,9 @@
   "extends": ["airbnb-base", "plugin:@typescript-eslint/recommended", "react-app"],
   "plugins": ["react", "@typescript-eslint"],
   "rules": {
+    // 取消class里面的方法必须使用this的限制
+    "class-methods-use-this": "off",
+    // 取消解析出来的变量名必须为驼峰格式
     "camelcase": ["error", { "ignoreDestructuring": true, "properties": "never" }],
     //import的文件路径中含有大小写混合的文件路径, 这条规则会触发告警
     "import/no-unresolved": [2, { "caseSensitive": false }],

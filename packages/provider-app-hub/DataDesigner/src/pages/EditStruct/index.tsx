@@ -1,5 +1,7 @@
 import React, { FC, useState, useEffect } from 'react';
-import { Tabs, Form, Tag } from 'antd';
+import {
+  Tabs, Form, Tag, Row, Col, Button
+} from 'antd';
 
 /**
  * 在antd Select组件基础上封装的选择框组件
@@ -7,6 +9,8 @@ import { Tabs, Form, Tag } from 'antd';
 import BasicStory from '@provider-app/data-designer/src/components/BasicStory';
 /** 表结构类型 */
 import { TableTypeEnum } from '@provider-app/data-designer/src/tools/constant';
+
+import EditableTable from '@provider-app/data-designer/src/bizComps/EditableTable';
 
 const { CheckableTag } = Tag;
 
@@ -19,11 +23,11 @@ const EditStruct :FC = () => {
   const formItemLayout = {
   /** 满栅格是24, 设置label标签宽度 */
     labelCol: {
-      span: 4
+      span: 6
     },
     /** 设置表单项宽度 */
     wrapperCol: {
-      span: 20
+      span: 18
     }
   };
 
@@ -54,7 +58,7 @@ const EditStruct :FC = () => {
       /** 表单项包裹组件属性 */
       compAttr: {
         type: 'Input',
-        placeholder: '最多可输入64个字符，名称唯一。输入字段可以为中文、英文、数字、下划线、括号',
+        placeholder: '',
       }
     },
     code: {
@@ -79,16 +83,6 @@ const EditStruct :FC = () => {
         readOnly: true,
       }
     },
-    primary_table: {
-      hide: true,
-      itemAttr: {
-        name: "primay_table",
-        label: "主表"
-      },
-      compAttr: {
-        type: 'Input',
-      }
-    },
     module_id: {
       itemAttr: {
         name: "module_id",
@@ -101,6 +95,10 @@ const EditStruct :FC = () => {
       }
     },
   };
+  const formButs = [
+    { text: '保存', onClick: () => {} },
+    { text: '返回', onClick: () => {} },
+  ];
 
   const tagsData = ['人员信息', '人员列表'];
   const [selectedTags, setSelectedTags] = useState([]);
@@ -119,7 +117,7 @@ const EditStruct :FC = () => {
       },
     },
     panes: [
-      { tab: '表字段', key: 'TableField', },
+      { tab: '表字段', key: 'TableField' },
       { tab: '引用表', key: 'ReferenceTable', },
       { tab: '外键设置', key: 'ForeignKeySet', },
       { tab: '组合唯一', key: 'ComposeUnique', },
@@ -129,48 +127,60 @@ const EditStruct :FC = () => {
     ]
   };
 
-  return (<>
-    <Form
-      name="auth-form"
-      /** 受控组件实例 */
-      form={form}
-      className="auth-form"
-      {...formItemLayout}
-      /** 表单初始值 */
-      initialValues={{}}
+  return (
+    <div className="b1px " style={{ height: '100%', padding: '20px 10px', width: "calc(100% - 120px)" }}>
 
-    >{
-        Object.keys(formItemsConfig).map((key) => (
-          <Form.Item key={key} {...formItemsConfig[key].itemAttr} >
-            <BasicStory {...formItemsConfig[key].compAttr} />
-          </Form.Item>
-        ))
-      }</Form>
+      <EditableTable />
 
-    <div style={{ padding: '16px 0', display: 'flex' }}>
-      <span style={{ marginRight: 8 }}>关联页面:</span>
-      <div style={{ border: '1px solid #ccc', padding: '6px 16px' }}>
-        {tagsData.map((tag) => (
-          <CheckableTag
-            key={tag}
-            checked={selectedTags.indexOf(tag) > -1}
-            onChange={(checked) => handleTagChange(tag, checked)}
-          >
-            {tag}
-          </CheckableTag>
-        ))}
+      <Form
+        name="auth-form"
+        /** 受控组件实例 */
+        form={form}
+        className="auth-form"
+        {...formItemLayout}
+        /** 表单初始值 */
+        initialValues={{}}
+      >
+        <Row gutter={24}>{
+          Object.keys(formItemsConfig).map((key) => (
+            <Col span={5} key={key}>
+              <Form.Item key={key} {...formItemsConfig[key].itemAttr} >
+                <BasicStory {...formItemsConfig[key].compAttr} />
+              </Form.Item>
+            </Col>
+          ))
+        }
+
+        <Col span={4} className="form-buts">
+          {formButs.map((item) => (<Button key={item.text} type='primary' className="button">{item.text}</Button>))}
+        </Col>
+        </Row>
+      </Form>
+
+      <div style={{ padding: '16px 0', display: 'flex' }}>
+        <span style={{ marginRight: 8 }}>关联页面:</span>
+        <div style={{ border: '1px solid #ccc', padding: '6px 16px' }}>
+          {tagsData.map((tag) => (
+            <CheckableTag
+              key={tag}
+              checked={selectedTags.indexOf(tag) > -1}
+              onChange={(checked) => handleTagChange(tag, checked)}
+            >
+              {tag}
+            </CheckableTag>
+          ))}
+        </div>
       </div>
+      <Tabs {...tabsConf.attr}>
+        {
+          tabsConf.panes.map((item) => (
+            <TabPane tab={item.tab} key={item.key}>
+              <BasicStory type={item.key} />
+            </TabPane>
+          ))
+        }
+      </Tabs>
     </div>
-    <Tabs {...tabsConf.attr}>
-      {
-        tabsConf.panes.map((item) => (
-          <TabPane tab={item.tab} key={item.key}>
-            <BasicStory type={item.key} />
-          </TabPane>
-        ))
-      }
-    </Tabs>
-  </>
   );
 };
 export default EditStruct;
