@@ -55,7 +55,7 @@ const TableHeadMenu = (props) => {
     </Menu>
   );
   return (
-    <section className="table-head-menu">
+    <section className="table-head-menu" style={{ margin: "0 20px", width: "calc(100% - 40px)" }}>
       <div className="ant-table-title">数据表列表</div>
       <div className={cx(cls1)} >
         <Button type="primary" className="button" onClick={() => openModal()}>

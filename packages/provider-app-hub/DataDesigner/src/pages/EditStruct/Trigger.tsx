@@ -1,9 +1,9 @@
 import React from "react";
 
-const TableField = () => {
+const Trigger = () => {
   return (
-    <>表结构</>
+    <>触发器</>
   );
 };
 
-export default TableField;
+export default Trigger;

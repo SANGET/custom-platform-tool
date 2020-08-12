@@ -10,7 +10,12 @@ body {
   font-size: 14px;
   font-family: -apple-system, BlinkMacSystemFont, segoe ui, Roboto, helvetica neue, Arial, noto sans, sans-serif, apple color emoji,
     segoe ui emoji, segoe ui symbol, noto color emoji;
+  /**
+  * 让文字显示只读状态 
+  */
+  cursor: default;
 }
+
 html,
 body,
 #root {
@@ -20,15 +25,16 @@ body,
 
 /** 应用容器 */
 .app-container {
-  box-sizing: border-box;
   display: flex;
   height: 100%;
+
   /** 路由导航 */
-  & > .menu {
+  &>.menu {
     flex: 0 0 auto;
   }
+
   /** 路由内容  */
-  & > main {
+  &>main {
     flex: 1 1 auto;
   }
 }
@@ -36,6 +42,7 @@ body,
 .flex {
   display: flex;
 }
+
 /** 弹性布局垂直居中 */
 .v-center {
   align-items: center;
@@ -51,6 +58,7 @@ body,
   flex: 0 0 300px;
   height: 100%;
 }
+
 /** 内容区 */
 .content {
   flex: 1;
@@ -63,8 +71,10 @@ body,
   .icon {
     color: rgba(255, 255, 255, 0.65);
   }
+
   font-size: 16px;
 }
+
 .ant-menu-item-active {
   .icon {
     color: #fff;
@@ -75,6 +85,7 @@ body,
   top: 32px;
   min-width: 800px;
 }
+
 /** 感觉没有多大必要修改antd的弹窗样式 */
 /** UI规范上的弹窗标题,按钮行高度 */
 .ant-modal-header,
@@ -82,9 +93,11 @@ body,
   display: flex;
   align-items: center;
 }
+
 /** UI规范上的弹窗标题高度 */
 .ant-modal-header {
   height: 48px;
+
   /** 关闭图标尺寸 */
   .ant-modal-close-x {
     width: 48px;
@@ -94,10 +107,11 @@ body,
 }
 
 .form-buts {
-  .button + .button {
+  .button+.button {
     margin-left: 16px;
   }
 }
+
 /**
  * 表格头部按钮样式
  */
@@ -105,12 +119,12 @@ body,
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin: 0 20px;
-  width: calc(100% - 40px);
+
 
   border: 1px solid #f0f0f0;
   border-bottom: none;
   color: rgba(0, 0, 0, 0.65);
+
   /** 
   列表表头操作按钮左右padding
   */
@@ -119,11 +133,13 @@ body,
     margin-right: 16px;
   }
 }
+
 /** UI规范上的弹窗底部按钮行高度 */
 .ant-modal-footer {
   height: 64px;
   justify-content: flex-end;
 }
+
 /** 加载遮罩 */
 .loading {
   position: absolute;
@@ -138,9 +154,11 @@ body,
   z-index: 9999;
   font-size: 20px;
 }
+
 .hide {
   display: none;
 }
+
 /** 公共 */
 .b1px {
   border: 1px solid @boderColor;

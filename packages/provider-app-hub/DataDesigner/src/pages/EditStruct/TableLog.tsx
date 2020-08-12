@@ -1,9 +1,12 @@
 import React from "react";
 
-const TableField = () => {
+/**
+* 表操作日志
+*/
+const TableLog = () => {
   return (
-    <>表结构</>
+    <>表操作日志</>
   );
 };
 
-export default TableField;
+export default TableLog;

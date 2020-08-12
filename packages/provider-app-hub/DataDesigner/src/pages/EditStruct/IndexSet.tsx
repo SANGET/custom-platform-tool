@@ -1,9 +1,11 @@
 import React from "react";
-
-const TableField = () => {
+/**
+* 索引设置
+*/
+const IndexSet = () => {
   return (
-    <>表结构</>
+    <>索引设置</>
   );
 };
 
-export default TableField;
+export default IndexSet;

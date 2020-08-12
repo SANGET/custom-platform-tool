@@ -89,10 +89,10 @@ const TableField = (props) => {
       /** 必须设置，不然表格列过多时内容会撑开容器,并且不能设置成true,要设置成数字,不然列宽设置无效 */
       x: 200,
       /** 设置之后 ,表格头就会被固定 */
-      y: document.documentElement.clientHeight - 200,
+      // y: document.documentElement.clientHeight - 200,
     },
     style: {
-      margin: '0 20px',
+      width: '100%'
     },
   };
 
@@ -176,7 +176,6 @@ const TableField = (props) => {
       {
         title: '分类',
         dataIndex: 'modified_by',
-        width: 140,
       },
       // {
       //   title: '操作',
@@ -271,6 +270,7 @@ const TableField = (props) => {
           };
         }}
       ></Table>
+
     </>
   );
 };

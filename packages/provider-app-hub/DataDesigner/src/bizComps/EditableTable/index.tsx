@@ -107,26 +107,64 @@ const EditableTable = () => {
 
   const columns = [
     {
-      title: 'name',
+      title: '序号',
+      dataIndex: 'key',
+      width: 100,
+      editable: false,
+      /** 自定义渲染函数 */
+      render: (text, record, index) => {
+        // console.log({ text, record, index });
+        /** 与后端协商,行号由前端计算 */
+        return <span>{index + 1}</span>;
+      },
+    },
+    {
+      title: '字段名称',
       dataIndex: 'name',
-      width: '25%',
+      width: 200,
       editable: true,
     },
     {
-      title: 'age',
+      title: '字段编码',
       dataIndex: 'age',
-      width: '15%',
+      width: 140,
       editable: true,
     },
     {
-      title: 'address',
+      title: '关联表',
       dataIndex: 'address',
-      width: '40%',
+      width: 300,
       editable: true,
     },
     {
-      title: 'operation',
+      title: '关联字段',
+      dataIndex: 'address',
+      width: 140,
+      editable: true,
+    },
+    {
+      title: '显示字段',
+      dataIndex: 'address',
+      width: 140,
+      editable: true,
+    },
+    {
+      title: '弹窗配置',
+      dataIndex: 'address',
+      width: 140,
+      editable: true,
+    },
+    {
+      title: '是否存在多层上级',
+      dataIndex: 'address',
+      width: 140,
+      editable: true,
+    },
+    {
+      title: '操作',
       dataIndex: 'operation',
+      fixed: 'right',
+      width: 100,
       render: (_: any, record: Item) => {
         const editable = isEditing(record);
         return editable ? (
@@ -188,18 +226,27 @@ const EditableTable = () => {
     setData(data.filter((item) => item.key !== key));
   };
 
+  const TableHeadMenus = [
+    { text: "新增", onClick: () => { handleAdd(); } },
+  ];
+
   return (
-    <>
-      <Button onClick={handleAdd} type="primary" style={{ marginBottom: 16 }}>
-          增加一行
-      </Button>
+    <div>
+      <section className="table-head-menu">
+        <div className="ant-table-title">引用字段列表</div>
+        <div >
+          {TableHeadMenus.map((item) => (<Button key={item.text} type="primary" className="button" onClick={item.onClick}>{item.text}</Button>))}
+        </div>
+      </section>
       <Form form={form} component={false}>
+
         <Table
           components={{
             body: {
               cell: EditableCell,
             },
           }}
+          scroll={{ x: 200 }}
           bordered
           dataSource={data}
           columns={mergedColumns}
@@ -209,7 +256,7 @@ const EditableTable = () => {
           }}
         />
       </Form>
-    </>
+    </div>
   );
 };
 

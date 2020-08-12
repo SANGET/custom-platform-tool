@@ -1,5 +1,63 @@
-.form-buts {
-  & > .button {
-    margin-right: 16px;
+/**
+* 表结构编辑页面特有样式 
+*/
+.edit-struct {
+
+  /**
+  * 搜索表单--搜索,返回按钮的边距
+  */
+  #edit-struct-search-form {
+    .form-buts {
+      &>.button {
+        margin-right: 16px;
+      }
+    }
   }
+
+  /**
+  * 关联页面
+  * ant-tag正常态和选中态文字颜色 
+  */
+  .ant-tag.ant-tag-checkable {
+
+    &>a {
+      color: #1890ff;
+    }
+
+    &.ant-tag-checkable-checked>a {
+      color: white;
+    }
+  }
+
+  /**
+  * 表格头部按钮菜单容器样式
+  */
+  .table-head-menu {
+    width: 100%;
+    margin: 0;
+  }
+
+  /**
+  * 重置ant-form-item-label的宽度,为了是搜素框和关联页面左侧两侧能够对齐
+  */
+  .ant-row.w100 {
+    .ant-col {
+      width: 100px !important
+    }
+  }
+
+  /**
+  * ant-tabs在不同tab面板进行切换的时候, 会有滚动条出现
+  */
+  // .ant-tabs-content-holder {
+  //   overflow: hidden;
+
+  //   .ant-tabs-content.ant-tabs-content-top {
+  //     overflow: hidden;
+
+  //     .ant-tabs-tabpane {
+  //       overflow: hidden;
+  //     }
+  //   }
+  // }
 }
