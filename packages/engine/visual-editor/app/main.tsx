@@ -1,19 +1,19 @@
-import React from "react";
+import React, { useEffect } from "react";
 
 import { Grid } from '@infra/ui';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 
-import ToolBar from '../components/Toolbar';
-import ComponentPanel from '../components/ComponentPanel';
-import CanvasStage from '../components/CanvasStage';
-import PropertiesEditor from '../components/PropertiesEditor';
+import ToolBar from '@engine/visual-editor/components/Toolbar';
+import ComponentPanel from '@engine/visual-editor/components/ComponentPanel';
+import CanvasStage from '@engine/visual-editor/components/CanvasStage';
+import PropertiesEditor from '@engine/visual-editor/components/PropertiesEditor';
 
-import { Dispatcher } from "../core/actions";
-// import { VisualEditorStore } from "../core/store";
+import { Dispatcher } from "@engine/visual-editor/core/actions";
+// import { VisualEditorStore } from "@engine/visual-editor/core/store";
 
-import { GlobalStyle } from '../style/global-style';
-import { VisualEditorState } from "../core/reducers/reducer";
+import { GlobalStyle } from '@engine/visual-editor/style/global-style';
+import { VisualEditorState } from "@engine/visual-editor/core/reducers/reducer";
 
 interface VisualEditorAppProps extends VisualEditorState {
   dispatcher: Dispatcher
@@ -25,9 +25,14 @@ const VisualEditorApp: React.FC<VisualEditorAppProps> = (props) => {
     selectedEntities,
     entitiesStateStore,
   } = props;
-  const { SelectEntity, InitEntityState, UpdateEntityState } = dispatcher;
+  const {
+    InitApp,
+    SelectEntity, InitEntityState, UpdateEntityState,
+  } = dispatcher;
 
-  const { activeID, activeEntity } = selectedEntities;
+  useEffect(() => {
+    InitApp();
+  }, []);
 
   return (
     <div>
@@ -86,26 +91,6 @@ const VisualEditorApp: React.FC<VisualEditorAppProps> = (props) => {
             />
           </Grid>
         </DndProvider>
-        {/* {
-          !!activeEntity && (
-            <Grid
-              lg={2}
-              md={2}
-              sm={2}
-              xs={2}
-              item
-              className="right-panel"
-            >
-              <PropertiesEditor
-                key={activeID}
-                selectedEntity={activeEntity}
-                defaultEntityState={entitiesStateStore[activeID]}
-                initEntityState={InitEntityState}
-                updateEntitiesStateStore={UpdateEntityState}
-              />
-            </Grid>
-          )
-        } */}
       </Grid>
       <GlobalStyle />
     </div>

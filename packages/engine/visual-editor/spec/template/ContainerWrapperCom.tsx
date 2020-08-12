@@ -10,7 +10,7 @@ import classnames from 'classnames';
 import { isNodeInChild } from '@engine/visual-editor/utils/node-filter';
 import { DragComponentClass, DropCollectType } from '@engine/visual-editor/types';
 import { ItemTypes } from '../types';
-import DragItem from '../DragItem';
+import DragItem from './DragItemInCanvas';
 import { FacToComponentProps } from '../wrapper-fac';
 
 const ContainerWrapper = styled.div`

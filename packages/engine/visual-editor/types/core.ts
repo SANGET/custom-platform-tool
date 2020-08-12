@@ -20,7 +20,7 @@ export interface EditorBasicComponentClass {
   parentID?: string
   /** 实例 ID */
   entityID?: string
-  /** 显示的标签 */
+  /** 组件类面板的显示名 */
   label: string;
   /** 绑定可编辑的属性 */
   bindProperties: {
@@ -145,7 +145,11 @@ export interface EntitiesStateStore {
 
 export interface EditorComponentEntityProps {
   /** 实例 id */
-  id: string;
+  id: string
+  /** horizontal 横向排序 */
+  hOrder: number
+  /** vertical 垂直排序 */
+  vOrder: number
   /** 组件实例状态数据 */
   // entityState: EditorEntityState
   /** 实例化后的状态 */

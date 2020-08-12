@@ -6,7 +6,7 @@ import React from 'react';
 import styled from 'styled-components';
 import classnames from 'classnames';
 
-import DragItem from '../DragItem';
+import DragItem from './DragItemInCanvas';
 import { ComponentTypeRenderer } from './ComponentTypeRenderer';
 import { FacToComponentProps } from '../wrapper-fac';
 

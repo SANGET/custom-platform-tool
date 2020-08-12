@@ -1,4 +1,5 @@
 import { EditorComponentClass } from "../types";
+import { CustomComponent } from "./custom-component-demo";
 
 interface ComponentClassCollection {
   [id: string]: EditorComponentClass
@@ -34,6 +35,40 @@ export const componentClassCollection: ComponentClassCollection = {
       propRefs: [
         'prop-style-1',
         'prop-flex-config-1'
+      ]
+    }
+  },
+  'component-table-1': {
+    id: 'component-table-1',
+    type: 'component',
+    label: '表格',
+    component: {
+      type: 'Table'
+    },
+    bindProperties: {
+      propRefs: [
+        'prop-style-1',
+        'prop-flex-config-1'
+      ]
+    }
+  },
+  'component-custom-1': {
+    id: 'component-custom-1',
+    type: 'component',
+    label: '自定义组件',
+    component: {
+      type: 'Custom',
+      render: CustomComponent
+    },
+    bindProperties: {
+      // propRefs: [
+      //   'prop-style-1',
+      //   'prop-flex-config-1'
+      // ]
+      rawProp: [
+        (entity) => {
+          return {};
+        }
       ]
     }
   },
