@@ -4,133 +4,132 @@
   "timestamp": 1596792833799,
   "result": {
     "total": 3,
-    "data": [
-      {
+    "data": [{
         "id": 1291614638525521920,
         "name": "普通表",
         "code": "putong",
         "type": "normalTable",
-        "module_id": "1596617518864031d59b8c1034e29b98",
+        "moduleId": 1291614638525521920,
+        "moduleName": "人员管理",
         "species": "BIS",
         "labels": null,
         "description": "普通",
-        "gmt_create": "2020-08-07T13:58:21.527",
-        "modified_by": null,
-        "gmt_modified": "2020-08-07T13:58:21.527",
-        "aux_table": null,
-        "tree_table": null,
+        "gmtCreate": "2020-08-07T13:58:21.527",
+        "modifiedBy": null,
+        "gmtModified": "2020-08-07T13:58:21.527",
+        "auxTable": null,
+        "treeTable": null,
         "sql_view": null,
-        "columns": [
-          {
+        "columns": [{
             "id": 1291614638525521922,
             "name": "最后修改时间",
             "code": "last_update_time",
-            "field_type": "DATE",
-            "field_size": null,
-            "data_type": "NORMAL",
+            "fieldType": "DATE",
+            "fieldSize": null,
+            "dataType": "NORMAL",
             "species": "SYS",
-            "decimal_size": null,
+            "decimalSize": null,
             "sequence": null,
-            "field_property": {
+            "fieldProperty": {
               "required": "true"
             },
-            "dictionary_foreign": null
+            "dictionaryForeign": null
           },
           {
             "id": 1291614638525521924,
             "name": "排序序号",
             "code": "sequence",
-            "field_type": "INT",
-            "field_size": 11,
-            "data_type": "NORMAL",
+            "fieldType": "INT",
+            "fieldSize": 11,
+            "dataType": "NORMAL",
             "species": "SYS",
-            "decimal_size": null,
+            "decimalSize": null,
             "sequence": null,
-            "field_property": {
+            "fieldProperty": {
               "required": "true",
               "unique": "true"
             },
-            "dictionary_foreign": null
+            "dictionaryForeign": null
           },
           {
             "id": 1291614638529716228,
             "name": "最后修改人",
             "code": "last_update_user",
-            "field_type": "VARCHAR",
-            "field_size": 32,
-            "data_type": "NORMAL",
+            "fieldType": "VARCHAR",
+            "fieldSize": 32,
+            "dataType": "NORMAL",
             "species": "SYS",
-            "decimal_size": null,
+            "decimalSize": null,
             "sequence": null,
-            "field_property": {
+            "fieldProperty": {
               "required": "true"
             },
-            "dictionary_foreign": null
+            "dictionaryForeign": null
           },
           {
             "id": 1291614638529716226,
             "name": "创建时间",
             "code": "create_time",
-            "field_type": "DATE",
-            "field_size": null,
-            "data_type": "NORMAL",
+            "fieldType": "DATE",
+            "fieldSize": null,
+            "dataType": "NORMAL",
             "species": "SYS",
-            "decimal_size": null,
+            "decimalSize": null,
             "sequence": null,
-            "field_property": {
+            "fieldProperty": {
               "required": "true"
             },
-            "dictionary_foreign": null
+            "dictionaryForeign": null
           },
           {
             "id": 1291614638529716230,
             "name": "数据版本",
             "code": "data_version",
-            "field_type": "VARCHAR",
-            "field_size": 32,
-            "data_type": "NORMAL",
+            "fieldType": "VARCHAR",
+            "fieldSize": 32,
+            "dataType": "NORMAL",
             "species": "SYS",
-            "decimal_size": null,
+            "decimalSize": null,
             "sequence": null,
-            "field_property": {
+            "fieldProperty": {
               "required": "true"
             },
-            "dictionary_foreign": null
+            "dictionaryForeign": null
           },
           {
             "id": 1291614638529716235,
             "name": "创建人",
             "code": "create_user",
-            "field_type": "VARCHAR",
-            "field_size": 32,
-            "data_type": "NORMAL",
+            "fieldType": "VARCHAR",
+            "fieldSize": 32,
+            "dataType": "NORMAL",
             "species": "SYS",
-            "decimal_size": null,
+            "decimalSize": null,
             "sequence": null,
-            "field_property": {
+            "fieldProperty": {
               "required": "true"
             },
-            "dictionary_foreign": null
+            "dictionaryForeign": null
           },
           {
             "id": 1291614638529716232,
             "name": "主键",
             "code": "id",
-            "field_type": "INT",
-            "field_size": 20,
-            "data_type": "PK",
+            "fieldType": "INT",
+            "fieldSize": 20,
+            "dataType": "PK",
             "species": "SYS",
-            "decimal_size": null,
+            "decimalSize": null,
             "sequence": null,
-            "field_property": {
+            "fieldProperty": {
               "required": "true",
               "unique": "true"
             },
-            "dictionary_foreign": null
+            "dictionaryForeign": null
           }
         ],
         "references": null,
-        "foreign_keys": null,
+        "foreignKeys": null,
         "combo_uniques": null,
         "indexes": null,
         "table_join_factor": null
@@ -140,183 +139,181 @@
         "name": "树形表",
         "code": "shuxing",
         "type": "tree",
-        "module_id": "1596617518864031d59b8c1034e29b98",
+        "moduleId": 1291614638525521920,
+        "moduleName": "人员管理",
         "species": "BIS",
         "labels": null,
         "description": "树形表描述",
-        "gmt_create": "2020-08-07T17:33:11.79",
-        "modified_by": null,
-        "gmt_modified": "2020-08-07T17:33:11.79",
-        "aux_table": null,
-        "tree_table": {
-          "max_level": 5
+        "gmtCreate": "2020-08-07T17:33:11.79",
+        "modifiedBy": null,
+        "gmtModified": "2020-08-07T17:33:11.79",
+        "auxTable": null,
+        "treeTable": {
+          "maxLevel": 5
         },
         "sql_view": null,
-        "columns": [
-          {
+        "columns": [{
             "id": 1291668703930359808,
             "name": "最后修改时间",
             "code": "last_update_time",
-            "field_type": "DATE",
-            "field_size": null,
-            "data_type": "NORMAL",
+            "fieldType": "DATE",
+            "fieldSize": null,
+            "dataType": "NORMAL",
             "species": "SYS",
-            "decimal_size": null,
+            "decimalSize": null,
             "sequence": null,
-            "field_property": {
+            "fieldProperty": {
               "required": "true"
             },
-            "dictionary_foreign": null
+            "dictionaryForeign": null
           },
           {
             "id": 1291668703934554116,
             "name": "名称",
             "code": "path",
-            "field_type": "VARCHAR",
-            "field_size": 256,
-            "data_type": "NORMAL",
+            "fieldType": "VARCHAR",
+            "fieldSize": 256,
+            "dataType": "NORMAL",
             "species": "BIS",
-            "decimal_size": null,
+            "decimalSize": null,
             "sequence": null,
-            "field_property": {
+            "fieldProperty": {
               "required": "true"
             },
-            "dictionary_foreign": null
+            "dictionaryForeign": null
           },
           {
             "id": 1291668703934554113,
             "name": "排序序号",
             "code": "sequence",
-            "field_type": "INT",
-            "field_size": 11,
-            "data_type": "NORMAL",
+            "fieldType": "INT",
+            "fieldSize": 11,
+            "dataType": "NORMAL",
             "species": "SYS",
-            "decimal_size": null,
+            "decimalSize": null,
             "sequence": null,
-            "field_property": {
+            "fieldProperty": {
               "required": "true",
               "unique": "true"
             },
-            "dictionary_foreign": null
+            "dictionaryForeign": null
           },
           {
             "id": 1291668703934554120,
             "name": "最后修改人",
             "code": "last_update_user",
-            "field_type": "VARCHAR",
-            "field_size": 32,
-            "data_type": "NORMAL",
+            "fieldType": "VARCHAR",
+            "fieldSize": 32,
+            "dataType": "NORMAL",
             "species": "SYS",
-            "decimal_size": null,
+            "decimalSize": null,
             "sequence": null,
-            "field_property": {
+            "fieldProperty": {
               "required": "true"
             },
-            "dictionary_foreign": null
+            "dictionaryForeign": null
           },
           {
             "id": 1291668703934554118,
             "name": "创建时间",
             "code": "create_time",
-            "field_type": "DATE",
-            "field_size": null,
-            "data_type": "NORMAL",
+            "fieldType": "DATE",
+            "fieldSize": null,
+            "dataType": "NORMAL",
             "species": "SYS",
-            "decimal_size": null,
+            "decimalSize": null,
             "sequence": null,
-            "field_property": {
+            "fieldProperty": {
               "required": "true"
             },
-            "dictionary_foreign": null
+            "dictionaryForeign": null
           },
           {
             "id": 1291668703934554122,
             "name": "数据版本",
             "code": "data_version",
-            "field_type": "VARCHAR",
-            "field_size": 32,
-            "data_type": "NORMAL",
+            "fieldType": "VARCHAR",
+            "fieldSize": 32,
+            "dataType": "NORMAL",
             "species": "SYS",
-            "decimal_size": null,
+            "decimalSize": null,
             "sequence": null,
-            "field_property": {
+            "fieldProperty": {
               "required": "true"
             },
-            "dictionary_foreign": null
+            "dictionaryForeign": null
           },
           {
             "id": 1291668703934554124,
             "name": "层级",
             "code": "level",
-            "field_type": "INT",
-            "field_size": 3,
-            "data_type": "NORMAL",
+            "fieldType": "INT",
+            "fieldSize": 3,
+            "dataType": "NORMAL",
             "species": "BIS",
-            "decimal_size": null,
+            "decimalSize": null,
             "sequence": null,
-            "field_property": {
+            "fieldProperty": {
               "required": "true"
             },
-            "dictionary_foreign": null
+            "dictionaryForeign": null
           },
           {
             "id": 1291668703934554126,
             "name": "父节点",
             "code": "pid",
-            "field_type": "INT",
-            "field_size": 20,
-            "data_type": "QUOTE",
+            "fieldType": "INT",
+            "fieldSize": 20,
+            "dataType": "QUOTE",
             "species": "BIS",
-            "decimal_size": null,
+            "decimalSize": null,
             "sequence": null,
-            "field_property": {
+            "fieldProperty": {
               "required": "true"
             },
-            "dictionary_foreign": null
+            "dictionaryForeign": null
           },
           {
             "id": 1291668703934554131,
             "name": "创建人",
             "code": "create_user",
-            "field_type": "VARCHAR",
-            "field_size": 32,
-            "data_type": "NORMAL",
+            "fieldType": "VARCHAR",
+            "fieldSize": 32,
+            "dataType": "NORMAL",
             "species": "SYS",
-            "decimal_size": null,
+            "decimalSize": null,
             "sequence": null,
-            "field_property": {
+            "fieldProperty": {
               "required": "true"
             },
-            "dictionary_foreign": null
+            "dictionaryForeign": null
           },
           {
             "id": 1291668703934554128,
             "name": "主键",
             "code": "id",
-            "field_type": "INT",
-            "field_size": 20,
-            "data_type": "PK",
+            "fieldType": "INT",
+            "fieldSize": 20,
+            "dataType": "PK",
             "species": "SYS",
-            "decimal_size": null,
+            "decimalSize": null,
             "sequence": null,
-            "field_property": {
+            "fieldProperty": {
               "required": "true",
               "unique": "true"
             },
-            "dictionary_foreign": null
+            "dictionaryForeign": null
           }
         ],
-        "references": [
-          {
-            "id": 1291668703913582592,
-            "field_code": "pid",
-            "ref_table_code": "shuxing",
-            "ref_field_code": "id",
-            "ref_display_field_code": "id",
-            "sequence": null
-          }
-        ],
-        "foreign_keys": null,
+        "references": [{
+          "id": 1291668703913582592,
+          "fieldCode": "pid",
+          "refTableCode": "shuxing",
+          "refFieldCode": "id",
+          "refDisplayFieldCode": "id",
+          "sequence": null
+        }],
+        "foreignKeys": null,
         "combo_uniques": null,
         "indexes": null,
         "table_join_factor": null
@@ -326,155 +323,153 @@
         "name": "附属表",
         "code": "fushu",
         "type": "auxTable",
-        "module_id": "1596617518864031d59b8c1034e29b98",
+        "moduleId": 1291614638525521920,
+        "moduleName": "人员管理",
         "species": "BIS",
         "labels": null,
         "description": "附属表描述",
-        "gmt_create": "2020-08-07T17:33:24.701",
-        "modified_by": null,
-        "gmt_modified": "2020-08-07T17:33:24.701",
-        "aux_table": {
-          "main_table_code": "putong"
+        "gmtCreate": "2020-08-07T17:33:24.701",
+        "modifiedBy": null,
+        "gmtModified": "2020-08-07T17:33:24.701",
+        "auxTable": {
+          "mainTableCode": "putong"
         },
-        "tree_table": null,
+        "treeTable": null,
         "sql_view": null,
-        "columns": [
-          {
+        "columns": [{
             "id": 1291668758137544705,
             "name": "外键",
             "code": "fid",
-            "field_type": "INT",
-            "field_size": 20,
-            "data_type": "FK",
+            "fieldType": "INT",
+            "fieldSize": 20,
+            "dataType": "FK",
             "species": "BIS",
-            "decimal_size": null,
+            "decimalSize": null,
             "sequence": null,
-            "field_property": {
+            "fieldProperty": {
               "required": "true"
             },
-            "dictionary_foreign": null
+            "dictionaryForeign": null
           },
           {
             "id": 1291668758137544709,
             "name": "排序序号",
             "code": "sequence",
-            "field_type": "INT",
-            "field_size": 11,
-            "data_type": "NORMAL",
+            "fieldType": "INT",
+            "fieldSize": 11,
+            "dataType": "NORMAL",
             "species": "SYS",
-            "decimal_size": null,
+            "decimalSize": null,
             "sequence": null,
-            "field_property": {
+            "fieldProperty": {
               "required": "true",
               "unique": "true"
             },
-            "dictionary_foreign": null
+            "dictionaryForeign": null
           },
           {
             "id": 1291668758137544707,
             "name": "最后修改时间",
             "code": "last_update_time",
-            "field_type": "DATE",
-            "field_size": null,
-            "data_type": "NORMAL",
+            "fieldType": "DATE",
+            "fieldSize": null,
+            "dataType": "NORMAL",
             "species": "SYS",
-            "decimal_size": null,
+            "decimalSize": null,
             "sequence": null,
-            "field_property": {
+            "fieldProperty": {
               "required": "true"
             },
-            "dictionary_foreign": null
+            "dictionaryForeign": null
           },
           {
             "id": 1291668758137544712,
             "name": "创建时间",
             "code": "create_time",
-            "field_type": "DATE",
-            "field_size": null,
-            "data_type": "NORMAL",
+            "fieldType": "DATE",
+            "fieldSize": null,
+            "dataType": "NORMAL",
             "species": "SYS",
-            "decimal_size": null,
+            "decimalSize": null,
             "sequence": null,
-            "field_property": {
+            "fieldProperty": {
               "required": "true"
             },
-            "dictionary_foreign": null
+            "dictionaryForeign": null
           },
           {
             "id": 1291668758137544714,
             "name": "最后修改人",
             "code": "last_update_user",
-            "field_type": "VARCHAR",
-            "field_size": 32,
-            "data_type": "NORMAL",
+            "fieldType": "VARCHAR",
+            "fieldSize": 32,
+            "dataType": "NORMAL",
             "species": "SYS",
-            "decimal_size": null,
+            "decimalSize": null,
             "sequence": null,
-            "field_property": {
+            "fieldProperty": {
               "required": "true"
             },
-            "dictionary_foreign": null
+            "dictionaryForeign": null
           },
           {
             "id": 1291668758137544716,
             "name": "数据版本",
             "code": "data_version",
-            "field_type": "VARCHAR",
-            "field_size": 32,
-            "data_type": "NORMAL",
+            "fieldType": "VARCHAR",
+            "fieldSize": 32,
+            "dataType": "NORMAL",
             "species": "SYS",
-            "decimal_size": null,
+            "decimalSize": null,
             "sequence": null,
-            "field_property": {
+            "fieldProperty": {
               "required": "true"
             },
-            "dictionary_foreign": null
+            "dictionaryForeign": null
           },
           {
             "id": 1291668758137544721,
             "name": "创建人",
             "code": "create_user",
-            "field_type": "VARCHAR",
-            "field_size": 32,
-            "data_type": "NORMAL",
+            "fieldType": "VARCHAR",
+            "fieldSize": 32,
+            "dataType": "NORMAL",
             "species": "SYS",
-            "decimal_size": null,
+            "decimalSize": null,
             "sequence": null,
-            "field_property": {
+            "fieldProperty": {
               "required": "true"
             },
-            "dictionary_foreign": null
+            "dictionaryForeign": null
           },
           {
             "id": 1291668758137544718,
             "name": "主键",
             "code": "id",
-            "field_type": "INT",
-            "field_size": 20,
-            "data_type": "PK",
+            "fieldType": "INT",
+            "fieldSize": 20,
+            "dataType": "PK",
             "species": "SYS",
-            "decimal_size": null,
+            "decimalSize": null,
             "sequence": null,
-            "field_property": {
+            "fieldProperty": {
               "required": "true",
               "unique": "true"
             },
-            "dictionary_foreign": null
+            "dictionaryForeign": null
           }
         ],
         "references": null,
-        "foreign_keys": [
-          {
-            "id": 1291668758137544704,
-            "field_code": "fid",
-            "ref_table_code": "putong",
-            "ref_field_code": "id",
-            "ref_display_field_code": "id",
-            "delete_strategy": "RESTRICT",
-            "update_strategy": "RESTRICT",
-            "sequence": null
-          }
-        ],
+        "foreignKeys": [{
+          "id": 1291668758137544704,
+          "fieldCode": "fid",
+          "refTableCode": "putong",
+          "refFieldCode": "id",
+          "refDisplayFieldCode": "id",
+          "deleteStrategy": "RESTRICT",
+          "updateStrategy": "RESTRICT",
+          "sequence": null
+        }],
         "combo_uniques": null,
         "indexes": null,
         "table_join_factor": null

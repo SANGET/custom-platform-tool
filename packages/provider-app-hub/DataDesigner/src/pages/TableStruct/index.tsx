@@ -35,6 +35,7 @@ import {
 import MenuTree from '@provider-app/data-designer/src/bizComps/MenuTree';
 
 /** 表单业务组件 */
+import axios from 'axios';
 import StructForm from './StructForm';
 
 /** 表头菜单组件 */
@@ -48,6 +49,7 @@ import './tableStruct.less';
 
 /** 搜索输入框 */
 const { Search } = Input;
+
 // const mapState = (state) => ({
 //   treeData: state.treeData,
 //   structTableData: state.structTableData
@@ -96,12 +98,15 @@ const TableStructContainer: FC = () => {
 
   /** 设置模块框的显示隐藏 */
   const [visible, setVisiable] = useState<boolean>(false);
+  /**
+  * 对json文件的格式要求极其严格,数组最后一项多加一个逗号,返回结果会变成null
+  */
 
   // const [tableData, setTableData] = useState([]);
 
   const getPageData = async () => {
     /** 请求菜单树,表结构的表类型列依赖菜单树数据 */
-    const menuTreeRes = await Http.get('http://localhost:60001/mock/menu.json', {});
+    const menuTreeRes = await Http.get('http://localhost:60001/mock/menu.json');
     const tData = listToTree(menuTreeRes.data.result);
 
     /**
@@ -121,23 +126,25 @@ const TableStructContainer: FC = () => {
 
     /** 请求表结构列表数据 */
     const tableRes = await Http.get('http://localhost:60001/mock/structList.json', {});
+    // console.log({ tableRes });
 
     /** 表格数据格式转换-注意setTableData之后不能立刻获取最新值 */
     const structTableData = tableRes.data.result.data.map((col) => {
       /** 根据T点的key查找节点完整信息 */
       /** 返回节点的名称 */
-      col.module_id = treeQuery(tData, col.module_id).title;
-      // console.log(col.module_id);
+      col.moduleId = treeQuery(tData, col.moduleId).title;
+      // console.log(col.moduleId);
       /** 将表类型代码转换为文字 */
       const showText = TableTypeEnum.find((item) => item.value === col.type);
       col.type = showText ? showText.text : '';
       /** gmt时间格式转yyyy-MM-dd hh:mm:ss */
-      col.gmt_create = formatGMT(col.gmt_create);
-      col.gmt_modified = formatGMT(col.gmt_modified);
+      col.gmtCreate = formatGMT(col.gmtCreate);
+      col.gmtModified = formatGMT(col.gmtModified);
       /** antd table每行记录必需有key字段 */
       col.key = col.id;
       return col;
     });
+    // console.log({ structTableData });
     // setTableData(structTableData);
     dispatch({ type: 'setStructTableData', structTableData });
   };

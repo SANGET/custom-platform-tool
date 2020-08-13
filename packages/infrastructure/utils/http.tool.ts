@@ -1,7 +1,7 @@
 /*
  * @Author: your name
  * @Date: 2020-07-30 15:44:00
- * @LastEditTime: 2020-08-01 10:39:23
+ * @LastEditTime: 2020-08-13 20:44:19
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: \custom-platform-v3-frontend\packages\infrastructure\utils\http.tool.ts

@@ -1,7 +1,7 @@
 /*
  * @Author: wph
  * @Date: 2020-07-22 09:23:52
- * @LastEditTime: 2020-08-12 17:40:39
+ * @LastEditTime: 2020-08-13 22:18:41
  * @LastEditors: Please set LastEditors
  * @Description: 权限功能单元与页面状态无关的方法
  * @FilePath: \custom-platform-v3-frontend\packages\provider-app-hub\AuthManager\src\features\authItem\authItem.ts
@@ -9,6 +9,73 @@
 /**
  * 与后端协商,不涉及动态改变的下拉选项存在前端,不用接口请求
  */
+
+/**
+ * 是否类型约束
+*/
+interface IYNType{
+  value:"true" | "false" ;
+  text:"是"|"否";
+}
+/**
+ * 是否类型枚举
+ */
+export const YNTypeEnum :Array<IYNType> = [
+  { value: "true", text: "是" },
+  { value: "false", text: "否" },
+];
+
+/**
+ * 字段类型约束
+*/
+interface IDataType{
+  value:"NORMAL" | "PK" | "QUOTE"|"DICT"|"FK";
+  text:"普通字段"|"主键字段"|"引用字段"|"字典字段"|"外键字段";
+}
+/**
+ * 字段类型枚举
+ */
+export const DataTypeEnum :Array<IDataType> = [
+  { value: "NORMAL", text: "普通字段" },
+  { value: "PK", text: "主键字段" },
+  { value: "QUOTE", text: "引用字段" },
+  { value: "DICT", text: "字典字段" },
+  { value: "FK", text: "外键字段" },
+];
+
+/**
+ * 字段类型约束
+*/
+interface IFieldType{
+  value:"VARCHAR" | "INT" | "TIME"|"DATE"|"TEXT";
+  text:"字符串"|"整型"|"时间"|"日期时间"|"超大文本";
+}
+/**
+ * 字段类型枚举
+ */
+export const FieldTypeEnum :Array<IFieldType> = [
+  { value: "VARCHAR", text: "字符串" },
+  { value: "INT", text: "整型" },
+  { value: "TIME", text: "时间" },
+  { value: "DATE", text: "日期时间" },
+  { value: "TEXT", text: "超大文本" },
+];
+
+/**
+ * 业务字段类型约束
+*/
+interface ISpeciesType{
+  value:"SYS" | "BIS" ;
+  text:"系统元数据"|"业务元数据";
+}
+/**
+ * 业务字段类型枚举
+ */
+export const SpeciesTypeEnum :Array<ISpeciesType> = [
+  { value: "SYS", text: "系统元数据" },
+  { value: "BIS", text: "业务元数据" },
+];
+
 /**
  * 表类型枚举
 */

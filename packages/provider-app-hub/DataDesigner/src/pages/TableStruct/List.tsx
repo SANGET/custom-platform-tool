@@ -79,12 +79,12 @@ const List = (props) => {
       },
       {
         title: '归属模块',
-        dataIndex: 'module_id',
+        dataIndex: 'moduleId',
         width: 140,
       },
       {
         title: '创建时间',
-        dataIndex: 'gmt_create',
+        dataIndex: 'gmtCreate',
         width: 160,
       },
       // {
@@ -99,12 +99,12 @@ const List = (props) => {
       // },
       {
         title: '最后修改时间',
-        dataIndex: 'gmt_modified',
+        dataIndex: 'gmtModified',
         width: 160,
       },
       {
         title: '最后修改人员',
-        dataIndex: 'modified_by',
+        dataIndex: 'modifiedBy',
         width: 140,
       },
       {

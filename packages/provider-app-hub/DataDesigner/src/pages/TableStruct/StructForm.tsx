@@ -63,15 +63,15 @@ const StructForm = ({
     /** 是 表类型 */
     type: '',
     /** 是 归属模块 */
-    module_id: '',
+    moduleId: '',
     /** 否 业务字段类型，SYS(系统元数据)BIS(业务元数据)，用户填写的表默认BIS即可 */
     species: 'BIS',
     /** 否 备注  */
     description: '',
     /** 否 附属表对象,如果表类型是附属表，则必填 */
-    aux_table: {},
+    auxTable: {},
     /** 否 树型表对象,如果表类型是树型表，则必填 */
-    tree_table: {},
+    treeTable: {},
     /** 否 引用表对象集合 */
     references: [],
     /** 否 外键对象集合 */
@@ -96,27 +96,27 @@ const StructForm = ({
 
   const onTypeChange = () => {
     // dispatch({ type: 'increment' });
-    // const { primary_table: primaryTable } = state;
-    // const primaryTableCopy = JSON.parse(JSON.stringify(state.primary_table));
+    // const { primaryTable: primaryTable } = state;
+    // const primaryTableCopy = JSON.parse(JSON.stringify(state.primaryTable));
 
     console.log(form.getFieldValue('type'));
     if (form.getFieldValue('type') === 'auxTable') {
-      formItemsConfig.primary_table.hide = false;
-      const { primary_table } = formItemsConfig;
-      setFormItemsConfig({ ...formItemsConfig, primary_table });
+      formItemsConfig.primaryTable.hide = false;
+      const { primaryTable } = formItemsConfig;
+      setFormItemsConfig({ ...formItemsConfig, primaryTable });
       // setFormItemsConfig((prevState) => ({
       //   ...prevState,
-      //   primary_table: { hide: false }
+      //   primaryTable: { hide: false }
 
       // }));
-      console.log(form.getFieldValue('type'), formItemsConfig.primary_table);
+      console.log(form.getFieldValue('type'), formItemsConfig.primaryTable);
     } else {
-      formItemsConfig.primary_table.hide = true;
-      const { primary_table } = formItemsConfig;
-      setFormItemsConfig({ ...formItemsConfig, primary_table });
+      formItemsConfig.primaryTable.hide = true;
+      const { primaryTable } = formItemsConfig;
+      setFormItemsConfig({ ...formItemsConfig, primaryTable });
       // setFormItemsConfig(formItemsConfig);
-      // console.log(form.getFieldValue('type'), formItemsConfig.primary_table);
-      // dispatch({ type: 'setFormItemsConfig', primary_table: primaryTableCopy });
+      // console.log(form.getFieldValue('type'), formItemsConfig.primaryTable);
+      // dispatch({ type: 'setFormItemsConfig', primaryTable: primaryTableCopy });
     }
     // dispatch({ type: 'setFormItemsConfig', formItemsConfig: state.formItemsConfig });
   };
@@ -174,19 +174,19 @@ const StructForm = ({
         onChange: onTypeChange
       }
     },
-    primary_table: {
+    primaryTable: {
       hide: true,
       itemAttr: {
-        name: "primay_table",
+        name: "primayTable",
         label: "主表"
       },
       compAttr: {
         type: 'Input',
       }
     },
-    module_id: {
+    moduleId: {
       itemAttr: {
-        name: "module_id",
+        name: "moduleId",
         label: "归属模块"
       },
       compAttr: {
@@ -222,12 +222,12 @@ const StructForm = ({
 
   const [formItemsConfig, setFormItemsConfig] = useState(formItemsConfigInitValue);
   useEffect(() => {
-    console.log('xxx', formItemsConfig.primary_table.hide);
-  }, [formItemsConfig.primary_table.hide]);
+    console.log('xxx', formItemsConfig.primaryTable.hide);
+  }, [formItemsConfig.primaryTable.hide]);
   // const [state, dispatch] = useReducer(reducer, formItemsConfigInitValue, init);
   // console.log(state);
   // const {
-  //   name, code, type, primary_table: primaryTable, module_id: moduleId, tag, description
+  //   name, code, type, primaryTable: primaryTable, moduleId: moduleId, tag, description
   // } = formItemsConfigInitValue;
   return (
     <Form

@@ -1,13 +1,21 @@
 /*
  * @Author: wph
  * @Date: 2020-08-07 17:31:53
- * @LastEditTime: 2020-08-08 14:34:28
+ * @LastEditTime: 2020-08-13 22:10:03
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: \custom-platform-v3-frontend\packages\provider-app-hub\DataDesigner\src\tools\format.ts
  */
+
 /** 日期类型约束 */
 type TDate= number | string;
+
+export const codeToText = (obj) => {
+  const { arr, val } = obj;
+  /** 将表类型代码转换为文字 */
+  const showText = arr.find((item) => item.value === val);
+  return showText ? showText.text : '';
+};
 /**
  * gmt时间格式化
  * @param times 日期

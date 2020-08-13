@@ -1,13 +1,3 @@
-// import React from "react";
-
-// const ForeignKeySet = () => {
-//   return (
-//     <>外键设置</>
-//   );
-// };
-
-// export default ForeignKeySet;
-
 import React, { useState } from 'react';
 import {
   Table, Input, InputNumber, Popconfirm, Form, Button
@@ -136,37 +126,37 @@ const ForeignKeySet = () => {
     },
     {
       title: '字段编码',
-      dataIndex: 'field_code',
+      dataIndex: 'fieldCode',
       width: 140,
       editable: true,
     },
     {
       title: '关联表',
-      dataIndex: 'ref_table_code',
+      dataIndex: 'refTableCode',
       width: 300,
       editable: true,
     },
     {
       title: '关联字段',
-      dataIndex: 'ref_field_code',
+      dataIndex: 'refFieldCode',
       width: 140,
       editable: true,
     },
     {
       title: '显示字段',
-      dataIndex: 'ref_display_field_code',
+      dataIndex: 'ref_displayFieldCode',
       width: 140,
       editable: true,
     },
     {
       title: '外键约束(删除时)',
-      dataIndex: 'delete_strategy',
+      dataIndex: 'deleteStrategy',
       width: 140,
       editable: true,
     },
     {
       title: '外键约束(更新时)',
-      dataIndex: 'update_strategy',
+      dataIndex: 'updateStrategy',
       width: 140,
       editable: true,
     },

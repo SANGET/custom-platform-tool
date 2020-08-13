@@ -47,11 +47,11 @@ const EditStruct :FC = () => {
       setDetailData(res.data.result);
 
       const {
-        name, code, type, module_id
+        name, code, type, moduleId
       } = res.data.result;
 
       form.setFieldsValue({
-        name, code, type, module_id
+        name, code, type, moduleId
       });
     });
   }, []);
@@ -120,9 +120,9 @@ const EditStruct :FC = () => {
         readOnly: true,
       }
     },
-    module_id: {
+    moduleId: {
       itemAttr: {
-        name: "module_id",
+        name: "moduleId",
         label: "归属模块"
       },
       compAttr: {
@@ -140,7 +140,7 @@ const EditStruct :FC = () => {
   */
   const fetchSelectTreeData = async () => {
     const data = await fetchMenuTree();
-    formItemsConfig.module_id.compAttr.treeData = data as never[];
+    formItemsConfig.moduleId.compAttr.treeData = data as never[];
     /**
     * 更新表单渲染数据
     */
