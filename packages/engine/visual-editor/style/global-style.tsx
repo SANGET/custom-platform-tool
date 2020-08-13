@@ -21,6 +21,12 @@ const LocalGlobalStyle = createGlobalStyle`
   .state-mark {
     pointer-events: none;
     border: 1px solid transparent;
+    &.hovering {
+      
+    }
+    &.selected {
+
+    }
   }
 `;
 

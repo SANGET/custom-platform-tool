@@ -6,9 +6,9 @@ import React from 'react';
 import styled from 'styled-components';
 import classnames from 'classnames';
 
-import DragItem from './DragItemInCanvas';
+import DragItem from '../DragItem';
 import { ComponentTypeRenderer } from './ComponentTypeRenderer';
-import { FacToComponentProps } from '../wrapper-fac';
+import { FacToComponentProps } from '../dragable-item-wrapper-fac';
 
 const ComponentWrapper = styled.div`
   position: relative;
@@ -19,13 +19,6 @@ const ComponentWrapper = styled.div`
   /* &:hover {
     background-color: rgba(0,0,0, 0.7);
   } */
-  &.selected {
-    /* box-shadow: 0 0 1px 3px rgba(127, 113, 185, 0.5); */
-    >.state-mark {
-      /* pointer-events: none; */
-      border-color: blue;
-    }
-  }
 `;
 
 type ComponentWrapperComProps = FacToComponentProps
@@ -66,7 +59,6 @@ const ComponentWrapperCom: React.FC<ComponentWrapperComProps> = ({
             entityState={entityState}
             entity={currEntity}
           />
-          <div className="state-mark fill"></div>
         </ComponentWrapper>
       </DragItem>
     </div>

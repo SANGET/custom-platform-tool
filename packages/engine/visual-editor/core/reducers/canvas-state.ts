@@ -1,7 +1,7 @@
 import {
   SELECT_ENTITY, INIT_ENTITY_STATE, SelectEntity,
   SelectEntityAction, InitEntityStateAction,
-  UPDATE_ENTITY_STATE, UpdateEntityStateAction
+  UPDATE_ENTITY_STATE, UpdateEntityStateAction, INIT_APP, CLEAR_SELECT, ClearSelectAction, InitAppAction
 } from "../actions/canvas";
 import { EditorComponentEntity, EntitiesStateStore, EditorEntityState } from "../../types";
 
@@ -9,16 +9,19 @@ import { EditorComponentEntity, EntitiesStateStore, EditorEntityState } from "..
  * 选中的组件实例的数据结构
  */
 export interface SelectEntityState {
-  activeID: string,
+  /** 选中的组件实例 ID */
+  activeEntityID: string,
+  /** 选中的组件实例 */
   activeEntity?: EditorComponentEntity
+  /** 可支持多选 */
   selectedList: {
     [id: string]: EditorComponentEntity
   }
 }
 
-const defaultState = {
+export const defaultSelectedEntities = {
   selectedList: {},
-  activeID: '',
+  activeEntityID: '',
   activeEntity: undefined
 };
 
@@ -26,10 +29,14 @@ const defaultState = {
  * 组件选择状态管理。如果组件未被实例化，则实例化后被选择
  */
 export function selectedEntitiesReducer(
-  state: SelectEntityState = defaultState,
-  action: SelectEntityAction
+  state: SelectEntityState = defaultSelectedEntities,
+  action: SelectEntityAction | ClearSelectAction | InitAppAction
 ) {
   switch (action.type) {
+    case INIT_APP:
+      return defaultSelectedEntities;
+    case CLEAR_SELECT:
+      return defaultSelectedEntities;
     case SELECT_ENTITY:
       const { entity } = action;
       const entityID = entity.id;
@@ -37,7 +44,7 @@ export function selectedEntitiesReducer(
         selectedList: {
           [entityID]: entity
         },
-        activeID: entityID,
+        activeEntityID: entityID,
         activeEntity: entity
       };
       // case INIT_ENTITY_STATE:

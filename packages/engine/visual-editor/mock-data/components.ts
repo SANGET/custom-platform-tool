@@ -67,7 +67,10 @@ export const componentClassCollection: ComponentClassCollection = {
       // ]
       rawProp: [
         (entity) => {
-          return {};
+          return {
+            id: '',
+            label: ''
+          };
         }
       ]
     }

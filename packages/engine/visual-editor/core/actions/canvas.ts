@@ -1,17 +1,37 @@
-import { EditorComponentEntity, EditorEntityState } from "../../types";
+import {
+  EditorComponentEntity, EditorEntityState, EditorPageEntity
+} from "../../types";
 
 export const INIT_APP = 'INIT_APP';
 export interface InitAppAction {
   type: typeof INIT_APP
+  entity: EditorComponentEntity
 }
 
 /**
  * 初始化组件类的状态
  */
 export const InitApp = (
+  entity: EditorComponentEntity
 ): InitAppAction => {
   return {
     type: INIT_APP,
+    entity
+  };
+};
+
+export const CLEAR_SELECT = 'CLEAR_SELECT';
+export interface ClearSelectAction {
+  type: typeof CLEAR_SELECT
+}
+
+/**
+ * 初始化组件类的状态
+ */
+export const ClearSelect = (
+): ClearSelectAction => {
+  return {
+    type: CLEAR_SELECT,
   };
 };
 
@@ -47,7 +67,9 @@ export interface SelectEntityAction {
 /**
  * 选择组件实例
  */
-export const SelectEntity = (entity: EditorComponentEntity): SelectEntityAction => {
+export const SelectEntity = (
+  entity: EditorComponentEntity | EditorPageEntity
+): SelectEntityAction => {
   return {
     type: SELECT_ENTITY,
     entity

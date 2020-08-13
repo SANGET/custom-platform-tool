@@ -30,10 +30,6 @@ const VisualEditorApp: React.FC<VisualEditorAppProps> = (props) => {
     SelectEntity, InitEntityState, UpdateEntityState,
   } = dispatcher;
 
-  useEffect(() => {
-    InitApp();
-  }, []);
-
   return (
     <div>
       <Grid

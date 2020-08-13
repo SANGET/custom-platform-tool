@@ -8,6 +8,13 @@ interface GenericComponentType {
   type: string
 }
 
+export interface ComponentBindPropsConfig {
+  /** 绑定的属性的 id */
+  propRefs?: string[]
+  /** 原生属性配置 */
+  rawProp?: PropertyItemConfig[]
+}
+
 /**
  * 可拖动的组件的 class
  */
@@ -23,10 +30,7 @@ export interface EditorBasicComponentClass {
   /** 组件类面板的显示名 */
   label: string;
   /** 绑定可编辑的属性 */
-  bindProperties: {
-    /** 绑定的属性的 id */
-    propRefs: string[]
-  }
+  bindProperties: ComponentBindPropsConfig
 }
 
 /**
@@ -157,6 +161,18 @@ export interface EditorComponentEntityProps {
   // _state: 'active' | 'disable'
   /** 实例化后的 class id */
   _classID: EditorComponentClass['id']
+}
+
+/**
+ * 页面元数据
+ */
+export interface EditorPageEntity {
+  /** 内部 page id，一般为固定 id */
+  id: string
+  /** 存放后端返回的 page id */
+  pageID: string
+  /** 绑定可编辑的属性 */
+  bindProperties: ComponentBindPropsConfig
 }
 
 /**
