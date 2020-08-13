@@ -25,9 +25,9 @@ const mapState = (state) => ({
   structPager: state.structPager,
 });
 const TableField = (props) => {
-  // const {
-  //   tableData, scroll, style, title
-  // } = props;
+  const {
+    tableData, scroll, style, title
+  } = props;
 
   /** react路由跳转方法,必须定义在react 组件中,跳转到编辑表页面时要用 */
   // const History = useHistory();
@@ -44,7 +44,12 @@ const TableField = (props) => {
     // };
   }, []);
 
-  const [tableData, setTableData] = useState([]);
+  const dataSource = tableData.map((row) => {
+    row.key = row.code;
+    return row;
+  });
+
+  // const [tableData, setTableData] = useState([]);
 
   useEffect(() => {
     const getPageData = async () => {
@@ -57,24 +62,24 @@ const TableField = (props) => {
       const tableRes = await Http.get('http://localhost:60001/mock/structList.json', {});
 
       /** 表格数据格式转换-注意setTableData之后不能立刻获取最新值 */
-      setTableData(tableRes.data.result.data.map((col) => {
-        /** 根据节点的key查找节点完整信息 */
-        /** 返回节点的名称 */
-        // col.module_id = treeQuery(tData, col.module_id).title;
-        // // console.log(col.module_id);
-        // /** 将表类型代码转换为文字 */
-        // const showText = TableTypeEnum.find((item) => item.value === col.type);
-        // col.type = showText ? showText.text : '';
-        // /** gmt时间格式转yyyy-MM-dd hh:mm:ss */
-        // col.gmt_create = formatGMT(col.gmt_create);
-        // col.gmt_modified = formatGMT(col.gmt_modified);
-        /** antd table每行记录必需有key字段 */
-        col.key = col.id;
-        return col;
-      }));
+      // setTableData(tableRes.data.result.data.map((col) => {
+      /** 根据节点的key查找节点完整信息 */
+      /** 返回节点的名称 */
+      // col.module_id = treeQuery(tData, col.module_id).title;
+      // // console.log(col.module_id);
+      // /** 将表类型代码转换为文字 */
+      // const showText = TableTypeEnum.find((item) => item.value === col.type);
+      // col.type = showText ? showText.text : '';
+      // /** gmt时间格式转yyyy-MM-dd hh:mm:ss */
+      // col.gmt_create = formatGMT(col.gmt_create);
+      // col.gmt_modified = formatGMT(col.gmt_modified);
+      /** antd table每行记录必需有key字段 */
+      //   col.key = col.id;
+      //   return col;
+      // }));
     };
 
-    getPageData();
+    // getPageData();
 
     // window.onresize = function () {
     //   console.log('log');
@@ -84,7 +89,7 @@ const TableField = (props) => {
   /** 表格属性 */
   const tableProps = {
     treeData: [],
-    tableData,
+    tableData: dataSource,
     scroll: {
       /** 必须设置，不然表格列过多时内容会撑开容器,并且不能设置成true,要设置成数字,不然列宽设置无效 */
       x: 200,
@@ -130,7 +135,7 @@ const TableField = (props) => {
       },
       {
         title: '字段类型',
-        dataIndex: 'type',
+        dataIndex: 'field_type',
         width: 100,
       },
       {
@@ -140,7 +145,7 @@ const TableField = (props) => {
       },
       {
         title: '长度',
-        dataIndex: 'gmt_create',
+        dataIndex: 'field_size',
         width: 160,
       },
       {

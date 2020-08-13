@@ -2,7 +2,10 @@ import React, { FC, useState, useEffect } from 'react';
 import {
   Tabs, Form, Tag, Row, Col, Button
 } from 'antd';
-
+/*
+* 网络请求工具
+*/
+import Http from '@infra/utils/http';
 /**
  * 在antd Select组件基础上封装的选择框组件
  */
@@ -27,11 +30,33 @@ const EditStruct :FC = () => {
   /**
    * 全局加载动画设置
    */
-  const { structTableData } = useMappedState((state) => ({
-    structTableData: state.structTableData
-  }));
+  // const { structTableData } = useMappedState((state) => ({
+  //   structTableData: state.structTableData
+  // }));
 
-  console.log({ structTableData });
+  const [detailData, setDetailData] = useState({ columns: [] });
+
+  /** 创建可控表单实例--用于新建表 */
+  const [form] = Form.useForm();
+
+  useEffect(() => {
+    // http:// {ip}:{port}/paas/ {lesseeCode}/{applicationCode}/data/v1/tables/00dd1b16e3a84a6fbeed12a661484eba
+    Http.get('http://localhost:60001/mock/structDetail.json', {}).then((res) => {
+      // console.log(res);
+
+      setDetailData(res.data.result);
+
+      const {
+        name, code, type, module_id
+      } = res.data.result;
+
+      form.setFieldsValue({
+        name, code, type, module_id
+      });
+    });
+  }, []);
+
+  // console.log({ structTableData });
 
   /** 表单项label和content的宽度 */
   const formItemLayout = {
@@ -45,8 +70,6 @@ const EditStruct :FC = () => {
     }
   };
 
-  /** 创建可控表单实例--用于新建表 */
-  const [form] = Form.useForm();
   const formItemsConfigInit = {
     name: {
     /** 表单项属性 */
@@ -145,7 +168,7 @@ const EditStruct :FC = () => {
 
   const tabsConf = {
     attr: {
-      defaultActiveKey: 'ReferenceTable',
+      defaultActiveKey: 'TableField',
       type: "card" as const,
       size: 'small' as const,
       style: { marginTop: '20px' },
@@ -154,7 +177,7 @@ const EditStruct :FC = () => {
       },
     },
     panes: [
-      { tab: '表字段', key: 'TableField' },
+      { tab: '表字段', key: 'TableField', tableData: detailData.columns },
       { tab: '引用表', key: 'ReferenceTable', },
       { tab: '外键设置', key: 'ForeignKeySet', },
       { tab: '组合唯一', key: 'ComposeUnique', },
@@ -174,8 +197,6 @@ const EditStruct :FC = () => {
         /** 受控组件实例 */
         form={form}
         {...formItemLayout}
-        /** 表单初始值 */
-        initialValues={{}}
       >
         <Row gutter={24}>{
           Object.keys(formItemsConfig).map((key) => (
@@ -222,7 +243,7 @@ const EditStruct :FC = () => {
         {
           tabsConf.panes.map((item) => (
             <TabPane tab={item.tab} key={item.key}>
-              <Row><BasicStory type={item.key} /></Row>
+              <Row><BasicStory {...item} type={item.key} /></Row>
             </TabPane>
           ))
         }
