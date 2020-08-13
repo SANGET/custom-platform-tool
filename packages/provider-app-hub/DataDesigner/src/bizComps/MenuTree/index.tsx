@@ -53,7 +53,7 @@ const MenuTree = ({ dataSource, ...props }) => {
     ...props,
     expandedKeys,
     autoExpandParent,
-    treeData: hightLight({ searchValue, treeNode: dataSource }),
+    treeData: dataSource.length > 0 && hightLight({ searchValue, treeNode: dataSource }),
     // onDrop,
     /**
    * 展开/收起节点时触发

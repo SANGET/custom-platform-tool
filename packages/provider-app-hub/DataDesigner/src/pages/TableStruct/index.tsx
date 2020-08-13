@@ -5,7 +5,9 @@
  * @Last Modified time: 2020-07-10 12:00:29
  */
 
-import React, { FC, useState, useEffect } from 'react';
+import React, {
+  FC, useState, useEffect, useCallback
+} from 'react';
 import { Input, Modal, Form } from 'antd';
 
 /** 网络请求工具 */
@@ -46,11 +48,11 @@ import './tableStruct.less';
 
 /** 搜索输入框 */
 const { Search } = Input;
+// const mapState = (state) => ({
+//   treeData: state.treeData,
+//   structTableData: state.structTableData
+// });
 
-/** 共享状态值--表结构分页和树形源数据 */
-const mapState = (state) => ({
-  treeData: state.treeData
-});
 /** 给你一些使用react hook的理由  */
 /** 理由一： hook使你无需更改页面结构,也能在不同的组件间复用状态,为了在组件间复用状态,providers,consumers,render Props、高阶组件这类方案需要更改页面结构
  *         通过抽象层组成的组件解决将可复用状态附加到组件路径的做法会形成嵌套地狱,
@@ -60,10 +62,28 @@ const mapState = (state) => ({
 /**  理由三 函数式组件比class组件更容易理解, 在函数组件中,很好理解props，state 和自顶向下的数据流，但在class组件中却一筹莫展，class组件中this的工作方式也不好理解 */
 /**  理由四 从概念上来讲React组件更像函数,而hook拥抱了函数,class组件不能很好的压缩,热重载不稳定,class组件会使component folding优化措施无效 */
 const TableStructContainer: FC = () => {
+  // 定义一个 mapState函数
+  /**
+   * useCallback 接收一个内联回调函数和一个依赖数组，返回一个记忆版本的回调函数，
+   * 只有当依赖发生变化的时候，回调函数才会改变。这在将回调传递给优化的子组件时非常有用，
+   * 这些组件依赖引用相等性来防止不必要的渲染
+   * */
+
+  const mapState = useCallback(
+    (state) => ({
+      treeData: state.treeData,
+      structTableData: state.structTableData
+    }),
+    []
+  );
+
   /** 在网络请求工具中,要用dispatch更改共享状态 */
   const dispatch = useDispatch();
   /** structPager显示列表序号的时候要用 treeData 左侧菜单树要用 */
-  const { treeData } = useMappedState(mapState);
+  /**
+   * 共享状态值--表结构分页和树形源数据
+   * */
+  const { treeData, structTableData } = useMappedState(mapState);
 
   /**
    *  useState和useReducer该如何选择
@@ -77,36 +97,55 @@ const TableStructContainer: FC = () => {
   /** 设置模块框的显示隐藏 */
   const [visible, setVisiable] = useState<boolean>(false);
 
-  const [tableData, setTableData] = useState([]);
+  // const [tableData, setTableData] = useState([]);
 
+  const getPageData = async () => {
+    /** 请求菜单树,表结构的表类型列依赖菜单树数据 */
+    const menuTreeRes = await Http.get('http://localhost:60001/mock/menu.json', {});
+    const tData = listToTree(menuTreeRes.data.result);
+
+    /**
+     * dispatch后组件渲染两次的原因
+    * 最近的react版本,dev模式下render使用的是strict mode,strict mode的通过两次调用constructor和render函数来更好的检测不符合预期的side effects
+    * 下列函数会执行两次:
+    * 类组件的constructor,render和shouldComponentUpdate方法
+    * 类组建的静态方法getDerivedStateFromProps
+    * 函数组件方法体
+    * 状态更新函数(setState的第一个参数)
+    * 传入useState,useMemo或useReducer的函数
+    * 在production环境下不会这样,所以不用担心
+    */
+    dispatch({ type: 'setTreeData', treeData: tData });
+
+    // console.log(tData);
+
+    /** 请求表结构列表数据 */
+    const tableRes = await Http.get('http://localhost:60001/mock/structList.json', {});
+
+    /** 表格数据格式转换-注意setTableData之后不能立刻获取最新值 */
+    const structTableData = tableRes.data.result.data.map((col) => {
+      /** 根据T点的key查找节点完整信息 */
+      /** 返回节点的名称 */
+      col.module_id = treeQuery(tData, col.module_id).title;
+      // console.log(col.module_id);
+      /** 将表类型代码转换为文字 */
+      const showText = TableTypeEnum.find((item) => item.value === col.type);
+      col.type = showText ? showText.text : '';
+      /** gmt时间格式转yyyy-MM-dd hh:mm:ss */
+      col.gmt_create = formatGMT(col.gmt_create);
+      col.gmt_modified = formatGMT(col.gmt_modified);
+      /** antd table每行记录必需有key字段 */
+      col.key = col.id;
+      return col;
+    });
+    // setTableData(structTableData);
+    dispatch({ type: 'setStructTableData', structTableData });
+  };
+  /**
+  * useEffect第二个值传空数组,是告诉react不要追踪任何值的变化，只运行一次
+  * 有效模拟componentDidMount事件
+  */
   useEffect(() => {
-    const getPageData = async () => {
-      /** 请求菜单树,表结构的表类型列依赖菜单树数据 */
-      const menuTreeRes = await Http.get('http://localhost:60001/mock/menu.json', {});
-      const tData = listToTree(menuTreeRes.data.result);
-      dispatch({ type: 'setTreeData', treeData: tData });
-
-      /** 请求表结构列表数据 */
-      const tableRes = await Http.get('http://localhost:60001/mock/structList.json', {});
-
-      /** 表格数据格式转换-注意setTableData之后不能立刻获取最新值 */
-      setTableData(tableRes.data.result.data.map((col) => {
-        /** 根据节点的key查找节点完整信息 */
-        /** 返回节点的名称 */
-        col.module_id = treeQuery(tData, col.module_id).title;
-        // console.log(col.module_id);
-        /** 将表类型代码转换为文字 */
-        const showText = TableTypeEnum.find((item) => item.value === col.type);
-        col.type = showText ? showText.text : '';
-        /** gmt时间格式转yyyy-MM-dd hh:mm:ss */
-        col.gmt_create = formatGMT(col.gmt_create);
-        col.gmt_modified = formatGMT(col.gmt_modified);
-        /** antd table每行记录必需有key字段 */
-        col.key = col.id;
-        return col;
-      }));
-    };
-
     getPageData();
 
     // window.onresize = function () {
@@ -117,7 +156,7 @@ const TableStructContainer: FC = () => {
   /** 表格属性 */
   const tableProps = {
     treeData,
-    tableData,
+    tableData: structTableData,
     scroll: {
       /** 必须设置，不然表格列过多时内容会撑开容器,并且不能设置成true,要设置成数字,不然列宽设置无效 */
       x: 200,
@@ -177,6 +216,7 @@ const TableStructContainer: FC = () => {
   const treeProps = {
     draggable: true,
     blockNode: true,
+    dataSource: treeData,
   };
   /** 搜索条件-表类型 */
   const basicSelectProps = {
@@ -203,7 +243,7 @@ const TableStructContainer: FC = () => {
         {/* 按照单一职责拆分组件,比直接组合更灵活 */}
         {/* <Input {...inputProps} /> */}
         {/* <Tree treeData={treeData} /> */}
-        <MenuTree {...treeProps} dataSource={treeData} />
+        <MenuTree {...treeProps} />
       </aside>
       <main className="content bl1px">
         {/* 搜索条件框 */}

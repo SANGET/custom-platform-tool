@@ -12,7 +12,10 @@ import { TableTypeEnum } from '@provider-app/data-designer/src/tools/constant';
 
 // import EditableTable from '@provider-app/data-designer/src/bizComps/EditableTable';
 
+import { fetchMenuTree } from '@provider-app/data-designer/src/api';
+
 import './editStruct.less';
+import { useMappedState } from 'redux-react-hook';
 
 const { CheckableTag } = Tag;
 
@@ -21,6 +24,15 @@ const { TabPane } = Tabs;
  * 数据表名称 数据表编码 表类型 归属模块
  */
 const EditStruct :FC = () => {
+  /**
+   * 全局加载动画设置
+   */
+  const { structTableData } = useMappedState((state) => ({
+    structTableData: state.structTableData
+  }));
+
+  console.log({ structTableData });
+
   /** 表单项label和content的宽度 */
   const formItemLayout = {
   /** 满栅格是24, 设置label标签宽度 */
@@ -35,7 +47,7 @@ const EditStruct :FC = () => {
 
   /** 创建可控表单实例--用于新建表 */
   const [form] = Form.useForm();
-  const formItemsConfig = {
+  const formItemsConfigInit = {
     name: {
     /** 表单项属性 */
       itemAttr: {
@@ -93,10 +105,32 @@ const EditStruct :FC = () => {
       compAttr: {
         type: 'TreeSelect',
         enum: TableTypeEnum,
+        treeData: []
         // ...tProps
       }
     },
   };
+
+  const [formItemsConfig, setFormItemsConfig] = useState(formItemsConfigInit);
+  /**
+  * 获取树选择数据
+  */
+  const fetchSelectTreeData = async () => {
+    const data = await fetchMenuTree();
+    formItemsConfig.module_id.compAttr.treeData = data as never[];
+    /**
+    * 更新表单渲染数据
+    */
+    setFormItemsConfig({ ...formItemsConfig });
+  };
+
+  /**
+   * 凡是http请求，都会造成页面死循环,都要放在useEffect中
+   */
+  useEffect(() => {
+    fetchSelectTreeData();
+  }, []);
+
   const formButs = [
     { text: '保存', onClick: () => {} },
     { text: '返回', onClick: () => {} },
@@ -188,7 +222,7 @@ const EditStruct :FC = () => {
         {
           tabsConf.panes.map((item) => (
             <TabPane tab={item.tab} key={item.key}>
-              <BasicStory type={item.key} />
+              <Row><BasicStory type={item.key} /></Row>
             </TabPane>
           ))
         }

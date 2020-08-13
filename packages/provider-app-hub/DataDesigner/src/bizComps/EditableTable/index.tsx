@@ -148,18 +148,18 @@ const EditableTable = () => {
       width: 140,
       editable: true,
     },
-    {
-      title: '弹窗配置',
-      dataIndex: 'address',
-      width: 140,
-      editable: true,
-    },
-    {
-      title: '是否存在多层上级',
-      dataIndex: 'address',
-      width: 140,
-      editable: true,
-    },
+    // {
+    //   title: '弹窗配置',
+    //   dataIndex: 'address',
+    //   width: 140,
+    //   editable: true,
+    // },
+    // {
+    //   title: '是否存在多层上级',
+    //   dataIndex: 'address',
+    //   width: 140,
+    //   editable: true,
+    // },
     {
       title: '操作',
       dataIndex: 'operation',
