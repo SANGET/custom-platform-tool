@@ -21,6 +21,10 @@ const LocalGlobalStyle = createGlobalStyle`
   .state-mark {
     pointer-events: none;
     border: 1px solid transparent;
+    left: 1px;
+    right: 1px;
+    bottom: 0;
+    top: 0;
     &.hovering {
       
     }

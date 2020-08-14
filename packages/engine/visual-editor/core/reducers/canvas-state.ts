@@ -1,9 +1,10 @@
 import {
   SELECT_ENTITY, INIT_ENTITY_STATE, SelectEntity,
   SelectEntityAction, InitEntityStateAction,
-  UPDATE_ENTITY_STATE, UpdateEntityStateAction, INIT_APP, CLEAR_SELECT, ClearSelectAction, InitAppAction
+  UPDATE_ENTITY_STATE, UpdateEntityStateAction, INIT_APP, CLEAR_SELECT,
+  ClearSelectAction, InitAppAction
 } from "../actions/canvas";
-import { EditorComponentEntity, EntitiesStateStore, EditorEntityState } from "../../types";
+import { EditorEntity, EntitiesStateStore, EditorEntityState } from "../../types";
 
 /**
  * 选中的组件实例的数据结构
@@ -12,10 +13,10 @@ export interface SelectEntityState {
   /** 选中的组件实例 ID */
   activeEntityID: string,
   /** 选中的组件实例 */
-  activeEntity?: EditorComponentEntity
+  activeEntity?: EditorEntity
   /** 可支持多选 */
   selectedList: {
-    [id: string]: EditorComponentEntity
+    [id: string]: EditorEntity
   }
 }
 

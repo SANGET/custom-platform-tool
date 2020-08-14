@@ -173,6 +173,13 @@ const CanvasStage: React.FC<CanvasStageProps> = ({
     selectEntity(PageEntity);
   };
 
+  const deleteElement = (event, entity) => {
+    layoutInfoDispatcher({
+      type: 'del',
+      entity
+    });
+  };
+
   useEffect(() => {
     /**
      * didMount 后选中页面本身
@@ -190,12 +197,15 @@ const CanvasStage: React.FC<CanvasStageProps> = ({
 
   /**
    * 布局包装渲染器的上下文
+   *
+   * TODO: 用 menoized 优化
    */
   const wrapperContext: WrapperFacOptions = {
     flatLayoutNodes,
     getSelectedState,
     getEntityProps,
     onDrop: dropDispatcher,
+    onDelete: deleteElement,
     onClick: onSelectEntityForClick,
   };
 

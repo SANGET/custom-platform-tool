@@ -40,6 +40,8 @@ export interface WrapperFacActions {
   onDrop: (entity, containerID?) => void;
   /** 响应组件点击事件 */
   onClick: (event, entity: EditorComponentEntity) => void;
+  /** 响应组件点击事件 */
+  onDelete: (event, entity: EditorComponentEntity) => void;
 }
 
 /**
@@ -55,7 +57,7 @@ interface FacToComponentPropsTemp extends WrapperFacOptions, LayoutWrapperContex
   currEntity: EditorComponentEntity
 }
 
-export type FacToComponentProps = Omit<FacToComponentPropsTemp, 'flatLayoutNodes'>
+export type FacToComponentProps = Omit<FacToComponentPropsTemp, 'flatLayoutNodes', 'onDelete'>
 
 export type ContainerWrapperFac = (
   wrapperComponent: React.ElementType<FacToComponentProps>,
@@ -91,7 +93,7 @@ const DragableItemWrapper = styled.div`
 export const dragableItemWrapperFac: ContainerWrapperFac = (
   WrapperComponent,
   {
-    onDrop, onClick,
+    onDrop, onClick, onDelete,
     flatLayoutNodes, getSelectedState, getEntityProps,
     // getHoveringEntity, setHoveringEntity
   },
@@ -103,6 +105,8 @@ export const dragableItemWrapperFac: ContainerWrapperFac = (
     // isHovering && 'hovering',
     isSelected && 'selected',
   ]);
+  const currEntity = flatLayoutNodes[id];
+
   return (
     <DragableItemWrapper
       // onMouseEnter={(e) => {
@@ -126,6 +130,13 @@ export const dragableItemWrapperFac: ContainerWrapperFac = (
       >
         {children}
       </WrapperComponent>
+      <div
+        className="t_red rm-btn"
+        onClick={(e) => {
+          e.stopPropagation();
+          onDelete(e, currEntity);
+        }}
+      >删除</div>
       <div className="hoving state-mark fill"></div>
       <div className="selected state-mark fill"></div>
     </DragableItemWrapper>

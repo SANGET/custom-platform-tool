@@ -181,6 +181,11 @@ export interface EditorPageEntity {
 export type EditorComponentEntity = EditorComponentClass & EditorComponentEntityProps
 
 /**
+ * 编辑器的实例种类
+ */
+export type EditorEntity = EditorComponentEntity | EditorPageEntity
+
+/**
  * 组件实例
  */
 export interface EditorComponentEntityStore {

@@ -1,4 +1,4 @@
-import { EditorPropertyItemsCollection, PropertyItemConfigFunc } from "../types";
+import { PropertyItemConfigFunc } from "../types";
 
 /**
  * TODO: 搞清楚属性如何影响组件实例，或者是说组件实例如何根据属性数据进行调整

@@ -1,18 +1,18 @@
 import {
-  EditorComponentEntity, EditorEntityState, EditorPageEntity
+  EditorComponentEntity, EditorEntityState, EditorPageEntity, EditorEntity
 } from "../../types";
 
 export const INIT_APP = 'INIT_APP';
 export interface InitAppAction {
   type: typeof INIT_APP
-  entity: EditorComponentEntity
+  entity: EditorEntity
 }
 
 /**
  * 初始化组件类的状态
  */
 export const InitApp = (
-  entity: EditorComponentEntity
+  entity: EditorEntity
 ): InitAppAction => {
   return {
     type: INIT_APP,
@@ -40,7 +40,7 @@ export const ClearSelect = (
 export const INIT_ENTITY_STATE = 'INIT_ENTITY_STATE';
 export interface InitEntityStateAction {
   type: typeof INIT_ENTITY_STATE
-  entity: EditorComponentEntity
+  entity: EditorEntity
   defaultEntityState
 }
 
@@ -48,7 +48,7 @@ export interface InitEntityStateAction {
  * 初始化组件类的状态
  */
 export const InitEntityState = (
-  entity: EditorComponentEntity,
+  entity: EditorEntity,
   defaultEntityState
 ): InitEntityStateAction => {
   return {
@@ -61,14 +61,14 @@ export const InitEntityState = (
 export const SELECT_ENTITY = 'SELECT_ENTITY';
 export interface SelectEntityAction {
   type: typeof SELECT_ENTITY
-  entity: EditorComponentEntity
+  entity: EditorEntity
 }
 
 /**
  * 选择组件实例
  */
 export const SelectEntity = (
-  entity: EditorComponentEntity | EditorPageEntity
+  entity: EditorEntity
 ): SelectEntityAction => {
   return {
     type: SELECT_ENTITY,
@@ -89,7 +89,7 @@ export interface UpdateEntityStateAction {
  * 更新组件实例的状态
  */
 export const UpdateEntityState = (
-  entity: EditorComponentEntity,
+  entity: EditorEntity,
   formState: EditorEntityState
 ): UpdateEntityStateAction => {
   return {

@@ -5,7 +5,7 @@ import React from 'react';
 import { Input, Button } from '@infra/ui';
 import { propertiesItemCollection } from '../../mock-data';
 import {
-  EditorComponentEntity, EditorEntityState, EditorPropertyItem,
+  EditorEntity, EditorEntityState, EditorPropertyItem,
   ComponentBindPropsConfig,
 } from '../../types';
 import useUpdateState from './useUpdateState';
@@ -18,7 +18,7 @@ export type InitEntityStateOfEditor = (entityState: EditorEntityState) => void
 
 export interface PropertiesEditorProps {
   /** 选中的 entity */
-  selectedEntity: EditorComponentEntity
+  selectedEntity: EditorEntity
   /** 属性项组合配置 */
   propertiesConfig: ComponentBindPropsConfig
   /** 属性编辑器的配置，通过该配置生成有层级结构的属性编辑面板 */
