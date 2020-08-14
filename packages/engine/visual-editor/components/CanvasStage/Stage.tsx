@@ -1,7 +1,7 @@
 /**
  * CanvasStage
  */
-import React, { useState, useReducer } from 'react';
+import React, { useState, useReducer, useEffect } from 'react';
 import { useDrop } from 'react-dnd';
 import styled from 'styled-components';
 import classnames from 'classnames';
@@ -18,24 +18,42 @@ import { layoutInfoActionReducer } from '@engine/visual-editor/core/reducers/lay
 import { ItemTypes } from '@engine/visual-editor/spec/types';
 import ContainerWrapperCom from '@engine/visual-editor/spec/template/ContainerWrapperCom';
 import ComponentWrapperCom from '@engine/visual-editor/spec/template/ComponentWrapperCom';
-import { DragComponentClass, DropCollectType, EntitiesStateStore } from '@engine/visual-editor/types';
-import { containerWrapperFac, FacToComponentProps } from '@engine/visual-editor/spec/wrapper-fac';
+import {
+  DragComponentClass, DropCollectType, EntitiesStateStore,
+  EditorPageEntity
+} from '@engine/visual-editor/types';
+import { dragableItemWrapperFac, FacToComponentProps, WrapperFacOptions } from '@engine/visual-editor/spec/dragable-item-wrapper-fac';
 
 import { Grid } from '@infra/ui';
 import { constructCompClass } from './utils/component-constructor';
 import { PropertiesEditorProps } from '../PropertiesEditor';
 import { Dispatcher } from '../../core/actions';
+import { pageProperties } from '../../mock-data/page-perproties';
 
 const StageRender = styled.div`
   min-height: 50vh;
   background-color: rgba(0,0,0, 0.05);
   padding: 10px;
+  border: 1px solid #EEE;
+  &:hover {
+    background-color: rgba(0,0,0, 0.05);
+  }
   &.renderer {
     &.overing {
       background-color: rgba(0,0,0, 0.08);
     }
   }
 `;
+
+const PAGE_ENTITY_ID = '__PAGE__ENTITY__ID__';
+
+const PageEntity: EditorPageEntity = {
+  id: PAGE_ENTITY_ID,
+  pageID: '',
+  bindProperties: {
+    rawProp: pageProperties
+  },
+};
 
 /**
  * 中央舞台组件的 props
@@ -76,11 +94,14 @@ const CanvasStage: React.FC<CanvasStageProps> = ({
     flatLayoutNodes, layoutInfoDispatcher
   ] = useReducer(layoutInfoActionReducer, {});
 
+  /**
+   * 点击选择组件实例的处理
+   */
   const onSelectEntityForClick = (clickEvent, entity) => {
     selectEntity(entity);
   };
 
-  const { activeID, activeEntity } = selectedEntities;
+  const { activeEntityID, activeEntity } = selectedEntities;
 
   /**
    * 相应拖放的放的动作的过滤器
@@ -147,6 +168,25 @@ const CanvasStage: React.FC<CanvasStageProps> = ({
     return entitiesStateStore[entityID];
   };
 
+  const selectPage = () => {
+    // pageProperties
+    selectEntity(PageEntity);
+  };
+
+  const deleteElement = (event, entity) => {
+    layoutInfoDispatcher({
+      type: 'del',
+      entity
+    });
+  };
+
+  useEffect(() => {
+    /**
+     * didMount 后选中页面本身
+     */
+    selectEntity(PageEntity);
+  }, []);
+
   const layoutNestingNodeTree = parseFlatNodeToNestNode<LayoutNodeInfo>(flatLayoutNodes);
 
   /**
@@ -157,12 +197,15 @@ const CanvasStage: React.FC<CanvasStageProps> = ({
 
   /**
    * 布局包装渲染器的上下文
+   *
+   * TODO: 用 menoized 优化
    */
-  const wrapperContext = {
+  const wrapperContext: WrapperFacOptions = {
     flatLayoutNodes,
     getSelectedState,
     getEntityProps,
     onDrop: dropDispatcher,
+    onDelete: deleteElement,
     onClick: onSelectEntityForClick,
   };
 
@@ -172,14 +215,14 @@ const CanvasStage: React.FC<CanvasStageProps> = ({
     isOverCurrent && 'overing'
   ]);
 
-  // console.log(layoutNestingNodeTree);
+  const pageEntityState = entitiesStateStore[PAGE_ENTITY_ID];
+  const pageStyle = pageEntityState?.style;
+
+  // console.log(activeEntity, entitiesStateStore);
 
   return (
     <div
       className="canvas-stage-container"
-      onClick={(e) => {
-        console.log('编辑页面属性');
-      }}
     >
       <Grid
         container
@@ -193,22 +236,30 @@ const CanvasStage: React.FC<CanvasStageProps> = ({
           item
           className="left-panel"
         >
-          <StageRender
-            ref={drop}
-            className={stageClasses}
-          >
-            <LayoutRenderer
-              layoutNode={layoutNestingNodeTree}
-              componentRenderer={containerWrapperFac(
-                ComponentWrapper,
-                wrapperContext,
-              )}
-              containerWrapper={containerWrapperFac(
-                ContainerWrapper,
-                wrapperContext,
-              )}
-            />
-          </StageRender>
+          <LayoutRenderer
+            layoutNode={layoutNestingNodeTree}
+            RootRender={(child) => (
+              <StageRender
+                ref={drop}
+                onClick={(e) => {
+                  // console.log('编辑页面属性');
+                  selectPage();
+                }}
+                className={stageClasses}
+                style={pageStyle}
+              >
+                {child}
+              </StageRender>
+            )}
+            componentRenderer={dragableItemWrapperFac(
+              ComponentWrapper,
+              wrapperContext,
+            )}
+            containerWrapper={dragableItemWrapperFac(
+              ContainerWrapper,
+              wrapperContext,
+            )}
+          />
         </Grid>
         {
           activeEntity && (
@@ -220,11 +271,12 @@ const CanvasStage: React.FC<CanvasStageProps> = ({
               item
             >
               <PropEditorRenderer
-                key={activeID}
+                key={activeEntityID}
+                propertiesConfig={activeEntity.bindProperties}
                 selectedEntity={activeEntity}
-                defaultEntityState={entitiesStateStore[activeID]}
-                initEntityState={initEntityState}
-                updateEntitiesStateStore={updateEntityState}
+                defaultEntityState={entitiesStateStore[activeEntityID]}
+                initEntityState={(entityState) => initEntityState(activeEntity, entityState)}
+                updateEntityState={(entityState) => updateEntityState(activeEntity, entityState)}
               />
             </Grid>
           )

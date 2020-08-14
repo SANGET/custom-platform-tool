@@ -5,25 +5,30 @@ import React from 'react';
 import { Input, Button } from '@infra/ui';
 import { propertiesItemCollection } from '../../mock-data';
 import {
-  EditorComponentEntity, EditorEntityState, EditorPropertyItem,
+  EditorEntity, EditorEntityState, EditorPropertyItem,
+  ComponentBindPropsConfig,
 } from '../../types';
 import useUpdateState from './useUpdateState';
 import { PropItemRenderer } from './PropItemRenderer';
-import { Dispatcher } from '../../core/actions';
 import { extractPropConfig } from './extractPropConfig';
 import { entityStateMergeRule } from './entityStateMergeRule';
 
+export type UpdateEntityStateOfEditor = (entityState: EditorEntityState) => void
+export type InitEntityStateOfEditor = (entityState: EditorEntityState) => void
+
 export interface PropertiesEditorProps {
   /** 选中的 entity */
-  selectedEntity: EditorComponentEntity
+  selectedEntity: EditorEntity
+  /** 属性项组合配置 */
+  propertiesConfig: ComponentBindPropsConfig
   /** 属性编辑器的配置，通过该配置生成有层级结构的属性编辑面板 */
   editorConfig?: any
   /** 默认的表单数据state */
   defaultEntityState?: EditorEntityState
   /** 保存属性的回调 */
-  updateEntitiesStateStore: Dispatcher['UpdateEntityState']
+  updateEntityState: UpdateEntityStateOfEditor
   /** 初始化实例的回调 */
-  initEntityState: Dispatcher['InitEntityState']
+  initEntityState: InitEntityStateOfEditor
 }
 
 const StateBtn = ({
@@ -54,7 +59,6 @@ class DefaultEntityStateManager {
   }
 
   setState = (
-    selectedEntity: EditorComponentEntity,
     propItemConfig
   ) => {
     const { defaultValue } = propItemConfig;
@@ -99,12 +103,13 @@ PropertiesEditorProps, PropertiesEditorState
   componentDidMount() {
     if (!this.hasDefaultEntityState) {
       const {
-        selectedEntity,
         initEntityState,
       } = this.props;
+
+      /** 这段代码会执行在 render 之后 */
       const _defaultEntityState = defaultEntityStateManager.getState();
       console.log(_defaultEntityState);
-      initEntityState(selectedEntity, _defaultEntityState);
+      initEntityState(_defaultEntityState);
 
       this.hasDefaultEntityState = true;
       this.setState({
@@ -118,13 +123,28 @@ PropertiesEditorProps, PropertiesEditorState
    *
    * TODO: 更强的状态管理工具
    */
-  updateEntityState = (propItemConfig, value) => {
+  updateEntityStateForSelf = (propItemConfig, value) => {
     this.setState(({ entityState }) => {
       const nextState = entityStateMergeRule(entityState, { propItemConfig, value });
       return {
         entityState: nextState
       };
     });
+  }
+
+  /**
+   * 合并 properties 配置
+   */
+  mergePropConfig = () => {
+    const {
+      propertiesConfig,
+    } = this.props;
+    const { propRefs = [], rawProp = [] } = propertiesConfig;
+    const bindProperties = [
+      ...propRefs,
+      ...rawProp
+    ];
+    return bindProperties;
   }
 
   /**
@@ -135,10 +155,33 @@ PropertiesEditorProps, PropertiesEditorState
       selectedEntity,
     } = this.props;
     const { entityState } = this.state;
-    const { bindProperties } = selectedEntity;
+    // const { bindProperties } = selectedEntity;
+    const bindProperties = this.mergePropConfig();
 
-    return Array.isArray(bindProperties.propRefs)
-    && bindProperties.propRefs.map((propID) => {
+    return Array.isArray(bindProperties)
+    && bindProperties.map((propConfig) => {
+      let propID: string;
+      let propOriginConfigItem;
+      let propItemConfig;
+      if (typeof propConfig === 'string') {
+        propID = propConfig;
+
+        /**
+         * @important
+         *
+         * 此配置为函数，需要在此做过滤
+         */
+        propOriginConfigItem = propertiesItemCollection[propID];
+        propItemConfig = extractPropConfig(propOriginConfigItem, selectedEntity);
+
+        /**
+         * 通过传入 entity 来提取 propItemConfig
+         */
+      } else {
+        propItemConfig = extractPropConfig(propConfig, selectedEntity);
+        propID = propItemConfig.id;
+      }
+
       /**
        * 将实例状态回填到属性项
        */
@@ -146,16 +189,6 @@ PropertiesEditorProps, PropertiesEditorState
         ? entityState.propOriginState[propID]
         : undefined;
       const currValue = activeState?.value;
-
-      /**
-       * @important
-       *
-       * 此配置为函数，需要在此做过滤
-       */
-      const propItemConfigOrigin = propertiesItemCollection[propID];
-
-      /** 通过传入 entity 来提取 propItemConfig */
-      const propItemConfig = extractPropConfig(propItemConfigOrigin, selectedEntity);
 
       /** 确保 propItemConfig 的 ID 与集合中的 ID 一致 */
       propItemConfig.id = propID;
@@ -166,7 +199,7 @@ PropertiesEditorProps, PropertiesEditorState
          *
          * 如果没有被初始化，则返回空的组件节点，等待组件属性的值被初始化后再做下一步渲染
          */
-        defaultEntityStateManager.setState(selectedEntity, propItemConfig);
+        defaultEntityStateManager.setState(propItemConfig);
         return (
           <div key={propID}></div>
         );
@@ -188,25 +221,32 @@ PropertiesEditorProps, PropertiesEditorState
               /**
                * 更新数据
                */
-              this.updateEntityState(propConfigRes, nextValue);
+              this.updateEntityStateForSelf(propConfigRes, nextValue);
             }}
             propID={propID}
             propItemConfig={propItemConfig}
-            entity={selectedEntity}
           />
         </div>
       );
     });
   }
 
+  /**
+   * 判断是否存在 PropertiesConfig
+   */
+  hasPropertiesConfig = () => {
+    const {
+      propertiesConfig,
+    } = this.props;
+    return propertiesConfig && (!!propertiesConfig.propRefs || !!propertiesConfig.rawProp);
+  }
+
   render() {
     const {
-      selectedEntity,
-      updateEntitiesStateStore
+      updateEntityState
     } = this.props;
     const { entityState } = this.state;
-    const { bindProperties } = selectedEntity;
-    const hasProps = !!bindProperties?.propRefs;
+    const hasProps = this.hasPropertiesConfig();
 
     const propFormDOM = hasProps && this.renderPropItem();
 
@@ -214,7 +254,7 @@ PropertiesEditorProps, PropertiesEditorState
       <div>
         <div className="action-area mb10">
           <StateBtn onClick={(e) => {
-            updateEntitiesStateStore(selectedEntity, entityState);
+            updateEntityState(entityState);
           }}
           />
         </div>

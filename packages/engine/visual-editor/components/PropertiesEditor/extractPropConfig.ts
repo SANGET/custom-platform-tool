@@ -5,11 +5,11 @@ import { PropertyItemConfigFunc, EditorComponentEntity, EditorPropertyItem } fro
  * 提取 prop config
  */
 export const extractPropConfig = (
-  propItemConfig: PropertyItemConfigFunc,
+  propItemConfigFunc: PropertyItemConfigFunc,
   entity: EditorComponentEntity
 ): EditorPropertyItem => {
-  if (typeof propItemConfig === 'function') {
-    return propItemConfig(mergeDeep(entity));
+  if (typeof propItemConfigFunc === 'function') {
+    return propItemConfigFunc(mergeDeep(entity));
   }
-  return propItemConfig;
+  return propItemConfigFunc;
 };

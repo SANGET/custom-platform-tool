@@ -108,7 +108,8 @@ ComponentPanel.defaultProps = {
           {
             title: '基础控件',
             items: [
-              'component-1'
+              'component-1',
+              'component-table-1',
             ]
           },
           {
