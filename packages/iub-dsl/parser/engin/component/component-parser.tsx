@@ -1,88 +1,173 @@
 import React, {
+  useLayoutEffect,
   Fragment, useState, useCallback, useMemo, useEffect
 } from "react";
 import { ComponentElement, ActionTypes } from "@iub-dsl/core/types/component/collection";
-import { UserBehavior } from "@iub-dsl/core";
+import { isPlainObject } from "lodash";
 import GetUIParser from "./ui";
 
-interface ComponentParseRes {
-  [compID: string]: (runtimeContext, ...args) => JSX.Element
-}
-type ActionAnalysisResult = {
-  [action in UserBehavior]: (...any) => unknown;
-};
-
-interface EntityCompParam {
-  props: { [str: string]: unknown };
-  actions: ActionAnalysisResult;
-  dataSource?: any;
-  id: string;
-  value?: string;
-  text?: string;
-}
-
-// 一个Comp实例有一个
-const resolveComp = {};
-
-const resolveProps = (props, runtimeContext) => {
-  return Object.keys(props).reduce((res, key) => {
-    res[key] = /^\@\(schemas\)/.test(props[key]) ? runtimeContext.pageRuntimeState[props[key].replace(/^\@\(schemas\)/, '')] : props[key];
-    return res;
-  }, {});
-};
-
-const resolveEvent = (events, runtimeContext) => {
-  return Object.keys(events).reduce((res, key) => {
-    res[key] = events[key](runtimeContext);
-    return res;
-  }, {});
-};
+const testWithSchemas = (text: string) => /^@\(schemas\)/.test(text);
+const replaceWithSchemas = (text: string) => text.replace(/^@\(schemas\)/, '');
 
 /**
- * 解析IUB组件集合
- * 绑定已经解析上下文的数据
- * @param compId 组件ID
- * @param componentElement 组件元素配置
- * @param parserContext 解析上下文
- * @returns 渲染组件的构造函数, 运行时候结合运行时上下文解析真实的props, 并返回能够渲染的jsx.Element
+ * 调度解析, 静态的props和需要被额外解析的props
+ * @param props 组件的所有props
  */
+const propsParserScheduler = (props) => {
+  const propsKeys = Object.keys(props);
+  let propsItem;
+  const staticProps = {};
+  const runProps = {};
+  propsKeys.forEach((key) => {
+    propsItem = props[key];
+    if (typeof propsItem === 'string') {
+      if (testWithSchemas(propsItem)) {
+        runProps[key] = {
+          type: 'stateManage',
+          how: 'getState',
+          filed: replaceWithSchemas(propsItem)
+        };
+      } else {
+        staticProps[key] = propsItem;
+      }
+    }
+    // 如: 低代码的描述
+    if (isPlainObject(propsItem)) {}
+  });
+
+  return {
+    staticProps, runProps
+  };
+};
+
+const styleParserScheduler = (style) => {
+  const styleKeys = Object.keys(style);
+  let styleItem;
+  const staticStyle = {};
+  const runStyle = {};
+  styleKeys.forEach((key) => {
+    styleItem = style[key];
+    if (typeof styleItem === 'string') {
+      if (testWithSchemas(styleItem)) {
+        runStyle[key] = {
+          type: 'stateManage',
+          how: 'getState',
+          filed: replaceWithSchemas(styleItem)
+        };
+      } else {
+        staticStyle[key] = styleItem;
+      }
+    }
+    // 如: 低代码的描述
+    if (isPlainObject(styleItem)) {}
+  });
+
+  return {
+    staticStyle, runStyle
+  };
+};
+
+const actionParserScheduler = (actons) => {
+
+};
+
+const resolveRunProps = (IUBRuntimeContext, runProps) => {
+  let temp;
+  return Object.keys(runProps).reduce((res, key) => {
+    temp = runProps[key];
+    // console.log(temp);
+    res.sourcePath[key] = temp.filed;
+    if (isPlainObject(temp)) {
+      res.resolveVal[key] = IUBRuntimeContext[temp.type][temp.how](temp.filed);
+    } else {
+      res.resolveVal[key] = '';
+    }
+    return res;
+  }, {
+    resolveVal: {},
+    sourcePath: {}
+  });
+};
+
+const resolveRunStyle = (IUBRuntimeContext, runStyle) => {
+  let temp;
+  let stateValue;
+  return Object.keys(runStyle).reduce((res, key) => {
+    temp = runStyle[key];
+    // console.log(temp);
+    if (isPlainObject(temp)) {
+      stateValue = IUBRuntimeContext[temp.type][temp.how](temp.filed);
+      // 低代码!!
+      if (key === 'display') {
+        res[key] = stateValue ? 'block' : 'none';
+      }
+    } else {
+      res[key] = '';
+    }
+    return res;
+  }, {});
+};
+
 /**
- * @step_1 获取组件、props、actions绑定
- * @step_2 传入context, 组装绑定和解析的函数, ??
- * @step_3 实际解析props,和绑定action ??
+ * 解析要素
+ * 1. 获取组件「组件Comp」
+ * 2. 解析props「静态props、动态增强解析的props」
+ * 3. 事件容器绑定
+ *
+ * 1. 组件特有props // 实际上,应该是并不知道的, 而是有内部隔离的实现
+ * 2. 需求公共props
+ * 3. 需求的style
+ * 4. 业务逻辑导致的style
+ * 5. 业务逻辑导致props
  */
 const parseComponent = (compId: string, componentElement: ComponentElement, parserContext) => {
-  const CompConstructor: React.FC<any> = GetUIParser(componentElement.component.type);
+  const CompConstructor: React.FC<any> = GetUIParser(componentElement.componentType);
+  const { actions = {}, props = {}, style = {} } = componentElement;
 
-  const props = {
-    ...componentElement.component
-  };
+  const { staticProps, runProps } = propsParserScheduler(props);
+
+  const { staticStyle, runStyle } = styleParserScheduler(style);
+
   //  解析动作
-  const { actions = {} } = componentElement;
-  const events = Object.keys(actions || {}).reduce((res, key) => {
-    res[key] = parserContext.actionParseRes[actions[key].actionID];
-    return res;
-  }, {});
+  let resolvedEvents;
 
   // CompConstructor
-  return (runtimeContext) => {
+  return (IUBRuntimeContext) => {
+    if (!resolvedEvents) {
+      resolvedEvents = Object.keys(actions || {}).reduce((res, key) => {
+        res[key] = parserContext.bindAction(actions[key].actionID)(IUBRuntimeContext);
+        return res;
+      }, {});
+    }
     // TODO: 是否再包裹一层
-    const newEvents: any = resolveEvent(events, runtimeContext);
-    const newProps: any = resolveProps(props, runtimeContext);
-    // console.log(newEvents, props);
-    useEffect(() => {
-      if (Reflect.has(newEvents, 'onMount')) {
-        newEvents.onMount();
-      }
-      return () => {
-        console.log('unMount');
-      };
-    }, []);
+    // console.log({ staticProps, runProps });
+    // console.log({ staticStyle, runStyle });
+
+    // useEffect(() => {
+    //   if (Reflect.has(newEvents, 'onMount')) {
+    //     newEvents.onMount();
+    //   }
+    //   return () => {
+    //     console.log('unMount');
+    //   };
+    // }, []);
+    const { resolveVal, sourcePath } = resolveRunProps(IUBRuntimeContext, runProps);
+
     return (
       <CompConstructor
-        // key={compId}
-        {...newProps}
-        {...newEvents}
+        id={compId}
+        events={resolvedEvents}
+        sourcePath={sourcePath}
+        // setStyle={staticStyle}
+        style= {{
+          ...resolveRunStyle(IUBRuntimeContext, runStyle)
+        }}
+        {
+          ...staticProps
+        }
+        {
+          ...resolveVal
+        }
       ></CompConstructor>
     );
   };
@@ -95,7 +180,9 @@ const ComponentCollectionParser = (
   componentCollection: { [compID: string]: ComponentElement },
   parserContext // 依赖~
 ) => {
-  const parseResult: ComponentParseRes = {};
+  /** 一次解析仅有一个解析后的Comp */
+  const resolvedComp = {};
+  const parseResult = {};
   let temp: ComponentElement;
   const componentIdArr = Object.keys(componentCollection);
 

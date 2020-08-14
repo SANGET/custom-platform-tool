@@ -24,6 +24,7 @@ const IUBDSLParser = ({ dsl }) => {
   const d = Date.now();
   // console.log(dsl);
   let parseContext: any = {
+    metadataCollection,
     sysRtCxtInterface,
     relationshipsCollection,
     layoutContent,
@@ -33,9 +34,20 @@ const IUBDSLParser = ({ dsl }) => {
     schemas
   };
 
+  const schemasParseRes = SchemasParser(schemas);
+  const parseActionResult = ActionsCollectionParser(actionsCollection);
+
   parseContext = {
     ...parseContext,
+    ...schemasParseRes,
+    bindAction: (actionID) => parseActionResult[actionID]
+  };
 
+  const componentParseRes = ComponentCollectionParser(componentsCollection, parseContext);
+  parseContext = {
+    ...parseContext,
+    componentParseRes
+    // initComp: (IUBRuntimeContext) => (compId) => componentParseRes[compId](IUBRuntimeContext)
   };
 
   return parseContext;

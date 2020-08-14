@@ -132,7 +132,6 @@ const SchemasParser = (originSchemas: Schemas) => {
       structParserParams
     );
   };
-
   return {
     getSchemasInitValue
   };

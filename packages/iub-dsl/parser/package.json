@@ -4,9 +4,10 @@
   "scripts": {
     "start": "start"
   },
-  "devDependencies": {
-  },
+  "devDependencies": {},
   "dependencies": {
+    "@types/lodash": "^4.14.159",
+    "lodash": "^4.17.19"
   },
   "author": "SANGET",
   "license": "MIT"

@@ -1,3 +1,4 @@
+/* eslint-disable no-param-reassign */
 import { ActionFlow } from "@iub-dsl/core";
 import { conditionP, whenP, funcP } from './code-engine';
 
