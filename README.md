@@ -12,15 +12,23 @@
 
 ## 技术选型
 
-建议学习
-
-- react
-- redux
-- webpack
-- lerna
-- less
-- styled-components
-- node
+- 页面渲染
+  - react
+  - less
+  - sass
+  - styled-components
+- 数据管理
+  - redux
+- 基础工具
+  - rxjs
+- 拖拽技术
+  - react-dnd
+- 工程管理
+  - webpack
+  - yarn
+  - lerna
+- 服务
+  - node
 
 -----
 
@@ -67,20 +75,6 @@
 - `package.json` - 工程 package json 配置
 - `README.md` - 工程总说明文档
 - `tsconfig.json` - typescript 的配置
-
------
-
-## 技术选型
-
-- 页面渲染
-  - react
-- 拖拽技术（选一）
-  - react-dnd
-  - sortablejs
-- 工程化
-  - webpack
-  - yarn
-  - lerna
 
 -----
 
