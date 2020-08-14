@@ -17,6 +17,8 @@ interface BaseScheams {
   /** 字段描述 */
   desc?: string;
   tag?: string;
+  fieldTag?: string;
+  compTag?: string;
 }
 export interface FoundationTypeSchemas extends BaseScheams {
   type: FoundationType
