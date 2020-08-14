@@ -1,6 +1,6 @@
 import { TypeOfIUBDSL } from '@iub-dsl/core';
 
-const MockLocationType = [
+export const MockLocationType = [
   {
     type: '0', name: '建筑物分组'
   },
@@ -15,7 +15,7 @@ const MockLocationType = [
   }
 ];
 
-const MockLocationData = [
+export const MockLocationData = [
   {
     id: 0,
     locationName: '天安科技园',
@@ -132,7 +132,7 @@ const locationManage: TypeOfIUBDSL = {
     dId2: {
       type: 'string',
       desc: '位置类型',
-      defaultVal: '建筑物分组',
+      defaultVal: '建分组',
       alias: 'location_type',
       fieldMapping: ''
     },
@@ -150,21 +150,68 @@ const locationManage: TypeOfIUBDSL = {
       struct: {
         sdId1: {
           type: 'string',
-          tag: 'showValue',
+          fieldTag: 'type',
           fieldMapping: '',
           desc: '显示值'
         },
         sdId2: {
           type: 'string',
           fieldMapping: '',
-          tag: 'value',
+          fieldTag: 'name',
           desc: '实际值'
         }
       }
     },
     dId5: {
+      type: 'structArray',
+      desc: '上级位置信息',
+      alias: '',
+      struct: {
+        sdId1: {
+          type: 'string',
+          fieldTag: 'id',
+          fieldMapping: '',
+          desc: 'id'
+        },
+        sdId2: {
+          type: 'string',
+          fieldTag: 'locationName',
+          fieldMapping: '',
+          desc: '位置名称'
+        },
+        sdId3: {
+          type: 'string',
+          fieldTag: 'locationType',
+          fieldMapping: '',
+          desc: '位置类型'
+        },
+        sdId4: {
+          type: 'string',
+          fieldTag: 'pid',
+          fieldMapping: '',
+          desc: 'pid'
+        },
+      }
+    },
+    dId6: {
+      type: 'boolean',
+      desc: '控制选择上级显示隐藏',
+      alias: '',
+    },
+    dId7: {
       type: 'structObject',
       struct: {
+        sdId0: {
+          type: 'structObject',
+          struct: {
+            ssdId1: {
+              type: 'string',
+            },
+            ssdId2: {
+              type: 'string'
+            }
+          }
+        },
         sdId1: {
           type: 'string',
         },
@@ -180,16 +227,16 @@ const locationManage: TypeOfIUBDSL = {
           }
         }
       }
-    }
+    },
   },
   componentsCollection: {
     searchInput: {
       id: 'searchInput',
       type: 'component',
-      component: {
+      componentType: 'Input',
+      props: {
+        value: '@(schemas)dId1',
         key: 'searchInput',
-        type: 'Input',
-        field: '@(schemas)searchLocationName',
         label: '位置名称'
       },
       actions: {
@@ -202,31 +249,49 @@ const locationManage: TypeOfIUBDSL = {
     locationType: {
       id: 'locationType',
       type: 'component',
-      component: {
-        key: 'locationType',
-        dataSource: '@(schemas)locationDataTypeSource',
-        type: 'Selector',
-        field: '@(schemas)searchLocationType',
-        label: '位置类型'
+      componentType: 'Selector',
+      props: {
+        value: '@(schemas)dId2',
+        dataSource: '@(schemas)dId4',
+        label: '位置类型',
+        // TODO: 对象的
+        showValue: 'sdId1',
+        selValue: 'sdId2'
       },
       actions: {
-        // onChange: {
-        //   type: 'actionRef',
-        //   actionID: 'selectorChange' // 这里是多个事件的而且是串行的
-        // },
-        onMount: {
+        onChange: {
           type: 'actionRef',
-          actionID: 'getLocationType' // 多个onMount
+          actionID: 'selectorChange' // 这里是多个事件的而且是串行的
+        },
+        // onMount: {
+        //   type: 'actionRef',
+        //   actionID: 'getLocationType' // 多个onMount
+        // }
+      }
+    },
+    pidInput: {
+      id: 'pidInput',
+      type: 'component',
+      componentType: 'Input',
+      props: {
+        value: '@(schemas)dId3',
+        key: 'pidInput',
+        label: '上级位置'
+      },
+      actions: {
+        onClick: {
+          type: 'actionRef',
+          actionID: 'inputChange'
         }
       }
     },
     addBtn: {
       id: 'addBtn',
       type: 'component',
-      component: {
+      componentType: 'Button',
+      props: {
         key: 'addBtn',
-        type: 'Button',
-        text: '新增'
+        text: '新增',
       },
       actions: {
         onClick: {
@@ -238,44 +303,52 @@ const locationManage: TypeOfIUBDSL = {
     delBtn: {
       id: 'delBtn',
       type: 'component',
-      component: {
+      componentType: 'Button',
+      props: {
         key: 'delBtn',
-        type: 'Button',
         text: '删除'
       },
       actions: {
-        // onClick: {
-        //   type: 'actionRef',
-        //   actionID: '' // 有选中的状态,然后弹出提示,然后数据收集然后提交
-        // }
+        onClick: {
+          type: 'actionRef',
+          actionID: 'openAddLocationForm' // 有选中的状态,然后弹出提示,然后数据收集然后提交
+        }
       }
     },
     detailBtn: {
       id: 'detailBtn',
       type: 'component',
-      component: {
+      componentType: 'Button',
+      props: {
         key: 'detailBtn',
-        type: 'Button',
         text: '详情'
       },
       actions: {
-        // onClick: {
-        //   type: 'actionRef',
-        //   actionID: '' // 有选中的状态, 弹窗, 导出值,引用值
-        // }
+        onClick: {
+          type: 'actionRef',
+          actionID: 'openAddLocationForm' // 有选中的状态, 弹窗, 导出值,引用值
+        }
       }
     },
     // IUB-运行上下文记录,运行的激活状态 // 最好设计成数组的形式
     // TODO: 选中、聚焦
-    // table: {
-    //   id: 'table',
-    //   type: 'component',
-    //   component: {
-    //     key: 'table',
-    //     type: 'Table',
-    //     dataSource: ''
-    //   }
-    // }
+    table: {
+      id: 'table',
+      type: 'component',
+      componentType: 'Table',
+      style: {
+        display: '@(schemas)dId6'
+      },
+      props: {
+        dataSource: '@(schemas)dId5'
+      },
+      actions: {
+        onClick: {
+          type: 'actionRef',
+          actionID: 'tableColClick'
+        }
+      }
+    }
   },
   actionsCollection: {
     inputChange: { // 输入框更改的action 默认暂时不讨论
@@ -298,6 +371,16 @@ const locationManage: TypeOfIUBDSL = {
       flowItems: { },
       flowCondition: {}
     },
+    selectorChange: {
+      flowControl: '',
+      flowItems: { },
+      flowCondition: {}
+    },
+    tableColClick: {
+      flowControl: '',
+      flowItems: { },
+      flowCondition: {}
+    }
   },
   relationshipsCollection: {
     dataCollection: {
@@ -332,6 +415,11 @@ const locationManage: TypeOfIUBDSL = {
             id: 'comp2',
             type: 'componentRef',
             componentID: 'locationType',
+          },
+          {
+            id: 'comp3',
+            type: 'componentRef',
+            componentID: 'pidInput',
           },
         ]
       },
@@ -368,11 +456,11 @@ const locationManage: TypeOfIUBDSL = {
           props: {}
         },
         body: [
-          // {
-          //   id: 'comp1',
-          //   type: 'componentRef',
-          //   componentID: 'table',
-          // }
+          {
+            id: 'comppp1',
+            type: 'componentRef',
+            componentID: 'table',
+          }
         ]
       }
     ]
