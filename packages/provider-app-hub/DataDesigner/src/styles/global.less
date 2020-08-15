@@ -26,6 +26,11 @@ body,
 /** 应用容器 */
 .app-container {
   display: flex;
+  /**
+  * 这里是一个非常重要的设置,如果设置成row布局,ant-table设置了固定表头，固定列之后,内容会溢出
+  * 隐藏修改成纵向布局
+  */
+  flex-direction: column;
   height: 100%;
 
   /** 路由导航 */
@@ -66,6 +71,22 @@ body,
   width: 0;
 }
 
+/**
+* ant row样式修改 有时候发现默认宽度不是100%，因此设置为100%
+*/
+.ant-row {
+  width: 100%;
+}
+
+/**
+* 编辑表格下面的数字输入框宽度设置为100% 
+*/
+.ant-table-cell {
+  .ant-input-number {
+    width: 100%;
+  }
+}
+
 /** 菜单导航正常与高亮状态的颜色 */
 .ant-menu-item {
   .icon {
@@ -81,30 +102,45 @@ body,
   }
 }
 
+/**
+* ant modal样式重置 
+*/
 .ant-modal {
   top: 32px;
   min-width: 800px;
-}
 
-/** 感觉没有多大必要修改antd的弹窗样式 */
-/** UI规范上的弹窗标题,按钮行高度 */
-.ant-modal-header,
-.ant-modal-footer {
-  display: flex;
-  align-items: center;
-}
+  &.w600 {
+    min-width: 600px;
+  }
 
-/** UI规范上的弹窗标题高度 */
-.ant-modal-header {
-  height: 48px;
+  /** 感觉没有多大必要修改antd的弹窗样式 */
+  /** UI规范上的弹窗标题,按钮行高度 */
+  .ant-modal-header,
+  .ant-modal-footer {
+    display: flex;
+    align-items: center;
+  }
 
-  /** 关闭图标尺寸 */
-  .ant-modal-close-x {
-    width: 48px;
+  /** UI规范上的弹窗标题高度 */
+  .ant-modal-header {
     height: 48px;
-    line-height: 48px;
+
+    /** 关闭图标尺寸 */
+    .ant-modal-close-x {
+      width: 48px;
+      height: 48px;
+      line-height: 48px;
+    }
+  }
+
+  /** UI规范上的弹窗底部按钮行高度 */
+  .ant-modal-footer {
+    height: 64px;
+    justify-content: flex-end;
   }
 }
+
+
 
 .form-buts {
   .button+.button {
@@ -134,11 +170,7 @@ body,
   }
 }
 
-/** UI规范上的弹窗底部按钮行高度 */
-.ant-modal-footer {
-  height: 64px;
-  justify-content: flex-end;
-}
+
 
 /** 加载遮罩 */
 .loading {

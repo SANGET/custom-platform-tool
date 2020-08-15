@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import {
-  Table, Input, InputNumber, Popconfirm, Form, Button
+  Table, Input, InputNumber, Popconfirm, Form, Button, Space
 } from 'antd';
 
 interface Item {
@@ -260,4 +260,57 @@ const EditableTable = () => {
   );
 };
 
+/**
+ * 列表行序号渲染
+ * @param page 页码
+ * @param pageSize 每页显示记录数量
+ */
+const renderIndexCol = ({ page, pageSize }) => {
+  return {
+    title: '序号',
+    dataIndex: 'rowIndex',
+    width: 80,
+    /** 自定义渲染函数 */
+    render: (text, record, index) => {
+      // console.log({ text, record, index });
+      /** 与后端协商,行号由前端计算 */
+      return <span>{(page - 1) * pageSize + index + 1}</span>;
+    },
+  };
+};
+/**
+* 操作列渲染函数
+*/
+const renderOperCol = (operButs) => {
+  return {
+    title: '操作',
+    dataIndex: 'operCol',
+    /** fixed属性会引起eslint告警, 需要使用断言 */
+    fixed: 'right' as const,
+    /** 每个文本的宽度应设置为80,是通过调整样式得出的合理值 */
+    width: operButs.length * 80,
+    render: (row) => {
+      return operButs.map((item) => {
+        return (
+          <Space size="middle" key={item.text}>
+            {
+              /** 删除需要弹出二次确认框 */
+              item.text === '删除'
+                ? (<Popconfirm placement="topLeft" title={item.title} onConfirm={() => item.onClick(row)} okText="删除" cancelText="取消">
+                  <Button type="link" >
+                    {item.text}
+                  </Button>
+                </Popconfirm>)
+
+                : (<Button type="link" onClick={() => item.onClick(row)}>
+                  {item.text}
+                </Button>)
+            }
+          </Space>
+        );
+      });
+    }
+  };
+};
+export { renderOperCol, renderIndexCol };
 export default EditableTable;

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Input, TreeSelect } from 'antd';
+import { Input, InputNumber, TreeSelect } from 'antd';
 
 /**
  * 在antd Select组件基础上封装的选择框组件
@@ -26,6 +26,7 @@ const { TextArea } = Input;
  */
 const components = {
   Input,
+  InputNumber,
   TextArea,
   BasicSelect,
   TreeSelect,

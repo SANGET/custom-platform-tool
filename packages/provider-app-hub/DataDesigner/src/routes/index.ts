@@ -1,7 +1,7 @@
 /*
  * @Author: wph
  * @Date: 2020-07-23 10:29:08
- * @LastEditTime: 2020-08-12 11:18:00
+ * @LastEditTime: 2020-08-14 17:35:23
  * @LastEditors: Please set LastEditors
  * @Description: 添加注释
  * @FilePath: \custom-platform-v3-frontend\packages\provider-app-hub\AuthManager\src\routes\index.ts
@@ -18,6 +18,9 @@ import EditStruct from '@provider-app/data-designer/src/pages/EditStruct';
 import ForeignKeySet from '@provider-app/data-designer/src/pages/EditStruct/ForeignKeySet';
 
 import ReferenceTable from '@provider-app/data-designer/src/pages/EditStruct/ReferenceTable';
+
+import DictManage from '@provider-app/data-designer/src/pages/DictManage';
+
 /**
 * 登录页
 */
@@ -39,6 +42,13 @@ const ROUTES = [
     icon: 'GoldOutlined',
     text: '表结构管理',
     component: TableStructContainer
+  },
+  {
+    key: 'DictManage',
+    link: '/DictManage',
+    icon: 'ClusterOutlined',
+    text: '字典管理',
+    component: DictManage
   },
   {
     key: 'EditStruct',

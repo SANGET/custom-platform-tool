@@ -15,6 +15,8 @@
   "dependencies": {
     "emotion": "^10.0.27",
     "js-pinyin": "^0.1.9",
+    "react-color": "^2.18.1",
+    "react-window": "^1.8.5",
     "redux-persist": "^6.0.0"
   },
   "browserslist": {

@@ -1,0 +1,17 @@
+{
+  "code": "00000",
+  "msg": "请求处理成功。",
+  "timestamp": 1595214753512,
+  "result": {
+    "total": 1,
+    "data": [{
+      "id": 1291935981624238080,
+      "createdBy": "admin",
+      "gmtCreate": "2020-08-07T13:58:21.527",
+      "modifiedBy": "admin",
+      "gmtModified": "2020-08-07T13:58:21.527",
+      "name": "性别",
+      "remark": "性别,男1女0"
+    }]
+  }
+}

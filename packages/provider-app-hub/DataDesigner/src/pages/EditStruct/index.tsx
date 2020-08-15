@@ -155,7 +155,116 @@ const EditStruct :FC = () => {
   }, []);
 
   const formButs = [
-    { text: '保存', onClick: () => {} },
+    {
+      text: '保存',
+      onClick: () => {
+        Http.put('http://{ip}:{port}/paas/ {lesseeCode}/{applicationCode}/data/v1/tables/').then((res) => {
+          const submitData = {
+          /** 是 表主键 */
+            id: '',
+            /** 是 数据表名称  */
+            name: '',
+            /** 是数据表编码 */
+            code: '',
+            /** 否表类型normalTable(普通表)tree(树形表)auxTable(附属表) */
+            type: '',
+            /** 是-归属模块，对应菜单模块主键 */
+            moduleId: '',
+            /** 否-业务字段类型，SYS(系统元数据)BIS(业务元数据)，用户填写的表默认BIS即可 */
+            species: '',
+            /** 否-备注 */
+            description: '',
+            /** 否-附属表对象,如果表类型是附属表，则必填 */
+            auxTable: {
+              /** 是-主表表名 */
+              mainTableCode: '',
+            },
+            /** 否-树型表对象,如果表类型是树型表，则必填 */
+            treeTable: {
+              /** 是-最大层级数 */
+              maxLevel: '',
+            },
+            /** 否-引用表对象集合 */
+            references: [{
+              /**  long 否 引用主键 */
+              id: '',
+              /**  String 是 字段编码 */
+              fieldCode: '',
+              /**  String 是 关联表 */
+              refTableCode: '',
+              /**  String 是 关联字段 */
+              refFieldCode: '',
+              /**  String 是 显示字段 */
+              refDisplayFieldCode: '',
+              /**  int */
+              sequence: ''
+            }],
+            /** 否-外键对象集合 */
+            foreignKeys: [{
+              /**  long 否 主键 */
+              id: '',
+              /** String 是 字段编码 */
+              fieldCode: '',
+              /**  String 是 关联表 */
+              refTableCode: '',
+              /**  String 是 关联字段 */
+              refFieldCode: '',
+              /**  String 是 显示字段 */
+              refDisplayFieldCode: '',
+              /**  int 是 排序号 */
+              sequence: '',
+              /**  String 是 外键约束（删除时）,RESTRICT(存在关联不允许操作)CASCADE(级联)SET_NULL(置空)NO_ACTION(不处理) */
+              deleteStrategy: '',
+              /**  String 是 外键约束（更新时）,RESTRICT(存在关联不允许操作)CASCADE(级联)SET_NULL(置空)NO_ACTION(不处理) */
+              updateStrategy: '',
+            }],
+            /** 否-列对象集合 */
+            columns: [{
+              /**  long 否 列主键 */
+              id: '',
+              /**  String 是 字段名称 */
+              name: '',
+              /**  String 是 字段编码 */
+              code: '',
+              /**  String 是 字段类型fieldType只能输入VARCHAR(字符串)INT(整型)TIME(时间)DATE(日期时间)TEXT(超大文本) */
+              fieldType: '',
+              // int 否 字段长度
+              fieldSize: '',
+              //  String 是 数据类型,NORMAL(普通字段)PK(主键字段)QUOTE(引用字段)DICT(字典字段)FK(外键字段)
+              dataType: '',
+              //  String 否 业务字段类型，SYS(系统元数据)BIS(业务元数据)，用户填写的表默认BIS即可
+              species: '',
+              //  int 否 小数位
+              decimalSize: '',
+              /**  int 否 排序号 */
+              sequence: '',
+              /**  Map 否 属性对象,key为列的页面属性，value为对应的属性值 */
+              fieldProperty: {
+                /**  必填,值true是，false否 */
+                required: '',
+                /**  唯一,值true是，false否 */
+                unique: '',
+                /**  装换成拼音,值true是，false否 */
+                pinyinConvent: '',
+                /**  校验规则 */
+                regular: '',
+              },
+              /**  DictionaryForeignVO 否 字典对象 */
+              dictionaryForeign: {
+                /** String 是 字典表名 */
+                refTableCode: '',
+                /** String 是 字典保存字段,写死code值 */
+                refFieldCode: '',
+                /**  String 是 字典显示字段,写死name值 */
+                refDisplayFieldCode: '',
+              }
+            }]
+          };
+
+          // console.log();
+        });
+      }
+    },
     { text: '返回', onClick: () => {} },
   ];
 
@@ -243,7 +352,7 @@ const EditStruct :FC = () => {
         {
           tabsConf.panes.map((item) => (
             <TabPane tab={item.tab} key={item.key}>
-              <Row><BasicStory {...item} type={item.key} /></Row>
+              <BasicStory {...item} type={item.key} />
             </TabPane>
           ))
         }

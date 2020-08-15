@@ -4,6 +4,7 @@ import { Tree, Input } from 'antd';
 import { treeToList, findMatch } from '@provider-app/data-designer/src/tools/tree';
 
 const MenuTree = ({ dataSource, ...props }) => {
+  const { getClickNodeValue } = props;
   /** 扁平结构的树形数组数组 */
   const treeList = treeToList(dataSource, []);
   // console.log({ dataSource });
@@ -67,12 +68,17 @@ const MenuTree = ({ dataSource, ...props }) => {
     },
     onSelect: (selectedKeys, e:{selected, selectedNodes, node, event}) => {
       console.log(selectedKeys, e);
+      const node = treeList.find((item) => item.key === selectedKeys[0]);
+      // console.log(treeList, treeList.find((item) => item.key === selectedKeys[0]));
+      setSearchValue(node.title);
+      getClickNodeValue && getClickNodeValue(node);
     }
   };
   /** 搜素组件属性设置 */
   const searchProps = {
     placeholder: '输入模块名称',
     style: { margin: '16px 8px', width: 'calc(100% - 16px)' },
+    value: searchValue,
     /**
    * 树过滤搜索框改变触发回调,展开匹配树节点
    * @param e input事件源

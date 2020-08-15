@@ -35,7 +35,6 @@ import {
 import MenuTree from '@provider-app/data-designer/src/bizComps/MenuTree';
 
 /** 表单业务组件 */
-import axios from 'axios';
 import StructForm from './StructForm';
 
 /** 表头菜单组件 */
@@ -190,7 +189,10 @@ const TableStructContainer: FC = () => {
       form
         .validateFields() /** 表单校验 */
         .then((values) => {
-          // console.log(values);
+          /**
+           * 与后端协商,只提交页面上有的字段,没有的不传
+           */
+          console.log(values);
           /** 新建表数据提交 */
           Http.post('http://{ip}:{port}/paas/{lesseeCode}/{applicationCode}/data/v1/tables/', {
             data: values
@@ -220,10 +222,42 @@ const TableStructContainer: FC = () => {
     initialValues: { name: '回显测试' },
   };
 
+  /**
+   * 表结构列表查询
+   * @param args 查询参数
+   */
+  const queryList = (args) => {
+    /**
+     * 与产品约定,左侧树查询不考虑右侧列表查询条件,右侧列表查询要带上左侧查询条件,点击了搜索按钮之后才查询
+     */
+    const queryParams = {
+      /**  String 否 数据表名称 */
+      name: '',
+      /**  long 否 模块主键 */
+      moduleId: '',
+      /**  String 否 表类型normalTable(普通表)tree(树形表)auxTable(附属表) */
+      type: '',
+      /**  int 是 分页查询起始位置,从0开始 */
+      offset: 1,
+      /**  int 是 每页查询记录数 */
+      size: 10
+    };
+    Http.get('http://{ip}:{port}/paas/ {lesseeCode}/{applicationCode}/data/v1/tables/list', { params: queryParams }).then((res) => {
+      console.log(res);
+    });
+  };
+
   const treeProps = {
     draggable: true,
     blockNode: true,
     dataSource: treeData,
+    onSelect: (selectedKeys, e:{selected, selectedNodes, node, event}) => {
+      /**
+      * selectedKeys是个数组,第一项就是选中项
+      */
+      // queryList({ moduleId: selectedKeys[0] });
+      console.log(selectedKeys);
+    }
   };
   /** 搜索条件-表类型 */
   const basicSelectProps = {
@@ -234,12 +268,14 @@ const TableStructContainer: FC = () => {
       console.log(value);
     }
   };
+
   /** 搜索条件-表名称 */
   const searchProps = {
     style: { width: 224, margin: '16px' },
     placeholder: '请输入表名称',
     onSearch: (value) => {
       console.log(value);
+      queryList(value);
     },
     enterButton: true,
   };

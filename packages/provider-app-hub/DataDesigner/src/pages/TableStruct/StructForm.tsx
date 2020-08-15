@@ -70,8 +70,12 @@ const StructForm = ({
     description: '',
     /** 否 附属表对象,如果表类型是附属表，则必填 */
     auxTable: {},
+    /** 表类型是附属表时,主表表名必填 */
+    mainTableCode: '',
     /** 否 树型表对象,如果表类型是树型表，则必填 */
     treeTable: {},
+    /** 如果表类型是树型表，则必填 最大层级树 2-15 */
+    maxLevel: '',
     /** 否 引用表对象集合 */
     references: [],
     /** 否 外键对象集合 */
@@ -221,9 +225,9 @@ const StructForm = ({
   };
 
   const [formItemsConfig, setFormItemsConfig] = useState(formItemsConfigInitValue);
-  useEffect(() => {
-    console.log('xxx', formItemsConfig.primaryTable.hide);
-  }, [formItemsConfig.primaryTable.hide]);
+  // useEffect(() => {
+  //   console.log('xxx', formItemsConfig.primaryTable.hide);
+  // }, [formItemsConfig.primaryTable.hide]);
   // const [state, dispatch] = useReducer(reducer, formItemsConfigInitValue, init);
   // console.log(state);
   // const {

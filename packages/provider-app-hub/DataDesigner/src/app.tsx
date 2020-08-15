@@ -58,10 +58,14 @@ const App: FC = () => {
       <div className="app-container">
         <Menu
           theme="dark"
-          mode="inline"
+          mode="horizontal"
           className="menu"
           onClick={handleClick}
-          style={{ width: 256, paddingTop: 20 }}
+          /**
+          * 将菜单排列在左侧
+          */
+          // mode="inline"
+          // style={{ width: '256px', paddingTop: 20 }}
           defaultSelectedKeys={[defaultSelectedKeys]}
           defaultOpenKeys={[defaultSelectedKeys]}
         >
