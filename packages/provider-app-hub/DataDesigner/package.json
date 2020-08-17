@@ -1,5 +1,5 @@
 {
-  "name": "@provider-app/data-design",
+  "name": "@provider-app/data-designer",
   "version": "0.0.1",
   "private": true,
   "main": "./index.js",
@@ -9,10 +9,16 @@
     "start": "cross-env PORT=60001 minictl start",
     "build": "minictl build",
     "test": "jest src --coverage",
-    "cp":"xcopy .\\src\\mock  .\\build\\mock /y/i/e/q"
+    "cp": "xcopy .\\src\\mock  .\\build\\mock /y/i/e/q"
   },
   "devDependencies": {},
-  "dependencies": {},
+  "dependencies": {
+    "emotion": "^10.0.27",
+    "js-pinyin": "^0.1.9",
+    "react-color": "^2.18.1",
+    "react-window": "^1.8.5",
+    "redux-persist": "^6.0.0"
+  },
   "browserslist": {
     "production": [
       ">0.2%",
