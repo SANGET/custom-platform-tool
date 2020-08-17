@@ -2,6 +2,10 @@ import React from 'react';
 import { Input, InputNumber, TreeSelect } from 'antd';
 
 /**
+ * 颜色选择器
+ */
+import BasicColorPicker, { BasicColor } from '@provider-app/data-designer/src/components/BasicColorPicker';
+/**
  * 在antd Select组件基础上封装的选择框组件
  */
 import { BasicSelect } from '@provider-app/data-designer/src/components/BasicSelect';
@@ -29,6 +33,8 @@ const components = {
   InputNumber,
   TextArea,
   BasicSelect,
+  BasicColor,
+  BasicColorPicker,
   TreeSelect,
   TableField,
   ReferenceTable,

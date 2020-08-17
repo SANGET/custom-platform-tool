@@ -3,6 +3,9 @@ import React from 'react';
 /** 教程 https://www.npmjs.com/package/emotion */
 import { css, cx } from 'emotion';
 
+/** react路由暴露出来的页面跳转方法 */
+import { useHistory } from 'react-router-dom';
+
 import {
   Menu, Dropdown, Button
 } from 'antd';
@@ -11,7 +14,7 @@ import {
 import { DownOutlined } from '@ant-design/icons';
 
 /** 当前功能页样式 */
-import './tableStruct.less';
+import './TableStruct.less';
 
 const cls1 = css`
   & > .button{
@@ -21,6 +24,8 @@ const cls1 = css`
 
 const TableHeadMenu = (props) => {
   const { openModal } = props;
+  /** react路由跳转方法,必须定义在react 组件中,跳转到编辑表页面时要用 */
+  const History = useHistory();
   /**
      * 创建权限项下拉按钮菜单点击触发回调
      * 执行模态框内容切换
@@ -36,7 +41,9 @@ const TableHeadMenu = (props) => {
 
       },
       export: () => { },
-      dict: () => { }
+      dict: () => {
+        History.push('/DictManage');
+      }
     };
     keyAction[key] && keyAction[key]();
   };

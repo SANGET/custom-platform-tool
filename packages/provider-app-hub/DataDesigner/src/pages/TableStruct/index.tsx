@@ -44,7 +44,7 @@ import TableHeadMenu from './TableHeadMenu';
 import List from './List';
 
 /** 当前功能页样式 */
-import './tableStruct.less';
+import './TableStruct.less';
 
 /** 搜索输入框 */
 const { Search } = Input;
@@ -62,7 +62,7 @@ const { Search } = Input;
 /**         hook将相互关联的拆分成更小的函数，而并非强制按照生命周期划分 */
 /**  理由三 函数式组件比class组件更容易理解, 在函数组件中,很好理解props，state 和自顶向下的数据流，但在class组件中却一筹莫展，class组件中this的工作方式也不好理解 */
 /**  理由四 从概念上来讲React组件更像函数,而hook拥抱了函数,class组件不能很好的压缩,热重载不稳定,class组件会使component folding优化措施无效 */
-const TableStructContainer: FC = () => {
+const TableStruct: FC = () => {
   // 定义一个 mapState函数
   /**
    * useCallback 接收一个内联回调函数和一个依赖数组，返回一个记忆版本的回调函数，
@@ -210,6 +210,7 @@ const TableStructContainer: FC = () => {
     /** 弹框取消按钮回调 */
     onCancel: (e) => {
       setVisiable(false);
+      // form.resetFields();
     },
     okText: '确定',
     cancelText: '取消',
@@ -219,7 +220,6 @@ const TableStructContainer: FC = () => {
   const formProps = {
     form,
     treeData,
-    initialValues: { name: '回显测试' },
   };
 
   /**
@@ -301,11 +301,11 @@ const TableStructContainer: FC = () => {
       </main>
       {/* 新建表弹窗 */}
       <Modal {...modalProps}>
-        {/* 新建表表单 */}
-        <StructForm {...formProps} />
+        {/* 新建表表单 给内容组件加个key,保证组件的内容能够重置,如果不加这个key,模态框第二次打开时,关联显示项不是默认项 */}
+        <StructForm key={new Date().getTime()} {...formProps} />
       </Modal>
     </div>
   );
 };
 
-export default TableStructContainer;
+export default TableStruct;

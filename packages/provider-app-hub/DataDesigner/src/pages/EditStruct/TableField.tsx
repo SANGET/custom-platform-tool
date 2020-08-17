@@ -1,136 +1,102 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import {
-  Table, Popconfirm, Form, Button, Modal
+  Popconfirm, Form, Button, Modal
 } from 'antd';
 
-import BasicStory from '@provider-app/data-designer/src/components/BasicStory';
+/**
+*  可编辑单元格组件
+*/
+import BasicEditTable from '@provider-app/data-designer/src/components/BasicEditTable';
+/**
+* 表头菜单组件
+*/
+import TableHeadMenu from '@provider-app/data-designer/src/bizComps/TableHeadMenu';
+/**
+* 关联表单组件
+*/
 import ReferenceForm from '@provider-app/data-designer/src/pages/EditStruct/ReferenceForm';
+
+/**
+* 字典管理组件
+*/
+import DictModal from '@provider-app/data-designer/src/pages/EditStruct/DictModal';
 
 /** 状态管理方法 */
 import { useMappedState, useDispatch } from 'redux-react-hook';
 
-/** 表类型枚举--表格列代码转文字时也要用 */
+/** 表类型枚举--表格列代码转文字时 要用 */
 import {
   DataTypeEnum, FieldTypeEnum, YNTypeEnum, SpeciesTypeEnum
 } from '@provider-app/data-designer/src/tools/constant';
 /**
- * 选项代码转文字
+ * 选项框代码转文字
  */
 import { codeToText } from '@provider-app/data-designer/src/tools/format';
-/**
-* 表单校验规则要用到
-*/
-import { Rule } from 'rc-field-form/lib/interface';
+
 /**
 * 正则表达式
 */
 import REG from '@provider-app/data-designer/src/tools/reg';
-import { getModalConfig } from '@provider-app/data-designer/src/tools/mix';
-
 /**
- * 表字段后端接口返回值，属性对象与前端页面展示值有差异,需要处理一下
- */
-interface Item {
-  id ? :string|number;
-  key: string|number;
-  /** 字段名称 */
-  name: string;
-  /** 字段编码 */
-  code:string;
-  /** 字段类型-VARCHAR(字符串)INT(整型)TIME(时间)DATE(日期时间)TEXT(超大文本) */
-  fieldType:"VARCHAR"|"INT"|"TIME"|"DATE"|"TEXT";
-  /** 数据类型 NORMAL(普通字段)PK(主键字段)QUOTE(引用字段)DICT(字典字段)FK(外键字段) */
-  dataType:'NORMAL'|"PK"|"QUOTE"|"DICT"|"FK";
-  /** 业务字段类型 */
-  species:string;
-  /** 小数位 */
-  decimalSize:number;
-  /** 属性对象 */
-  fieldProperty?:{
-    /** 必填 */
-    required:'true'|'false';
-    /** 唯一 */
-    unique:'true'|'false';
-    /** 转换成拼音 */
-    pinyinConvent: 'true'|'false';
-    regular?:unknown;
-  }
-  /** 字典对象 */
-  dictionaryForeign?:{
-    /** 字典主键 */
-    id?:string|number;
-    /** 表名 */
-    tableName:string;
-    /** 字典字段 */
-    fieldCode:string;
-    /** 字典保存字段表中文名 */
-    refTableName:string;
-    /** 字典保存字段,写死code值 */
-    refFieldCode:string;
-    /** 字典显示字段,写死name值 */
-    refDisplayFieldCode:string;
-  }
-  [propName: string]: unknown;
-}
-
-/**
- * 编辑表格属性约束
- */
-interface EditableCellProps extends React.HTMLAttributes<HTMLElement> {
-  editing: boolean;
-  dataIndex: string;
-  title: string;
-  formConfig:{
-    attrs:{
-      type:'InputNumber' | 'Input' | 'BasicSelect';
-      enum?:Array<{value, text}>;
-    }
-    rules:Rule[];
-  }
-  record: Item;
-  index: number;
-  children: React.ReactNode;
-}
-
-/**
-*  编辑表格设置,这里是重点
+* 模态框默认配置
 */
-const EditableCell: React.FC<EditableCellProps> = ({
-  editing,
-  dataIndex,
-  title,
-  formConfig,
-  record,
-  index,
-  children,
-  ...restProps
-}) => {
-  return (
-    <td {...restProps}>
-      {editing ? (
-        <Form.Item
-          name={dataIndex}
-          rules={formConfig.rules}
-        >
-          <BasicStory {...formConfig.attrs} />
-        </Form.Item>
-      ) : (
-        <Form.Item>
-          {children }
-        </Form.Item>
-      )}
-    </td>
-  );
-};
+import { getModalConfig } from '@provider-app/data-designer/src/tools/mix';
 
 /**
  * 表字段组件
 */
 const TableField = (props) => {
-  const {
-    tableData, scroll, style, title
-  } = props;
+  /**
+  * 表字段列表的值是通过父组件 EditStruct传进来的
+  */
+  const { tableData } = props;
 
+  /**
+  * 将后端返回的列表值转换成页面的显示值
+  */
+  const dataSource = tableData.map((row) => {
+    /**
+    * 唯一,必填,转换成拼音 这几项后端返回的值是一个对象,页面展示需要进行拆解
+    */
+    /** 有可能没有值 */
+    if (row.fieldProperty) {
+      row.unique = codeToText({ arr: YNTypeEnum, val: row.fieldProperty.unique }) || '';
+      row.required = codeToText({ arr: YNTypeEnum, val: row.fieldProperty.required }) || '';
+      row.pinyinConvent = codeToText({ arr: YNTypeEnum, val: row.fieldProperty.pinyinConvent }) || '';
+    } else {
+      row.unique = '';
+      row.required = '';
+      row.pinyinConvent = '';
+    }
+    /**
+    * 数据类型代码转文本
+    */
+    row.dataType = codeToText({ arr: DataTypeEnum, val: row.dataType });
+    /**
+    * 字段类型代码转文本
+    */
+    row.fieldType = codeToText({ arr: FieldTypeEnum, val: row.fieldType });
+    /**
+    * 分类代码转文本
+    */
+    row.species = codeToText({ arr: SpeciesTypeEnum, val: row.species });
+    row.key = row.code;
+    return row;
+  });
+  /**
+  * 因为会动态增删父组件传进来的表格数据,所以需要用状态值保存
+  * 只会初始化一次,发现dataSource有值之后,不会再被执行
+  */
+  const [fieldTableData, setFieldTableData] = useState(dataSource);
+
+  useEffect(() => {
+    setFieldTableData(dataSource.filter((item) => item.species !== '系统'));
+  }, [tableData]);
+
+  // console.log({ fieldTableData, dataSource, tableData, });
+  /**
+  * 树形数据在多个地方要使用,因此保存在store中
+  */
   const mapState = useCallback(
     (state) => ({
       treeData: state.treeData
@@ -142,76 +108,46 @@ const TableField = (props) => {
    * */
   const { treeData } = useMappedState(mapState);
 
-  /** 创建+引用字段弹窗表单实例 */
-  const [refForm] = Form.useForm();
+  /** 创建+字典字段弹窗表单实例 */
+  const [dictForm] = Form.useForm();
 
-  /** 创建可控表单实例 */
-  const [form] = Form.useForm();
+  /** 创建+表字段行内表单实例 */
+  const [fieldForm] = Form.useForm();
   /**
   * 行编辑态设置
   */
   const [editingKey, setEditingKey] = useState<number|string>('');
-
   /**
-  * 编辑行号与记录行号相符时，设置编辑状态
+  * 编辑行号与记录行号相符时，设置成编辑状态
   */
-  const isEditing = (record: Item) => record.key === editingKey;
-
-  /**
-  * 将后端返回的列表值转换成页面的显示值
-  */
-  const dataSource = tableData.map((row) => {
-    if (row.fieldProperty) {
-      row.unique = codeToText({ arr: YNTypeEnum, val: row.fieldProperty.unique }) || '';
-      row.required = codeToText({ arr: YNTypeEnum, val: row.fieldProperty.required }) || '';
-      row.pinyinConvent = codeToText({ arr: YNTypeEnum, val: row.fieldProperty.pinyinConvent }) || '';
-    } else {
-      row.unique = '';
-      row.required = '';
-      row.pinyinConvent = '';
-    }
-    /**
-    * 数据类型代码值转文本
-    */
-    row.dataType = codeToText({ arr: DataTypeEnum, val: row.dataType });
-    /**
-    * 字段类型代码值转文本
-    */
-    row.fieldType = codeToText({ arr: FieldTypeEnum, val: row.fieldType });
-    /**
-    * 分类代码值转文本
-    */
-    row.species = codeToText({ arr: SpeciesTypeEnum, val: row.species });
-    row.key = row.code;
-    return row;
-  });
+  const isEditing = (record) => record.key === editingKey;
 
   // console.log(dataSource);
-  const [data, setData] = useState(dataSource);
-
-  useEffect(() => {
-    // setData(dataSource);
-  }, []);
 
   /**
   * 编辑函数初始值设置
   */
-  const edit = (record: Item) => {
-    form.setFieldsValue({
+  const edit = (record) => {
+    fieldForm.setFieldsValue({
       ...record
     });
     setEditingKey(record.key);
   };
 
+  /**
+  * 取消编辑
+  */
   const cancel = () => {
     setEditingKey('');
   };
-
+  /**
+  * 保存编辑行的值
+  */
   const save = async (key: React.Key) => {
     try {
-      const row = (await form.validateFields()) as Item;
+      const row = (await fieldForm.validateFields()) as Item;
 
-      const newData = [...data];
+      const newData = [...fieldTableData];
       const index = newData.findIndex((item) => key === item.key);
       if (index > -1) {
         const item = newData[index];
@@ -219,11 +155,11 @@ const TableField = (props) => {
           ...item,
           ...row,
         });
-        setData(newData);
+        setFieldTableData(newData);
         setEditingKey('');
       } else {
         newData.push(row);
-        setData(newData);
+        setFieldTableData(newData);
         setEditingKey('');
       }
     } catch (errInfo) {
@@ -231,6 +167,9 @@ const TableField = (props) => {
     }
   };
 
+  /**
+  * 表字段列属性配置
+  */
   const columns = [
     {
       title: '序号',
@@ -307,7 +246,7 @@ const TableField = (props) => {
               if (value === '' || value === undefined) {
                 return Promise.reject(new Error('请输入字符长度'));
               }
-              if (!REG['正整数'].test(value)) {
+              if (!REG.plusInt.test(value)) {
                 return Promise.reject(new Error('必须是正整数'));
               }
 
@@ -368,7 +307,7 @@ const TableField = (props) => {
         attrs: {
           type: 'Input',
           onFocus: () => {
-            setTableFieldVisible(true);
+            setDictFieldVisible(true);
           }
         },
         rules: [{
@@ -430,6 +369,9 @@ const TableField = (props) => {
       },
     },
   ];
+  /**
+  * 给表字段的编辑列添加编辑属性设置
+  */
   const mergedColumns = columns.map((col) => {
     if (!col.editable) {
       return col;
@@ -449,6 +391,9 @@ const TableField = (props) => {
     };
   });
 
+  /**
+  * 添加一行记录
+  */
   const handleAdd = () => {
     const newData = {
       id: '',
@@ -472,332 +417,176 @@ const TableField = (props) => {
       /** 转换成拼音 */
       pinyinConvent: 'true',
     };
-    data.unshift(newData);
+    fieldTableData.unshift(newData);
     /**
-    * 为什么直接赋值setData(data)不更新,非要写成setData([...data])才触发更新
+    * 为什么直接赋值setData(fieldTableData)不更新,非要写成setData([...fieldTableData])才触发更新
     */
-    setData([...data]);
+    setFieldTableData([...fieldTableData]);
     edit(newData);
-    console.log(data);
+    console.log(fieldTableData);
   };
-  const handleDelete = (key) => {
-    setData(data.filter((item) => item.key !== key));
-  };
-
-  // const TableHeadMenus = [
-  //   { text: "新增", onClick: () => { handleAdd(); } },
-  // ];
-
-  const TableHeadMenus = [
-    { text: "+字段", onClick: () => { handleAdd(); } },
-    { text: "+字典字段", onClick: () => {} },
-    {
-      text: "+引用字段",
-      onClick: () => {
-        setRefModalVisible(true);
-      }
-    },
-    { text: "+外键字段", onClick: () => {} },
-    { text: "删除", onClick: () => {} },
-    { text: "保存", onClick: () => {} },
-    { text: "隐藏系统字段", onClick: () => {} },
-  ];
   /**
-   * 引用字段--关联字段，显示字段下拉选项值
-   */
-  const RefFieldEnum = tableData.map((item) => {
-    return {
-      text: item.name,
-      value: item.code,
-    };
-  });
+  * 删除一行记录
+  */
+  const handleDelete = (key) => {
+    setFieldTableData(fieldTableData.filter((item) => item.key !== key));
+  };
+  /**
+  * 编辑表格属性配置
+  */
+  const editTableProps = {
+    form: fieldForm,
+    dataSource: fieldTableData,
+    columns: mergedColumns,
+    pagination: {
+      onChange: cancel,
+    }
+  };
+  /**
+  * 设置+引用字段，+外键字段弹窗标题
+  */
+  const [modalTitle, setModalTitle] = useState('');
+  /**
+  * 显示隐藏系统字段标题
+  */
+  const [sysBtnTitle, setSysBtnTitle] = useState('显示');
+  /**
+  * 字段列表属性配置
+  */
+  const tableHeadMenuProps = {
+    title: '字段列表',
+    menus: [
+      { text: "+字段", onClick: () => { handleAdd(); } },
+      {
+        text: "+字典字段",
+        onClick: () => {
+          setDictFieldVisible(true);
+        }
+      },
+      {
+        text: "+引用字段",
+        onClick: () => {
+          setModalTitle('关联表信息');
+          setRefModalVisible(true);
+        }
+      },
+      {
+        text: "+外键字段",
+        onClick: () => {
+          setModalTitle('外键关联表信息');
+          setRefModalVisible(true);
+        }
+      },
+      {
+        text: "复制",
+        onClick: () => {
+          /** 有参数 */
+          handleAdd();
+        }
+      },
+      // { text: "删除", onClick: () => {} },
+      {
+        text: `${sysBtnTitle}系统字段`,
+        onClick: () => {
+          /**
+          * 因为setXXX之后不能立刻拿到最新值,所以需要借助变量,获取最新值
+          */
+          const title = sysBtnTitle === "显示" ? '隐藏' : "显示";
+          setSysBtnTitle(title);
+          // console.log({ title, dataSource });
+          setFieldTableData(dataSource.filter((item) => {
+            /**
+            * 当按钮为显示时,过滤掉系统类型字段,否则显示系统字段
+            */
+            return title === '显示' ? item.species === '业务' : true;
+          }));
+        }
+      },
+    ]
+  };
 
-  // console.log({ tableData, data });
-  const [tableFieldVisible, setTableFieldVisible] = useState(false);
-  const modalProps = {
-    visible: tableFieldVisible,
+  // console.log({ tableData, fieldTableData });
+  const [dictFieldVisible, setDictFieldVisible] = useState(false);
+  /**
+  * +字典字段弹窗属性
+  */
+  const dictModalProps = getModalConfig({
+    visible: dictFieldVisible,
     title: '选择字典',
     /**
    * 弹框确定按钮回调
    * @param e  点击按钮事件源
-   * @param { form-新建表可控表单实例 }
+   * @param { fieldForm-新建表可控表单实例 }
    */
     onOk: (e) => {
-      // form
-      //   .validateFields() /** 表单校验 */
-      //   .then((values) => {
-      //     /**
-      //      * 与后端协商,只提交页面上有的字段,没有的不传
-      //      */
-      //     console.log(values);
-      //     /** 新建表数据提交 */
-      //     Http.post('http://{ip}:{port}/paas/{lesseeCode}/{applicationCode}/data/v1/tables/', {
-      //       data: values
-      //     }).then(() => {
-      //       /** 关闭弹窗 */
-      //       setVisiable(false);
-      //     });
-      //   })
-      //   .catch((errorInfo) => {
-      //     /** 校验未通过 */
-      //     console.log(errorInfo);
-      //   });
-      // // }
-      setTableFieldVisible(false);
+      dictForm
+        .validateFields() /** 表单校验 */
+        .then((values) => {
+          /**
+           * 与后端协商,只提交页面上有的字段,没有的不传
+           */
+          // console.log(values);
+          // /** 新建表数据提交 */
+          // Http.post('http://{ip}:{port}/paas/{lesseeCode}/{applicationCode}/data/v1/tables/', {
+          //   data: values
+          // }).then(() => {
+          //   /** 关闭弹窗 */
+          //   setDictFieldVisible(false);
+          // });
+        })
+        .catch((errorInfo) => {
+          /** 校验未通过 */
+          console.log(errorInfo);
+        });
+      // }
     },
     /** 弹框取消按钮回调 */
     onCancel: (e) => {
-      setTableFieldVisible(false);
-    },
-    okText: '确定',
-    cancelText: '取消',
-    width: 800,
-  };
-
-  /**
-  * 选择关联表弹窗显隐控制
-  */
-  const [selectTableVisible, setSelectTableVisible] = useState(false);
-  /**
-  * 选择关联表弹窗属性配置
-  */
-  const selectTableModalProps = getModalConfig({
-    visible: selectTableVisible,
-    title: '选择关联表',
-    /**
-   * 弹框确定按钮回调
-   * @param e  点击按钮事件源
-   * @param { form-新建表可控表单实例 }
-   */
-    onOk: (e) => {
-      console.log('ok');
-      setSelectTableVisible(false);
-    },
-    /** 弹框取消按钮回调 */
-    onCancel: (e) => {
-      console.log('cancel');
-      setSelectTableVisible(false);
+      setDictFieldVisible(false);
     },
   });
 
   /**
-  * 关联表弹窗表单-显示隐藏状态变量和模态框属性配置
+  * +引用字段弹窗表单-显示隐藏状态变量和模态框属性配置
   */
   const [refModalVisible, setRefModalVisible] = useState(false);
-  const refModalProps = {
+  const refModalProps = getModalConfig({
     visible: refModalVisible,
-    title: '关联表信息',
+    title: modalTitle,
     /**
    * 弹框确定按钮回调
    * @param e  点击按钮事件源
-   * @param { form-新建表可控表单实例 }
+   * @param { fieldForm-新建表可控表单实例 }
    */
     onOk: (e) => {
-      // form
-      //   .validateFields() /** 表单校验 */
-      //   .then((values) => {
-      //     /**
-      //      * 与后端协商,只提交页面上有的字段,没有的不传
-      //      */
-      //     console.log(values);
-      //     /** 新建表数据提交 */
-      //     Http.post('http://{ip}:{port}/paas/{lesseeCode}/{applicationCode}/data/v1/tables/', {
-      //       data: values
-      //     }).then(() => {
-      //       /** 关闭弹窗 */
-      //       setVisiable(false);
-      //     });
-      //   })
-      //   .catch((errorInfo) => {
-      //     /** 校验未通过 */
-      //     console.log(errorInfo);
-      //   });
-      // // }
       setRefModalVisible(false);
     },
     /** 弹框取消按钮回调 */
     onCancel: (e) => {
       setRefModalVisible(false);
     },
-    okText: '确定',
-    cancelText: '取消',
-    width: 800,
-  };
-
+  });
   /**
-  * 选择关联表弹窗--左侧菜单树点击的节点值
+  * 引用字段表单组件属性
+  * 将一个组件的相关属性放在一起
   */
-  const [selectMenuTreeNode, setSelectMenuTreeNode] = useState({});
-  /**
-  * 选择关联表弹窗--关联表搜索框值
-  */
-  const [selectTableSearchValue, setSelectTableSearchValue] = useState('');
-  /** 树形属性配置 */
-  /**
-  * 写到这里遇到一个问题,是把公共数据放在store中好,还是通过传回调的方式好
-  */
-  const treeProps = {
-    dataSource: treeData,
-    value: '',
-    placeholder: '请选择父级',
-    style: {
-      width: '100%'
-    },
-    getClickNodeValue: (node) => {
-      console.log({ '选择关联表弹窗--左侧菜单树点击的节点值': node });
-      setSelectMenuTreeNode(node);
-    }
+  const refFormProps = {
+    treeData,
+    tableData: dataSource
   };
-
-  /** 搜索条件-表名称 */
-  const searchProps = {
-    value: selectTableSearchValue,
-    style: { margin: '16px 0' },
-    placeholder: '请输入表名称',
-    onSearch: (value) => {
-      console.log(value, selectMenuTreeNode);
-      // queryList(value);
-    },
-    enterButton: true,
-  };
-
-  /**
-   * 列表配置
-   */
-  const tableProps = {
-    columns: [{
-      title: '字段名称',
-      dataIndex: 'name',
-      key: 'name'
-    }],
-    dataSource: tableData,
-    scroll: { y: 300, },
-    onRow: (record) => {
-      return {
-        onClick: (event) => {
-          setSelectTableSearchValue('heha');
-          console.log(record);
-        },
-        onDoubleClick: (event) => {},
-        onContextMenu: (event) => {},
-        onMouseEnter: (event) => {}, // 鼠标移入行
-        onMouseLeave: (event) => {},
-      };
-    }
-
-  };
-
-  // id	long	主键
-  // fieldName	String	字段名称
-  // fieldCode	String	字段编码
-  // refTableCode	String	关联表
-  // refFieldCode	String	关联字段
-  // refDisplayFieldCode	String	显示字段
-  // sequence	int	排序号
-  // deleteStrategy	String	外键约束（删除时）,RESTRICT(存在关联不允许操作)CASCADE(级联)SET_NULL(置空)NO_ACTION(不处理)
-  // updateStrategy	String	外键约束（更新时）,RESTRICT(存在关联不允许操作)CASCADE(级联)SET_NULL(置空)NO_ACTION(不处理)
-
-  /** 表单配置项 */
-  const formItemsConfig = {
-    refTableCode: {
-      /** 表单项属性 */
-      itemAttr: {
-        label: "关联表",
-        name: "refTableCode",
-        rules: [
-          { required: true, message: '请选择关联表!' },
-          { pattern: /^[\u4e00-\u9fa5_a-zA-Z0-9()]+$/, message: '输入字段可以为中文、英文、数字、下划线、括号' },
-          { max: 64, message: '最多只能输入64个字符' },
-          /** 自定义校验器 */
-          // ({ getFieldValue }) => ({
-          //   validator(rule, value) {
-          //     if (!value || getFieldValue('password') === value) {
-          //       return Promise.resolve();
-          //     }
-          //     /** 这里如果不写成new Error,会触发eslint告警 */
-          //     return Promise.reject(new Error('The two passwords that you entered do not match!'));
-          //   },
-          // }),
-        ],
-      },
-      /** 表单项包裹组件属性 */
-      compAttr: {
-        type: 'Input',
-        placeholder: '请选择关联表',
-        onFocus: (e) => {
-          setSelectTableVisible(true);
-          /** 将表格名称转换为汉字首字母拼音 */
-          // form.setFieldsValue({ code: PinYin.getCamelChars(form.getFieldValue('name')) });
-        }
-      }
-    },
-    /**
-    * 关联字段--数据来自表结构详情中的表字段
-    */
-    refFieldCode: {
-      itemAttr: {
-        label: "关联字段",
-        name: "refFieldCode",
-        rules: [{ required: true, message: '请选择关联字段!' }],
-      },
-      compAttr: {
-        type: 'BasicSelect',
-        enum: RefFieldEnum,
-      }
-    },
-    /**
-    * 显示字段
-    */
-    refDisplayFieldCode: {
-      itemAttr: {
-        name: "refDisplayFieldCode",
-        label: "显示字段"
-      },
-      compAttr: {
-        type: 'BasicSelect',
-        enum: RefFieldEnum,
-        // onChange: onTypeChange
-      }
-    },
-  };
-  const formProps = {
-    form: refForm,
-    formItemsConfig,
-  };
-
   return (
     <div>
-      <section className="table-head-menu">
-        <div className="ant-table-title">表字段列表</div>
-        <div >
-          {TableHeadMenus.map((item) => (<Button key={item.text} type="primary" className="button" onClick={item.onClick}>{item.text}</Button>))}
-        </div>
-      </section>
-      <Form form={form} component={false}>
-
-        <Table
-          components={{
-            body: {
-              cell: EditableCell,
-            },
-          }}
-
-          bordered
-          dataSource={data}
-          columns={mergedColumns}
-          rowClassName="editable-row"
-          pagination={{
-            onChange: cancel,
-          }}
-        />
-      </Form>
-      <Modal {...modalProps}>
-        {/* 新建表表单 */}
-        {/* <StructForm {...formProps} /> */}
+      <TableHeadMenu {...tableHeadMenuProps} />
+      {/* 组件传参格式的写法很重要,如果组件的参数是通过列举的方式展开,那么延展符这种写法就是错误的,会导致页面报错 */}
+      <BasicEditTable {...editTableProps} />
+      <Modal {...dictModalProps}>
+        {/* +字典字段弹窗表单 */}
+        <DictModal />
       </Modal>
       {/* +引用字段弹窗表单 */}
       <Modal {...refModalProps}>
-        <ReferenceForm formProps={formProps} modalProps={ selectTableModalProps} RefFieldEnum={RefFieldEnum} treeProps={treeProps} tableProps={tableProps} searchProps={searchProps} />
+        {/* 引用路径 ReferenceForm-->TreeListModal--> MenuTree & BasicStory */}
+        <ReferenceForm {...refFormProps} />
       </Modal>
     </div>
   );

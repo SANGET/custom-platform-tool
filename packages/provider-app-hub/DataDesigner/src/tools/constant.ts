@@ -1,7 +1,7 @@
 /*
  * @Author: wph
  * @Date: 2020-07-22 09:23:52
- * @LastEditTime: 2020-08-15 10:55:41
+ * @LastEditTime: 2020-08-16 14:01:20
  * @LastEditors: Please set LastEditors
  * @Description: 权限功能单元与页面状态无关的方法
  * @FilePath: \custom-platform-v3-frontend\packages\provider-app-hub\AuthManager\src\features\authItem\authItem.ts
@@ -66,14 +66,14 @@ export const FieldTypeEnum :Array<IFieldType> = [
 */
 interface ISpeciesType{
   value:"SYS" | "BIS" ;
-  text:"系统元数据"|"业务元数据";
+  text:"系统"|"业务";
 }
 /**
  * 业务字段类型枚举
  */
 export const SpeciesTypeEnum :Array<ISpeciesType> = [
-  { value: "SYS", text: "系统元数据" },
-  { value: "BIS", text: "业务元数据" },
+  { value: "SYS", text: "系统" },
+  { value: "BIS", text: "业务" },
 ];
 
 /**

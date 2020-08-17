@@ -3,6 +3,36 @@ import {
   Table, Input, InputNumber, Popconfirm, Form, Button, Space
 } from 'antd';
 
+import styled from 'styled-components';
+
+/**
+* 编辑表页面样式
+*/
+const EditTableStyled = styled.div`
+.editable-cell {
+  position: relative;
+}
+
+.editable-cell-value-wrap {
+  padding: 5px 12px;
+  cursor: pointer;
+}
+
+.editable-row:hover .editable-cell-value-wrap {
+  border: 1px solid #d9d9d9;
+  border-radius: 4px;
+  padding: 4px 11px;
+}
+
+[data-theme='dark'] .editable-row:hover .editable-cell-value-wrap {
+  border: 1px solid #434343;
+}
+
+.el-table__header {
+  table-layout: auto !important;
+}
+`;
+
 interface Item {
   key: string|number;
   name: string;
@@ -231,7 +261,7 @@ const EditableTable = () => {
   ];
 
   return (
-    <div>
+    <EditTableStyled>
       <section className="table-head-menu">
         <div className="ant-table-title">引用字段列表</div>
         <div >
@@ -256,7 +286,7 @@ const EditableTable = () => {
           }}
         />
       </Form>
-    </div>
+    </EditTableStyled>
   );
 };
 

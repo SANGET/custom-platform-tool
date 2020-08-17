@@ -3,7 +3,7 @@ import {
   Form, TreeSelect, Input
 } from 'antd';
 /** 当前页面样式 */
-import './tableStruct.less';
+import './TableStruct.less';
 
 /** 导出基础选择框及其枚举数据 */
 /** 内聚和单一职责,有时候令人感觉边界不清,枚举值和选择框组件放在一起貌似也不错 */
@@ -36,22 +36,8 @@ const formItemLayout = {
   }
 };
 
-// function init(formItemsConfig) {
-//   return { formItemsConfig };
-// }
-
-// const reducer = (state, action) => {
-//   const { formItemsConfig } = action;
-//   switch (action.type) {
-//     case 'setFormItemsConfig':
-//       return { formItemsConfig };
-//     default:
-//       throw new Error();
-//   }
-// };
-
 const StructForm = ({
-  form, treeData, initialValues, ...rest
+  form, treeData, ...rest
 }) => {
   // console.log({ treeData });
   /** 表单初始化 */
@@ -98,34 +84,27 @@ const StructForm = ({
     }
   };
 
+  /**
+  * 表类型联动对象
+  */
+  const refShowInit = { normalTable: '', tree: 'hide', auxTable: 'hide' };
+  /**
+  * 表类型联动状态设置
+  */
+  const [refShow, setRefShow] = useState(refShowInit);
+
+  // console.log({ refShow });
   const onTypeChange = () => {
-    // dispatch({ type: 'increment' });
-    // const { primaryTable: primaryTable } = state;
-    // const primaryTableCopy = JSON.parse(JSON.stringify(state.primaryTable));
-
-    console.log(form.getFieldValue('type'));
-    if (form.getFieldValue('type') === 'auxTable') {
-      formItemsConfig.primaryTable.hide = false;
-      const { primaryTable } = formItemsConfig;
-      setFormItemsConfig({ ...formItemsConfig, primaryTable });
-      // setFormItemsConfig((prevState) => ({
-      //   ...prevState,
-      //   primaryTable: { hide: false }
-
-      // }));
-      console.log(form.getFieldValue('type'), formItemsConfig.primaryTable);
-    } else {
-      formItemsConfig.primaryTable.hide = true;
-      const { primaryTable } = formItemsConfig;
-      setFormItemsConfig({ ...formItemsConfig, primaryTable });
-      // setFormItemsConfig(formItemsConfig);
-      // console.log(form.getFieldValue('type'), formItemsConfig.primaryTable);
-      // dispatch({ type: 'setFormItemsConfig', primaryTable: primaryTableCopy });
-    }
-    // dispatch({ type: 'setFormItemsConfig', formItemsConfig: state.formItemsConfig });
+    const type = form.getFieldValue('type');
+    const showObj = Object.keys(refShowInit).reduce((prev, key) => {
+      prev[key] = key === type ? '' : 'hide';
+      return prev;
+    }, {});
+    // console.log({ showObj });
+    setRefShow(showObj as { normalTable: string; tree: string; auxTable: string; });
   };
   /** 表单配置项 */
-  const formItemsConfigInitValue = {
+  const formItemsConfig = {
     name: {
       /** 表单项属性 */
       itemAttr: {
@@ -178,25 +157,38 @@ const StructForm = ({
         onChange: onTypeChange
       }
     },
-    primaryTable: {
-      hide: true,
-      itemAttr: {
-        name: "primayTable",
-        label: "主表"
-      },
-      compAttr: {
-        type: 'Input',
-      }
-    },
     moduleId: {
       itemAttr: {
         name: "moduleId",
-        label: "归属模块"
+        label: "归属模块",
+        className: refShow.normalTable,
       },
       compAttr: {
         type: 'TreeSelect',
         enum: TableTypeEnum,
         ...tProps
+      }
+    },
+    maxLevel: {
+      itemAttr: {
+        name: "maxLevel",
+        label: "最大层级数",
+        className: refShow.tree,
+      },
+      compAttr: {
+        type: 'InputNumber',
+        placeholder: '最大层级不能超过5级'
+      }
+    },
+    mainTableCode: {
+      itemAttr: {
+        name: "mainTableCode",
+        label: "主表",
+        className: refShow.auxTable,
+      },
+      compAttr: {
+        type: 'Input',
+        placeholder: '请输入主表'
       }
     },
     tag: {
@@ -224,29 +216,17 @@ const StructForm = ({
     }
   };
 
-  const [formItemsConfig, setFormItemsConfig] = useState(formItemsConfigInitValue);
-  // useEffect(() => {
-  //   console.log('xxx', formItemsConfig.primaryTable.hide);
-  // }, [formItemsConfig.primaryTable.hide]);
-  // const [state, dispatch] = useReducer(reducer, formItemsConfigInitValue, init);
-  // console.log(state);
-  // const {
-  //   name, code, type, primaryTable: primaryTable, moduleId: moduleId, tag, description
-  // } = formItemsConfigInitValue;
   return (
     <Form
-      name="auth-form"
+      name="struct-form"
       /** 受控组件实例 */
       form={form}
-      className="auth-form"
       {...formItemLayout}
-      /** 表单初始值 */
-      initialValues={initialValues}
       {...rest}
     >{
 
         Object.keys(formItemsConfig).map((key) => (
-          <Form.Item key={key} {...formItemsConfig[key].itemAttr} style={{ display: formItemsConfig[key].hide ? 'none' : '' }}>
+          <Form.Item key={key} {...formItemsConfig[key].itemAttr}>
             <BasicStory {...formItemsConfig[key].compAttr} />
           </Form.Item>
         ))

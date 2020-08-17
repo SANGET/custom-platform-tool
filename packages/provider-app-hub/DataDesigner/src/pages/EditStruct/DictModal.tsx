@@ -15,10 +15,10 @@ import { renderIndexCol, renderOperCol } from '@provider-app/data-designer/src/b
 */
 import TableHeadMenu from '@provider-app/data-designer/src/bizComps/TableHeadMenu';
 
+import DictForm from '@provider-app/data-designer/src/pages/DictManage/DictForm';
 import { getModalConfig } from '../../tools/mix';
-import DictForm from './DictForm';
 
-const DictManage = () => {
+const DictModal = () => {
   const [pager, setPager] = useState({ page: 1, pageSize: 10 });
 
   /**
@@ -29,40 +29,17 @@ const DictManage = () => {
   * 字典表单显示隐藏控制
   */
   const [visible, setVisiable] = useState(false);
-  /** 操作按钮 */
-  const operButs = [
-    {
-      text: '编辑',
-      onClick: (row) => {
-        setFormTitle('编辑字典');
-        setVisiable(true);
-      }
-    },
-    { text: '删除', title: '你确定删除这条字典?', onClick: (row) => { } },
-  ];
+
   const columns = [
-    // renderIndexCol(pager),
+    renderIndexCol(pager),
     {
       title: '字典名称',
       dataIndex: 'name',
-      width: 140,
     },
     {
       title: '字典描述',
-      dataIndex: 'remark',
-      width: '30%',
+      dataIndex: 'description',
     },
-    {
-      title: '最后修改人',
-      dataIndex: 'remark',
-      width: 140,
-    },
-    {
-      title: '最后修改时间',
-      dataIndex: 'remark',
-      width: 160,
-    },
-    renderOperCol(operButs),
 
   ];
 
@@ -70,64 +47,12 @@ const DictManage = () => {
     {
       key: 1,
       name: 'John Brown sr.',
-      age: 60,
-      address: 'New York No. 1 Lake Park',
-      children: [
-        {
-          key: 11,
-          name: 'John Brown',
-          age: 42,
-          address: 'New York No. 2 Lake Park',
-        },
-        {
-          key: 12,
-          name: 'John Brown jr.',
-          age: 30,
-          address: 'New York No. 3 Lake Park',
-          children: [
-            {
-              key: 121,
-              name: 'Jimmy Brown',
-              age: 16,
-              address: 'New York No. 3 Lake Park',
-            },
-          ],
-        },
-        {
-          key: 13,
-          name: 'Jim Green sr.',
-          age: 72,
-          address: 'London No. 1 Lake Park',
-          children: [
-            {
-              key: 131,
-              name: 'Jim Green',
-              age: 42,
-              address: 'London No. 2 Lake Park',
-              children: [
-                {
-                  key: 1311,
-                  name: 'Jim Green jr.',
-                  age: 25,
-                  address: 'London No. 3 Lake Park',
-                },
-                {
-                  key: 1312,
-                  name: 'Jimmy Green sr.',
-                  age: 18,
-                  address: 'London No. 4 Lake Park',
-                },
-              ],
-            },
-          ],
-        },
-      ],
+      description: 'Sidney No. 1 Lake Park',
     },
     {
       key: 2,
       name: 'Joe Black',
-      age: 32,
-      address: 'Sidney No. 1 Lake Park',
+      description: 'Sidney No. 1 Lake Park',
     },
   ];
   /**
@@ -243,8 +168,8 @@ const DictManage = () => {
   };
 
   const formItemLayout = {
-    labelCol: { span: 6 },
-    wrapperCol: { span: 18 },
+    labelCol: { span: 10 },
+    wrapperCol: { span: 14 },
   };
   const [form] = Form.useForm();
 
@@ -262,8 +187,6 @@ const DictManage = () => {
           setVisiable(true);
         }
       },
-      { text: '导入', onClick: () => {} },
-      { text: '导出', onClick: () => {} },
     ]
   };
   /**
@@ -286,11 +209,25 @@ const DictManage = () => {
     },
   });
 
+  const rowSelection = {
+    onChange: (selectedRowKeys, selectedRows) => {
+      console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
+    },
+  };
+  const searchProps = {
+    colSpan: 10,
+    btnSpan: 4,
+  };
+
   return (<>
-    <BasicSearchForm />
+    <BasicSearchForm {...searchProps} />
     <TableHeadMenu {...tableHeadMenus} />
     <Table
       bordered
+      rowSelection={{
+        type: 'radio',
+        ...rowSelection,
+      }}
       columns={columns.map((item) => {
         item.key = item.dataIndex;
         return item;
@@ -312,4 +249,4 @@ const DictManage = () => {
   </>);
 };
 
-export default DictManage;
+export default DictModal;

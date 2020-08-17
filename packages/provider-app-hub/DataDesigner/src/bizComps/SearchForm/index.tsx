@@ -29,6 +29,7 @@ const SearchStyled = styled.div`
 `;
 
 const BasicSearchForm = (props) => {
+  const { colSpan = 6, btnSpan = 8 } = props;
   const formItemLayout = {
     labelCol: { span: 6 },
     wrapperCol: { span: 18 },
@@ -42,17 +43,17 @@ const BasicSearchForm = (props) => {
       form={form}
     >
       <Row gutter={24}>
-        <Col span={6}>
+        <Col span={colSpan}>
           <Form.Item label="字典名称">
             <Input placeholder="" />
           </Form.Item>
         </Col>
-        <Col span={6}>
+        <Col span={colSpan}>
           <Form.Item label="字典描述">
             <Input placeholder="" />
           </Form.Item>
         </Col>
-        <Col span={8}>
+        <Col span={btnSpan}>
           <Form.Item>
             <Button type="primary">搜索</Button>
           </Form.Item>

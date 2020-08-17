@@ -1,4 +1,6 @@
 import React, { FC, useState, useEffect } from 'react';
+/** react路由暴露出来的页面跳转方法 */
+import { useHistory } from 'react-router-dom';
 import {
   Tabs, Form, Tag, Row, Col, Button
 } from 'antd';
@@ -13,11 +15,12 @@ import BasicStory from '@provider-app/data-designer/src/components/BasicStory';
 /** 表结构类型 */
 import { TableTypeEnum } from '@provider-app/data-designer/src/tools/constant';
 
-// import EditableTable from '@provider-app/data-designer/src/bizComps/EditableTable';
+import { History } from '@provider-app/data-designer/src/routes';
 
 import { fetchMenuTree } from '@provider-app/data-designer/src/api';
 
-import './editStruct.less';
+import './EditStruct.less';
+
 import { useMappedState } from 'redux-react-hook';
 
 const { CheckableTag } = Tag;
@@ -33,6 +36,8 @@ const EditStruct :FC = () => {
   // const { structTableData } = useMappedState((state) => ({
   //   structTableData: state.structTableData
   // }));
+  /** react路由跳转方法,必须定义在react 组件中,跳转到编辑表页面时要用 */
+  const History = useHistory();
 
   const [detailData, setDetailData] = useState({ columns: [] });
 
@@ -265,7 +270,13 @@ const EditStruct :FC = () => {
         });
       }
     },
-    { text: '返回', onClick: () => {} },
+    {
+      text: '返回',
+      onClick: () => {
+        console.log(History);
+        History.goBack();
+      }
+    },
   ];
 
   const tagsData = ['人员信息', '人员列表'];
@@ -321,7 +332,7 @@ const EditStruct :FC = () => {
         }
         {/* 设置按钮的宽度占行宽的24之四 */}
         <Col span={4} className="form-buts">
-          {formButs.map((item) => (<Button key={item.text} type='primary' className="button">{item.text}</Button>))}
+          {formButs.map((item) => (<Button key={item.text} type='primary' className="button" onClick={item.onClick}>{item.text}</Button>))}
         </Col>
         </Row>
       </Form>
@@ -341,7 +352,7 @@ const EditStruct :FC = () => {
                 checked={selectedTags.indexOf(tag as never) > -1}
                 onChange={(checked) => handleTagChange(tag, checked)}
               >
-                <a href={tag}>{tag}</a>
+                <a>{tag}</a>
               </CheckableTag>
             ))}
           </div>
