@@ -1,30 +1,34 @@
-import React from "react";
+import React, { useEffect } from "react";
 
 import { Grid } from '@infra/ui';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
-import { useSelectEntity, useEntitiesStateStore } from "@engine/visual-editor/core/actions-hook";
 
-import ToolBar from '../components/Toolbar';
-import ComponentPanel from '../components/ComponentPanel';
-import CanvasStage from '../components/CanvasStage';
-import PropertiesEditor from '../components/PropertiesEditor';
+import ToolBar from '@engine/visual-editor/components/Toolbar';
+import ComponentPanel from '@engine/visual-editor/components/ComponentPanel';
+import CanvasStage from '@engine/visual-editor/components/CanvasStage';
+import PropertiesEditor from '@engine/visual-editor/components/PropertiesEditor';
 
-// import { Dispatcher } from "../core/actions";
-// import { VisualEditorStore } from "../core/store";
+import { Dispatcher } from "@engine/visual-editor/core/actions";
+// import { VisualEditorStore } from "@engine/visual-editor/core/store";
 
-import { GlobalStyle } from '../style/global-style';
+import { GlobalStyle } from '@engine/visual-editor/style/global-style';
+import { VisualEditorState } from "@engine/visual-editor/core/reducers/reducer";
 
-// interface VisualEditorAppProps {
-//   dispatcher: Dispatcher
-//   layoutContent: VisualEditorStore['layoutContentState']
-// }
+interface VisualEditorAppProps extends VisualEditorState {
+  dispatcher: Dispatcher
+}
 
-const VisualEditorApp: React.FC = (props) => {
-  const [selectedEntities, selectEntity] = useSelectEntity();
-  const [entitiesStateStore, saveEntitiesStateStore] = useEntitiesStateStore();
-
-  const { activeID, activeEntity } = selectedEntities;
+const VisualEditorApp: React.FC<VisualEditorAppProps> = (props) => {
+  const {
+    dispatcher,
+    selectedEntities,
+    entitiesStateStore,
+  } = props;
+  const {
+    InitApp,
+    SelectEntity, InitEntityState, UpdateEntityState,
+  } = dispatcher;
 
   return (
     <div>
@@ -37,13 +41,15 @@ const VisualEditorApp: React.FC = (props) => {
           item
           className="logo"
           lg={2}
+          md={3}
         >
           <h3>Visual editor</h3>
         </Grid>
         <Grid
           item
           className=""
-          lg={10}
+          lg={9}
+          md={10}
         >
           <ToolBar />
         </Grid>
@@ -64,39 +70,23 @@ const VisualEditorApp: React.FC = (props) => {
             <ComponentPanel />
           </Grid>
           <Grid
-            lg={8}
-            md={8}
-            sm={8}
-            xs={8}
+            lg={10}
+            md={10}
+            sm={10}
+            xs={10}
             item
             className="canvas-container"
           >
             <CanvasStage
-              selectedEntities={selectedEntities.selectedList}
+              selectedEntities={selectedEntities}
               entitiesStateStore={entitiesStateStore}
-              selectEntity={selectEntity}
+              selectEntity={SelectEntity}
+              initEntityState={InitEntityState}
+              updateEntityState={UpdateEntityState}
+              PropEditorRenderer={PropertiesEditor}
             />
           </Grid>
         </DndProvider>
-        {
-          !!activeEntity && (
-            <Grid
-              lg={2}
-              md={2}
-              sm={2}
-              xs={2}
-              item
-              className="right-panel"
-            >
-              <PropertiesEditor
-                key={activeID}
-                selectedEntity={activeEntity}
-                defaultEntityState={entitiesStateStore[activeID]}
-                saveEntitiesStateStore={saveEntitiesStateStore}
-              />
-            </Grid>
-          )
-        }
       </Grid>
       <GlobalStyle />
     </div>

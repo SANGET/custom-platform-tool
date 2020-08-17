@@ -1,4 +1,5 @@
 import React from 'react';
+import { IsFunc } from '@mini-code/base-func';
 import { LayoutNodeInfo } from '../types';
 
 /**
@@ -13,13 +14,14 @@ export interface LayoutWrapperContext {
 
 export interface LayoutParserWrapper {
   /** 容器渲染 wrapper 包装函数 */
-  containerWrapper?: (ctx: LayoutWrapperContext) => React.ElementType
+  containerWrapper?: (ctx: LayoutWrapperContext) => JSX.Element
   /** 组件渲染器，由调用方实现 */
-  componentRenderer?: (ctx: LayoutWrapperContext) => React.ElementType
+  componentRenderer?: (ctx: LayoutWrapperContext) => JSX.Element
 }
 
 export interface LayoutRendererProps extends LayoutParserWrapper {
-  layoutNode: LayoutNodeInfo[];
+  layoutNode: LayoutNodeInfo[]
+  RootRender?: (renderRes: React.ElementType[]) => JSX.Element
 }
 
 /**
@@ -74,21 +76,26 @@ const renderLayout = (
   return res;
 };
 
+/**
+ * 布局渲染引擎入口
+ */
 const LayoutRenderer: React.FC<LayoutRendererProps> = (
   props,
 ) => {
   const {
     layoutNode,
+    RootRender,
     containerWrapper,
     componentRenderer,
   } = props;
-  return (
+  const layoutRenderRes = renderLayout(layoutNode, {
+    containerWrapper,
+    componentRenderer,
+  });
+  return typeof RootRender === 'function' ? RootRender(layoutRenderRes) : (
     <div className="layout-parser-content">
       {
-        renderLayout(layoutNode, {
-          containerWrapper,
-          componentRenderer,
-        })
+        layoutRenderRes
       }
     </div>
   );

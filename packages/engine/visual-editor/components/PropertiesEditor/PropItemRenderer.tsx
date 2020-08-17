@@ -3,7 +3,6 @@ import { Input, Selector, Button } from '@infra/ui';
 import { EditorPropertyItem } from '../../types';
 
 interface PropItemRendererProps {
-  entity
   propItemConfig
   componentState
   propID: string
@@ -15,7 +14,6 @@ interface PropItemRendererProps {
  * 根据属性项的 type 选择对应的组件进行渲染
  */
 export const PropItemRenderer: React.FC<PropItemRendererProps> = ({
-  entity,
   propItemConfig,
   componentState,
   propID,
@@ -59,8 +57,8 @@ export const PropItemRenderer: React.FC<PropItemRendererProps> = ({
   }
   return (
     <div className="mb10">
-      <span className="label mr5">{label}</span>
-      <span className="content">{Com}</span>
+      <div className="label mb5">{label}</div>
+      <div className="content">{Com}</div>
     </div>
   );
 };

@@ -1,0 +1,110 @@
+
+
+#auto-logging-tip {
+  width: 400px;
+  text-align: center;
+  padding: 20px;
+  margin: 20% auto;
+}
+.login-panel {
+  @include fill();
+  background-size: cover;
+  &.fixed {
+    position: fixed;
+  }
+  .panel-tip {
+    margin: 0;
+  }
+  .login-layout {
+    position: absolute;
+    background-color: #FFF;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 440px;
+    padding: 10px 30px 30px;
+    // background-color: #f9f9f9;
+    box-shadow: 0 0 3px rgba(0, 0, 0, 0.2);
+    border-radius: 4px;
+    transition: all ease 2s;
+    .input-control {
+      width: 100%;
+      // background-color: transparent;
+    }
+    &:hover {
+      box-shadow: 0 40px 48px rgba(0, 0, 0, 0.4);
+    }
+    .horizontal-form {
+      padding: 10px 0;
+      background-color: transparent;
+    }
+    .title {
+      // color: #FFF;
+      // margin-bottom: 10px;
+      display: flex !important;
+    }
+    .form-group {
+      position: relative;
+      margin: 15px 0;
+      // margin-top: 25px;
+      .control-label {
+        display: none;
+      }
+      .form-control {
+        min-height: 36px;
+        // width: 100%;
+        // background-color: rgba(255,255,255,0);
+        // color: #FFF;
+      }
+      .form-tip {
+        position: absolute;
+        right: 4px;
+      }
+    }
+    .animate-input-title .input-control .title {
+      bottom: auto !important;
+    }
+    .login-btn {
+      $btnColor: #f16a6a;
+      color: #FFF;
+      margin-top: 10px;
+      width: 100%;
+      background-color: $btnColor;
+      border-color: $btnColor;
+      border: none;
+      // padding: 10px 0;
+      box-shadow: 0 6px 12px rgba(#000, 0.2);
+      &:hover {
+        background-color: darken($btnColor, 5%);
+      }
+    }
+  }
+}
+
+.login-panel:after {
+  // background: url(./login-pattern.svg);
+  background-size: 501px 990px;
+  background-position: 0 0;
+  animation-direction: reverse;
+  animation-duration: 60s;
+  animation-iteration-count: infinite;
+  animation-name: bg-scroll;
+  animation-timing-function: linear;
+  bottom: 0;
+  content: '';
+  left: 0;
+  opacity: 0.2;
+  position: absolute;
+  right: 0;
+  top: 0;
+  z-index: -1;
+}
+
+@keyframes bg-scroll {
+  from {
+    background-position: 0 0;
+  }
+  to {
+    background-position: 0 990px;
+  }
+}

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useDrag } from 'react-dnd';
 import { ItemTypes } from './types';
 
@@ -16,9 +16,10 @@ export interface DragItemProps extends React.HTMLAttributes<HTMLDivElement> {
 /**
  * 拖拽容器
  */
-const DragItem = ({
-  children, dragItemClass, dragConfig, ...other
-}: DragItemProps) => {
+const DragItem: React.FC<DragItemProps> = ({
+  children, dragItemClass, dragConfig,
+  ...other
+}) => {
   const [{ isDragging }, drag] = useDrag({
     item: {
       dragConfig,
@@ -30,7 +31,10 @@ const DragItem = ({
     }),
   });
   return (
-    <div {...other} ref={drag}>
+    <div
+      {...other}
+      ref={drag}
+    >
       {children}
     </div>
   );

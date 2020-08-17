@@ -1,0 +1,42 @@
+// 重定义 UI 库的样式
+
+body {
+  background-color: $base-bg-color;
+}
+
+.fill {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+}
+
+.vertical-form {
+  .form-group {
+    text-align: left;
+    color: #555;
+  }
+}
+
+.__popover {
+  pointer-events: none;
+}
+
+.tabs-container {
+  margin: 0 !important;
+}
+
+img {
+  max-width: 100%;
+}
+
+.loading-control {
+  z-index: 111;
+}
+
+.card-item {
+  h3,h4 {
+    margin-top: 0;
+  }
+}

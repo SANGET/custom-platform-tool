@@ -5,8 +5,8 @@ import { DndProvider } from 'react-dnd';
 import { ShowModal } from '@deer-ui/core';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 
-import { useEntitiesStateStore, useSelectEntity } from "@engine/visual-editor/app/actions";
-import { getLayoutNodeTree, getLayoutContentCollection } from "@engine/visual-editor/components/CanvasStage";
+// import { useEntitiesStateStore, useSelectEntity } from "@engine/visual-editor/app/actions";
+// import { getLayoutNodeTree, getLayoutContentCollection } from "@engine/visual-editor/components/CanvasStage";
 import ToolBar from './components/Toolbar';
 import ComponentPanel from './components/ComponentPanel';
 import CanvasStage from './components/CanvasStage';

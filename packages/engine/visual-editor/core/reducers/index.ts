@@ -1,4 +1,4 @@
-import reducer from './reducer';
-
-export default reducer;
-export type StoreType = typeof reducer;
+export * from './reducer';
+export * from './canvas-state';
+export * from './layout-info';
+export { default } from './reducer';
