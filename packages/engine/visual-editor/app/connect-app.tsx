@@ -2,7 +2,7 @@ import React from 'react';
 
 import { Provider as ReduxProvider, connect, ConnectedProps } from 'react-redux';
 
-import createChatStore from '../core/store';
+import createStore from '../core/store';
 import * as VisualEditorActions from '../core/actions';
 
 import VisualEditorApp from './main';
@@ -37,7 +37,7 @@ const mapDispatchToProps = (dispatch) => {
   return dispatcherCache;
 };
 
-const appStore = createChatStore();
+const appStore = createStore();
 
 const connector = connect(mapStateToProps, mapDispatchToProps);
 

@@ -1,5 +1,4 @@
 import React from 'react';
-import { IsFunc } from '@mini-code/base-func';
 import { LayoutNodeInfo } from '../types';
 
 /**

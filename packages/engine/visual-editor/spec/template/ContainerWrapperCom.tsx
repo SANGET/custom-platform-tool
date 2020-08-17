@@ -9,6 +9,7 @@ import classnames from 'classnames';
 import DragItem from '../DragItem';
 import { FacToComponentProps } from '../dragable-item-wrapper-fac';
 import DropContainer from '../DropContainer';
+import { ItemTypes } from '../types';
 
 const ContainerWrapper = styled.div`
   position: relative;
@@ -32,54 +33,46 @@ const containerLayoutParser = (layoutInfo): React.CSSProperties => {
 
 type ContainerWrapperComProps = FacToComponentProps
 
-const ContainerWrapperCom: React.FC<ContainerWrapperComProps> = ({
-  children,
-  currEntity,
-  id,
-  node,
-  onClick,
-  getSelectedState,
-  getEntityProps,
-  onDrop
-}) => {
-  const isSelected = getSelectedState(id);
-
-  const classes = classnames([
-    // isOverCurrent && 'overing',
-    isSelected && 'selected'
-  ]);
-
+const ContainerWrapperCom: React.FC<ContainerWrapperComProps> = (props) => {
+  const {
+    children,
+    currEntity,
+    id,
+    idx,
+    node,
+    onClick,
+    getEntityProps,
+    onMove,
+    onDrop
+  } = props;
   const entityState = getEntityProps(id) || {};
   const { style } = entityState;
   const { layout: layoutProps } = node;
   // const _style = Object.assign({}, style, containerLayoutParser(layoutProps));
 
-  // TODO: 修复 flex 布局的问题
   return (
-    <DropContainer
-      isSelected={isSelected}
+    // <DropContainer
+    //   isSelected={isSelected}
+    //   id={id}
+    // >
+    <DragItem
       id={id}
-      onDrop={(dragEntity, _id) => {
-        onDrop(dragEntity, _id);
-      }}
-      onClick={(e) => {
-        onClick(e, currEntity);
-      }}
+      index={idx}
+      onMove={onMove}
+      onDrop={onDrop}
+      onClick={onClick}
+      dragItemClass={currEntity}
+      type={ItemTypes.DragItemEntity}
     >
-      <DragItem
-        dragItemClass={currEntity}
-      >
-        <ContainerWrapper
-          className={classes}
+      <ContainerWrapper>
+        <div
+          style={containerLayoutParser(layoutProps)}
         >
-          <div
-            style={containerLayoutParser(layoutProps)}
-          >
-            {children}
-          </div>
-        </ContainerWrapper>
-      </DragItem>
-    </DropContainer>
+          {children}
+        </div>
+      </ContainerWrapper>
+    </DragItem>
+    // </DropContainer>
   );
 };
 

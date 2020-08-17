@@ -16,11 +16,10 @@ export interface ComponentBindPropsConfig {
 }
 
 /**
- * 可拖动的组件的 class
+ * 编辑器中的元素类 element class
+ * 用于存储组件的元数据信息
  */
-export interface EditorBasicComponentClass {
-  /** 组件类型 */
-  type: string
+export interface EditorBasicElementClass<C> {
   /** 组件类型 id */
   id: string
   /** 父级 ID */
@@ -30,43 +29,47 @@ export interface EditorBasicComponentClass {
   /** 组件类面板的显示名 */
   label: string;
   /** 绑定可编辑的属性 */
-  bindProperties: ComponentBindPropsConfig
+  bindProps: ComponentBindPropsConfig
+  /** 元素的组件类型 */
+  component: C
 }
 
 /**
  * 容器组件类
  */
-export interface EditorContainerClass<C> extends EditorBasicComponentClass {
-  /** 容器组件 */
-  type: 'container'
-  /** 组件类型 */
-  component?: C
-  /** 布局容器特有的类型 */
-  layout: {
-    type: 'flex'
-    props: {
-      justifyContent
-      justifyItems
-    }
-  }
-}
+// export interface EditorContainerClass<C> extends EditorBasicElementClass<C> {
+//   /** 容器组件 */
+//   type: 'container'
+//   /** 组件类型 */
+//   component?: C
+//   /** 布局容器特有的类型 */
+//   layout: {
+//     type: 'flex'
+//     props: {
+//       justifyContent
+//       justifyItems
+//     }
+//   }
+// }
 
-/**
- * 一般组件类
- */
-export interface EditorCompClass<C> extends EditorBasicComponentClass {
-  /** 一般组件 */
-  type: 'component'
-  /** 组件类型 */
-  component: C
-}
+// /**
+//  * 一般组件类
+//  */
+// export interface EditorCompClass<C> extends EditorBasicElementClass {
+//   /** 一般组件 */
+//   type: 'component'
+//   /** 组件类型 */
+//   component: C
+// }
 
 /**
  * 可拖动的组件的 class
  */
-export type EditorComponentClass<C = GenericComponentType> =
-  EditorContainerClass<C> |
-  EditorCompClass<C>
+export interface EditorComponentClass<C = GenericComponentType> extends EditorBasicElementClass<C> {
+  id: string
+}
+// EditorContainerClass<C> |
+// EditorCompClass<C>
 
 /// //////////////// 属性 ///////////////////
 
@@ -147,21 +150,21 @@ export interface EntitiesStateStore {
 
 /// //////////////// 实例状态 ///////////////////
 
-export interface EditorComponentEntityProps {
-  /** 实例 id */
-  id: string
-  /** horizontal 横向排序 */
-  hOrder: number
-  /** vertical 垂直排序 */
-  vOrder: number
-  /** 组件实例状态数据 */
-  // entityState: EditorEntityState
-  /** 实例化后的状态 */
-  _state: string
-  // _state: 'active' | 'disable'
-  /** 实例化后的 class id */
-  _classID: EditorComponentClass['id']
-}
+// export interface EditorComponentEntityProps {
+//   /** 实例 id */
+//   id: string
+//   // /** horizontal 横向排序 */
+//   // hOrder: number
+//   // /** vertical 垂直排序 */
+//   // vOrder: number
+//   /** 组件实例状态数据 */
+//   // entityState: EditorEntityState
+//   /** 实例化后的状态 */
+//   _state: string
+//   // _state: 'active' | 'disable'
+//   /** 实例化后的 class id */
+//   _classID: EditorComponentClass['id']
+// }
 
 /**
  * 页面元数据
@@ -172,13 +175,28 @@ export interface EditorPageEntity {
   /** 存放后端返回的 page id */
   pageID: string
   /** 绑定可编辑的属性 */
-  bindProperties: ComponentBindPropsConfig
+  bindProps: ComponentBindPropsConfig
 }
 
 /**
  * 组件实例
  */
-export type EditorComponentEntity = EditorComponentClass & EditorComponentEntityProps
+export interface EditorComponentEntity extends EditorComponentClass {
+  /** 实例 id */
+  id: string
+  // /** horizontal 横向排序 */
+  // hOrder: number
+  // /** vertical 垂直排序 */
+  // vOrder: number
+  /** 组件实例状态数据 */
+  // entityState: EditorEntityState
+  body?: EditorComponentEntity[]
+  /** 实例化后的状态 */
+  _state: string
+  // _state: 'active' | 'disable'
+  /** 实例化后的 class id */
+  _classID: EditorComponentClass['id']
+}
 
 /**
  * 编辑器的实例种类
@@ -206,7 +224,7 @@ export interface DragItemType {
 /**
  * 组件类拖拽项
  */
-export interface DragComponentClass extends DragItemType {
+export interface DragItemClass extends DragItemType {
   type: string
   dragItemClass: EditorComponentClass
 }

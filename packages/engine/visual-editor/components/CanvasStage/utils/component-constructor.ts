@@ -9,7 +9,8 @@ import { EditorComponentClass, EditorComponentEntity } from '../../../types';
  */
 export const constructCompClass = (
   componentClass: EditorComponentClass,
-  extendEntityID = ''
+  extendEntityID = '',
+  state = 'active'
 ): EditorComponentEntity => {
   /** 外部可以通过 entityID 设置 componentClass id */
   let { entityID = '' } = componentClass;
@@ -30,7 +31,7 @@ export const constructCompClass = (
     /** 备份 classID */
     _classID: componentClass.id,
     /** 当前实例是激活的 */
-    _state: "active",
+    _state: state,
   });
 
   return entity;

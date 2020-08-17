@@ -8,7 +8,7 @@ import classnames from 'classnames';
 
 import { isNodeInChild } from '@engine/visual-editor/utils/node-filter';
 import { ItemTypes } from '@engine/visual-editor/spec/types';
-import { DragComponentClass, DropCollectType, EntitiesStateStore } from '@engine/visual-editor/types';
+import { DragItemClass, DropCollectType, EntitiesStateStore } from '@engine/visual-editor/types';
 import { Call } from '@mini-code/base-func';
 
 const DropContainerWrapper = styled.div`
@@ -32,7 +32,7 @@ export interface DropContainerProps {
   className?: boolean
   id: string
   children: React.ReactChild
-  useDropOptions?: DropTargetHookSpec<DragComponentClass, void, DropCollectType>
+  useDropOptions?: DropTargetHookSpec<DragItemClass, void, DropCollectType>
 }
 
 /**
@@ -44,8 +44,8 @@ const DropContainer: React.FC<DropContainerProps> = ({
   useDropOptions = {},
   ...other
 }) => {
-  const { accept = ItemTypes.DragComponent } = useDropOptions;
-  const [{ isOverCurrent }, drop] = useDrop<DragComponentClass, void, DropCollectType>({
+  const { accept = ItemTypes.DragItemClass } = useDropOptions;
+  const [{ isOverCurrent }, drop] = useDrop<DragItemClass, void, DropCollectType>({
     ...useDropOptions,
     accept,
     /**
