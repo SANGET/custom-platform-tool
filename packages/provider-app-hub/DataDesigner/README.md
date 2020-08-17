@@ -1,7 +1,7 @@
 <!--
  * @Author: wph
  * @Date: 2020-08-04 14:51:28
- * @LastEditTime: 2020-08-04 17:39:09
+ * @LastEditTime: 2020-08-17 10:29:20
  * @LastEditors: Please set LastEditors
  * @Description: 数据管理应用模块
  * @FilePath: \custom-platform-v3-frontend\packages\provider-app-hub\DataDesign\README.md
@@ -28,6 +28,7 @@ yarn
   - `bizComps` 业务组件--特定业务功能模块可以复用的组件
   - `components` 子项目通用组件
   - `tools` 子项目工具类
+  - `store` 全局状态文件
   - `pages/` - 页面文件
     - `template/` - 页面模板
     - `xxx/` -xxx页面资源文件夹
