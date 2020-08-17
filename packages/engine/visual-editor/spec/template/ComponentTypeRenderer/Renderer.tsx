@@ -1,6 +1,7 @@
 import React from 'react';
-import { Input, Button } from '@infra/ui';
+import { Input, Table } from '@infra/ui';
 import { EditorComponentEntity, EditorEntityState } from '@engine/visual-editor/types';
+import { EditableTable } from './Table';
 
 export interface ComponentTypeRendererProps {
   entity: EditorComponentEntity
@@ -28,6 +29,16 @@ export const ComponentTypeRenderer: React.FC<ComponentTypeRendererProps> = ({
         <div className="">
           <div className="control-label">{label}</div>
           <Input
+            {...props}
+          />
+        </div>
+      );
+      break;
+    case 'Table':
+      Com = (
+        <div className="">
+          <div className="control-label">{label}</div>
+          <EditableTable
             {...props}
           />
         </div>

@@ -12,7 +12,6 @@
     "packages/spec/*"
   ],
   "scripts": {
-    "preinstall": "npm run setup:registry",
     "pull:all": "git pull origin master --rebase",
     "lerna:bootstrap": "lerna bootstrap",
     "start:all": "lerna run --parallel --stream start",

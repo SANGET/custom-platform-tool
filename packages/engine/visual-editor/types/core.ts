@@ -8,6 +8,13 @@ interface GenericComponentType {
   type: string
 }
 
+export interface ComponentBindPropsConfig {
+  /** 绑定的属性的 id */
+  propRefs?: string[]
+  /** 原生属性配置 */
+  rawProp?: PropertyItemConfig[]
+}
+
 /**
  * 可拖动的组件的 class
  */
@@ -20,13 +27,10 @@ export interface EditorBasicComponentClass {
   parentID?: string
   /** 实例 ID */
   entityID?: string
-  /** 显示的标签 */
+  /** 组件类面板的显示名 */
   label: string;
   /** 绑定可编辑的属性 */
-  bindProperties: {
-    /** 绑定的属性的 id */
-    propRefs: string[]
-  }
+  bindProperties: ComponentBindPropsConfig
 }
 
 /**
@@ -145,7 +149,11 @@ export interface EntitiesStateStore {
 
 export interface EditorComponentEntityProps {
   /** 实例 id */
-  id: string;
+  id: string
+  /** horizontal 横向排序 */
+  hOrder: number
+  /** vertical 垂直排序 */
+  vOrder: number
   /** 组件实例状态数据 */
   // entityState: EditorEntityState
   /** 实例化后的状态 */
@@ -156,9 +164,26 @@ export interface EditorComponentEntityProps {
 }
 
 /**
+ * 页面元数据
+ */
+export interface EditorPageEntity {
+  /** 内部 page id，一般为固定 id */
+  id: string
+  /** 存放后端返回的 page id */
+  pageID: string
+  /** 绑定可编辑的属性 */
+  bindProperties: ComponentBindPropsConfig
+}
+
+/**
  * 组件实例
  */
 export type EditorComponentEntity = EditorComponentClass & EditorComponentEntityProps
+
+/**
+ * 编辑器的实例种类
+ */
+export type EditorEntity = EditorComponentEntity | EditorPageEntity
 
 /**
  * 组件实例

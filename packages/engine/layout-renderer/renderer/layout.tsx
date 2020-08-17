@@ -1,4 +1,5 @@
 import React from 'react';
+import { IsFunc } from '@mini-code/base-func';
 import { LayoutNodeInfo } from '../types';
 
 /**
@@ -19,7 +20,8 @@ export interface LayoutParserWrapper {
 }
 
 export interface LayoutRendererProps extends LayoutParserWrapper {
-  layoutNode: LayoutNodeInfo[];
+  layoutNode: LayoutNodeInfo[]
+  RootRender?: (renderRes: React.ElementType[]) => JSX.Element
 }
 
 /**
@@ -82,16 +84,18 @@ const LayoutRenderer: React.FC<LayoutRendererProps> = (
 ) => {
   const {
     layoutNode,
+    RootRender,
     containerWrapper,
     componentRenderer,
   } = props;
-  return (
+  const layoutRenderRes = renderLayout(layoutNode, {
+    containerWrapper,
+    componentRenderer,
+  });
+  return typeof RootRender === 'function' ? RootRender(layoutRenderRes) : (
     <div className="layout-parser-content">
       {
-        renderLayout(layoutNode, {
-          containerWrapper,
-          componentRenderer,
-        })
+        layoutRenderRes
       }
     </div>
   );

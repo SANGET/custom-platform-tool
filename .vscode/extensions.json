@@ -11,5 +11,6 @@
     "davidanson.vscode-markdownlint",
     "esbenp.prettier-vscode",
     "jpoissonnier.vscode-styled-components",
+    "mikey.vscode-fileheader",
   ]
 }
