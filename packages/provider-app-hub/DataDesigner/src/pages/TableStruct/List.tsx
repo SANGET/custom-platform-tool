@@ -5,7 +5,7 @@
  * @Last Modified time: 2020-07-10 12:00:29
  */
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useCallback } from 'react';
 import {
   Table, Button, Space, Tooltip, Popconfirm
 } from 'antd';
@@ -15,6 +15,7 @@ import { useHistory } from 'react-router-dom';
 
 /** 状态管理方法 */
 import { useMappedState, useDispatch } from 'redux-react-hook';
+import Http, { Msg } from '@infra/utils/http';
 
 /** 共享状态值--表结构分页和树形源数据 */
 const mapState = (state) => ({
@@ -22,7 +23,7 @@ const mapState = (state) => ({
 });
 const List = (props) => {
   const {
-    tableData, scroll, style, title
+    tableData, scroll, style, title, pagination, queryList, setData
   } = props;
 
   /** react路由跳转方法,必须定义在react 组件中,跳转到编辑表页面时要用 */
@@ -44,9 +45,29 @@ const List = (props) => {
   const columns = (() => {
     /** 操作按钮 */
     const operButs = [
-      { text: '编辑', onClick: (row) => { History.push('/EditStruct'); } },
-      { text: '删除', onClick: (row) => { } },
-      { text: '复制', onClick: (row) => { } },
+      {
+        text: '编辑',
+        onClick: (row) => {
+          // console.log(row);
+          History.push({ pathname: `/EditStruct/${row.id}`, state: { id: row.id } });
+        }
+      },
+      {
+        text: '删除',
+        onClick: (row) => {
+          Http.delete(`/data/v1/tables/${row.id}`).then((res) => {
+            Msg.success('操作成功');
+            queryList();
+          });
+        }
+      },
+      {
+        text: '复制',
+        onClick: (row) => {
+          row.name = `复制${row.name}`;
+          setData([row, ...tableData]);
+        }
+      },
       { text: '表关系图', onClick: (row) => { } },
     ];
 
@@ -114,20 +135,21 @@ const List = (props) => {
         fixed: 'right' as const,
         /** 每个文本的宽度应设置为80,是通过调整样式得出的合理值 */
         width: operButs.length * 80,
-        render: (row) => {
+        render: (row, record, index) => {
+          // console.log(row, record, index);
           return operButs.map((item) => {
             return (
               <Space size="middle" key={item.text}>
                 {
                   /** 删除需要弹出二次确认框 */
                   item.text === '删除'
-                    ? (<Popconfirm placement="topLeft" title={'你确定要删除这条记录吗?'} onConfirm={() => item.onClick(row)} okText="删除" cancelText="取消">
+                    ? (<Popconfirm placement="topLeft" title={'你确定要删除这条记录吗?'} onConfirm={() => item.onClick(record)} okText="确定" cancelText="取消">
                       <Button type="link" >
                         {item.text}
                       </Button>
                     </Popconfirm>)
 
-                    : (<Button type="link" onClick={() => item.onClick(row)}>
+                    : (<Button type="link" onClick={() => item.onClick(record)}>
                       {item.text}
                     </Button>)
                 }
@@ -169,6 +191,7 @@ const List = (props) => {
         }),
         onChange: (page, pageSize) => {
           dispatch({ type: 'triggerStructPager', structPager: { page, pageSize } });
+          pagination && pagination(page, pageSize);
         }
       }}
 

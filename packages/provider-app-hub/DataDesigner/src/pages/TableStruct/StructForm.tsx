@@ -101,7 +101,7 @@ const StructForm = ({
       return prev;
     }, {});
     // console.log({ showObj });
-    setRefShow(showObj as { normalTable: string; tree: string; auxTable: string; });
+    // setRefShow(showObj as { normalTable: string; tree: string; auxTable: string; });
   };
   /** 表单配置项 */
   const formItemsConfig = {
@@ -114,16 +114,6 @@ const StructForm = ({
           { required: true, message: '请输入数据表名称!' },
           { pattern: /^[\u4e00-\u9fa5_a-zA-Z0-9()]+$/, message: '输入字段可以为中文、英文、数字、下划线、括号' },
           { max: 64, message: '最多只能输入64个字符' },
-          /** 自定义校验器 */
-          // ({ getFieldValue }) => ({
-          //   validator(rule, value) {
-          //     if (!value || getFieldValue('password') === value) {
-          //       return Promise.resolve();
-          //     }
-          //     /** 这里如果不写成new Error,会触发eslint告警 */
-          //     return Promise.reject(new Error('The two passwords that you entered do not match!'));
-          //   },
-          // }),
         ],
       },
       /** 表单项包裹组件属性 */
@@ -154,7 +144,7 @@ const StructForm = ({
       compAttr: {
         type: 'BasicSelect',
         enum: TableTypeEnum,
-        onChange: onTypeChange
+        onChange: () => { onTypeChange(); }
       }
     },
     moduleId: {
@@ -174,6 +164,8 @@ const StructForm = ({
         name: "maxLevel",
         label: "最大层级数",
         className: refShow.tree,
+        /** 表类型为树表时关联必填 */
+        rules: [{ required: refShow.tree === '', message: '请输入最大层级数!' }],
       },
       compAttr: {
         type: 'InputNumber',
@@ -185,21 +177,23 @@ const StructForm = ({
         name: "mainTableCode",
         label: "主表",
         className: refShow.auxTable,
+        /** 表类型为附属表时关联必填 */
+        rules: [{ required: refShow.auxTable === '', message: '请输入主表!' }],
       },
       compAttr: {
         type: 'Input',
         placeholder: '请输入主表'
       }
     },
-    tag: {
-      itemAttr: {
-        name: "tag",
-        label: "标签"
-      },
-      compAttr: {
-        type: 'Input',
-      }
-    },
+    // tag: {
+    //   itemAttr: {
+    //     name: "tag",
+    //     label: "标签"
+    //   },
+    //   compAttr: {
+    //     type: 'Input',
+    //   }
+    // },
     description: {
       itemAttr: {
         name: "description",

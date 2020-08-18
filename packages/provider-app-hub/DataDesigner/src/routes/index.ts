@@ -1,7 +1,7 @@
 /*
  * @Author: wph
  * @Date: 2020-07-23 10:29:08
- * @LastEditTime: 2020-08-17 09:53:50
+ * @LastEditTime: 2020-08-17 21:37:22
  * @LastEditors: Please set LastEditors
  * @Description: 添加注释
  * @FilePath: \custom-platform-v3-frontend\packages\provider-app-hub\AuthManager\src\routes\index.ts
@@ -53,7 +53,7 @@ const ROUTES = [
   },
   {
     key: 'EditStruct',
-    link: '/EditStruct',
+    link: '/EditStruct/:id',
     icon: 'ClusterOutlined',
     text: '编辑表',
     component: EditStruct

@@ -5,6 +5,17 @@
   "main": "./index.js",
   "author": "wph",
   "license": "MIT",
+  "proxy": {
+    "/api": {
+      "target": "http://10.7.1.59:8080/paas/hy/smart_building",
+      "pathRewrite": {
+        "^/api": ""
+      },
+      "logLevel": "debug",
+      "changeOrigin": true,
+      "secure": false
+    }
+  },
   "scripts": {
     "start": "cross-env PORT=60001 minictl start",
     "build": "minictl build",
