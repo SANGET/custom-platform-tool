@@ -8,17 +8,17 @@
 import React, {
   FC, useState, useEffect, useCallback
 } from 'react';
-import { Input, Modal, Form } from 'antd';
+import { Modal, Form } from 'antd';
 
 /** 网络请求工具 */
 import Http, { Msg } from '@infra/utils/http';
 
 /** 状态管理方法 */
 import { useMappedState, useDispatch } from 'redux-react-hook';
-/** 自定义基础组件 */
 
-/** 选择框组件 */
-import { BasicSelect } from '@provider-app/data-designer/src/components/BasicSelect';
+/** 基本表单 */
+import BasicForm from '@provider-app/data-designer/src/components/BasicForm';
+
 /** 表类型枚举--表格列代码转文字时也要用 */
 import { TableTypeEnum } from '@provider-app/data-designer/src/tools/constant';
 
@@ -36,25 +36,17 @@ import {
 import MenuTree from '@provider-app/data-designer/src/bizComps/MenuTree';
 
 /** 表单业务组件 */
-import Axios from 'axios';
+import { fetchMenuTree } from '@provider-app/data-designer/src/api';
 import StructForm from './StructForm';
 
 /** 表头菜单组件 */
-import TableHeadMenu from './TableHeadMenu';
+import StructHeadMenu from './StrcutHeadMenu';
 
 /** 表格业务组件 */
 import List from './List';
 
 /** 当前功能页样式 */
 import './TableStruct.less';
-
-/** 搜索输入框 */
-const { Search } = Input;
-
-// const mapState = (state) => ({
-//   treeData: state.treeData,
-//   structTableData: state.structTableData
-// });
 
 /** 给你一些使用react hook的理由  */
 /** 理由一： hook使你无需更改页面结构,也能在不同的组件间复用状态,为了在组件间复用状态,providers,consumers,render Props、高阶组件这类方案需要更改页面结构
@@ -64,20 +56,49 @@ const { Search } = Input;
 /**         hook将相互关联的拆分成更小的函数，而并非强制按照生命周期划分 */
 /**  理由三 函数式组件比class组件更容易理解, 在函数组件中,很好理解props，state 和自顶向下的数据流，但在class组件中却一筹莫展，class组件中this的工作方式也不好理解 */
 /**  理由四 从概念上来讲React组件更像函数,而hook拥抱了函数,class组件不能很好的压缩,热重载不稳定,class组件会使component folding优化措施无效 */
+/** 给你一些使用函数组件的理由 */
+/** 1.babel/ts 做 class transformation 的时候会产生额外的函数调用 */
+/** 2.class component 存在 life-cycle 检查 & 执行 */
+/** 3.function component 在 uglify 时可压缩的空间大于 class component */
+/** 4.function component 更为轻量 */
+
+/**
+* useState和useReducer该如何选择
+* 如果 state 只想用在 组件内部，建议使用 useState，如果想维护全局 state 建议使用 useReducer
+* 如果 state 的类型为 Number, String, Boolean 建议使用 useState，如果 state 的类型 为 Object 或 Array，建议使用 useReducer
+* 如果 state 变化非常多，也是建议使用 useReducer，集中管理 state 变化，便于维护
+* 如果 state 关联变化，建议使用 useReducer
+* 业务逻辑如果很复杂，也建议使用 useReducer
+* */
+
+/* useCallback就是处理父组件重复无用的调用子组件的方法，useMemo处理属性重复无用的调用的 */
+/**
+* useMemo用法,父组件没有属性传递给子组件时,为了减少父组件状态改变时，子组件不必要的渲染,要用useMemo包裹一下子组件
+* */
+/* 当父组件传递状态给子组件的时候，memo没什么效果 要引入hooks的useCallback、useMemo这两个钩子。 */
+/* useCallback(() => {},[]) */
+/* 使用useCallback优化了传递给子组件的函数，只初始化一次这个函数，下次不产生新的函数 */
+
+/**
+  * dispatch后组件渲染两次的原因
+* 最近的react版本,dev模式下render使用的是strict mode,strict mode的通过两次调用constructor和render函数来更好的检测不符合预期的side effects
+* 下列函数会执行两次:
+* 类组件的constructor,render和shouldComponentUpdate方法
+* 类组建的静态方法getDerivedStateFromProps
+* 函数组件方法体
+* 状态更新函数(setState的第一个参数)
+* 传入useState,useMemo或useReducer的函数
+* 在production环境下不会这样,所以不用担心
+*/
+
 const TableStruct: FC = () => {
   // 定义一个 mapState函数
-  /**
-   * useCallback 接收一个内联回调函数和一个依赖数组，返回一个记忆版本的回调函数，
-   * 只有当依赖发生变化的时候，回调函数才会改变。这在将回调传递给优化的子组件时非常有用，
-   * 这些组件依赖引用相等性来防止不必要的渲染
-   * */
   const mapState = useCallback(
     (state) => ({
       treeData: state.treeData,
     }),
     []
   );
-  const [structTableData, setStructTableData] = useState([]);
 
   /** 在网络请求工具中,要用dispatch更改共享状态 */
   const dispatch = useDispatch();
@@ -87,14 +108,7 @@ const TableStruct: FC = () => {
    * */
   const { treeData } = useMappedState(mapState);
 
-  /**
-   * useState和useReducer该如何选择
-   * 如果 state 的类型为 Number, String, Boolean 建议使用 useState，如果 state 的类型 为 Object 或 Array，建议使用 useReducer
-   * 如果 state 变化非常多，也是建议使用 useReducer，集中管理 state 变化，便于维护
-   * 如果 state 关联变化，建议使用 useReducer
-   * 业务逻辑如果很复杂，也建议使用 useReducer
-   * 如果 state 只想用在 组件内部，建议使用 useState，如果想维护全局 state 建议使用 useReducer
-   *    */
+  const [structTableData, setStructTableData] = useState([]);
 
   /** 设置模块框的显示隐藏 */
   const [visible, setVisiable] = useState<boolean>(false);
@@ -155,20 +169,11 @@ const TableStruct: FC = () => {
   const getPageData = async () => {
     /** 请求菜单树,表结构的表类型列依赖菜单树数据 */
     // const menuTreeRes = await Http.get('http://localhost:60001/mock/menu.json');
-    const menuTreeRes = await Http.get('/page/v1/menus/list');
-    const tData = listToTree(menuTreeRes.data.result);
+    // const menuTreeRes = await Http.get('/page/v1/menus/list');
+    // const tData = listToTree(menuTreeRes.data.result);
 
-    /**
-     * dispatch后组件渲染两次的原因
-    * 最近的react版本,dev模式下render使用的是strict mode,strict mode的通过两次调用constructor和render函数来更好的检测不符合预期的side effects
-    * 下列函数会执行两次:
-    * 类组件的constructor,render和shouldComponentUpdate方法
-    * 类组建的静态方法getDerivedStateFromProps
-    * 函数组件方法体
-    * 状态更新函数(setState的第一个参数)
-    * 传入useState,useMemo或useReducer的函数
-    * 在production环境下不会这样,所以不用担心
-    */
+    const tData = await fetchMenuTree();
+
     dispatch({ type: 'setTreeData', treeData: tData });
     // console.log({ treeData });
     queryList();
@@ -203,7 +208,7 @@ const TableStruct: FC = () => {
     },
     scroll: {
       /** 必须设置，不然表格列过多时内容会撑开容器,并且不能设置成true,要设置成数字,不然列宽设置无效 */
-      x: 200,
+      // x: 200,
       /** 设置之后 ,表格头就会被固定 */
       y: document.documentElement.clientHeight - 200,
     },
@@ -230,9 +235,7 @@ const TableStruct: FC = () => {
           /**
            * 与后端协商,只提交页面上有的字段,没有的不传
            */
-
           const { mainTableCode, maxLevel, type } = values;
-
           /** 附属表,才有auxTable */
           if (type === "auxTable") {
             values.auxTable = {
@@ -245,7 +248,7 @@ const TableStruct: FC = () => {
             };
             delete values.maxLevel;
           }
-
+          /** 用户新增数据类型都是业务类型 */
           values.species = "BIS";
 
           console.log(values);
@@ -279,8 +282,8 @@ const TableStruct: FC = () => {
     treeData,
   };
 
+  /** 左侧菜单树配置 */
   const treeProps = {
-    draggable: true,
     blockNode: true,
     dataSource: treeData,
     /**
@@ -295,56 +298,96 @@ const TableStruct: FC = () => {
       // console.log(selectedKeys[0]);
     }
   };
-  /** 搜索条件-表类型 */
-  const basicSelectProps = {
-    enum: TableTypeEnum,
-    style: { width: 224 },
-    placeholder: "请选择表类型",
-    onChange: (value) => {
-      /** 用数据表类型搜索,页码从第一页开始 */
-      // queryList({ type: value, offset: 0 });
-      // console.log(value);
-    }
-  };
 
+  /**
+  * 搜索表单实例
+  */
+  const [searchForm] = Form.useForm();
   /** 搜索条件-表名称 */
   const searchProps = {
-    style: { width: 224, margin: '16px' },
-    placeholder: '请输入表名称',
-    onSearch: (value) => {
-      console.log(value);
-      /** 用数据表名称搜索,页码从第一页开始 */
-      queryList({ name: value, offset: 0 });
-    },
-    enterButton: true,
+    form: searchForm,
+    items: {
+      type: {
+        itemAttr: {
+          label: "表类型",
+        },
+        compAttr: {
+          type: 'BasicSelect',
+          enum: TableTypeEnum,
+          placeholder: "请选择表类型",
+        }
+      },
+      name: {
+      /** 表单项属性 */
+        itemAttr: {
+          label: "表名称",
+          rules: [
+            { required: false, message: '请输入数据表名称!' },
+            { pattern: /^[\u4e00-\u9fa5_a-zA-Z0-9()]+$/, message: '输入字段可以为中文、英文、数字、下划线、括号' },
+            { max: 64, message: '最多只能输入64个字符' },
+          ],
+        },
+        /** 表单项包裹组件属性 */
+        compAttr: {
+          type: 'Input',
+          placeholder: '请输入表名称',
+        }
+      },
+      btns: {
+        itemAttr: {},
+        compAttr: [
+          {
+            type: 'primary',
+            text: '搜索',
+            onClick: () => {
+              searchForm
+                .validateFields() /** 表单校验 */
+                .then((values) => {
+                  const { type, name } = values;
+                  /**
+                   * 列表查询,页码从0开始
+                   */
+                  queryList({ type, name, offset: 0 });
+                });
+            }
+          },
+          {
+            type: '',
+            text: '清空',
+            onClick: () => {
+              searchForm.resetFields();
+            }
+          }
+        ]
+      }
+    }
+
   };
 
   return (
     <div className="auth-item flex b1px " style={{ height: '100%' }}>
       <aside className="tree-box">
-        {/* 按照单一职责拆分组件,比直接组合更灵活 */}
-        {/* <Input {...inputProps} /> */}
-        {/* <Tree treeData={treeData} /> */}
+        {/* 含有搜索功能的菜单树 */}
         <MenuTree {...treeProps} />
       </aside>
       <main className="content bl1px">
         {/* 搜索条件框 */}
-        <div className="flex v-center ml20">
-          <BasicSelect {...basicSelectProps} />
-          <Search {...searchProps} />
-        </div>
+        <BasicForm {...searchProps} />
         {/* 表头菜单--新建表 标签管理 更多按钮 */}
-        <TableHeadMenu openModal={() => setVisiable(true)}/>
+        <StructHeadMenu openModal={() => setVisiable(true)}/>
         {/* 表结构列表 */}
         <List {...tableProps} />
       </main>
       {/* 新建表弹窗 */}
       <Modal {...modalProps}>
         {/* 新建表表单 给内容组件加个key,保证组件的内容能够重置,如果不加这个key,模态框第二次打开时,关联显示项不是默认项 */}
-        <StructForm key={new Date().getTime()} {...formProps} />
+        <StructForm {...formProps} />
       </Modal>
     </div>
   );
 };
 
+/**
+* key={new Date().getTime()}
+*/
 export default TableStruct;

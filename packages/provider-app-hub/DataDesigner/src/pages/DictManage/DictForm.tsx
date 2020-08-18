@@ -1,10 +1,7 @@
 import React, {
-  FC, useState, useEffect, useCallback
+  useState, useEffect
 } from 'react';
-import { Input, Modal, Form } from 'antd';
 
-/** 在js中写css的工具 */
-import styled from 'styled-components';
 /** 网络请求工具 */
 import Http from '@infra/utils/http';
 /** 颜色选择器 */
@@ -85,7 +82,7 @@ const DictForm = (props) => {
     },
     {
       title: '名称',
-      dataIndex: 'name',
+      dataIndex: 'itemName',
       formConfig: {
         attrs: { type: 'Input', placeholder: '请输入名称', style: { color: color.fontColor, backgroundColor: color.bgColor } },
         rules: [{
@@ -205,8 +202,10 @@ const DictForm = (props) => {
       name: '',
       /** 字典项编码 */
       code: '',
-      /** 颜色 */
-      renderColor: '',
+      /** 背景颜色 */
+      renderBgColor: '',
+      /** 字体颜色 */
+      renderFontColor: '',
     };
     fieldTableData.unshift(newData);
     /**
@@ -280,12 +279,11 @@ const DictForm = (props) => {
   const formProps = {
     form,
     colSpan: 12,
-    formItemsConfig: {
+    items: {
       name: {
         /** 表单项属性 */
         itemAttr: {
           label: "字典名称",
-          name: "name",
           rules: [
             { required: true, message: '请输入名称!' },
             { pattern: /^[\u4e00-\u9fa5_a-zA-Z0-9()]+$/, message: '输入字段可以为中文、英文、数字、下划线、括号' },
@@ -301,11 +299,10 @@ const DictForm = (props) => {
           }
         }
       },
-      code: {
+      description: {
         /** 表单项属性 */
         itemAttr: {
           label: "字典描述",
-          name: "description",
           rules: [
             { required: true, message: '请输入名称!' },
             { pattern: /^[\u4e00-\u9fa5_a-zA-Z0-9()]+$/, message: '输入字段可以为中文、英文、数字、下划线、括号' },
@@ -317,7 +314,6 @@ const DictForm = (props) => {
           type: 'Input',
           placeholder: '请输入字典描述',
           onChange: (e) => {
-
           }
         }
       }
@@ -330,7 +326,6 @@ const DictForm = (props) => {
     <BasicForm {...formProps}/>
     <BasicEditTable {...editTableProps} />
     <BasicColorPicker {...colorProps} />
-
   </>);
 };
 

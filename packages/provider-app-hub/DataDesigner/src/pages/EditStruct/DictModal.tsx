@@ -8,7 +8,9 @@ import {
 import styled from 'styled-components';
 /** 网络请求工具 */
 import Http from '@infra/utils/http';
-import { BasicSearchForm } from '@provider-app/data-designer/src/bizComps/SearchForm';
+
+/** 基本表单 */
+import BasicForm from '@provider-app/data-designer/src/components/BasicForm';
 import { renderIndexCol, renderOperCol } from '@provider-app/data-designer/src/bizComps/EditableTable';
 /**
 * 表头菜单组件
@@ -167,10 +169,6 @@ const DictModal = () => {
     });
   };
 
-  const formItemLayout = {
-    labelCol: { span: 10 },
-    wrapperCol: { span: 14 },
-  };
   const [form] = Form.useForm();
 
   /**
@@ -215,12 +213,45 @@ const DictModal = () => {
     },
   };
   const searchProps = {
-    colSpan: 10,
-    btnSpan: 4,
+    colSpan: 12,
+    items: {
+      name: {
+        /** 表单项属性 */
+        itemAttr: {
+          label: "字典名称",
+          rules: [
+            { required: true, message: '请输入名称!' },
+            { pattern: /^[\u4e00-\u9fa5_a-zA-Z0-9()]+$/, message: '输入字段可以为中文、英文、数字、下划线、括号' },
+            { max: 64, message: '最多只能输入64个字符' },
+          ],
+        },
+        /** 表单项包裹组件属性 */
+        compAttr: {
+          type: 'Input',
+          placeholder: '请输入字典名称',
+          onChange: (e) => {
+
+          }
+        }
+      },
+      description: {
+        /** 表单项属性 */
+        itemAttr: {
+          label: "字典描述",
+        },
+        /** 表单项包裹组件属性 */
+        compAttr: {
+          type: 'Input',
+          placeholder: '请输入字典描述',
+          onChange: (e) => {
+          }
+        }
+      }
+    }
   };
 
   return (<>
-    <BasicSearchForm {...searchProps} />
+    <BasicForm {...searchProps} />
     <TableHeadMenu {...tableHeadMenus} />
     <Table
       bordered

@@ -5,10 +5,11 @@ import {
   Row, Col, Input, Modal, Form, Button, Table, Popconfirm, Space
 } from 'antd';
 
-import styled from 'styled-components';
 /** 网络请求工具 */
 import Http from '@infra/utils/http';
-import { BasicSearchForm } from '@provider-app/data-designer/src/bizComps/SearchForm';
+
+/** 基本表单 */
+import BasicForm from '@provider-app/data-designer/src/components/BasicForm';
 import { renderIndexCol, renderOperCol } from '@provider-app/data-designer/src/bizComps/EditableTable';
 /**
 * 表头菜单组件
@@ -242,10 +243,6 @@ const DictManage = () => {
     });
   };
 
-  const formItemLayout = {
-    labelCol: { span: 6 },
-    wrapperCol: { span: 18 },
-  };
   const [form] = Form.useForm();
 
   /**
@@ -286,8 +283,66 @@ const DictManage = () => {
     },
   });
 
+  /**
+  * 搜索表单实例
+  */
+  const [searchForm] = Form.useForm();
+  /** 搜索条件-表名称 */
+  const searchProps = {
+    form: searchForm,
+    items: {
+      name: {
+        itemAttr: {
+          label: "字典名称",
+        },
+        compAttr: {
+          type: 'Input',
+          placeholder: "请输入字典名称",
+        }
+      },
+      description: {
+        /** 表单项属性 */
+        itemAttr: {
+          label: "字典描述",
+        },
+        /** 表单项包裹组件属性 */
+        compAttr: {
+          type: 'Input',
+          placeholder: '请输入表名称',
+        }
+      },
+      btns: {
+        itemAttr: {},
+        compAttr: [
+          {
+            type: 'primary',
+            text: '搜索',
+            onClick: () => {
+              searchForm
+                .validateFields() /** 表单校验 */
+                .then((values) => {
+                  const { description, name } = values;
+                  /**
+                     * 列表查询,页码从0开始
+                     */
+                  // queryList({ description, name, offset: 0 });
+                });
+            }
+          },
+          {
+            type: '',
+            text: '清空',
+            onClick: () => {
+              searchForm.resetFields();
+            }
+          }
+        ]
+      }
+    }
+
+  };
   return (<>
-    <BasicSearchForm />
+    <BasicForm {...searchProps} />
     <TableHeadMenu {...tableHeadMenus} />
     <Table
       bordered

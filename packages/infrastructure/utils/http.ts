@@ -38,8 +38,8 @@ const Http = axios.create({
    * 后面数组中的函数必须返回一个字符串，或 ArrayBuffer，或 Stream
    */
   transformRequest: [(data, headers) => {
-    // 对 data 进行任意转换处理
-    /** 发送的时候是json，里面又转了一次,结果就变成[object object] */
+    /**采用Http.post(url,data)发送的时候设置了application/json，里面又执行了一次JSON.parse,结果最终参数变成[object object] */
+    /** 所以在这里要做一下对冲转换 */
     return JSON.stringify(data);
   }],
   /** transformResponse 在传递给 then/catch 前，允许修改响应数据 */

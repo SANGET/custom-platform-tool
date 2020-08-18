@@ -48,7 +48,7 @@ const List = (props) => {
       {
         text: '编辑',
         onClick: (row) => {
-          // console.log(row);
+          console.log(row);
           History.push({ pathname: `/EditStruct/${row.id}`, state: { id: row.id } });
         }
       },

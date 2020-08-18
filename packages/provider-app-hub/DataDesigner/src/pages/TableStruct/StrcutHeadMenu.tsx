@@ -1,28 +1,22 @@
 /** jsx文件必须包含react作用域 */
 import React from 'react';
 /** 教程 https://www.npmjs.com/package/emotion */
-import { css, cx } from 'emotion';
 
 /** react路由暴露出来的页面跳转方法 */
 import { useHistory } from 'react-router-dom';
 
-import {
-  Menu, Dropdown, Button
-} from 'antd';
+import { Menu } from 'antd';
 
-/** icon图标--向下的箭头 */
-import { DownOutlined } from '@ant-design/icons';
+/**
+* 表头菜单组件
+*/
+import TableHeadMenu from '@provider-app/data-designer/src/bizComps/TableHeadMenu';
 
-/** 当前功能页样式 */
-import './TableStruct.less';
-
-const cls1 = css`
-  & > .button{
-    margin-right:16px;
-  }
-`;
-
-const TableHeadMenu = (props) => {
+/**
+* 结构表表头菜单
+* openModal--打开新建表弹窗
+*/
+const StructHeadMenu = (props) => {
   const { openModal } = props;
   /** react路由跳转方法,必须定义在react 组件中,跳转到编辑表页面时要用 */
   const History = useHistory();
@@ -61,24 +55,29 @@ const TableHeadMenu = (props) => {
       { moreButs.map((item) => (<Menu.Item key={item.key}>{item.menu}</Menu.Item>))}
     </Menu>
   );
+
+  /**
+  * 字段列表属性配置
+  */
+  const tableHeadMenuProps = {
+    title: '数据表列表',
+    style: { margin: "0 20px", width: "calc(100% - 40px)" },
+    menus: [
+      { text: "新建表", onClick: () => openModal() },
+      {
+        text: "标签管理",
+        onClick: () => { }
+      },
+      {
+        text: "更多按钮",
+        overlay: menuList,
+      },
+
+    ]
+  };
   return (
-    <section className="table-head-menu" style={{ margin: "0 20px", width: "calc(100% - 40px)" }}>
-      <div className="ant-table-title">数据表列表</div>
-      <div className={cx(cls1)} >
-        <Button type="primary" className="button" onClick={() => openModal()}>
-            新建表
-        </Button>
-        <Button type="primary" className="button">
-            标签管理
-        </Button>
-        <Dropdown overlay={menuList} placement="bottomRight" trigger={['click']}>
-          <Button type="primary" className="button">
-              更多按钮 <DownOutlined />
-          </Button>
-        </Dropdown>
-      </div>
-    </section>
+    <TableHeadMenu {...tableHeadMenuProps} />
   );
 };
 
-export default TableHeadMenu;
+export default StructHeadMenu;
