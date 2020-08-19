@@ -10,6 +10,9 @@ import { GetMenu } from './services/menu';
 import { PageContainer, Nav } from './components';
 import router from './config/router';
 
+import "antd/dist/antd.css";
+import { TabNav } from "./components/TabNav";
+
 interface AppContainerState extends RouterState {
   ready?: boolean;
   navStore?: [];
@@ -51,6 +54,7 @@ export default class App extends RouterMultiple<AppContainerProps, AppContainerS
       routers, routerInfo, activeRouteIdx, activeRoute,
       navStore, ready
     } = this.state;
+    console.log(routerInfo);
 
     return (
       <div id="app-container">
@@ -58,32 +62,7 @@ export default class App extends RouterMultiple<AppContainerProps, AppContainerS
           ready ? (
             <>
               <Nav navConfig={navStore} />
-              <div
-                className="tabs-for-multiple-router"
-                style={{
-                  margin: 20
-                }}
-              >
-                {
-                  routers.map((route, idx) => {
-                    return (
-                      <span
-                        key={route}
-                        className="label"
-                        style={{
-                          padding: 20
-                        }}
-                      >
-                        <Link
-                          to={route}
-                        >
-                          {route}
-                        </Link>
-                      </span>
-                    );
-                  })
-                }
-              </div>
+              <TabNav routers={routers} routerInfo={routerInfo} activeRoute={activeRoute} />
               <div className="pages-container">
                 {
                   Object.keys(routerInfo).map((pageID, idx) => {

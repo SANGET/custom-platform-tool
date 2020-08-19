@@ -108,7 +108,7 @@ PropertiesEditorProps, PropertiesEditorState
 
       /** 这段代码会执行在 render 之后 */
       const _defaultEntityState = defaultEntityStateManager.getState();
-      console.log(_defaultEntityState);
+      // console.log(_defaultEntityState);
       initEntityState(_defaultEntityState);
 
       this.hasDefaultEntityState = true;
@@ -140,11 +140,11 @@ PropertiesEditorProps, PropertiesEditorState
       propertiesConfig,
     } = this.props;
     const { propRefs = [], rawProp = [] } = propertiesConfig;
-    const bindProperties = [
+    const bindProps = [
       ...propRefs,
       ...rawProp
     ];
-    return bindProperties;
+    return bindProps;
   }
 
   /**
@@ -155,11 +155,11 @@ PropertiesEditorProps, PropertiesEditorState
       selectedEntity,
     } = this.props;
     const { entityState } = this.state;
-    // const { bindProperties } = selectedEntity;
-    const bindProperties = this.mergePropConfig();
+    // const { bindProps } = selectedEntity;
+    const bindProps = this.mergePropConfig();
 
-    return Array.isArray(bindProperties)
-    && bindProperties.map((propConfig) => {
+    return Array.isArray(bindProps)
+    && bindProps.map((propConfig) => {
       let propID: string;
       let propOriginConfigItem;
       let propItemConfig;

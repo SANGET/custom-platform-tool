@@ -4,6 +4,7 @@ import { Tabs, Tab } from '@infra/ui';
 import DragItem, { DragItemConfig } from '@engine/visual-editor/spec/DragItem';
 import { EditorComponentClass } from '@engine/visual-editor/types';
 import { componentClassCollection } from '../../mock-data';
+import { ItemTypes } from '../../spec/types';
 
 export interface PanelItemsGroup {
   title: string
@@ -73,6 +74,7 @@ const ComponentPanel = ({
                             return (
                               <div key={id}>
                                 <DragItem
+                                  type={ItemTypes.DragItemClass}
                                   dragConfig={getDragItemConfig ? getDragItemConfig(componentClass) : {}}
                                   dragItemClass={{
                                     ...componentClass,

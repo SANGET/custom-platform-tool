@@ -213,7 +213,9 @@ class MultipleRouterManager<
   initRoute = () => {
     // let initRoute = resolvePath(location.hash)[0];
     const { defaultPath } = this;
-    const initRoute = getUrlParams(undefined, undefined, true)[getRouteKey()];
+    const initRouteInfo = getUrlParams(undefined, undefined, true);
+    console.log(initRouteInfo);
+    const initRoute = initRouteInfo[getRouteKey()];
 
     defaultPath
       && onNavigate({
@@ -224,6 +226,7 @@ class MultipleRouterManager<
       && onNavigate({
         type: "PUSH",
         route: initRoute,
+        params: initRouteInfo
       });
     // if (!initRoute && defaultPath) {
     //   onNavigate({
