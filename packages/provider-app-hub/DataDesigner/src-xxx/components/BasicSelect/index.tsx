@@ -11,7 +11,7 @@ const { Option } = Select;
  */
 export const BasicSelect = (props) => {
   return (
-    <Select {...props}>
+    <Select {...props} allowClear>
       {props.enum.map((item) => (
         <Option key={item.text} value={item.value}>
           {item.text}

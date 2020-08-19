@@ -1,7 +1,7 @@
 /*
  * @Author: wph
  * @Date: 2020-07-22 09:23:52
- * @LastEditTime: 2020-08-19 09:19:47
+ * @LastEditTime: 2020-08-13 18:12:29
  * @LastEditors: Please set LastEditors
  * @Description: 权限功能单元与页面状态无关的方法
  * @FilePath: \custom-platform-v3-frontend\packages\provider-app-hub\AuthManager\src\features\authItem\authItem.ts
@@ -197,7 +197,6 @@ const listToTree = (list) => {
     map[list[i].id] = list[i];
     list[i].children = [];
   }
-  // console.log(list, map);
   /** 遍历扁平树 */
   for (let i = 0, len = list.length; i < len; i++) {
     node = list[i];
@@ -208,12 +207,11 @@ const listToTree = (list) => {
     /** antd-TreeSelect组件每个节点需要value字段,需要加上 */
     node.value = node.id;
     /** 当为叶子节点 */
-    if (node.pid) {
+    if (node.pid !== null) {
       /** 这里是重点 */
       /** map[node.id] 和 分别对应的list[i],node,指向同一块引用 */
       /** 修改了map[node.id],就相当于修改了分别对应的 list[i] 和 node */
       /** 而压入tree的node,实际上就是map[node.pid] */
-      // console.log(node.pid);
       map[node.pid].children.push(node);
     } else {
       /** 根节点 */

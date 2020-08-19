@@ -6,11 +6,6 @@ import { TableTypeEnum } from '@provider-app/data-designer/src/tools/constant';
 
 /** 基本表单 */
 import BasicForm from '@provider-app/data-designer/src/components/BasicForm';
-
-/**
-* 正则表达式
-*/
-import REG from '@provider-app/data-designer/src/tools/reg';
 /** 中文转拼音工具 */
 import PinYin from 'js-pinyin';
 
@@ -26,34 +21,34 @@ const StructForm = ({
   form, treeData, ...rest
 }) => {
   /** 表单初始化 */
-  // form.setFieldsValue({
-  //   /** 是 数据表名称  */
-  //   name: '',
-  //   /** 是 数据表编码 */
-  //   code: '',
-  //   /** 是 表类型 */
-  //   type: '',
-  //   /** 是 归属模块 */
-  //   moduleId: '',
-  //   /** 否 业务字段类型，SYS(系统元数据)BIS(业务元数据)，用户填写的表默认BIS即可 */
-  //   species: 'BIS',
-  //   /** 否 备注  */
-  //   description: '',
-  //   /** 否 附属表对象,如果表类型是附属表，则必填 */
-  //   auxTable: {},
-  //   /** 表类型是附属表时,主表表名必填 */
-  //   mainTableCode: '',
-  //   /** 否 树型表对象,如果表类型是树型表，则必填 */
-  //   treeTable: {},
-  //   /** 如果表类型是树型表，则必填 最大层级树 2-15 */
-  //   maxLevel: '',
-  //   /** 否 引用表对象集合 */
-  //   references: [],
-  //   /** 否 外键对象集合 */
-  //   foreign_keys: [],
-  //   /** 否 列对象集合 */
-  //   columns: [],
-  // });
+  form.setFieldsValue({
+    /** 是 数据表名称  */
+    name: '',
+    /** 是 数据表编码 */
+    code: '',
+    /** 是 表类型 */
+    type: '',
+    /** 是 归属模块 */
+    moduleId: '',
+    /** 否 业务字段类型，SYS(系统元数据)BIS(业务元数据)，用户填写的表默认BIS即可 */
+    species: 'BIS',
+    /** 否 备注  */
+    description: '',
+    /** 否 附属表对象,如果表类型是附属表，则必填 */
+    auxTable: {},
+    /** 表类型是附属表时,主表表名必填 */
+    mainTableCode: '',
+    /** 否 树型表对象,如果表类型是树型表，则必填 */
+    treeTable: {},
+    /** 如果表类型是树型表，则必填 最大层级树 2-15 */
+    maxLevel: '',
+    /** 否 引用表对象集合 */
+    references: [],
+    /** 否 外键对象集合 */
+    foreign_keys: [],
+    /** 否 列对象集合 */
+    columns: [],
+  });
 
   // console.log({ treeData});
   /** 树形属性配置 */
@@ -69,7 +64,7 @@ const StructForm = ({
   /**
   * 表类型联动对象
   */
-  const refShowInit = { normalTable: 'show', tree: 'hide', auxTable: 'hide' };
+  const refShowInit = { normalTable: '', tree: 'hide', auxTable: 'hide' };
   /**
   * 表类型联动状态设置
   */
@@ -78,9 +73,9 @@ const StructForm = ({
   *  联动显示
   */
   const onTypeChange = () => {
-    const type = form.getFieldValue('type');
+    const type = form.getFieldValue('typeA');
     const showObj = Object.keys(refShowInit).reduce((prev, key) => {
-      prev[key] = key === type ? 'show' : 'hide';
+      prev[key] = key === type ? '' : 'hide';
       return prev;
     }, {});
     // console.log({ showObj });
@@ -97,7 +92,7 @@ const StructForm = ({
         label: "数据表名称",
         rules: [
           { required: true, message: '请输入数据表名称!' },
-          { pattern: REG.znEnNum, message: '输入字段可以为中文、英文、数字、下划线、括号' },
+          { pattern: /^[\u4e00-\u9fa5_a-zA-Z0-9()]+$/, message: '输入字段可以为中文、英文、数字、下划线、括号' },
           { max: 64, message: '最多只能输入64个字符' },
         ],
       },
@@ -117,14 +112,12 @@ const StructForm = ({
         rules: [{ required: true, message: '请输入数据表编码!' }],
       },
       compAttr: {
-        type: 'Input',
-        placeholder: '会自动将中文转为首字母大写英文,手动可修改'
+        type: 'Input'
       }
     },
-    type: {
+    typeA: {
       itemAttr: {
-        label: "表类型",
-        rules: [{ required: true, message: '请选择表类型!' }],
+        label: "表类型"
       },
       compAttr: {
         type: 'BasicSelect',
@@ -148,29 +141,11 @@ const StructForm = ({
         label: "最大层级数",
         className: refShow.tree,
         /** 表类型为树表时关联必填 */
-        rules: [
-          { required: refShow.tree === 'show' },
-          ({ getFieldValue }) => ({
-            validator(rule, value) {
-              if (value === '' || value === undefined) {
-                return Promise.reject(new Error('请输入最大层级数'));
-              }
-              if (!REG.plusInt.test(value)) {
-                return Promise.reject(new Error('必须是正整数'));
-              }
-              if (value > 5) {
-                return Promise.reject(new Error('最大层级数不能超过5级'));
-              }
-              return Promise.resolve();
-              /** 这里如果不写成new Error,会触发eslint告警 */
-              // return Promise.reject(new Error('The two passwords that you entered do not match!'));
-            },
-          }),
-        ],
+        rules: [{ required: refShow.tree === '', message: '请输入最大层级数!' }],
       },
       compAttr: {
         type: 'InputNumber',
-        placeholder: '须为正整数,最大层级不超过5级'
+        placeholder: '最大层级不能超过5级'
       }
     },
     mainTableCode: {
@@ -178,7 +153,7 @@ const StructForm = ({
         label: "主表",
         className: refShow.auxTable,
         /** 表类型为附属表时关联必填 */
-        rules: [{ required: refShow.auxTable === 'show', message: '请输入主表!' }],
+        rules: [{ required: refShow.auxTable === '', message: '请输入主表!' }],
       },
       compAttr: {
         type: 'Input',
@@ -198,12 +173,12 @@ const StructForm = ({
         name: "description",
         label: "备注",
         rules: [
-          { max: 100, message: '最多只能输入100个字' },
+          { max: 100, message: '最多只能输入100个中文字符' },
         ],
       },
       compAttr: {
         type: 'TextArea',
-        placeholder: '最多只能输入100个字',
+        placeholder: '最多支持100个中文字符的输入',
         autoSize: { minRows: 4, maxRows: 6 }
       }
     }

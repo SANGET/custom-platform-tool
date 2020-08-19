@@ -63,13 +63,6 @@ import './TableStruct.less';
 /** 4.function component 更为轻量 */
 
 /**
- * 给你使用ts的一些理由
- *1. 静态类型检查-静态类型检查可以避免很多不必要的错误
- *2. IDE 智能提示-可以提高编码的效率
- *3. 有利于书写自描述的代码(类型即文档);
- *4. 方便代码重构(配合 IDE 可以自动重构).
- */
-/**
 * useState和useReducer该如何选择
 * 如果 state 只想用在 组件内部，建议使用 useState，如果想维护全局 state 建议使用 useReducer
 * 如果 state 的类型为 Number, String, Boolean 建议使用 useState，如果 state 的类型 为 Object 或 Array，建议使用 useReducer
@@ -97,11 +90,6 @@ import './TableStruct.less';
 * 传入useState,useMemo或useReducer的函数
 * 在production环境下不会这样,所以不用担心
 */
-
-/**
-数据驱动，对表单的任何操作都可以通过操作配置数据完成。
-高维护性，维护表单，只需要维护配置数据。
- */
 
 const TableStruct: FC = () => {
   // 定义一个 mapState函数
@@ -220,7 +208,7 @@ const TableStruct: FC = () => {
     },
     scroll: {
       /** 必须设置，不然表格列过多时内容会撑开容器,并且不能设置成true,要设置成数字,不然列宽设置无效 */
-      x: 200,
+      // x: 200,
       /** 设置之后 ,表格头就会被固定 */
       y: document.documentElement.clientHeight - 200,
     },
@@ -282,7 +270,7 @@ const TableStruct: FC = () => {
     /** 弹框取消按钮回调 */
     onCancel: (e) => {
       setVisiable(false);
-      form.resetFields();
+      // form.resetFields();
     },
     okText: '确定',
     cancelText: '取消',
@@ -400,6 +388,6 @@ const TableStruct: FC = () => {
 };
 
 /**
-*
+* key={new Date().getTime()}
 */
 export default TableStruct;

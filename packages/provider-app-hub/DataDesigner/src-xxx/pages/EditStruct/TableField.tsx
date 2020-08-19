@@ -185,7 +185,8 @@ const TableField = (props) => {
   */
   const handleAdd = () => {
     const newData = {
-      key: `${new Date().getTime()}`,
+      id: '',
+      key: '',
       /** 字段名称 */
       name: '',
       /** 字段编码 */
@@ -214,8 +215,8 @@ const TableField = (props) => {
     console.log(fieldTableData);
   };
   /**
-  * 删除一行记录
-  */
+* 删除一行记录
+*/
   const handleDelete = (key) => {
   /** 用key,过滤掉这一行数据 */
   /** 要用store缓存起来,刷新页面时，可以恢复数据 */
