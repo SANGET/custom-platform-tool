@@ -7,7 +7,7 @@ import { ItemTypes } from './types';
 import { DragItemClass, DropCollectType } from '../types';
 import { isNodeInChild } from '../utils';
 
-interface DnDContext {
+export interface DnDContext {
   id: string
   idx: number
 }

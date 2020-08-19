@@ -52,11 +52,11 @@ const DropStageContainer: React.FC<DropStageProps> = ({
     isOverCurrent
   }, drop] = useDrop<DragItemClass, void, DropCollectType>({
     accept,
-    drop: ({ dragItemClass }) => {
-      // console.log('drop');
+    drop: (dropOptions) => {
+      const { dragItemClass, type } = dropOptions;
       if (isOverCurrent) {
         const _dragItemClass = { ...dragItemClass };
-        onDrop(_dragItemClass);
+        onDrop(_dragItemClass, dropOptions);
       }
     },
     collect: (monitor) => ({

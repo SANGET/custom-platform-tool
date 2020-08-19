@@ -26,6 +26,7 @@ import { PropertiesEditorProps } from '../PropertiesEditor';
 import { Dispatcher } from '../../core/actions';
 import { pageProperties } from '../../mock-data/page-perproties';
 import DropStageContainer from './DropStageContainer';
+import { DnDContext } from '../../spec/DragItem';
 
 const PAGE_ENTITY_ID = '__PAGE__ENTITY__ID__';
 
@@ -67,7 +68,7 @@ class CanvasStageClass extends React.Component<CanvasStageProps & {
   layoutInfoDispatcher: React.Dispatch<LayoutInfoActionReducerAction>
 }> {
   /** 用于记录最后拖拽的实例的 idx */
-  lastMoveIdx!: number
+  lastMoveIdx!: number | undefined
 
   componentDidMount() {
     this.props.selectEntity(PageEntity);
@@ -93,21 +94,21 @@ class CanvasStageClass extends React.Component<CanvasStageProps & {
    * 相应拖放的放的动作的过滤器
    * 用于实例化 componentClass 或者更新 componentEntity
    */
-  dropDispatcher = (componentClass, dropCtx = {}) => {
+  dropDispatcher = (componentClass, dropCtx?: DnDContext) => {
     const {
       layoutNodeInfo,
       layoutInfoDispatcher,
       selectEntity
     } = this.props;
-    const { id: parentID = null, idx } = dropCtx;
-    if (typeof idx === 'undefined') {
+    const { id: parentID = null, idx } = dropCtx || {};
+    let _idx = idx;
+    if (typeof _idx === 'undefined') {
       if (typeof this.lastMoveIdx === 'undefined') {
-        idx = layoutNodeInfo.length;
+        _idx = layoutNodeInfo.length;
       } else {
-        idx = this.lastMoveIdx;
+        _idx = this.lastMoveIdx;
       }
     }
-    console.log(this.lastMoveIdx, idx);
     const itemClassCopy = Object.assign({}, componentClass);
     if (parentID) {
       itemClassCopy.parentID = parentID;
@@ -127,11 +128,12 @@ class CanvasStageClass extends React.Component<CanvasStageProps & {
       /** 实例化组件类 */
       const entity = constructCompClass(itemClassCopy);
       _entity = entity;
-      this.addElement(_entity, idx);
+      this.addElement(_entity, _idx);
     }
 
     /** 选中被操作的组件 */
     setTimeout(() => selectEntity(_entity));
+    this.lastMoveIdx = undefined;
   };
 
   addElement = (entity, idx) => {
@@ -233,14 +235,6 @@ class CanvasStageClass extends React.Component<CanvasStageProps & {
       selectEntity(PageEntity);
     };
 
-    // const layoutNestingNodeTree = parseFlatNodeToNestNode<LayoutNodeInfo>(layoutNodeInfo);
-
-    /**
-     * @important 必须信息
-     * 设置 node 信息
-     */
-    // setNodeTreeNestingInfo(layoutNestingNodeTree, layoutNodeInfo);
-
     const pageEntityState = entitiesStateStore[PAGE_ENTITY_ID];
     const pageStyle = pageEntityState?.style;
 
@@ -265,8 +259,9 @@ class CanvasStageClass extends React.Component<CanvasStageProps & {
               layoutNode={layoutNodeInfo}
               RootRender={(child) => (
                 <DropStageContainer
-                  accept={[ItemTypes.DragItemClass]}
-                  onDrop={(_dragItemClass) => {
+                  accept={[ItemTypes.DragItemClass, ItemTypes.DragItemEntity]}
+                  onDrop={(_dragItemClass, dropOptions) => {
+                    if (dropOptions.type !== ItemTypes.DragItemClass) return;
                     /** 清除 parentID */
                     delete _dragItemClass.parentID;
                     this.dropDispatcher(_dragItemClass);

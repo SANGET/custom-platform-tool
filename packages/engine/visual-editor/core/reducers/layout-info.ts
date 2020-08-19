@@ -67,7 +67,6 @@ export const layoutInfoReducer: LayoutInfoActionReducer = (
           [idx, 1, addEntity],
         ],
       });
-      console.log(idx);
 
       return addNextState;
     case 'motify':
