@@ -1,7 +1,7 @@
 /*
  * @Author: your name
  * @Date: 2020-08-19 15:04:22
- * @LastEditTime: 2020-08-19 15:19:38
+ * @LastEditTime: 2020-08-19 17:36:32
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: \custom-platform-v3-frontend\packages\provider-app-hub\DataDesigner\src\api\tableStruct.ts

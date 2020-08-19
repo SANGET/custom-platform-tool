@@ -1,6 +1,7 @@
 import React, { FC, useState, useEffect } from 'react';
 /** react路由暴露出来的页面跳转方法 */
-import { useHistory, Location } from 'react-router-dom';
+// import { useHistory, Location } from 'react-router-dom';
+import { onNavigate, getUrlParams } from 'multiple-page-routing';
 import {
   Tabs, Form, Tag, Row, Col, Button
 } from 'antd';
@@ -36,7 +37,7 @@ const EditStruct = () => {
   //   structTableData: state.structTableData
   // }));
   /** react路由跳转方法,必须定义在react 组件中,跳转到编辑表页面时要用 */
-  const History = useHistory();
+  // const History = useHistory();
 
   // console.log(History.location.state.id);
 
@@ -47,6 +48,8 @@ const EditStruct = () => {
 
   useEffect(() => {
     // http:// {ip}:{port}/paas/ {lesseeCode}/{applicationCode}/data/v1/tables/00dd1b16e3a84a6fbeed12a661484eba
+    const res = getUrlParams(undefined, undefined, true).id;
+    console.log(res);
     Http.get(`/data/v1/tables/${History.location.state.id}`, {}).then((res) => {
       // console.log(res);
 
@@ -264,8 +267,11 @@ const EditStruct = () => {
     {
       text: '返回',
       onClick: () => {
-        console.log(History);
-        History.goBack();
+        onNavigate({
+          type: "GO_BACK",
+        });
+        // console.log(History);
+        // History.goBack();
       }
     },
   ];

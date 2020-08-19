@@ -11,7 +11,8 @@ import {
 } from 'antd';
 
 /** react路由暴露出来的页面跳转方法 */
-import { useHistory } from 'react-router-dom';
+// import { useHistory } from 'react-router-dom';
+import { onNavigate } from 'multiple-page-routing';
 
 /** 状态管理方法 */
 import { useMappedState, useDispatch } from 'redux-react-hook';
@@ -28,6 +29,7 @@ import BasicForm from '@provider-app/data-designer/src/components/BasicForm';
 import REG from '@provider-app/data-designer/src/tools/reg';
 
 import { getModalConfig } from '../../tools/mix';
+
 /** 共享状态值--表结构分页和树形源数据 */
 const mapState = (state) => ({
   structPager: state.structPager,
@@ -38,7 +40,7 @@ const List = (props) => {
   } = props;
 
   /** react路由跳转方法,必须定义在react 组件中,跳转到编辑表页面时要用 */
-  const History = useHistory();
+  // const History = useHistory();
   /** 在网络请求工具中,要用dispatch更改共享状态 */
   const dispatch = useDispatch();
   /** structPager显示列表序号的时候要用 treeData 左侧菜单树要用 */
@@ -60,7 +62,12 @@ const List = (props) => {
         text: '编辑',
         onClick: (row) => {
           console.log(row);
-          History.push({ pathname: `/EditStruct/${row.id}`, state: { id: row.id } });
+          onNavigate({
+            type: "PUSH",
+            route: '/EditStruct/',
+            params: { id: row.id }
+          });
+          // History.push({ pathname: `/EditStruct/${row.id}`, state: { id: row.id } });
         }
       },
       {

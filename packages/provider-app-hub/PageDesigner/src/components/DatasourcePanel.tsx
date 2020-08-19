@@ -3,7 +3,7 @@ import React from 'react';
 const DatasourcePanel = () => {
   return (
     <div>
-      DatasourcePanel
+      数据源控件面板
     </div>
   );
 };

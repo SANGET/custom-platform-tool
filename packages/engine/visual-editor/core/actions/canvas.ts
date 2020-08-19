@@ -2,7 +2,9 @@ import {
   EditorComponentEntity, EditorEntityState, EditorPageEntity, EditorEntity
 } from "../../types";
 
-export const INIT_APP = 'INIT_APP';
+/// app /////////////////
+
+export const INIT_APP = 'app/init';
 export interface InitAppAction {
   type: typeof INIT_APP
   entity: EditorEntity
@@ -20,7 +22,9 @@ export const InitApp = (
   };
 };
 
-export const CLEAR_SELECT = 'CLEAR_SELECT';
+/// entity /////////////////
+
+export const CLEAR_SELECT = 'entity/unselect';
 export interface ClearSelectAction {
   type: typeof CLEAR_SELECT
 }
@@ -35,9 +39,81 @@ export const ClearSelect = (
   };
 };
 
-/// /////////////////
+export const SELECT_ENTITY = 'entity/select';
+export interface SelectEntityAction {
+  type: typeof SELECT_ENTITY
+  entity: EditorEntity
+}
 
-export const INIT_ENTITY_STATE = 'INIT_ENTITY_STATE';
+/**
+ * 选择组件实例
+ */
+export const SelectEntity = (
+  entity: EditorEntity
+): SelectEntityAction => {
+  return {
+    type: SELECT_ENTITY,
+    entity
+  };
+};
+
+export const ADD_ENTITY = 'entity/add';
+export interface AddEntityAction {
+  type: typeof ADD_ENTITY
+  entity: EditorEntity
+}
+
+/**
+ * 添加组件实例
+ */
+export const AddEntity = (
+  entity: EditorEntity
+): AddEntityAction => {
+  return {
+    type: ADD_ENTITY,
+    entity
+  };
+};
+
+export const UPDATE_ENTITY = 'entity/update';
+export interface UpdateEntityAction {
+  type: typeof UPDATE_ENTITY
+  entity: EditorEntity
+}
+
+/**
+ * 更改组件实例
+ */
+export const UpdateEntity = (
+  entity: EditorEntity
+): UpdateEntityAction => {
+  return {
+    type: UPDATE_ENTITY,
+    entity
+  };
+};
+
+export const DEL_ENTITY = 'entity/del';
+export interface DelEntityAction {
+  type: typeof DEL_ENTITY
+  entity: EditorEntity
+}
+
+/**
+ * 删除组件实例
+ */
+export const DelEntity = (
+  entity: EditorEntity
+): DelEntityAction => {
+  return {
+    type: DEL_ENTITY,
+    entity
+  };
+};
+
+/// entityState /////////////////
+
+export const INIT_ENTITY_STATE = 'entityState/init';
 export interface InitEntityStateAction {
   type: typeof INIT_ENTITY_STATE
   entity: EditorEntity
@@ -58,27 +134,7 @@ export const InitEntityState = (
   };
 };
 
-export const SELECT_ENTITY = 'SELECT_ENTITY';
-export interface SelectEntityAction {
-  type: typeof SELECT_ENTITY
-  entity: EditorEntity
-}
-
-/**
- * 选择组件实例
- */
-export const SelectEntity = (
-  entity: EditorEntity
-): SelectEntityAction => {
-  return {
-    type: SELECT_ENTITY,
-    entity
-  };
-};
-
-/// /////////////////
-
-export const UPDATE_ENTITY_STATE = 'UPDATE_ENTITY_STATE';
+export const UPDATE_ENTITY_STATE = 'entityState/update';
 export interface UpdateEntityStateAction {
   type: typeof UPDATE_ENTITY_STATE
   entityID: string,
@@ -98,15 +154,3 @@ export const UpdateEntityState = (
     formState
   };
 };
-
-/// /////////////////
-
-/**
- * 返回合成的 dispatcher 类型，提供给连接 redux 的组件使用
- */
-export interface Dispatcher {
-  InitApp: typeof InitApp
-  SelectEntity: typeof SelectEntity
-  InitEntityState: typeof InitEntityState
-  UpdateEntityState: typeof UpdateEntityState
-}

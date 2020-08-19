@@ -10,7 +10,6 @@
     "shd101wyy.markdown-preview-enhanced",
     "davidanson.vscode-markdownlint",
     "esbenp.prettier-vscode",
-    "jpoissonnier.vscode-styled-components",
-    "mikey.vscode-fileheader",
+    "jpoissonnier.vscode-styled-components"
   ]
 }

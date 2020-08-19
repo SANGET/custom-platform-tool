@@ -47,6 +47,7 @@ import List from './List';
 
 /** 当前功能页样式 */
 import './TableStruct.less';
+import { Connector } from '../../tools/connector';
 
 /** 给你一些使用react hook的理由  */
 /** 理由一： hook使你无需更改页面结构,也能在不同的组件间复用状态,为了在组件间复用状态,providers,consumers,render Props、高阶组件这类方案需要更改页面结构
@@ -397,4 +398,6 @@ const TableStruct: FC = () => {
   );
 };
 
-export default TableStruct;
+const TableStructApp = Connector(TableStruct);
+
+export default TableStructApp;

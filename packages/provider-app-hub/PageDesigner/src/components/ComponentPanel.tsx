@@ -5,7 +5,7 @@ import DatasourcePanel from './DatasourcePanel';
 const ComponentPanelCustom = (props) => {
   return (
     <div>
-      ComponentPanelCustom
+      自定义的组件类面板
       <DatasourcePanel />
       <ComponentPanel {...props} />
     </div>

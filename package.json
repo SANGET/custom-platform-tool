@@ -16,10 +16,9 @@
     "lerna:bootstrap": "lerna bootstrap",
     "start:all": "lerna run --parallel --stream start",
     "start:provider-app": "cd ./packages/provider-app-hub/EntryHall && npm start",
+    "start:data-dev": "cd ./packages/provider-app-hub/EntryHall && npm start",
     "start:visual-editor": "cd ./packages/engine/visual-editor && npm start",
     "start:page-designer": "cd ./packages/provider-app-hub/PageDesigner && npm start",
-    "start:auth": "cd ./packages/provider-app-hub/AuthManager && npm start",
-    "start:data": "cd ./packages/provider-app-hub/DataDesigner && npm start",
     "start:consumer-app": "cd ./packages/consumer-app/web-client && npm start",
     "build:provider-app": "minictl build",
     "build:visual-editor-app": "cd ./packages/engine/visual-editor && npm run build",
@@ -61,11 +60,6 @@
     "ts-jest": "26.1.4",
     "typescript": "3.9.5"
   },
-  "jestSonar": {
-    "reportPath": "coverage",
-    "reportFile": "test-reporter.xml",
-    "indent": 4
-  },
   "husky": {
     "hooks": {
       "commit-msg": "commitlint -E HUSKY_GIT_PARAMS"
@@ -84,10 +78,5 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/SANGET/custom-platform-tool.git"
-  },
-  "dependencies": {
-    "axios": "^0.19.2",
-    "react-router-dom": "^5.2.0",
-    "redux-react-hook": "^4.0.1"
   }
 }

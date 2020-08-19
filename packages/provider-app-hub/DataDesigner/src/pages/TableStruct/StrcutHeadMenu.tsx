@@ -3,7 +3,8 @@ import React from 'react';
 /** 教程 https://www.npmjs.com/package/emotion */
 
 /** react路由暴露出来的页面跳转方法 */
-import { useHistory } from 'react-router-dom';
+// import { useHistory } from 'react-router-dom';
+import { onNavigate } from 'multiple-page-routing';
 
 import { Menu } from 'antd';
 
@@ -19,7 +20,7 @@ import TableHeadMenu from '@provider-app/data-designer/src/bizComps/TableHeadMen
 const StructHeadMenu = (props) => {
   const { openModal } = props;
   /** react路由跳转方法,必须定义在react 组件中,跳转到编辑表页面时要用 */
-  const History = useHistory();
+  // const History = useHistory();
   /**
      * 创建权限项下拉按钮菜单点击触发回调
      * 执行模态框内容切换
@@ -36,7 +37,11 @@ const StructHeadMenu = (props) => {
       },
       export: () => { },
       dict: () => {
-        History.push('/DictManage');
+        // History.push('/DictManage');
+        onNavigate({
+          type: "PUSH",
+          route: '/DictManage'
+        });
       }
     };
     keyAction[key] && keyAction[key]();

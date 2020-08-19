@@ -1,7 +1,7 @@
 /*
  * @Author: your name
  * @Date: 2020-07-22 09:23:52
- * @LastEditTime: 2020-08-17 21:31:29
+ * @LastEditTime: 2020-08-19 18:02:12
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: \custom-platform-v3-frontend\packages\infrastructure\utils\http.ts
@@ -38,7 +38,7 @@ const Http = axios.create({
    * 后面数组中的函数必须返回一个字符串，或 ArrayBuffer，或 Stream
    */
   transformRequest: [(data, headers) => {
-    /**采用Http.post(url,data)发送的时候设置了application/json，里面又执行了一次JSON.parse,结果最终参数变成[object object] */
+    /** 采用Http.post(url,data)发送的时候设置了application/json，里面又执行了一次JSON.parse,结果最终参数变成[object object] */
     /** 所以在这里要做一下对冲转换 */
     return JSON.stringify(data);
   }],
