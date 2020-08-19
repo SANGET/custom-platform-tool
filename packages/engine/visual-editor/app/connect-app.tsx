@@ -4,8 +4,6 @@ import { Provider as ReduxProvider, connect, ConnectedProps } from 'react-redux'
 
 import createStore from '../core/store';
 import * as VisualEditorActions from '../core/actions';
-
-import VisualEditorApp from './main';
 import { VisualEditorState } from '../core/reducers/reducer';
 
 /** TODO: 完善 state */
@@ -41,16 +39,15 @@ const appStore = createStore();
 
 const connector = connect(mapStateToProps, mapDispatchToProps);
 
-const Connect = connector(VisualEditorApp);
-
 type PropsFromRedux = ConnectedProps<typeof connector>
 
-const App: React.FC<PropsFromRedux> = () => {
+const Connector = (ConnectApp): React.FC<PropsFromRedux> => () => {
+  const ConnectedApp = connector(ConnectApp);
   return (
     <ReduxProvider store={appStore}>
-      <Connect />
+      <ConnectedApp />
     </ReduxProvider>
   );
 };
 
-export default App;
+export default Connector;

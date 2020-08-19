@@ -174,25 +174,19 @@ class CanvasStageClass extends React.Component<CanvasStageProps & {
       layoutInfoDispatcher,
     } = this.props;
     let dragEntity = layoutNodeInfo[dragIndex];
-    let nextState;
+    let removeItem = false;
     // console.log(dragEntity);
     if (!dragEntity) {
       /** 如果没有实例，则创建临时实例 */
       dragEntity = constructCompClass(dragItem.dragItemClass, '', 'temp');
-      nextState = update(layoutNodeInfo, {
-        $splice: [
-          [dragIndex, 0],
-          [hoverIndex, 0, dragEntity],
-        ],
-      });
-    } else {
-      nextState = update(layoutNodeInfo, {
-        $splice: [
-          [dragIndex, 1],
-          [hoverIndex, 0, dragEntity],
-        ],
-      });
+      removeItem = true;
     }
+    const nextState = update(layoutNodeInfo, {
+      $splice: [
+        [dragIndex, removeItem ? 0 : 1],
+        [hoverIndex, 0, dragEntity],
+      ],
+    });
     /** 将最后的实例 idx 存储下来 */
     this.lastMoveIdx = hoverIndex;
     layoutInfoDispatcher({
