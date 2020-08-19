@@ -115,41 +115,6 @@ checkBrowsers(paths.appPath, isInteractive)
         urls.lanUrlForConfig
       );
     }
-    // }
-
-    // console.log({ q: JSON.stringify(serverConfig), }, typeof proxySetting);
-
-    // const test = {
-    //   disableHostCheck: false,
-    //   compress: true,
-    //   clientLogLevel: "info",
-    //   contentBase: "F:\\custom-platform-v3-frontend\\packages\\provider-app-hub\\DataDesigner\\public",
-    //   watchContentBase: true,
-    //   hot: true,
-    //   publicPath: "/",
-    //   quiet: true,
-    //   watchOptions: {
-    //     ignored: {}
-    //   },
-    //   https: false,
-    //   host: "0.0.0.0",
-    //   overlay: false,
-    //   historyApiFallback: {
-    //     disableDotRule: true
-    //   },
-    //   public: "10.7.1.186",
-    //   proxy: {
-    //     "/api": {
-    //       target: "http://10.7.1.59:8080/paas/hy/smart_building",
-    //       pathRewrite: {
-    //         "^/api": ""
-    //       },
-    //       logLevel: "debug",
-    //       changeOrigin: true,
-    //       secure: false
-    //     }
-    //   }
-    // };
 
     const devServer = new WebpackDevServer(compiler, serverConfig);
     // Launch WebpackDevServer.

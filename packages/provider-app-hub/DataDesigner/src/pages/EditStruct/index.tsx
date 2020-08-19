@@ -15,7 +15,7 @@ import BasicStory from '@provider-app/data-designer/src/components/BasicStory';
 /** 表结构类型 */
 import { TableTypeEnum } from '@provider-app/data-designer/src/tools/constant';
 
-import { fetchMenuTree } from '@provider-app/data-designer/src/api';
+import { GetMenuTree } from '@provider-app/data-designer/src/api';
 
 import './EditStruct.less';
 
@@ -135,7 +135,7 @@ const EditStruct = () => {
   * 获取树选择数据
   */
   const fetchSelectTreeData = async () => {
-    const data = await fetchMenuTree();
+    const data = await GetMenuTree();
     formItemsConfig.moduleId.compAttr.treeData = data as never[];
     /**
     * 更新表单渲染数据

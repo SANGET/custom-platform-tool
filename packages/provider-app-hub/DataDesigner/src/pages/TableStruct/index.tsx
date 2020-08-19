@@ -23,20 +23,20 @@ import BasicForm from '@provider-app/data-designer/src/components/BasicForm';
 import { TableTypeEnum } from '@provider-app/data-designer/src/tools/constant';
 
 /** 树操作方法 */
-import {
-  treeQuery, listToTree
-} from '@provider-app/data-designer/src/tools/tree';
+import { treeQuery } from '@provider-app/data-designer/src/tools/tree';
 
+/**
+* 模态框默认配置
+*/
+import { getModalConfig } from '@provider-app/data-designer/src/tools/mix';
 /** GMT时间格式化 */
-import {
-  formatGMT
-} from '@provider-app/data-designer/src/tools/format';
+import { formatGMT } from '@provider-app/data-designer/src/tools/format';
 
 /** 菜单树业务组件 */
 import MenuTree from '@provider-app/data-designer/src/bizComps/MenuTree';
 
 /** 表单业务组件 */
-import { fetchMenuTree } from '@provider-app/data-designer/src/api';
+import { GetMenuTree } from '@provider-app/data-designer/src/api';
 import StructForm from './StructForm';
 
 /** 表头菜单组件 */
@@ -50,7 +50,7 @@ import './TableStruct.less';
 
 /** 给你一些使用react hook的理由  */
 /** 理由一： hook使你无需更改页面结构,也能在不同的组件间复用状态,为了在组件间复用状态,providers,consumers,render Props、高阶组件这类方案需要更改页面结构
- *         通过抽象层组成的组件解决将可复用状态附加到组件路径的做法会形成嵌套地狱,
+ *         通过抽象层组成的组件解决将可复用状态附加到组件路径的做法会形成嵌套地狱
  */
 /** 理由二： 复杂组件更易理解  状态逻辑和副作用充斥在组件中,使简单组件变得复杂,在hook中可以用内置暴露的reduces管理这些状态,此外,相互关联且需要对照修改的代码被拆分到不同的生命周期中 */
 /**         hook将相互关联的拆分成更小的函数，而并非强制按照生命周期划分 */
@@ -69,6 +69,7 @@ import './TableStruct.less';
  *3. 有利于书写自描述的代码(类型即文档);
  *4. 方便代码重构(配合 IDE 可以自动重构).
  */
+
 /**
 * useState和useReducer该如何选择
 * 如果 state 只想用在 组件内部，建议使用 useState，如果想维护全局 state 建议使用 useReducer
@@ -87,7 +88,7 @@ import './TableStruct.less';
 /* 使用useCallback优化了传递给子组件的函数，只初始化一次这个函数，下次不产生新的函数 */
 
 /**
-  * dispatch后组件渲染两次的原因
+* dispatch后组件渲染两次的原因
 * 最近的react版本,dev模式下render使用的是strict mode,strict mode的通过两次调用constructor和render函数来更好的检测不符合预期的side effects
 * 下列函数会执行两次:
 * 类组件的constructor,render和shouldComponentUpdate方法
@@ -141,11 +142,11 @@ const TableStruct: FC = () => {
      */
     const params = Object.assign({}, {
       /**  String 否 数据表名称 */
-      // name: '',
-      // /**  long 否 模块主键 */
-      // moduleId: '',
-      // /**  String 否 表类型normalTable(普通表)tree(树形表)auxTable(附属表) */
-      // type: '',
+      name: '',
+      /**  long 否 模块主键 */
+      moduleId: '',
+      /**  String 否 表类型normalTable(普通表)tree(树形表)auxTable(附属表) */
+      type: '',
       /**  int 是 分页查询起始位置,从0开始 */
       offset: 0,
       /**  int 是 每页查询记录数 */
@@ -184,7 +185,7 @@ const TableStruct: FC = () => {
     // const menuTreeRes = await Http.get('/page/v1/menus/list');
     // const tData = listToTree(menuTreeRes.data.result);
 
-    const tData = await fetchMenuTree();
+    const tData = await GetMenuTree();
 
     dispatch({ type: 'setTreeData', treeData: tData });
     // console.log({ treeData });
@@ -232,7 +233,7 @@ const TableStruct: FC = () => {
   /** 创建可控表单实例--用于新建表 */
   const [form] = Form.useForm();
   /** 模态框属性 */
-  const modalProps = {
+  const modalProps = getModalConfig({
     visible,
     title: '新建数据表',
     /**
@@ -284,10 +285,7 @@ const TableStruct: FC = () => {
       setVisiable(false);
       form.resetFields();
     },
-    okText: '确定',
-    cancelText: '取消',
-    width: 800,
-  };
+  });
   /** 新建表表单属性 */
   const formProps = {
     form,
@@ -399,7 +397,4 @@ const TableStruct: FC = () => {
   );
 };
 
-/**
-*
-*/
 export default TableStruct;

@@ -5,9 +5,9 @@
  * @Last Modified time: 2020-07-10 12:00:29
  */
 
-import React, { useEffect, useCallback } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
-  Table, Button, Space, Tooltip, Popconfirm
+  Table, Button, Space, Tooltip, Popconfirm, Modal, Form
 } from 'antd';
 
 /** react路由暴露出来的页面跳转方法 */
@@ -17,6 +17,17 @@ import { useHistory } from 'react-router-dom';
 import { useMappedState, useDispatch } from 'redux-react-hook';
 import Http, { Msg } from '@infra/utils/http';
 
+/** 导出接口 */
+import { ReqCopyTableStructRecord } from '@provider-app/data-designer/src/api';
+
+/** 基本表单 */
+import BasicForm from '@provider-app/data-designer/src/components/BasicForm';
+/**
+* 正则表达式
+*/
+import REG from '@provider-app/data-designer/src/tools/reg';
+
+import { getModalConfig } from '../../tools/mix';
 /** 共享状态值--表结构分页和树形源数据 */
 const mapState = (state) => ({
   structPager: state.structPager,
@@ -64,8 +75,9 @@ const List = (props) => {
       {
         text: '复制',
         onClick: (row) => {
-          row.name = `复制${row.name}`;
-          setData([row, ...tableData]);
+          setVisible(true);
+          const { id, code } = row;
+          form.setFieldsValue({ id, code, name: `${row.name}_副本_xxxxx` });
         }
       },
       { text: '表关系图', onClick: (row) => { } },
@@ -176,37 +188,145 @@ const List = (props) => {
     });
   })();
 
-  return (
-    <Table
-      bordered
-      title={title}
-      dataSource={tableData}
-      columns={columns}
-      scroll={scroll}
-      style={style}
-      rowClassName="editable-row"
-      pagination={{
-        showTotal: ((total) => {
-          return `共 ${total} 条`;
-        }),
-        onChange: (page, pageSize) => {
-          dispatch({ type: 'triggerStructPager', structPager: { page, pageSize } });
-          pagination && pagination(page, pageSize);
-        }
-      }}
+  const [visible, setVisible] = useState(false);
+  /** 创建可控表单实例--复制表单 */
+  const [form] = Form.useForm();
+  /** 模态框属性 */
+  const modalProps = getModalConfig({
+    visible,
+    title: '复制数据表',
+    /**
+   * 弹框确定按钮回调
+   * @param e  点击按钮事件源
+   * @param { form-新建表可控表单实例 }
+   */
+    onOk: (e) => {
+      form
+        .validateFields() /** 表单校验 */
+        .then((values) => {
+          console.log(values, form.getFieldsValue());
+          /** 新建表数据提交 */
+          ReqCopyTableStructRecord(values).then(() => {
+            Msg.success('操作成功');
+            queryList();
+            /** 关闭弹窗 */
+            setVisible(false);
+          });
+        })
+        .catch((errorInfo) => {
+          /** 校验未通过 */
+          console.log(errorInfo);
+          Msg.error('表单校验未通过');
+        });
+      // }
+    },
+    /** 弹框取消按钮回调 */
+    onCancel: (e) => {
+      setVisible(false);
+      form.resetFields();
+    },
+    width: 400,
+  });
 
-      onRow={(record) => {
-        return {
-          onDoubleClick: (event) => {
-          },
-          onMouseLeave: (event) => {
-          },
-          onContextMenu: (event) => { },
-          onMouseEnter: (event) => { },
-          onClick: (event) => { }
-        };
-      }}
-    ></Table>
+  /**
+  * 表单项配置
+  */
+  const items = {
+    name: {
+    /** 表单项属性 */
+      itemAttr: {
+        label: "数据表名称",
+        rules: [
+          { required: true, message: '请输入数据表名称!' },
+          { pattern: REG.znEnNum, message: '输入字段可以为中文、英文、数字、下划线、括号' },
+          { max: 64, message: '最多只能输入64个字符' },
+        ],
+      },
+      /** 表单项包裹组件属性 */
+      compAttr: {
+        type: 'Input',
+        placeholder: '最多可输入64个字符，名称唯一。输入字段可以为中文、英文、数字、下划线、括号',
+      }
+    },
+    id: {
+      /** 表单项属性 */
+      itemAttr: {
+        label: "id",
+        className: 'hide',
+      },
+      /** 表单项包裹组件属性 */
+      compAttr: {
+        type: 'Input',
+      }
+    },
+    code: {
+      /** 表单项属性 */
+      itemAttr: {
+        label: "code",
+        className: 'hide',
+      },
+      /** 表单项包裹组件属性 */
+      compAttr: {
+        type: 'Input',
+      }
+    }
+  };
+  /**
+   * 表单配置
+   */
+  const formConfig = {
+    form,
+    items,
+    colSpan: 24,
+    layout: 'horizontal',
+    /** 表单项label和content的宽度 */
+    formItemLayout: {
+      /** 满栅格是24, 设置label标签宽度 */
+      labelCol: {
+        span: 4
+      },
+      /** 设置表单项宽度 */
+      wrapperCol: {
+        span: 20
+      }
+    }
+  };
+  return (
+    <>
+      <Table
+        bordered
+        title={title}
+        dataSource={tableData}
+        columns={columns}
+        scroll={scroll}
+        style={style}
+        rowClassName="editable-row"
+        pagination={{
+          showTotal: ((total) => {
+            return `共 ${total} 条`;
+          }),
+          onChange: (page, pageSize) => {
+            dispatch({ type: 'triggerStructPager', structPager: { page, pageSize } });
+            pagination && pagination(page, pageSize);
+          }
+        }}
+
+        onRow={(record) => {
+          return {
+            onDoubleClick: (event) => {
+            },
+            onMouseLeave: (event) => {
+            },
+            onContextMenu: (event) => { },
+            onMouseEnter: (event) => { },
+            onClick: (event) => { }
+          };
+        }}
+      ></Table>
+      <Modal {...modalProps}>
+        <BasicForm {...formConfig} />
+      </Modal>
+    </>
   );
 };
 

@@ -1,7 +1,7 @@
 /*
  * @Author: your name
  * @Date: 2020-07-30 15:44:00
- * @LastEditTime: 2020-08-17 21:01:14
+ * @LastEditTime: 2020-08-19 15:25:32
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: \custom-platform-v3-frontend\packages\infrastructure\utils\http.tool.ts
@@ -67,6 +67,7 @@ export const resHandler = (res) => {
     const { code, msg } = data;
     /** 非正确业务码返回 */
     if (code && code !== '00000') {
+      alertMsg({ type: 'error', title: `请求错误 ${code}`, desc: msg });
       fetchLog(res);
       return Promise.reject(msg);
     }
@@ -105,7 +106,7 @@ export const errHandler = (error) => {
   fetchLog(error);
   /** 登录超时跳转到登陆页 */
   if (logoutCode.includes(status)) {
-    alertMsg({ type: 'error', title: '登录已过期，请重新登录' });
+    Msg.error('登录已过期，请重新登录');
     /** 清除所有的登录态信息 */
     globalThis.sessionStorage.clear();
     // useHistory().replace('/login');
@@ -114,7 +115,7 @@ export const errHandler = (error) => {
   }
   // console.log(error);
   // 弹出网络错误提示框
-  alertMsg({ type: 'error', title: `请求错误 ${status || ''}`, desc: errMsg });
+  alertMsg({ type: 'error', title: `请求错误 ${status}`, desc: errMsg });
 
   return Promise.reject(error);
 };

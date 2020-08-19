@@ -1,7 +1,7 @@
 /*
  * @Author: wph
  * @Date: 2020-07-22 09:23:52
- * @LastEditTime: 2020-08-19 09:19:47
+ * @LastEditTime: 2020-08-19 14:59:09
  * @LastEditors: Please set LastEditors
  * @Description: 权限功能单元与页面状态无关的方法
  * @FilePath: \custom-platform-v3-frontend\packages\provider-app-hub\AuthManager\src\features\authItem\authItem.ts
@@ -208,7 +208,8 @@ const listToTree = (list) => {
     /** antd-TreeSelect组件每个节点需要value字段,需要加上 */
     node.value = node.id;
     /** 当为叶子节点 */
-    if (node.pid) {
+    /** 后端返回数据中的pid不一定有对应的真实节点,所以要进行判空 */
+    if (node.pid && map[node.pid]) {
       /** 这里是重点 */
       /** map[node.id] 和 分别对应的list[i],node,指向同一块引用 */
       /** 修改了map[node.id],就相当于修改了分别对应的 list[i] 和 node */
