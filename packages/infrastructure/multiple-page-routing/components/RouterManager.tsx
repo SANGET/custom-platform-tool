@@ -1,3 +1,11 @@
+/*
+ * @Author: your name
+ * @Date: 2020-08-05 20:52:58
+ * @LastEditTime: 2020-08-19 17:14:39
+ * @LastEditors: Please set LastEditors
+ * @Description: In User Settings Edit
+ * @FilePath: \custom-platform-v3-frontend\packages\infrastructure\multiple-page-routing\components\RouterManager.tsx
+ */
 import React, { Component } from "react";
 
 import { getUrlParams, UrlParamsRes } from "@mini-code/request/url-resolve";

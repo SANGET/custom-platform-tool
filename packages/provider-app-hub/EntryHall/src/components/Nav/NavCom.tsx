@@ -26,7 +26,7 @@ export const Nav = ({
         </SubMenu>
         <SubMenu key="sub2" icon={<AppstoreOutlined />} title="数据设计">
           <Menu.Item key="221">
-            <Link to="/data-manager">表结构管理</Link>
+            <Link to="/TableStruct" params={{ title: '表结构管理' }}>表结构管理</Link>
           </Menu.Item>
           <Menu.Item key="222">
           字典管理

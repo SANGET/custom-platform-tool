@@ -1,5 +1,5 @@
 import { createBrowserHistory, Location } from "history";
-import { urlParamsToQuery } from "@mini-code/request/url-resolve";
+import { urlParamsToQuery, getUrlParams, UrlParamsRes } from "@mini-code/request/url-resolve";
 
 interface NavigateConfig {
   from?: Location;
@@ -70,4 +70,5 @@ export {
   replaceHistory,
   getRouteKey,
   onNavigate,
+  getUrlParams,
 };

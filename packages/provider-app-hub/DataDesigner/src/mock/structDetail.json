@@ -1,0 +1,87 @@
+{
+  "code": "00000",
+  "msg": "请求处理成功。",
+  "timestamp": 1593741344649,
+  "result": {
+    "id": "00dd1b16e3a84a6fbeed12a661484eba",
+    "name": "人员表",
+    "code": "hr_member",
+    "type": "normalTable",
+    "module_id": "12345",
+    "species": "BIS",
+    "description": "人员表备注",
+    "aux_table": {
+      "main_table_code": "hr_member"
+    },
+    "tree_table": {
+      "max_level": "5"
+    },
+    "columns": [
+      {
+        "code": "id",
+        "name": "主键",
+        "field_type": "VARCHAR",
+        "field_size": 32,
+        "species": "BIS",
+        "data_type": "NORMAL",
+        "decimal_size": 0
+      },
+      {
+        "code": "dict",
+        "name": "字典",
+        "field_type": "VARCHAR",
+        "field_size": 32,
+        "species": "BIS",
+        "data_type": "DICT",
+        "decimal_size": 2,
+        "dictionary_foreign": {
+          "field_code": "dict",
+          "ref_table_code": "org_city",
+          "ref_field_code": "code",
+          "ref_display_field_code": "name"
+        },
+        "field_property": {
+          "unique": "0",
+          "required": "1"
+        }
+      },
+      {
+        "code": "jigou",
+        "name": "机构名称",
+        "field_type": "VARCHAR",
+        "field_size": 32,
+        "species": "BIS",
+        "data_type": "QUOTE",
+        "decimal_size": 2
+      },
+      {
+        "code": "waijian",
+        "name": "外键",
+        "field_type": "VARCHAR",
+        "field_size": 32,
+        "species": "BIS",
+        "data_type": "FK",
+        "decimal_size": 2
+      }
+    ],
+    "references": [
+      {
+        "field_code": "jigou",
+        "ref_table_code": "org_dept",
+        "ref_field_code": "id",
+        "ref_display_field_code": "name",
+        "sequence": 1
+      }
+    ],
+    "foreign_keys": [
+      {
+        "field_code": "waijian",
+        "ref_table_code": "org_dept",
+        "ref_field_code": "code",
+        "ref_display_field_code": "name",
+        "delete_strategy": "CASCADE",
+        "update_strategy": "CASCADE"
+      }
+    ]
+  }
+}
