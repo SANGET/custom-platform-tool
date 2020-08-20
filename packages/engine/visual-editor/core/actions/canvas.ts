@@ -24,14 +24,14 @@ export const InitApp = (
 
 /// entity /////////////////
 
+/**
+ * 初始化组件类的状态
+ */
 export const CLEAR_SELECT = 'entity/unselect';
 export interface ClearSelectAction {
   type: typeof CLEAR_SELECT
 }
 
-/**
- * 初始化组件类的状态
- */
 export const ClearSelect = (
 ): ClearSelectAction => {
   return {
@@ -39,15 +39,15 @@ export const ClearSelect = (
   };
 };
 
+/**
+ * 选择组件实例
+ */
 export const SELECT_ENTITY = 'entity/select';
 export interface SelectEntityAction {
   type: typeof SELECT_ENTITY
   entity: EditorEntity
 }
 
-/**
- * 选择组件实例
- */
 export const SelectEntity = (
   entity: EditorEntity
 ): SelectEntityAction => {
@@ -57,57 +57,78 @@ export const SelectEntity = (
   };
 };
 
-export const ADD_ENTITY = 'entity/add';
-export interface AddEntityAction {
-  type: typeof ADD_ENTITY
-  entity: EditorEntity
-}
-
 /**
  * 添加组件实例
  */
+export const ADD_ENTITY = 'entity/add';
+export interface AddEntityAction {
+  type: typeof ADD_ENTITY
+  entity: EditorComponentEntity
+  idx: number
+}
+
 export const AddEntity = (
-  entity: EditorEntity
+  entity: EditorComponentEntity,
+  idx
 ): AddEntityAction => {
   return {
     type: ADD_ENTITY,
-    entity
+    entity,
+    idx
   };
 };
-
-export const UPDATE_ENTITY = 'entity/update';
-export interface UpdateEntityAction {
-  type: typeof UPDATE_ENTITY
-  entity: EditorEntity
-}
 
 /**
  * 更改组件实例
  */
-export const UpdateEntity = (
-  entity: EditorEntity
-): UpdateEntityAction => {
+export const MOTIFY_ENTITY = 'entity/motify';
+export interface MotifyEntityAction {
+  type: typeof MOTIFY_ENTITY
+  entity: EditorComponentEntity
+}
+
+export const MotifyEntity = (
+  entity: EditorComponentEntity
+): MotifyEntityAction => {
   return {
-    type: UPDATE_ENTITY,
+    type: MOTIFY_ENTITY,
     entity
   };
 };
 
-export const DEL_ENTITY = 'entity/del';
-export interface DelEntityAction {
-  type: typeof DEL_ENTITY
-  entity: EditorEntity
-}
-
 /**
  * 删除组件实例
  */
+export const DEL_ENTITY = 'entity/del';
+export interface DelEntityAction {
+  type: typeof DEL_ENTITY
+  entityIdx: number
+}
+
 export const DelEntity = (
-  entity: EditorEntity
+  entityIdx: number
 ): DelEntityAction => {
   return {
     type: DEL_ENTITY,
-    entity
+    entityIdx
+  };
+};
+
+/**
+ * 设置 layout info 的值
+ */
+export const SET_LAYOUT_STATE = 'layout/state/set';
+export interface SetLayoutAction {
+  type: typeof SET_LAYOUT_STATE
+  state
+}
+
+export const SetLayoutInfo = (
+  state
+): SetLayoutAction => {
+  return {
+    type: SET_LAYOUT_STATE,
+    state
   };
 };
 

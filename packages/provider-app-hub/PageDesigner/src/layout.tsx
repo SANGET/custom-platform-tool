@@ -23,10 +23,12 @@ const PageDesignerApp: React.FC<VisualEditorAppProps> = (props) => {
     dispatcher,
     selectedEntities,
     entitiesStateStore,
+    layoutInfo
   } = props;
   const {
     InitApp,
     SelectEntity, InitEntityState, UpdateEntityState,
+    SetLayoutInfo, DelEntity, MotifyEntity, AddEntity,
   } = dispatcher;
 
   return (
@@ -79,9 +81,14 @@ const PageDesignerApp: React.FC<VisualEditorAppProps> = (props) => {
             <CanvasStage
               selectedEntities={selectedEntities}
               entitiesStateStore={entitiesStateStore}
+              layoutNodeInfo={layoutInfo}
               selectEntity={SelectEntity}
               initEntityState={InitEntityState}
               updateEntityState={UpdateEntityState}
+              SetLayoutInfo={SetLayoutInfo}
+              DelEntity={DelEntity}
+              MotifyEntity={MotifyEntity}
+              AddEntity={AddEntity}
               PropEditorRenderer={PropertiesEditor}
             />
           </Grid>
