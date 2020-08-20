@@ -1,0 +1,14 @@
+{
+  "name": "@consumer-app/web-server",
+  "description": "生产者与消费者的中转中心",
+  "version": "0.0.1",
+  "scripts": {
+    "start": "start"
+  },
+  "devDependencies": {
+  },
+  "dependencies": {
+  },
+  "author": "SANGET",
+  "license": "MIT"
+}

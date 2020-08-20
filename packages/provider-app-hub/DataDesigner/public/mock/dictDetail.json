@@ -1,0 +1,43 @@
+{
+  "code": "00000",
+  "msg": "请求处理成功。",
+  "timestamp": 1595214753512,
+  "result": {
+    "id": 1291935981624238080,
+    "createdBy": "admin",
+    "gmtCreate": "2020-08-07T13:58:21.527",
+    "modifiedBy": "admin",
+    "gmtModified": "2020-08-07T13:58:21.527",
+    "name": "性别",
+    "description": "性别,男1女0",
+    "items": [{
+        "id": 1291936407861993472,
+        "createdBy": "admin",
+        "gmtCreate": "2020-08-07T13:58:21.527",
+        "modifiedBy": "admin",
+        "gmtModified": "2020-08-07T13:58:21.527",
+        "code": "0",
+        "name": "女",
+        "pid": null,
+        "renderColor": "#fff",
+        "sort": 1,
+        "level": 1,
+        "path": "1291936407861993472"
+      },
+      {
+        "id": 1292652624910360576,
+        "createdBy": "admin",
+        "gmtCreate": "2020-08-07T13:58:21.527",
+        "modifiedBy": "admin",
+        "gmtModified": "2020-08-07T13:58:21.527",
+        "code": "1",
+        "name": "男",
+        "pid": null,
+        "renderColor": "#fff",
+        "sort": 2,
+        "level": 1,
+        "path": "1292652624910360576"
+      }
+    ]
+  }
+}

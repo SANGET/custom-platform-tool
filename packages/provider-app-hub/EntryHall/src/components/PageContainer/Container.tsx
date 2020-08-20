@@ -1,0 +1,22 @@
+/**
+ * TODO: 引用 redux
+ */
+
+import React from 'react';
+
+interface PageContainerProps {
+  pageID?: string;
+  pageAuthInfo?: {};
+}
+
+export const PageContainer = (props: PageContainerProps) => {
+  const {
+    pageID, pageAuthInfo, children
+  } = props;
+  // TODO: 数据的可用性统一管理
+  return (
+    <div className="page-container">
+      {children}
+    </div>
+  );
+};

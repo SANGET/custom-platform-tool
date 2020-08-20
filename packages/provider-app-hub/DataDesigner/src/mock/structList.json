@@ -1,0 +1,25 @@
+{
+  "code": "00000",
+  "msg": "请求处理成功。",
+  "timestamp": 1593740244476,
+  "result": {
+    "total": 1,
+    "data": [
+      {
+        "id": "00dd1b16e3a84a6fbeed12a661484eba",
+        "name": "人员表",
+        "code": "hr_member",
+        "type": "normalTable",
+        "module_id": "人员管理",
+        "species": "BIS",
+        "description": "人员表备注",
+        "aux_table": {
+          "main_table_code": "hr_member"
+        },
+        "tree_table": {
+          "max_level": "5"
+        }
+      }
+    ]
+  }
+}

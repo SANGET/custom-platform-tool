@@ -1,0 +1,4 @@
+[build]
+  command = "npm run build:visual-editor-app"
+  publish = "packages/engine/visual-editor/build"
+  environment = { NODE_VERSION = "13.7.0" }
