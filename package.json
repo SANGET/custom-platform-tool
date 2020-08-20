@@ -16,7 +16,7 @@
     "lerna:bootstrap": "lerna bootstrap",
     "start:all": "lerna run --parallel --stream start",
     "start:provider-app": "cd ./packages/provider-app-hub/EntryHall && npm start",
-    "start:data-dev": "cd ./packages/provider-app-hub/EntryHall && npm start",
+    "start:data": "cd ./packages/provider-app-hub/EntryHall && npm start",
     "start:visual-editor": "cd ./packages/engine/visual-editor && npm start",
     "start:page-designer": "cd ./packages/provider-app-hub/PageDesigner && npm start",
     "start:consumer-app": "cd ./packages/consumer-app/web-client && npm start",
