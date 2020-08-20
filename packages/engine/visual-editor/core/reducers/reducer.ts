@@ -5,7 +5,7 @@ import {
   selectedEntitiesReducer,
   // getEntityDefaultState,
 } from './canvas-state';
-// import { layoutInfoReducer } from "./layout-info";
+import { layoutInfoReducer } from "./layout-info";
 
 /**
  * 将 reducer 合成
@@ -13,7 +13,7 @@ import {
 const VisualEditorStateReducer = combineReducers({
   entitiesStateStore: entitiesStateStoreReducer,
   selectedEntities: selectedEntitiesReducer,
-  // layoutInfo: layoutInfoReducer,
+  layoutInfo: layoutInfoReducer,
 });
 
 export default VisualEditorStateReducer;

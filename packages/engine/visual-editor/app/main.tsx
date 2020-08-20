@@ -25,10 +25,12 @@ const VisualEditorApp: React.FC<VisualEditorAppProps> = (props) => {
     selectedEntities,
     entitiesStateStore,
   } = props;
+  // 调整整体的数据结构，通过 redux 描述一份完整的{页面数据}
   const {
     InitApp,
     SelectEntity, InitEntityState, UpdateEntityState,
   } = dispatcher;
+  console.log(entitiesStateStore);
 
   return (
     <div>
