@@ -28,7 +28,18 @@ import BasicForm from '@provider-app/data-designer/src/components/BasicForm';
 */
 import REG from '@provider-app/data-designer/src/tools/reg';
 
-import { getModalConfig } from '../../tools/mix';
+import PinYin from 'js-pinyin';
+import { getModalConfig, randomNum } from '../../tools/mix';
+
+/** 中文转拼音工具 */
+
+/** 中文转换为拼音工具设置选项 */
+PinYin.setOptions({
+  /** 关闭音调转换功能 */
+  checkPolyphone: false,
+  /** 将汉字首字母转换为大写拼音 */
+  charCase: 0,
+});
 
 /** 共享状态值--表结构分页和树形源数据 */
 const mapState = (state) => ({
@@ -83,8 +94,9 @@ const List = (props) => {
         text: '复制',
         onClick: (row) => {
           setVisible(true);
-          const { id, code } = row;
-          form.setFieldsValue({ id, code, name: `${row.name}_副本_xxxxx` });
+          const { id } = row;
+          const copyName = `${row.name}_副本_${randomNum(10000, 99999)}`;
+          form.setFieldsValue({ id, code: PinYin.getCamelChars(copyName), name: copyName });
         }
       },
       { text: '表关系图', onClick: (row) => { } },
@@ -212,6 +224,7 @@ const List = (props) => {
         .validateFields() /** 表单校验 */
         .then((values) => {
           console.log(values, form.getFieldsValue());
+          // value;
           /** 新建表数据提交 */
           ReqCopyTableStructRecord(values).then(() => {
             Msg.success('操作成功');
@@ -232,7 +245,7 @@ const List = (props) => {
       setVisible(false);
       form.resetFields();
     },
-    width: 400,
+    width: 500,
   });
 
   /**
@@ -253,6 +266,20 @@ const List = (props) => {
       compAttr: {
         type: 'Input',
         placeholder: '最多可输入64个字符，名称唯一。输入字段可以为中文、英文、数字、下划线、括号',
+        onChange: (e) => {
+          /** 将表格名称转换为汉字首字母拼音 */
+          form.setFieldsValue({ code: PinYin.getCamelChars(form.getFieldValue('name')) });
+        }
+      }
+    },
+    code: {
+      itemAttr: {
+        label: "数据表编码",
+        rules: [{ required: true, message: '请输入数据表编码!' }],
+      },
+      compAttr: {
+        type: 'Input',
+        placeholder: '会自动将中文转为首字母大写英文,可手动修改'
       }
     },
     id: {
@@ -266,17 +293,6 @@ const List = (props) => {
         type: 'Input',
       }
     },
-    code: {
-      /** 表单项属性 */
-      itemAttr: {
-        label: "code",
-        className: 'hide',
-      },
-      /** 表单项包裹组件属性 */
-      compAttr: {
-        type: 'Input',
-      }
-    }
   };
   /**
    * 表单配置
@@ -290,11 +306,11 @@ const List = (props) => {
     formItemLayout: {
       /** 满栅格是24, 设置label标签宽度 */
       labelCol: {
-        span: 4
+        span: 6
       },
       /** 设置表单项宽度 */
       wrapperCol: {
-        span: 20
+        span: 18
       }
     }
   };
