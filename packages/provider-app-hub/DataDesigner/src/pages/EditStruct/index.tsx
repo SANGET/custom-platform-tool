@@ -1,6 +1,7 @@
 import React, { FC, useState, useEffect } from 'react';
 /** react路由暴露出来的页面跳转方法 */
-import { useHistory } from 'react-router-dom';
+// import { useHistory, Location } from 'react-router-dom';
+import { onNavigate, getUrlParams } from 'multiple-page-routing';
 import {
   Tabs, Form, Tag, Row, Col, Button
 } from 'antd';
@@ -15,21 +16,20 @@ import BasicStory from '@provider-app/data-designer/src/components/BasicStory';
 /** 表结构类型 */
 import { TableTypeEnum } from '@provider-app/data-designer/src/tools/constant';
 
-import { History } from '@provider-app/data-designer/src/routes';
-
-import { fetchMenuTree } from '@provider-app/data-designer/src/api';
+import { GetMenuTree } from '@provider-app/data-designer/src/api';
 
 import './EditStruct.less';
 
-import { useMappedState } from 'redux-react-hook';
+// import { useMappedState } from 'redux-react-hook';
 
 const { CheckableTag } = Tag;
 
 const { TabPane } = Tabs;
+
 /**
  * 数据表名称 数据表编码 表类型 归属模块
  */
-const EditStruct :FC = () => {
+const EditStruct = () => {
   /**
    * 全局加载动画设置
    */
@@ -37,7 +37,9 @@ const EditStruct :FC = () => {
   //   structTableData: state.structTableData
   // }));
   /** react路由跳转方法,必须定义在react 组件中,跳转到编辑表页面时要用 */
-  const History = useHistory();
+  // const History = useHistory();
+
+  // console.log(History.location.state.id);
 
   const [detailData, setDetailData] = useState({ columns: [] });
 
@@ -46,7 +48,9 @@ const EditStruct :FC = () => {
 
   useEffect(() => {
     // http:// {ip}:{port}/paas/ {lesseeCode}/{applicationCode}/data/v1/tables/00dd1b16e3a84a6fbeed12a661484eba
-    Http.get('http://localhost:60001/mock/structDetail.json', {}).then((res) => {
+    const res = getUrlParams(undefined, undefined, true).id;
+    console.log(res);
+    Http.get(`/data/v1/tables/${History.location.state.id}`, {}).then((res) => {
       // console.log(res);
 
       setDetailData(res.data.result);
@@ -85,16 +89,6 @@ const EditStruct :FC = () => {
           { required: true, message: '请输入数据表名称!' },
           { pattern: /^[\u4e00-\u9fa5_a-zA-Z0-9()]+$/, message: '输入字段可以为中文、英文、数字、下划线、括号' },
           { max: 64, message: '最多只能输入64个字符' },
-        /** 自定义校验器 */
-        // ({ getFieldValue }) => ({
-        //   validator(rule, value) {
-        //     if (!value || getFieldValue('password') === value) {
-        //       return Promise.resolve();
-        //     }
-        //     /** 这里如果不写成new Error,会触发eslint告警 */
-        //     return Promise.reject(new Error('The two passwords that you entered do not match!'));
-        //   },
-        // }),
         ],
       },
       /** 表单项包裹组件属性 */
@@ -144,7 +138,7 @@ const EditStruct :FC = () => {
   * 获取树选择数据
   */
   const fetchSelectTreeData = async () => {
-    const data = await fetchMenuTree();
+    const data = await GetMenuTree();
     formItemsConfig.moduleId.compAttr.treeData = data as never[];
     /**
     * 更新表单渲染数据
@@ -273,8 +267,11 @@ const EditStruct :FC = () => {
     {
       text: '返回',
       onClick: () => {
-        console.log(History);
-        History.goBack();
+        onNavigate({
+          type: "GO_BACK",
+        });
+        // console.log(History);
+        // History.goBack();
       }
     },
   ];

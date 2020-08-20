@@ -114,7 +114,7 @@ const TableField = (props) => {
   /** 创建+表字段行内表单实例 */
   const [fieldForm] = Form.useForm();
   /**
-  * 行编辑态设置
+  * 每一行都有一个唯一的key,记录编辑行是哪一行
   */
   const [editingKey, setEditingKey] = useState<number|string>('');
   /**
@@ -123,48 +123,104 @@ const TableField = (props) => {
   const isEditing = (record) => record.key === editingKey;
 
   // console.log(dataSource);
-
   /**
   * 编辑函数初始值设置
   */
   const edit = (record) => {
+    /**
+     * 将行记录的值设置到表单-这里前端显示值和后端返回值可能并不完全一样，需要转换
+     */
     fieldForm.setFieldsValue({
       ...record
     });
+    /**
+    * 设置编辑行--编辑行的按钮是保存和取消
+    */
     setEditingKey(record.key);
   };
 
   /**
-  * 取消编辑
-  */
-  const cancel = () => {
-    setEditingKey('');
-  };
-  /**
   * 保存编辑行的值
+  * key-编辑行的key
   */
   const save = async (key: React.Key) => {
     try {
-      const row = (await fieldForm.validateFields()) as Item;
-
+      /**
+       * 先进行表单校验,校验通过可以拿到该行的表单值
+       */
+      const row = (await fieldForm.validateFields());
+      /**
+      * 复制一份表格数据
+      */
       const newData = [...fieldTableData];
+      /** 找到编辑行的索引号 */
       const index = newData.findIndex((item) => key === item.key);
+      /** 如果找到,把新值合并到旧值对象上,替换掉原有的那一行记录 */
       if (index > -1) {
         const item = newData[index];
         newData.splice(index, 1, {
           ...item,
           ...row,
         });
-        setFieldTableData(newData);
-        setEditingKey('');
       } else {
-        newData.push(row);
-        setFieldTableData(newData);
-        setEditingKey('');
+        /** 没有找到该记录,插入一条新记录,显示在第一行 */
+        newData.unshift(row);
       }
+      /** 更新表格数据 */
+      setFieldTableData(newData);
+      /** 清除编辑行的key */
+      setEditingKey('');
     } catch (errInfo) {
       console.log('Validate Failed:', errInfo);
     }
+  };
+    /**
+  * 取消编辑
+  */
+  const cancel = () => {
+    setEditingKey('');
+  };
+    /**
+  * 添加一行记录
+  */
+  const handleAdd = () => {
+    const newData = {
+      key: `${new Date().getTime()}`,
+      /** 字段名称 */
+      name: '',
+      /** 字段编码 */
+      code: '',
+      /** 字段类型-VARCHAR(字符串)INT(整型)TIME(时间)DATE(日期时间)TEXT(超大文本) */
+      fieldType: "VARCHAR",
+      /** 数据类型 NORMAL(普通字段)PK(主键字段)QUOTE(引用字段)DICT(字典字段)FK(外键字段) */
+      dataType: 'NORMAL',
+      /** 业务字段类型 SYS(系统元数据)BIS(业务元数据) */
+      species: "BIS",
+      /** 小数位 */
+      decimalSize: 0,
+      /** 必填 */
+      required: 'false',
+      /** 唯一 */
+      unique: 'false',
+      /** 转换成拼音 */
+      pinyinConvent: 'true',
+    };
+    fieldTableData.unshift(newData);
+    /**
+  * 为什么直接赋值setData(fieldTableData)不更新,非要写成setData([...fieldTableData])才触发更新
+  */
+    setFieldTableData([...fieldTableData]);
+    edit(newData);
+    console.log(fieldTableData);
+  };
+  /**
+  * 删除一行记录
+  */
+  const handleDelete = (key) => {
+  /** 用key,过滤掉这一行数据 */
+  /** 要用store缓存起来,刷新页面时，可以恢复数据 */
+  /** 页面销毁时,要清楚所有的localStorage中的内容 */
+    setFieldTableData(fieldTableData.filter((item) => item.key !== key));
   };
 
   /**
@@ -307,6 +363,7 @@ const TableField = (props) => {
         attrs: {
           type: 'Input',
           onFocus: () => {
+            // console.log('xx');
             setDictFieldVisible(true);
           }
         },
@@ -346,7 +403,10 @@ const TableField = (props) => {
       dataIndex: 'operation',
       fixed: 'right',
       width: 180,
-      render: (_: any, record: Item) => {
+      render: (text, record, index) => {
+        /**
+        * 如果该行的key与记录的编辑行的key相等,则展示保存和取消按钮
+        */
         const editable = isEditing(record);
         return editable ? (
           <span>
@@ -357,7 +417,7 @@ const TableField = (props) => {
           </span>
         ) : (
           <span>
-
+            {/* 正在编辑的话,禁用其它行的编辑按钮 */}
             <Button type='link' disabled={editingKey !== ''} style={{ marginRight: 8 }} onClick={() => edit(record)}>
             编辑
             </Button>
@@ -379,9 +439,10 @@ const TableField = (props) => {
     return {
       ...col,
       /**
-      * 传入单元格里面的参数
+      * 传入单元格里面的参数,每次页面状态更新,都会执行onCell方法
+      * 某一行的key与设置编辑行的key相等时,该行每列元素就会变成可编辑态
       */
-      onCell: (record: Item) => ({
+      onCell: (record) => ({
         record,
         formConfig: col.formConfig,
         dataIndex: col.dataIndex,
@@ -391,46 +452,6 @@ const TableField = (props) => {
     };
   });
 
-  /**
-  * 添加一行记录
-  */
-  const handleAdd = () => {
-    const newData = {
-      id: '',
-      key: '',
-      /** 字段名称 */
-      name: '',
-      /** 字段编码 */
-      code: '',
-      /** 字段类型-VARCHAR(字符串)INT(整型)TIME(时间)DATE(日期时间)TEXT(超大文本) */
-      fieldType: "VARCHAR",
-      /** 数据类型 NORMAL(普通字段)PK(主键字段)QUOTE(引用字段)DICT(字典字段)FK(外键字段) */
-      dataType: 'NORMAL',
-      /** 业务字段类型 SYS(系统元数据)BIS(业务元数据) */
-      species: "BIS",
-      /** 小数位 */
-      decimalSize: 0,
-      /** 必填 */
-      required: 'false',
-      /** 唯一 */
-      unique: 'false',
-      /** 转换成拼音 */
-      pinyinConvent: 'true',
-    };
-    fieldTableData.unshift(newData);
-    /**
-    * 为什么直接赋值setData(fieldTableData)不更新,非要写成setData([...fieldTableData])才触发更新
-    */
-    setFieldTableData([...fieldTableData]);
-    edit(newData);
-    console.log(fieldTableData);
-  };
-  /**
-  * 删除一行记录
-  */
-  const handleDelete = (key) => {
-    setFieldTableData(fieldTableData.filter((item) => item.key !== key));
-  };
   /**
   * 编辑表格属性配置
   */

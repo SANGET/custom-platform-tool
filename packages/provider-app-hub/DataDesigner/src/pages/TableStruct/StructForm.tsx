@@ -1,20 +1,18 @@
 import React, { useState, useEffect } from 'react';
-import {
-  Form, TreeSelect, Input
-} from 'antd';
-/** 当前页面样式 */
-import './TableStruct.less';
 
 /** 导出基础选择框及其枚举数据 */
 /** 内聚和单一职责,有时候令人感觉边界不清,枚举值和选择框组件放在一起貌似也不错 */
 import { TableTypeEnum } from '@provider-app/data-designer/src/tools/constant';
-/** 中文转拼音工具 */
-import PinYin from 'js-pinyin';
+
+/** 基本表单 */
+import BasicForm from '@provider-app/data-designer/src/components/BasicForm';
 
 /**
- * 在antd Select组件基础上封装的选择框组件
- */
-import BasicStory from '@provider-app/data-designer/src/components/BasicStory';
+* 正则表达式
+*/
+import REG from '@provider-app/data-designer/src/tools/reg';
+/** 中文转拼音工具 */
+import PinYin from 'js-pinyin';
 
 /** 中文转换为拼音工具设置选项 */
 PinYin.setOptions({
@@ -24,106 +22,51 @@ PinYin.setOptions({
   charCase: 0,
 });
 
-/** 表单项label和content的宽度 */
-const formItemLayout = {
-  /** 满栅格是24, 设置label标签宽度 */
-  labelCol: {
-    span: 4
-  },
-  /** 设置表单项宽度 */
-  wrapperCol: {
-    span: 20
-  }
-};
-
 const StructForm = ({
   form, treeData, ...rest
 }) => {
-  // console.log({ treeData });
-  /** 表单初始化 */
-  form.setFieldsValue({
-    /** 是 数据表名称  */
-    name: '',
-    /** 是 数据表编码 */
-    code: '',
-    /** 是 表类型 */
-    type: '',
-    /** 是 归属模块 */
-    moduleId: '',
-    /** 否 业务字段类型，SYS(系统元数据)BIS(业务元数据)，用户填写的表默认BIS即可 */
-    species: 'BIS',
-    /** 否 备注  */
-    description: '',
-    /** 否 附属表对象,如果表类型是附属表，则必填 */
-    auxTable: {},
-    /** 表类型是附属表时,主表表名必填 */
-    mainTableCode: '',
-    /** 否 树型表对象,如果表类型是树型表，则必填 */
-    treeTable: {},
-    /** 如果表类型是树型表，则必填 最大层级树 2-15 */
-    maxLevel: '',
-    /** 否 引用表对象集合 */
-    references: [],
-    /** 否 外键对象集合 */
-    foreign_keys: [],
-    /** 否 列对象集合 */
-    columns: [],
-  });
-
-  // console.log({
-  //   treeData1,
-  //   treeData
-  // });
+  // console.log({ treeData});
   /** 树形属性配置 */
   const tProps = {
     treeData,
     value: '',
-    placeholder: '请选择父级',
-    style: {
-      width: '100%'
-    }
+    placeholder: '',
+    style: { width: '100%' }
   };
 
   /**
   * 表类型联动对象
   */
-  const refShowInit = { normalTable: '', tree: 'hide', auxTable: 'hide' };
+  const refShowInit = { normalTable: 'show', tree: 'hide', auxTable: 'hide' };
   /**
   * 表类型联动状态设置
   */
   const [refShow, setRefShow] = useState(refShowInit);
-
-  // console.log({ refShow });
+  /**
+  *  联动显示
+  */
   const onTypeChange = () => {
     const type = form.getFieldValue('type');
     const showObj = Object.keys(refShowInit).reduce((prev, key) => {
-      prev[key] = key === type ? '' : 'hide';
+      prev[key] = key === type ? 'show' : 'hide';
       return prev;
     }, {});
     // console.log({ showObj });
     setRefShow(showObj as { normalTable: string; tree: string; auxTable: string; });
   };
-  /** 表单配置项 */
-  const formItemsConfig = {
+
+  /**
+  * 表单项配置
+  */
+  const items = {
     name: {
       /** 表单项属性 */
       itemAttr: {
         label: "数据表名称",
-        name: "name",
         rules: [
           { required: true, message: '请输入数据表名称!' },
-          { pattern: /^[\u4e00-\u9fa5_a-zA-Z0-9()]+$/, message: '输入字段可以为中文、英文、数字、下划线、括号' },
+          { pattern: REG.znEnNum, message: '输入字段可以为中文、英文、数字、下划线、括号' },
           { max: 64, message: '最多只能输入64个字符' },
-          /** 自定义校验器 */
-          // ({ getFieldValue }) => ({
-          //   validator(rule, value) {
-          //     if (!value || getFieldValue('password') === value) {
-          //       return Promise.resolve();
-          //     }
-          //     /** 这里如果不写成new Error,会触发eslint告警 */
-          //     return Promise.reject(new Error('The two passwords that you entered do not match!'));
-          //   },
-          // }),
         ],
       },
       /** 表单项包裹组件属性 */
@@ -139,29 +82,75 @@ const StructForm = ({
     code: {
       itemAttr: {
         label: "数据表编码",
-        name: "code",
         rules: [{ required: true, message: '请输入数据表编码!' }],
       },
       compAttr: {
-        type: 'Input'
+        type: 'Input',
+        placeholder: '会自动将中文转为首字母大写英文,可手动修改'
       }
     },
     type: {
       itemAttr: {
-        name: "type",
-        label: "表类型"
+        label: "表类型",
+        rules: [{ required: true, message: '请选择表类型!' }],
       },
       compAttr: {
         type: 'BasicSelect',
         enum: TableTypeEnum,
-        onChange: onTypeChange
+        onChange: () => onTypeChange()
+      }
+    },
+    maxLevel: {
+      itemAttr: {
+        label: "最大层级数",
+        className: refShow.tree,
+        /** 表类型为树表时关联必填 */
+        rules: [
+          /** required设置条件必须未生效,要展示必填项前面的红色*,需要把这一项设置为true */
+          { required: refShow.tree === 'show' },
+          ({ getFieldValue }) => ({
+            validator(rule, value) {
+              /** 当表类型不是附属表时,不对提交内容做校验 */
+              if (refShow.tree === 'hide') {
+                return Promise.resolve();
+              }
+              /** 这里如果不写成new Error,会触发eslint告警 */
+              if (value === '' || value === undefined) {
+                return Promise.reject(new Error('请输入最大层级数'));
+              }
+              if (!REG.plusInt.test(value)) {
+                return Promise.reject(new Error('必须是正整数'));
+              }
+              if (value > 5) {
+                return Promise.reject(new Error('最大层级数不能超过5级'));
+              }
+              return Promise.resolve();
+            },
+          }),
+        ],
+      },
+      compAttr: {
+        type: 'InputNumber',
+        placeholder: '须为正整数,最大层级不超过5级'
+      }
+    },
+    mainTableCode: {
+      itemAttr: {
+        label: "主表",
+        className: refShow.auxTable,
+        /** 表类型为附属表时关联必填 */
+        rules: [{ required: refShow.auxTable === 'show', message: '请输入主表!' }],
+      },
+      compAttr: {
+        type: 'Input',
+        placeholder: '请输入主表'
       }
     },
     moduleId: {
       itemAttr: {
-        name: "moduleId",
         label: "归属模块",
         className: refShow.normalTable,
+        rules: [{ required: true, message: '请选择归属模块' }],
       },
       compAttr: {
         type: 'TreeSelect',
@@ -169,69 +158,53 @@ const StructForm = ({
         ...tProps
       }
     },
-    maxLevel: {
-      itemAttr: {
-        name: "maxLevel",
-        label: "最大层级数",
-        className: refShow.tree,
-      },
-      compAttr: {
-        type: 'InputNumber',
-        placeholder: '最大层级不能超过5级'
-      }
-    },
-    mainTableCode: {
-      itemAttr: {
-        name: "mainTableCode",
-        label: "主表",
-        className: refShow.auxTable,
-      },
-      compAttr: {
-        type: 'Input',
-        placeholder: '请输入主表'
-      }
-    },
-    tag: {
-      itemAttr: {
-        name: "tag",
-        label: "标签"
-      },
-      compAttr: {
-        type: 'Input',
-      }
-    },
+    // tag: {
+    //   itemAttr: {
+    //     label: "标签"
+    //   },
+    //   compAttr: {
+    //     type: 'Input',
+    //   }
+    // },
     description: {
       itemAttr: {
         name: "description",
         label: "备注",
         rules: [
-          { max: 100, message: '最多只能输入100个中文字符' },
+          { max: 100, message: '最多只能输入100个字' },
         ],
       },
       compAttr: {
         type: 'TextArea',
-        placeholder: '最多支持100个中文字符的输入',
+        placeholder: '最多只能输入100个字',
         autoSize: { minRows: 4, maxRows: 6 }
+      }
+    }
+  };
+  /**
+   * 表单配置
+   */
+  const formConfig = {
+    form,
+    items,
+    colSpan: 24,
+    layout: 'horizontal',
+    /** 表单项label和content的宽度 */
+    formItemLayout: {
+      /** 满栅格是24, 设置label标签宽度 */
+      labelCol: {
+        span: 4
+      },
+      /** 设置表单项宽度 */
+      wrapperCol: {
+        span: 20
       }
     }
   };
 
   return (
-    <Form
-      name="struct-form"
-      /** 受控组件实例 */
-      form={form}
-      {...formItemLayout}
-      {...rest}
-    >{
-
-        Object.keys(formItemsConfig).map((key) => (
-          <Form.Item key={key} {...formItemsConfig[key].itemAttr}>
-            <BasicStory {...formItemsConfig[key].compAttr} />
-          </Form.Item>
-        ))
-      }
-    </Form>);
+    <BasicForm {...formConfig} />
+  );
 };
 
 export default StructForm;

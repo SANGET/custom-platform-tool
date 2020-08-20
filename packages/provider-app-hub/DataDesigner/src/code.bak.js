@@ -1,11 +1,22 @@
 /*
  * @Author: your name
  * @Date: 2020-08-07 14:22:42
- * @LastEditTime: 2020-08-12 15:13:45
+ * @LastEditTime: 2020-08-17 10:57:17
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: \custom-platform-v3-frontend\packages\provider-app-hub\DataDesign\src\codeBak.js
  */
+
+/** 自定义校验器 */
+// ({ getFieldValue }) => ({
+//   validator(rule, value) {
+//     if (!value || getFieldValue('password') === value) {
+//       return Promise.resolve();
+//     }
+//     /** 这里如果不写成new Error,会触发eslint告警 */
+//     return Promise.reject(new Error('The two passwords that you entered do not match!'));
+//   },
+// }),
 
 /**
    * 拖拽位置处理

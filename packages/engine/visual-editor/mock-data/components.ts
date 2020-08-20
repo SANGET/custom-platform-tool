@@ -13,7 +13,7 @@ export const componentClassCollection: ComponentClassCollection = {
     component: {
       type: 'Input'
     },
-    bindProperties: {
+    bindProps: {
       propRefs: [
         'prop-style-1',
         'prop-label-1'
@@ -31,7 +31,7 @@ export const componentClassCollection: ComponentClassCollection = {
       }
     },
     label: 'Flex 布局',
-    bindProperties: {
+    bindProps: {
       propRefs: [
         'prop-style-1',
         'prop-flex-config-1'
@@ -45,7 +45,7 @@ export const componentClassCollection: ComponentClassCollection = {
     component: {
       type: 'Table'
     },
-    bindProperties: {
+    bindProps: {
       propRefs: [
         'prop-style-1',
         'prop-flex-config-1'
@@ -60,7 +60,7 @@ export const componentClassCollection: ComponentClassCollection = {
       type: 'Custom',
       render: CustomComponent
     },
-    bindProperties: {
+    bindProps: {
       // propRefs: [
       //   'prop-style-1',
       //   'prop-flex-config-1'

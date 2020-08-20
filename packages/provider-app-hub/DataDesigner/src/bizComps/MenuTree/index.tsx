@@ -4,7 +4,7 @@ import { Tree, Input } from 'antd';
 import { treeToList, findMatch } from '@provider-app/data-designer/src/tools/tree';
 
 const MenuTree = ({ dataSource, ...props }) => {
-  const { getClickNodeValue } = props;
+  const { getClickNodeValue, onSelect } = props;
   /** 扁平结构的树形数组数组 */
   const treeList = treeToList(dataSource, []);
   // console.log({ dataSource });
@@ -67,10 +67,11 @@ const MenuTree = ({ dataSource, ...props }) => {
       setExpandedKeys(expandedKeys);
     },
     onSelect: (selectedKeys, e:{selected, selectedNodes, node, event}) => {
-      console.log(selectedKeys, e);
+      // console.log(selectedKeys, e);
       const node = treeList.find((item) => item.key === selectedKeys[0]);
       // console.log(treeList, treeList.find((item) => item.key === selectedKeys[0]));
       setSearchValue(node.title);
+      onSelect && onSelect(selectedKeys, e);
       getClickNodeValue && getClickNodeValue(node);
     }
   };
@@ -100,7 +101,7 @@ const MenuTree = ({ dataSource, ...props }) => {
 
   return (
     <div>
-      <Input {...searchProps} />
+      <Input {...searchProps} allowClear />
       <Tree {...tProps} />
     </div>
   );

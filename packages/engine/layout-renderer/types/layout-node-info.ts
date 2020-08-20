@@ -10,8 +10,6 @@ export interface LayoutNodeInfo {
   id: string;
   /** 节点类型 */
   type: "container" | 'component';
-  /** 引用的元素 ID */
-  elemRefID: string;
   /** 子布局内容 */
   body: LayoutNodeInfo[]
 }

@@ -52,8 +52,9 @@ const BasicStory = (props) => {
   /**
    * type是组件类型
    */
-  const SpecificStory = components[props.type];
-  return <SpecificStory {...props} />;
+  const { type, ...rest } = props;
+  const SpecificStory = components[type];
+  return <SpecificStory {...rest} />;
 };
 /**
 * fasdf

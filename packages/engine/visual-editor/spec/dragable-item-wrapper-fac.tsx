@@ -10,14 +10,15 @@ import {
 } from '@engine/layout-renderer';
 import styled from 'styled-components';
 import classnames from 'classnames';
-import { LayoutInfoActionReducerState } from '@engine/visual-editor/core/reducers/layout-info';
 import { EditorEntityState, EditorComponentEntity } from '@engine/visual-editor/types';
+import { DragItemDrop, DragItemDrag, DragItemMove } from './DragItem';
 // import { Debounce } from '@mini-code/base-func';
 
 export type GetEntityProps = (id: string) => EditorEntityState
 export type GetSelectedState = (id: string) => boolean
 export type GetHoveringEntity = (id: string) => boolean
 export type SetHoveringEntity = (id: string) => void
+export type GetLayoutNode = (idx: number) => EditorComponentEntity
 
 // export interface WrapperOveringTipContext {
 //   /** 获取组件实例的 props */
@@ -32,16 +33,20 @@ export interface WrapperFacContext {
   /** 获取组件实例的 props */
   getEntityProps: GetEntityProps
   /** 扁平的 node 结构 */
-  flatLayoutNodes: LayoutInfoActionReducerState
+  getLayoutNode: GetLayoutNode
 }
 
 export interface WrapperFacActions {
-  /** 响应组件的“方”事件 */
-  onDrop: (entity, containerID?) => void;
+  /** 响应组件的“放”事件 */
+  onDrop: DragItemDrop
+  /** 响应组件的“拖”事件 */
+  onDrag?: DragItemDrag
   /** 响应组件点击事件 */
-  onClick: (event, entity: EditorComponentEntity) => void;
+  onClick: (event, { entity: EditorComponentEntity, idx: number }) => void
   /** 响应组件点击事件 */
-  onDelete: (event, entity: EditorComponentEntity) => void;
+  onMove: DragItemMove
+  /** 响应组件点击事件 */
+  onDelete: (event, { idx: number, entity: EditorComponentEntity }) => void
 }
 
 /**
@@ -57,7 +62,7 @@ interface FacToComponentPropsTemp extends WrapperFacOptions, LayoutWrapperContex
   currEntity: EditorComponentEntity
 }
 
-export type FacToComponentProps = Omit<FacToComponentPropsTemp, 'flatLayoutNodes', 'onDelete'>
+export type FacToComponentProps = Omit<FacToComponentPropsTemp, 'getLayoutNode', 'onDelete'>
 
 export type ContainerWrapperFac = (
   wrapperComponent: React.ElementType<FacToComponentProps>,
@@ -93,40 +98,36 @@ const DragableItemWrapper = styled.div`
 export const dragableItemWrapperFac: ContainerWrapperFac = (
   WrapperComponent,
   {
-    onDrop, onClick, onDelete,
-    flatLayoutNodes, getSelectedState, getEntityProps,
+    onDrop, onMove, onClick, onDelete,
+    getLayoutNode, getSelectedState, getEntityProps,
     // getHoveringEntity, setHoveringEntity
   },
 ) => (propsForChild) => {
-  const { id, children } = propsForChild;
+  const { id, idx, children } = propsForChild;
   const isSelected = getSelectedState(id);
   // const isHovering = getHoveringEntity(id);
   const classes = classnames([
     // isHovering && 'hovering',
     isSelected && 'selected',
   ]);
-  const currEntity = flatLayoutNodes[id];
+  const currEntity = getLayoutNode(idx);
 
   return (
     <DragableItemWrapper
-      // onMouseEnter={(e) => {
-      //   // debounce.cancel();
-      //   setHoveringEntity(id);
-      // }}
-      // onMouseLeave={(e) => {
-      //   // debounce.exec(() => setHoveringEntity(''), 300);
-      //   setHoveringEntity('');
-      // }}
       className={classes}
       key={id}
     >
       <WrapperComponent
         {...propsForChild}
-        onClick={onClick}
+        onClick={(e) => {
+          e.stopPropagation();
+          onClick(e, { entity: currEntity, idx });
+        }}
         onDrop={onDrop}
-        currEntity={flatLayoutNodes[id]}
+        currEntity={currEntity}
         getSelectedState={getSelectedState}
         getEntityProps={getEntityProps}
+        onMove={onMove}
       >
         {children}
       </WrapperComponent>
@@ -134,9 +135,11 @@ export const dragableItemWrapperFac: ContainerWrapperFac = (
         className="t_red rm-btn"
         onClick={(e) => {
           e.stopPropagation();
-          onDelete(e, currEntity);
+          onDelete(e, { idx, entity: currEntity });
         }}
-      >删除</div>
+      >
+        删除
+      </div>
       <div className="hoving state-mark fill"></div>
       <div className="selected state-mark fill"></div>
     </DragableItemWrapper>

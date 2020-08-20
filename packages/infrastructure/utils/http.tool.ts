@@ -1,7 +1,7 @@
 /*
  * @Author: your name
  * @Date: 2020-07-30 15:44:00
- * @LastEditTime: 2020-08-13 20:44:19
+ * @LastEditTime: 2020-08-19 15:25:32
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: \custom-platform-v3-frontend\packages\infrastructure\utils\http.tool.ts
@@ -10,7 +10,46 @@
 // import { useHistory } from 'react-router-dom';
 // const history = useHistory();
 /** 弹出提示框组件 */
-import { alertMsg } from './utils';
+import { notification } from 'antd';
+
+/** 弹窗参数类型约束 */
+export type alertMsgArgs={
+  type?:'open'|'success'|'warning'|'info'|'error';
+  title:string;
+  desc?:string;
+  duration?:number;
+}
+/**
+ * 弹出通知提醒框
+ * @param type  弹窗类型
+ * @param title  标题
+ * @param desc 详细描述
+ * @param duration 提醒框显示时间
+ */
+export function alertMsg(params:alertMsgArgs) {
+  const {
+    title, type, desc, duration
+  } = params;
+  const args = {
+    message: title || '',
+    description: desc || '',
+    duration: duration || 3,
+    showIcon: true
+  };
+
+  notification[type || 'open'](args);
+  return args;
+}
+/**
+* 操作提示
+*/
+const Msg = {
+  success: (title) => alertMsg({ title, type: 'success' }),
+  warning: (title) => alertMsg({ title, type: 'warning' }),
+  error: (title) => alertMsg({ title, type: 'error' }),
+};
+
+export { Msg };
 
 /** 登陆超时编码 */
 export const logoutCode = [600];
@@ -28,6 +67,7 @@ export const resHandler = (res) => {
     const { code, msg } = data;
     /** 非正确业务码返回 */
     if (code && code !== '00000') {
+      alertMsg({ type: 'error', title: `请求错误 ${code}`, desc: msg });
       fetchLog(res);
       return Promise.reject(msg);
     }
@@ -66,7 +106,7 @@ export const errHandler = (error) => {
   fetchLog(error);
   /** 登录超时跳转到登陆页 */
   if (logoutCode.includes(status)) {
-    alertMsg({ type: 'error', title: '登录已过期，请重新登录' });
+    Msg.error('登录已过期，请重新登录');
     /** 清除所有的登录态信息 */
     globalThis.sessionStorage.clear();
     // useHistory().replace('/login');
@@ -75,7 +115,7 @@ export const errHandler = (error) => {
   }
   // console.log(error);
   // 弹出网络错误提示框
-  alertMsg({ type: 'error', title: `请求错误 ${status || ''}`, desc: errMsg });
+  alertMsg({ type: 'error', title: `请求错误 ${status}`, desc: errMsg });
 
   return Promise.reject(error);
 };

@@ -1,7 +1,7 @@
 /*
  * @Author: wph
  * @Date: 2020-08-15 16:01:41
- * @LastEditTime: 2020-08-15 16:34:08
+ * @LastEditTime: 2020-08-20 11:04:47
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: \custom-platform-v3-frontend\packages\provider-app-hub\DataDesigner\src\tools\mix.ts
@@ -10,7 +10,7 @@
  * 生成模态框基本配置
  * @param config 传入的配置
  */
-const getModalConfig = (config) => {
+export const getModalConfig = (config) => {
   return {
     visible: false,
     title: '',
@@ -54,4 +54,21 @@ const getModalConfig = (config) => {
   };
 };
 
-export { getModalConfig };
+/**
+ * 生成minNum-maxNum之间的随机数
+ * @param minNum: 随机数区间的最小值
+ * @param maxNum: 随机数区间的最大值
+ */
+export function randomNum(minNum:number, maxNum:number) {
+  switch (arguments.length) {
+    case 1:
+      return parseInt(Math.random() * minNum + 1, 10);
+    case 2:
+      return parseInt(Math.random() * (maxNum - minNum + 1) + minNum, 10);
+    default:
+      return 0;
+      break;
+  }
+}
+
+// export { getModalConfig };

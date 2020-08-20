@@ -2,8 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import {
   Form, Modal, Table, Input, Row, Col
 } from 'antd';
-/** 当前页面样式 */
-// import './tableStruct.less';
+
 
 /**
  * 在antd Select组件基础上封装的选择框组件

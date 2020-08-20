@@ -1,4 +1,5 @@
 /**
+ * @author zxj
  * 具体 component 实现的地方
  */
 
@@ -9,6 +10,7 @@ import classnames from 'classnames';
 import DragItem from '../DragItem';
 import { ComponentTypeRenderer } from './ComponentTypeRenderer';
 import { FacToComponentProps } from '../dragable-item-wrapper-fac';
+import { ItemTypes } from '../types';
 
 const ComponentWrapper = styled.div`
   position: relative;
@@ -26,33 +28,32 @@ type ComponentWrapperComProps = FacToComponentProps
 const ComponentWrapperCom: React.FC<ComponentWrapperComProps> = ({
   currEntity,
   id,
+  idx,
   node,
   onDrop,
+  onMove,
   onClick,
   getSelectedState,
   getEntityProps,
 }) => {
-  const isSelected = getSelectedState(id);
-  const classes = classnames([
-    isSelected && 'selected'
-  ]);
-
   const entityState = getEntityProps(id) || {};
   const { style } = entityState;
 
   return (
     <div
-      onClick={(e) => {
-        e.stopPropagation();
-        onClick(e, currEntity);
-      }}
+      onClick={onClick}
       className="relative"
     >
       <DragItem
+        id={id}
+        index={idx}
+        onDrop={onDrop}
         dragItemClass={currEntity}
+        type={ItemTypes.DragItemEntity}
+        accept={[ItemTypes.DragItemEntity, ItemTypes.DragItemClass]}
+        onMove={onMove}
       >
         <ComponentWrapper
-          className={classes}
           style={style}
         >
           <ComponentTypeRenderer
