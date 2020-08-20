@@ -10,4 +10,8 @@ export interface Dispatcher {
   SelectEntity: typeof CanvasActions['SelectEntity']
   InitEntityState: typeof CanvasActions['InitEntityState']
   UpdateEntityState: typeof CanvasActions['UpdateEntityState']
+  SetLayoutInfo: typeof CanvasActions['SetLayoutInfo']
+  DelEntity: typeof CanvasActions['DelEntity']
+  MotifyEntity: typeof CanvasActions['MotifyEntity']
+  AddEntity: typeof CanvasActions['AddEntity']
 }

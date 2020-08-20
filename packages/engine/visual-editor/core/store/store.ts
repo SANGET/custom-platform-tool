@@ -1,13 +1,8 @@
 import { createStore, applyMiddleware } from 'redux';
 
 import AppReducers, { VisualEditorState } from '../reducers';
-import { layoutContentState } from '../reducers/canvas-state';
 
-export interface VisualEditorStore extends VisualEditorState {
-  layoutContentState: layoutContentState
-}
-
-let store: VisualEditorStore | null;
+let store: VisualEditorState | null;
 
 export const getStore = () => {
   return store;

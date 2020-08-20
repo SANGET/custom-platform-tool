@@ -24,12 +24,15 @@ const VisualEditorApp: React.FC<VisualEditorAppProps> = (props) => {
     dispatcher,
     selectedEntities,
     entitiesStateStore,
+    layoutInfo
   } = props;
   // 调整整体的数据结构，通过 redux 描述一份完整的{页面数据}
   const {
     InitApp,
     SelectEntity, InitEntityState, UpdateEntityState,
+    SetLayoutInfo, DelEntity, MotifyEntity, AddEntity,
   } = dispatcher;
+
   console.log(entitiesStateStore);
 
   return (
@@ -82,9 +85,14 @@ const VisualEditorApp: React.FC<VisualEditorAppProps> = (props) => {
             <CanvasStage
               selectedEntities={selectedEntities}
               entitiesStateStore={entitiesStateStore}
+              layoutNodeInfo={layoutInfo}
               selectEntity={SelectEntity}
               initEntityState={InitEntityState}
               updateEntityState={UpdateEntityState}
+              SetLayoutInfo={SetLayoutInfo}
+              DelEntity={DelEntity}
+              MotifyEntity={MotifyEntity}
+              AddEntity={AddEntity}
               PropEditorRenderer={PropertiesEditor}
             />
           </Grid>

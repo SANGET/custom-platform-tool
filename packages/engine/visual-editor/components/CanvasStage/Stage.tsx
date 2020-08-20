@@ -52,6 +52,10 @@ export interface CanvasStageProps {
   updateEntityState: Dispatcher['UpdateEntityState']
   /** 初始化实例的回调 */
   initEntityState: Dispatcher['InitEntityState']
+  SetLayoutInfo: Dispatcher['SetLayoutInfo']
+  DelEntity: Dispatcher['DelEntity']
+  MotifyEntity: Dispatcher['MotifyEntity']
+  AddEntity: Dispatcher['AddEntity']
   /** 选中的组件实例 */
   selectedEntities: SelectEntityState
   /** 组件实例的状态集合 */
@@ -63,9 +67,9 @@ export interface CanvasStageProps {
 /**
  * 中央舞台组件
  */
-class CanvasStageClass extends React.Component<CanvasStageProps & {
+class CanvasStage extends React.Component<CanvasStageProps & {
   layoutNodeInfo: LayoutInfoActionReducerState
-  layoutInfoDispatcher: React.Dispatch<LayoutInfoActionReducerAction>
+  // layoutInfoDispatcher: React.Dispatch<LayoutInfoActionReducerAction>
 }> {
   /** 用于记录最后拖拽的实例的 idx */
   lastMoveIdx!: number | undefined
@@ -97,7 +101,6 @@ class CanvasStageClass extends React.Component<CanvasStageProps & {
   dropDispatcher = (componentClass, dropCtx?: DnDContext) => {
     const {
       layoutNodeInfo,
-      layoutInfoDispatcher,
       selectEntity
     } = this.props;
     const { id: parentID = null, idx } = dropCtx || {};
@@ -137,22 +140,11 @@ class CanvasStageClass extends React.Component<CanvasStageProps & {
   };
 
   addElement = (entity, idx) => {
-    this.props.layoutInfoDispatcher({
-      type: 'add',
-      entity,
-      idx
-    });
+    this.props.AddEntity(entity, idx);
   }
 
   deleteElement = (event, { idx, entity }) => {
-    const {
-      layoutInfoDispatcher,
-    } = this.props;
-
-    layoutInfoDispatcher({
-      type: 'del',
-      entityIdx: idx
-    });
+    this.props.DelEntity(idx);
   };
 
   /**
@@ -171,7 +163,7 @@ class CanvasStageClass extends React.Component<CanvasStageProps & {
   onMove = (dragIndex, hoverIndex, dragItem) => {
     const {
       layoutNodeInfo,
-      layoutInfoDispatcher,
+      SetLayoutInfo,
     } = this.props;
     let dragEntity = layoutNodeInfo[dragIndex];
     let removeItem = false;
@@ -189,10 +181,7 @@ class CanvasStageClass extends React.Component<CanvasStageProps & {
     });
     /** 将最后的实例 idx 存储下来 */
     this.lastMoveIdx = hoverIndex;
-    layoutInfoDispatcher({
-      type: 'set',
-      state: nextState,
-    });
+    SetLayoutInfo(nextState);
   }
 
   /**
@@ -305,18 +294,18 @@ class CanvasStageClass extends React.Component<CanvasStageProps & {
   }
 }
 
-const CanvasStage: React.FC<CanvasStageProps> = (props) => {
-  const [
-    layoutNodeInfo, layoutInfoDispatcher
-  ] = useReducer(layoutInfoReducer, []);
+// const CanvasStage: React.FC<CanvasStageProps> = (props) => {
+//   const [
+//     layoutNodeInfo, layoutInfoDispatcher
+//   ] = useReducer(layoutInfoReducer, []);
 
-  return (
-    <CanvasStageClass
-      {...props}
-      layoutNodeInfo={layoutNodeInfo}
-      layoutInfoDispatcher={layoutInfoDispatcher}
-    />
-  );
-};
+//   return (
+//     <CanvasStageClass
+//       {...props}
+//       layoutNodeInfo={layoutNodeInfo}
+//       layoutInfoDispatcher={layoutInfoDispatcher}
+//     />
+//   );
+// };
 
 export default CanvasStage;
