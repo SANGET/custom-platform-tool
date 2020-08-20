@@ -95,6 +95,9 @@ const List = (props) => {
         onClick: (row) => {
           setVisible(true);
           const { id } = row;
+          /**
+          * 复制记录时，数据表名称后面要加五位随机数
+          */
           const copyName = `${row.name}_副本_${randomNum(10000, 99999)}`;
           form.setFieldsValue({ id, code: PinYin.getCamelChars(copyName), name: copyName });
         }

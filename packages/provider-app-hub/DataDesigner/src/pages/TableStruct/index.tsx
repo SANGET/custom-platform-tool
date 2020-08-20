@@ -147,7 +147,7 @@ const TableStruct: FC = () => {
       /**  long 否 模块主键 */
       moduleId: '',
       /**  String 否 表类型normalTable(普通表)tree(树形表)auxTable(附属表) */
-      type: '',
+      type: [''],
       /**  int 是 分页查询起始位置,从0开始 */
       offset: 0,
       /**  int 是 每页查询记录数 */
@@ -249,25 +249,27 @@ const TableStruct: FC = () => {
           /**
            * 与后端协商,只提交页面上有的字段,没有的不传
            */
-          const { mainTableCode, maxLevel, type } = values;
-          /** 附属表,才有auxTable */
+          const formData = { ...values };
+          const { mainTableCode, maxLevel, type } = formData;
+          /** 附属表,才有auxTable属性 */
           if (type === "auxTable") {
-            values.auxTable = {
+            formData.auxTable = {
               mainTableCode
             };
-            delete values.mainTableCode;
+            delete formData.mainTableCode;
           } else if (type === 'tree') {
-            values.treeTable = {
+            /** 树形表,才有maxLevel属性 */
+            formData.treeTable = {
               maxLevel
             };
-            delete values.maxLevel;
+            delete formData.maxLevel;
           }
           /** 用户新增数据类型都是业务类型 */
-          values.species = "BIS";
+          formData.species = "BIS";
 
-          console.log(values);
+          console.log(formData);
           /** 新建表数据提交 */
-          Http.post('/data/v1/tables/', values).then(() => {
+          Http.post('/data/v1/tables/', formData).then(() => {
             Msg.success('操作成功');
             queryList();
             /** 关闭弹窗 */
@@ -358,7 +360,7 @@ const TableStruct: FC = () => {
                   /**
                    * 列表查询,页码从0开始
                    */
-                  queryList({ type, name, offset: 0 });
+                  queryList({ type: [type], name, offset: 0 });
                 });
             }
           },

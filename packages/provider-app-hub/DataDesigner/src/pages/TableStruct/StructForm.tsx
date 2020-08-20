@@ -23,7 +23,7 @@ PinYin.setOptions({
 });
 
 const StructForm = ({
-  form, treeData, ...rest
+  form, treeData, queryList, ...rest
 }) => {
   // console.log({ treeData});
   /** 树形属性配置 */
@@ -143,7 +143,10 @@ const StructForm = ({
       },
       compAttr: {
         type: 'Input',
-        placeholder: '请输入主表'
+        placeholder: '请输入主表',
+        onFocus: () => {
+          console.log({});
+        }
       }
     },
     moduleId: {
