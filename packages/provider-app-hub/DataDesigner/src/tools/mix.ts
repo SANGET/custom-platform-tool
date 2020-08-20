@@ -1,7 +1,7 @@
 /*
  * @Author: wph
  * @Date: 2020-08-15 16:01:41
- * @LastEditTime: 2020-08-20 11:04:47
+ * @LastEditTime: 2020-08-20 11:36:25
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: \custom-platform-v3-frontend\packages\provider-app-hub\DataDesigner\src\tools\mix.ts
@@ -62,12 +62,11 @@ export const getModalConfig = (config) => {
 export function randomNum(minNum:number, maxNum:number) {
   switch (arguments.length) {
     case 1:
-      return parseInt(Math.random() * minNum + 1, 10);
+      return parseInt(`${Math.random() * minNum + 1}`, 10);
     case 2:
-      return parseInt(Math.random() * (maxNum - minNum + 1) + minNum, 10);
+      return parseInt(`${Math.random() * (maxNum - minNum + 1) + minNum}`, 10);
     default:
       return 0;
-      break;
   }
 }
 
