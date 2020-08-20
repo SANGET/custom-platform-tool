@@ -1,5 +1,0 @@
-const propsCollection = {};
-
-const registerProps = () => {
-
-};

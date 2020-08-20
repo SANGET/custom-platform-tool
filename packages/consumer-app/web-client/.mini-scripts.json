@@ -1,7 +1,0 @@
-{
-  "srcDir": "src",
-  "appIndexJs": "app",
-  "appBuildDir": "build",
-  "appHtml": "public/index.html",
-  "deployHtml": "public/deploy.html"
-}
