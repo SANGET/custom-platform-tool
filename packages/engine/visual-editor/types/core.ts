@@ -22,45 +22,19 @@ export interface ComponentBindPropsConfig {
 export interface EditorBasicElementClass<C> {
   /** 组件类型 id */
   id: string
-  /** 父级 ID */
-  parentID?: string
-  /** 实例 ID */
-  entityID?: string
+  // /** 父级 ID */
+  // parentID?: string
+  // /** 实例 ID */
+  // entityID?: string
   /** 组件类面板的显示名 */
   label: string;
+  /** 组件类面板的显示名 */
+  desc?: string;
   /** 绑定可编辑的属性 */
   bindProps: ComponentBindPropsConfig
   /** 元素的组件类型 */
   component: C
 }
-
-/**
- * 容器组件类
- */
-// export interface EditorContainerClass<C> extends EditorBasicElementClass<C> {
-//   /** 容器组件 */
-//   type: 'container'
-//   /** 组件类型 */
-//   component?: C
-//   /** 布局容器特有的类型 */
-//   layout: {
-//     type: 'flex'
-//     props: {
-//       justifyContent
-//       justifyItems
-//     }
-//   }
-// }
-
-// /**
-//  * 一般组件类
-//  */
-// export interface EditorCompClass<C> extends EditorBasicElementClass {
-//   /** 一般组件 */
-//   type: 'component'
-//   /** 组件类型 */
-//   component: C
-// }
 
 /**
  * 可拖动的组件的 class
@@ -81,7 +55,7 @@ export interface EditorPropertyItem {
   id: string
   /** 显示的 label */
   label: string
-  /** 属性的类型 */
+  /** 用于定位组件实例的属性，例如 entity[propType] */
   type: string
   /** 属性作用于组件实例的某种属性 */
   target: string
@@ -135,8 +109,8 @@ export interface EditorEntityState {
   propOriginState?: {
     [stateID: string]: EditorEntityStateItem
   }
-  /** 绑定的页面内唯一数据 ID */
-  dataID?: string
+  // /** 绑定的页面内唯一数据 ID */
+  // dataID?: string
   /** 样式 */
   style?: React.CSSProperties
 }
@@ -179,7 +153,7 @@ export interface EditorPageEntity {
 }
 
 /**
- * 组件实例
+ * 组件实例信息
  */
 export interface EditorComponentEntity extends EditorComponentClass {
   /** 实例 id */

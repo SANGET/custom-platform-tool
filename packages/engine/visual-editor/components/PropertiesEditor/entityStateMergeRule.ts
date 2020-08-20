@@ -68,7 +68,7 @@ export const entityStateMergeRule: EntityStateMergeRule = (
         }
       }),
       style: Object.assign({}, srcEntityState.style, getStyle(entityStateItemParams)),
-      dataID: srcEntityStateCopy.dataID ? srcEntityStateCopy.dataID : increaseID()
+      // dataID: srcEntityStateCopy.dataID ? srcEntityStateCopy.dataID : increaseID()
     }, mergeGeneralProp(entityStateItemParams));
 
   return resState;

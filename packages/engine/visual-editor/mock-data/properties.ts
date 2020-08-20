@@ -39,9 +39,6 @@ export const propertiesItemCollection: EditorPropertyItemsCollection = {
     return {
       id: 'prop-flex-config-1',
       label: '列数量',
-      /**
-       * 用于定位属性类型
-       */
       type: 'style',
       target: 'color',
       component: {
