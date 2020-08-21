@@ -41,6 +41,7 @@ import REG from '@provider-app/data-designer/src/tools/reg';
 * 模态框默认配置
 */
 import { getModalConfig } from '@provider-app/data-designer/src/tools/mix';
+import Http, { Msg } from '@infra/utils/http';
 
 /**
  * 表字段组件
@@ -220,7 +221,17 @@ const TableField = (props) => {
   /** 用key,过滤掉这一行数据 */
   /** 要用store缓存起来,刷新页面时，可以恢复数据 */
   /** 页面销毁时,要清楚所有的localStorage中的内容 */
-    setFieldTableData(fieldTableData.filter((item) => item.key !== key));
+
+    Http.delete(`/smart_building/data/v1/tables/column/allowedDeleted/${key}`).then((res) => {
+      /**
+       * true 存在与页面控件相互绑定,false没有与页面控件相互绑定
+       */
+      if (res.data.result) {
+        Msg.error('该字段与页面控件相绑定，不能删除');
+      } else {
+        setFieldTableData(fieldTableData.filter((item) => item.key !== key));
+      }
+    });
   };
 
   /**

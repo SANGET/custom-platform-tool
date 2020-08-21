@@ -18,8 +18,9 @@ import TableHeadMenu from '@provider-app/data-designer/src/bizComps/TableHeadMen
 
 import { Connector } from '@provider-app/data-designer/src/connector';
 
-import { getModalConfig } from '../../tools/mix';
-import DictForm from './DictForm';
+import { getModalConfig } from '@provider-app/data-designer/src/tools/mix';
+import { formatGMT } from '@provider-app/data-designer/src/tools/format';
+import DictForm from '@provider-app/data-designer/src/pages/DictManage/DictForm';
 
 const DictManage = () => {
   const [pager, setPager] = useState({ page: 1, pageSize: 10 });
@@ -47,11 +48,33 @@ const DictManage = () => {
     {
       text: '编辑',
       onClick: (row) => {
+        /**
+        * 获取详情
+        */
         getDetail({
           id: row.id,
           cb: (data) => {
-            data.name = 'test';
-            submitData(data);
+            getSubDictDetail({
+              dictionaryId: data.id,
+              pid: data.items[0].id,
+            });
+            // data.name = 'test';
+            // submitData({ type: 'update', data });
+            // modifySubDict({
+            //   dictionaryId: data.id,
+            //   pid: data.items[0].id,
+            //   items: [{
+            //     code: "zzdxz",
+            //     name: "子字典新增",
+            //     renderBgColor: "#000",
+            //     renderFontColor: "#fff"
+            //   }]
+            // });
+            // delSubDetail({
+            //   dictionaryId: data.id,
+            //   pid: data.items[0].id,
+            //   cb: () => Msg.success('操作成功')
+            // });
           }
         });
         // setFormTitle('编辑字典');
@@ -130,7 +153,13 @@ const DictManage = () => {
     }, args);
     Http.get('/smart_building/data/v1/dictionary/list', { params }).then((res) => {
       // console.log(res.data.result);
-      setTableData(res.data.result.data);
+      const data = res.data.result.data.map((row) => ({
+        ...row,
+        gmtModified: formatGMT(row.gmtModified)
+
+      }));
+
+      setTableData(data);
     });
   };
 
@@ -151,6 +180,10 @@ const DictManage = () => {
   * 新增/修改子字典接口
   */
   const modifySubDict = (data) => {
+    // const reqMethod = {
+    //   add: 'post',
+    //   update: 'put'
+    // }[type];
     /**
     * {
     "dictionaryId":1292652624910360576, // 列表第一行的id
@@ -169,20 +202,21 @@ const DictManage = () => {
     ]
 }
     */
-    Http.put("/smart_building/data/v1/dictionary_value/", { data }).then((res) => {
-      console.log(res);
+    Http.put("/smart_building/data/v1/dictionary_value/", data).then((res) => {
+      // console.log(res);
+      getList();
+      Msg.success('操作成功');
     });
   };
   /**
   * 查询字典项项
   */
-  const getSubDictDetail = (params) => {
-    // {
-    //   dictionaryId
-    //   pid
-    // }
-    Http.get('/smart_building/data/v1/dictionary_value/{dictionaryId}/{pid}', { params }).then((res) => {
+  const getSubDictDetail = (args) => {
+    const { dictionaryId, pid, cb } = args;
+
+    Http.get(`/smart_building/data/v1/dictionary_value/${dictionaryId}/${pid}`).then((res) => {
       console.log(res);
+      cb && cb(res);
     });
   };
   /**
@@ -190,6 +224,8 @@ const DictManage = () => {
   * 删除子字典项
   */
   const delSubDetail = (params) => {
+    const { dictionaryId, pid, cb } = params;
+
     /**
     * 是删除子字典下面的子项,不是删除子字典自身
     */
@@ -198,8 +234,9 @@ const DictManage = () => {
     /**
     * "level"=5时 第5级隐藏配置子项,删除子项按钮
     */
-    Http.delete('/smart_building/data/v1/dictionary_value/{dictionaryId}/{pid}', { params }).then((res) => {
-      console.log(res);
+    Http.delete(`/smart_building/data/v1/dictionary_value/${dictionaryId}/${pid}`).then((res) => {
+      cb && cb(res);
+      // console.log(res);
     });
   };
 
@@ -215,30 +252,30 @@ const DictManage = () => {
       {
         text: '新建',
         onClick: () => {
-          submitData({
-            type: 'add',
-            data: {
-              name: `性别-${new Date().getTime()}`,
-              description: "性别,男1女0",
-              items: [
-                {
-                  code: "0",
-                  name: "女",
-                  renderBgColor: "#fff",
-                  renderFontColor: "#fff"
-                },
-                {
-                  code: "1",
-                  name: "男",
-                  renderBgColor: "#fff",
-                  renderFontColor: "#fff"
-                }
-              ]
-            }
-          });
+          // submitData({
+          //   type: 'add',
+          //   data: {
+          //     name: `性别-${new Date().getTime()}`,
+          //     description: "性别,男1女0",
+          //     items: [
+          //       {
+          //         code: "0",
+          //         name: "女",
+          //         renderBgColor: "#fff",
+          //         renderFontColor: "#fff"
+          //       },
+          //       {
+          //         code: "1",
+          //         name: "男",
+          //         renderBgColor: "#fff",
+          //         renderFontColor: "#fff"
+          //       }
+          //     ]
+          //   }
+          // });
 
-          // setFormTitle('新增字典');
-          // setVisiable(true);
+          setFormTitle('新增字典');
+          setVisiable(true);
         }
       },
       { text: '导入', onClick: () => {} },
@@ -339,6 +376,7 @@ const DictManage = () => {
           return `共 ${total} 条`;
         }),
         onChange: (page, pageSize) => {
+          getList({ offset: page - 1, size: pageSize });
           setPager({ page, pageSize });
         }
       }}

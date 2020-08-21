@@ -10,6 +10,8 @@ import BasicColorPicker from '@provider-app/data-designer/src/components/BasicCo
 import BasicEditTable, { renderOperCol } from '@provider-app/data-designer/src/components/BasicEditTable';
 import { PlusOutlined, MinusOutlined } from '@ant-design/icons';
 
+import { TableForm } from '@provider-app/data-designer/src/bizComps/TableForm';
+
 /** 基础表单组件 */
 import BasicForm from '@provider-app/data-designer/src/components/BasicForm';
 /**
@@ -315,58 +317,59 @@ const DictForm = (props) => {
         }
       }
     },
-    listItems: {
-      name: {
-        /** 表单项属性 */
-        itemAttr: {
-          rules: [
-            { required: true, message: '请输入名称!' },
-            { pattern: /^[\u4e00-\u9fa5_a-zA-Z0-9()]+$/, message: '输入字段可以为中文、英文、数字、下划线、括号' },
-            { max: 64, message: '最多只能输入64个字符' },
-          ],
-        },
-        /** 表单项包裹组件属性 */
-        compAttr: {
-          type: 'Input',
-          placeholder: '请输入字典项名称',
-          onChange: (e) => {
-          }
-        }
-      },
-      code: {
-        /** 表单项属性 */
-        itemAttr: {
-          rules: [
-            { required: true, message: '请输入字典项编码!' },
-          ]
-        },
-        /** 表单项包裹组件属性 */
-        compAttr: {
-          type: 'Input',
-          placeholder: '请输入字典项编码',
-          onChange: (e) => {
-          }
-        }
-      },
-      renderColor: {
-        /** 表单项属性 */
-        itemAttr: {
-        },
-        /** 表单项包裹组件属性 */
-        compAttr: {
-          type: 'Input',
-          placeholder: '请选择字体和背景颜色',
-          onChange: (e) => {
-          }
-        }
-      }
-    }
+    // listItems: {
+    //   name: {
+    //     /** 表单项属性 */
+    //     itemAttr: {
+    //       rules: [
+    //         { required: true, message: '请输入名称!' },
+    //         { pattern: /^[\u4e00-\u9fa5_a-zA-Z0-9()]+$/, message: '输入字段可以为中文、英文、数字、下划线、括号' },
+    //         { max: 64, message: '最多只能输入64个字符' },
+    //       ],
+    //     },
+    //     /** 表单项包裹组件属性 */
+    //     compAttr: {
+    //       type: 'Input',
+    //       placeholder: '请输入字典项名称',
+    //       onChange: (e) => {
+    //       }
+    //     }
+    //   },
+    //   code: {
+    //     /** 表单项属性 */
+    //     itemAttr: {
+    //       rules: [
+    //         { required: true, message: '请输入字典项编码!' },
+    //       ]
+    //     },
+    //     /** 表单项包裹组件属性 */
+    //     compAttr: {
+    //       type: 'Input',
+    //       placeholder: '请输入字典项编码',
+    //       onChange: (e) => {
+    //       }
+    //     }
+    //   },
+    //   renderColor: {
+    //     /** 表单项属性 */
+    //     itemAttr: {
+    //     },
+    //     /** 表单项包裹组件属性 */
+    //     compAttr: {
+    //       type: 'Input',
+    //       placeholder: '请选择字体和背景颜色',
+    //       onChange: (e) => {
+    //       }
+    //     }
+    //   }
+    // }
   };
 
   return (<>
 
     {/* <Input onFocus={() => { openColorPicker(); }}/> */}
     <BasicForm {...formProps}/>
+    {/* <TableForm /> */}
     {/* <BasicEditTable {...editTableProps} /> */}
     <BasicColorPicker {...colorProps} />
   </>);

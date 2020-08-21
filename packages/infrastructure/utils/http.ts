@@ -1,7 +1,7 @@
 /*
  * @Author: your name
  * @Date: 2020-07-22 09:23:52
- * @LastEditTime: 2020-08-20 20:12:41
+ * @LastEditTime: 2020-08-21 11:37:26
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: \custom-platform-v3-frontend\packages\infrastructure\utils\http.ts
@@ -24,12 +24,15 @@ const Http = axios.create({
   /** withCredentials 表示请求跨域时是否带上cookie */
   withCredentials: true,
   headers: {
-    get: {
-      'Content-Type': 'application/x-www-form-urlencoded'
-    },
-    post: {
-      'Content-Type': 'application/json;charset=UTF-8'
-    }
+    // get: {
+    //   'Content-Type': 'application/x-www-form-urlencoded'
+    // },
+    // post: {
+    /**
+    * 后端返回的数据是json格式
+    */
+    'Content-Type': 'application/json;charset=UTF-8'
+    // }
   },
   /** 默认返回数据格式设置为json */
   responseType: 'json',

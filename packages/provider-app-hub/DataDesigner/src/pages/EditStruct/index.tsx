@@ -30,6 +30,80 @@ const { CheckableTag } = Tag;
 
 const { TabPane } = Tabs;
 
+const mockData = {
+  createdUserName: null,
+  modifiedUserName: null,
+  id: "1295910116473839616",
+  name: "测试人员",
+  code: "CSRY",
+  type: "tree",
+  moduleId: "1295970297744334848",
+  moduleName: "人员管理",
+  species: "BIS",
+  labels: null,
+  description: "111",
+  gmtCreate: "2020-08-19T10:27:03.363",
+  modifiedBy: "1295915065878388737",
+  gmtModified: "2020-08-19T10:27:03.363",
+  auxTable: null,
+  treeTable: { maxLevel: 5, createdBy: null, modifiedBy: null },
+  sqlView: null,
+  columns: [{
+    id: "1295910116574502913", name: "最后修改时间", code: "last_update_time", fieldType: "DATE", fieldSize: null, dataType: "NORMAL", species: "SYS", decimalSize: null, sequence: null, fieldProperty: { required: "true" }, dictionaryForeign: null, createdBy: null, modifiedBy: null
+  }, {
+    id: "1295910116578697217", name: "排序序号", code: "sequence", fieldType: "INT", fieldSize: 11, dataType: "NORMAL", species: "SYS", decimalSize: null, sequence: null, fieldProperty: { required: "true", unique: "true" }, dictionaryForeign: null, createdBy: null, modifiedBy: null
+  }, {
+    id: "1295910116578697220", name: "名称", code: "path", fieldType: "VARCHAR", fieldSize: 256, dataType: "NORMAL", species: "BIS", decimalSize: null, sequence: null, fieldProperty: {}, dictionaryForeign: null, createdBy: null, modifiedBy: null
+  }, {
+    id: "1295910116578697223", name: "最后修改人", code: "last_update_user", fieldType: "BIGINT", fieldSize: null, dataType: "NORMAL", species: "SYS", decimalSize: null, sequence: null, fieldProperty: { required: "true" }, dictionaryForeign: null, createdBy: null, modifiedBy: null
+  }, {
+    id: "1295910116578697221", name: "创建时间", code: "create_time", fieldType: "DATE", fieldSize: null, dataType: "NORMAL", species: "SYS", decimalSize: null, sequence: null, fieldProperty: { required: "true" }, dictionaryForeign: null, createdBy: null, modifiedBy: null
+  }, {
+    id: "1295910116578697225", name: "数据版本", code: "data_version", fieldType: "VARCHAR", fieldSize: 32, dataType: "NORMAL", species: "SYS", decimalSize: null, sequence: null, fieldProperty: { required: "true" }, dictionaryForeign: null, createdBy: null, modifiedBy: null
+  }, {
+    id: "1295910116578697227", name: "层级", code: "level", fieldType: "INT", fieldSize: 3, dataType: "NORMAL", species: "BIS", decimalSize: null, sequence: null, fieldProperty: { required: "true" }, dictionaryForeign: null, createdBy: null, modifiedBy: null
+  }, {
+    id: "1295910116578697229", name: "父节点", code: "pid", fieldType: "BIGINT", fieldSize: null, dataType: "QUOTE", species: "BIS", decimalSize: null, sequence: null, fieldProperty: {}, dictionaryForeign: null, createdBy: null, modifiedBy: null
+  }, {
+    id: "1295910116582891523", name: "创建人", code: "create_user", fieldType: "VARCHAR", fieldSize: 32, dataType: "NORMAL", species: "SYS", decimalSize: null, sequence: null, fieldProperty: { required: "true" }, dictionaryForeign: null, createdBy: null, modifiedBy: null
+  }, {
+    id: "1295910116582891520", name: "主键", code: "id", fieldType: "BIGINT", fieldSize: null, dataType: "PK", species: "SYS", decimalSize: null, sequence: null, fieldProperty: { required: "true", unique: "true" }, dictionaryForeign: null, createdBy: null, modifiedBy: null
+  },
+  {
+    name: "测试A", code: "CSA", fieldType: "BIGINT", fieldSize: null, dataType: "FK", species: "BIS", decimalSize: null, sequence: 10, fieldProperty: { required: "true", unique: "true" }, dictionaryForeign: null, createdBy: null, modifiedBy: null
+  }
+  ],
+  references: [{
+    id: "1295910116532559872", fieldName: "父节点", fieldCode: "pid", refTableCode: "CSRY", refFieldCode: "id", refDisplayFieldCode: "id", sequence: 2, createdBy: null, modifiedBy: null
+  },
+  {
+    fieldName: "最后修改人",
+    fieldCode: "last_update_user",
+    refTableCode: "shuxingbiao",
+    refFieldCode: "pid",
+    refDisplayFieldCode: "path",
+    sequence: 1,
+    createdBy: null,
+    modifiedBy: null
+  }
+  ],
+  foreignKeys: [
+    {
+      sequence: 1,
+      fieldCode: "CSA",
+      refTableCode: "shuxingbiao",
+      refFieldCode: "pid",
+      refDisplayFieldCode: "path",
+      deleteStrategy: "CASCADE",
+      updateStrategy: "CASCADE"
+    }
+  ],
+  comboUniques: null,
+  indexes: null,
+  tableJoinFactor: null,
+  relationTables: [],
+  createdBy: null
+};
 /**
  * 数据表名称 数据表编码 表类型 归属模块
  */
@@ -163,108 +237,108 @@ const EditStruct = (props) => {
     {
       text: '保存',
       onClick: () => {
-        Http.put('http://{ip}:{port}/paas/ {lesseeCode}/{applicationCode}/smart_building/data/v1/tables/').then((res) => {
-          const submitData = {
-          /** 是 表主键 */
-            id: '',
-            /** 是 数据表名称  */
-            name: '',
-            /** 是数据表编码 */
-            code: '',
-            /** 否表类型normalTable(普通表)tree(树形表)auxTable(附属表) */
-            type: '',
-            /** 是-归属模块，对应菜单模块主键 */
-            moduleId: '',
-            /** 否-业务字段类型，SYS(系统元数据)BIS(业务元数据)，用户填写的表默认BIS即可 */
-            species: '',
-            /** 否-备注 */
-            description: '',
-            /** 否-附属表对象,如果表类型是附属表，则必填 */
-            auxTable: {
-              /** 是-主表表名 */
-              mainTableCode: '',
-            },
-            /** 否-树型表对象,如果表类型是树型表，则必填 */
-            treeTable: {
-              /** 是-最大层级数 */
-              maxLevel: '',
-            },
-            /** 否-引用表对象集合 */
-            references: [{
-              /**  long 否 引用主键 */
-              id: '',
-              /**  String 是 字段编码 */
-              fieldCode: '',
-              /**  String 是 关联表 */
-              refTableCode: '',
-              /**  String 是 关联字段 */
-              refFieldCode: '',
-              /**  String 是 显示字段 */
-              refDisplayFieldCode: '',
-              /**  int */
-              sequence: ''
-            }],
-            /** 否-外键对象集合 */
-            foreignKeys: [{
-              /**  long 否 主键 */
-              id: '',
-              /** String 是 字段编码 */
-              fieldCode: '',
-              /**  String 是 关联表 */
-              refTableCode: '',
-              /**  String 是 关联字段 */
-              refFieldCode: '',
-              /**  String 是 显示字段 */
-              refDisplayFieldCode: '',
-              /**  int 是 排序号 */
-              sequence: '',
-              /**  String 是 外键约束（删除时）,RESTRICT(存在关联不允许操作)CASCADE(级联)SET_NULL(置空)NO_ACTION(不处理) */
-              deleteStrategy: '',
-              /**  String 是 外键约束（更新时）,RESTRICT(存在关联不允许操作)CASCADE(级联)SET_NULL(置空)NO_ACTION(不处理) */
-              updateStrategy: '',
-            }],
-            /** 否-列对象集合 */
-            columns: [{
-              /**  long 否 列主键 */
-              id: '',
-              /**  String 是 字段名称 */
-              name: '',
-              /**  String 是 字段编码 */
-              code: '',
-              /**  String 是 字段类型fieldType只能输入VARCHAR(字符串)INT(整型)TIME(时间)DATE(日期时间)TEXT(超大文本) */
-              fieldType: '',
-              // int 否 字段长度
-              fieldSize: '',
-              //  String 是 数据类型,NORMAL(普通字段)PK(主键字段)QUOTE(引用字段)DICT(字典字段)FK(外键字段)
-              dataType: '',
-              //  String 否 业务字段类型，SYS(系统元数据)BIS(业务元数据)，用户填写的表默认BIS即可
-              species: '',
-              //  int 否 小数位
-              decimalSize: '',
-              /**  int 否 排序号 */
-              sequence: '',
-              /**  Map 否 属性对象,key为列的页面属性，value为对应的属性值 */
-              fieldProperty: {
-                /**  必填,值true是，false否 */
-                required: '',
-                /**  唯一,值true是，false否 */
-                unique: '',
-                /**  装换成拼音,值true是，false否 */
-                pinyinConvent: '',
-                /**  校验规则 */
-                regular: '',
-              },
-              /**  DictionaryForeignVO 否 字典对象 */
-              dictionaryForeign: {
-                /** String 是 字典表名 */
-                refTableCode: '',
-                /** String 是 字典保存字段,写死code值 */
-                refFieldCode: '',
-                /**  String 是 字典显示字段,写死name值 */
-                refDisplayFieldCode: '',
-              }
-            }]
-          };
+        Http.put('/smart_building/data/v1/tables/', mockData).then((res) => {
+          // const submitData = {
+          // /** 是 表主键 */
+          //   id: '',
+          //   /** 是 数据表名称  */
+          //   name: '',
+          //   /** 是数据表编码 */
+          //   code: '',
+          //   /** 否表类型normalTable(普通表)tree(树形表)auxTable(附属表) */
+          //   type: '',
+          //   /** 是-归属模块，对应菜单模块主键 */
+          //   moduleId: '',
+          //   /** 否-业务字段类型，SYS(系统元数据)BIS(业务元数据)，用户填写的表默认BIS即可 */
+          //   species: '',
+          //   /** 否-备注 */
+          //   description: '',
+          //   /** 否-附属表对象,如果表类型是附属表，则必填 */
+          //   auxTable: {
+          //     /** 是-主表表名 */
+          //     mainTableCode: '',
+          //   },
+          //   /** 否-树型表对象,如果表类型是树型表，则必填 */
+          //   treeTable: {
+          //     /** 是-最大层级数 */
+          //     maxLevel: '',
+          //   },
+          //   /** 否-引用表对象集合 */
+          //   references: [{
+          //     /**  long 否 引用主键 */
+          //     id: '',
+          //     /**  String 是 字段编码 */
+          //     fieldCode: '',
+          //     /**  String 是 关联表 */
+          //     refTableCode: '',
+          //     /**  String 是 关联字段 */
+          //     refFieldCode: '',
+          //     /**  String 是 显示字段 */
+          //     refDisplayFieldCode: '',
+          //     /**  int */
+          //     sequence: ''
+          //   }],
+          //   /** 否-外键对象集合 */
+          //   foreignKeys: [{
+          //     /**  long 否 主键 */
+          //     id: '',
+          //     /** String 是 字段编码 */
+          //     fieldCode: '',
+          //     /**  String 是 关联表 */
+          //     refTableCode: '',
+          //     /**  String 是 关联字段 */
+          //     refFieldCode: '',
+          //     /**  String 是 显示字段 */
+          //     refDisplayFieldCode: '',
+          //     /**  int 是 排序号 */
+          //     sequence: '',
+          //     /**  String 是 外键约束（删除时）,RESTRICT(存在关联不允许操作)CASCADE(级联)SET_NULL(置空)NO_ACTION(不处理) */
+          //     deleteStrategy: '',
+          //     /**  String 是 外键约束（更新时）,RESTRICT(存在关联不允许操作)CASCADE(级联)SET_NULL(置空)NO_ACTION(不处理) */
+          //     updateStrategy: '',
+          //   }],
+          //   /** 否-列对象集合 */
+          //   columns: [{
+          //     /**  long 否 列主键 */
+          //     id: '',
+          //     /**  String 是 字段名称 */
+          //     name: '',
+          //     /**  String 是 字段编码 */
+          //     code: '',
+          //     /**  String 是 字段类型fieldType只能输入VARCHAR(字符串)INT(整型)TIME(时间)DATE(日期时间)TEXT(超大文本) */
+          //     fieldType: '',
+          //     // int 否 字段长度
+          //     fieldSize: '',
+          //     //  String 是 数据类型,NORMAL(普通字段)PK(主键字段)QUOTE(引用字段)DICT(字典字段)FK(外键字段)
+          //     dataType: '',
+          //     //  String 否 业务字段类型，SYS(系统元数据)BIS(业务元数据)，用户填写的表默认BIS即可
+          //     species: '',
+          //     //  int 否 小数位
+          //     decimalSize: '',
+          //     /**  int 否 排序号 */
+          //     sequence: '',
+          //     /**  Map 否 属性对象,key为列的页面属性，value为对应的属性值 */
+          //     fieldProperty: {
+          //       /**  必填,值true是，false否 */
+          //       required: '',
+          //       /**  唯一,值true是，false否 */
+          //       unique: '',
+          //       /**  装换成拼音,值true是，false否 */
+          //       pinyinConvent: '',
+          //       /**  校验规则 */
+          //       regular: '',
+          //     },
+          //     /**  DictionaryForeignVO 否 字典对象 */
+          //     dictionaryForeign: {
+          //       /** String 是 字典表名 */
+          //       refTableCode: '',
+          //       /** String 是 字典保存字段,写死code值 */
+          //       refFieldCode: '',
+          //       /**  String 是 字典显示字段,写死name值 */
+          //       refDisplayFieldCode: '',
+          //     }
+          //   }]
+          // };
 
           // console.log();
         });
