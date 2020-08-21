@@ -13,6 +13,8 @@ import { Modal, Form } from 'antd';
 /** 网络请求工具 */
 import Http, { Msg } from '@infra/utils/http';
 
+import { Connector } from '@provider-app/data-designer/src/connector';
+
 /** 状态管理方法 */
 import { useMappedState, useDispatch } from 'redux-react-hook';
 
@@ -47,7 +49,6 @@ import List from './List';
 
 /** 当前功能页样式 */
 import './TableStruct.less';
-import { Connector } from '@provider-app/data-designer/src/connector';
 
 /** 给你一些使用react hook的理由  */
 /** 理由一： hook使你无需更改页面结构,也能在不同的组件间复用状态,为了在组件间复用状态,providers,consumers,render Props、高阶组件这类方案需要更改页面结构
@@ -105,7 +106,17 @@ import { Connector } from '@provider-app/data-designer/src/connector';
 高维护性，维护表单，只需要维护配置数据。
  */
 
-const TableStruct: FC = () => {
+const TableStruct = () => {
+  // http:// 10.7.1.59:8080/paas/hy/manage/v1/users/login
+  // /smart_building
+
+  Http.defaults.headers.common.Authorization = '1295915065878388737';
+  // const res = await Http.post('/manage/v1/users/login', {
+  //   loginName: "hy",
+  //   password: "123456"
+  // });
+  // Http.defaults.headers.common.Authorization = res.data.result.loginSuccessInfo.token;
+
   // 定义一个 mapState函数
   const mapState = useCallback(
     (state) => ({
@@ -131,13 +142,10 @@ const TableStruct: FC = () => {
   */
 
   /**
-   * 表结构列表查询
-   * @param treeData-菜单树,用于菜单id转文字
-   * @param TableTypeEnum-表类型枚举,用于表类型转文字
-   * @param formatGMT-gmt时间格式转yyyy-MM-dd hh:mm:ss
    *
+   * @param args
    */
-  const queryList = async (args = {}) => {
+  const getList = async (args = {}) => {
     /**
      * 与产品约定,左侧树查询不考虑右侧列表查询条件,右侧列表查询要带上左侧查询条件,点击了搜索按钮之后才查询
      */
@@ -147,7 +155,7 @@ const TableStruct: FC = () => {
       /**  long 否 模块主键 */
       moduleId: '',
       /**  String 否 表类型normalTable(普通表)tree(树形表)auxTable(附属表) */
-      type: [''],
+      type: ['primaryTable', 'tree', 'auxTable'],
       /**  int 是 分页查询起始位置,从0开始 */
       offset: 0,
       /**  int 是 每页查询记录数 */
@@ -155,12 +163,21 @@ const TableStruct: FC = () => {
     }, args);
     /** 请求表结构列表数据 */
     // const tableRes = await Http.get('http://localhost:60001/mock/structList.json', { params });
-    const tableRes = await Http.get('/data/v1/tables/list', { params });
-
+    return await Http.get('/smart_building/data/v1/tables/list', { params });
+  };
+  /**
+   * 表结构列表查询
+   * @param treeData-菜单树,用于菜单id转文字
+   * @param TableTypeEnum-表类型枚举,用于表类型转文字
+   * @param formatGMT-gmt时间格式转yyyy-MM-dd hh:mm:ss
+   *
+   */
+  const queryList = async (args = {}) => {
     // console.log({ tableRes });
-
+    const tableRes = await getList(args);
     /** 表格数据格式转换-注意setStructTableData之后不能立刻获取最新值 */
-    const tableData = tableRes.data.result.data.map((col) => {
+    const tableData = tableRes.data.result.data.map((row) => {
+      const col = { ...row };
       /** 根据T点的key查找节点完整信息 */
       /** 返回节点的名称 */
       col.moduleId = treeQuery(treeData, col.moduleId).title;
@@ -178,6 +195,18 @@ const TableStruct: FC = () => {
     // console.log({ structTableData });
     // setTableData(structTableData);
     setStructTableData(tableData);
+  };
+  /**
+   * 获取主表列表枚举
+   */
+  const getTableEnum = async () => {
+    const tableRes = await getList({ type: ['primaryTable', 'tree', 'auxTable'] }) || [];
+    return tableRes.data.result.data.map((row) => {
+      return {
+        text: row.name,
+        value: row.code
+      };
+    });
   };
 
   const getPageData = async () => {
@@ -269,7 +298,7 @@ const TableStruct: FC = () => {
 
           console.log(formData);
           /** 新建表数据提交 */
-          Http.post('/data/v1/tables/', formData).then(() => {
+          Http.post('/smart_building/data/v1/tables/', formData).then(() => {
             Msg.success('操作成功');
             queryList();
             /** 关闭弹窗 */
@@ -292,6 +321,7 @@ const TableStruct: FC = () => {
   /** 新建表表单属性 */
   const formProps = {
     form,
+    PrimayTableEnum: getTableEnum(),
     treeData,
   };
 

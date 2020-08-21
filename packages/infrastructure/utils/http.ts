@@ -1,12 +1,13 @@
 /*
  * @Author: your name
  * @Date: 2020-07-22 09:23:52
- * @LastEditTime: 2020-08-19 18:02:12
+ * @LastEditTime: 2020-08-20 20:12:41
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: \custom-platform-v3-frontend\packages\infrastructure\utils\http.ts
  */
 import axios from 'axios';
+import Qs from 'qs';
 import {
   resHandler, errHandler, Msg
 } from './http.tool';
@@ -47,8 +48,13 @@ const Http = axios.create({
     // 对 data 进行任意转换处理
     return data;
   }],
+  paramsSerializer(params) {
+    return Qs.stringify(params, { arrayFormat: 'repeat' });
+  }
 
 });
+
+Http.defaults.headers.common.Authorization = '1295915065878388737';
 
 export const beforeEach = Http.interceptors.request;
 export const afterEach = Http.interceptors.response;

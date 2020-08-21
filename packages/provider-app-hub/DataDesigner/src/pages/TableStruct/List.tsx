@@ -75,8 +75,8 @@ const List = (props) => {
           console.log(row);
           onNavigate({
             type: "PUSH",
-            route: '/EditStruct/',
-            params: { id: row.id }
+            route: '/data_designer/edit_struct',
+            params: { id: row.id, title: '编辑表' }
           });
           // History.push({ pathname: `/EditStruct/${row.id}`, state: { id: row.id } });
         }
@@ -84,7 +84,7 @@ const List = (props) => {
       {
         text: '删除',
         onClick: (row) => {
-          Http.delete(`/data/v1/tables/${row.id}`).then((res) => {
+          Http.delete(`/smart_building/data/v1/tables/${row.id}`).then((res) => {
             Msg.success('操作成功');
             queryList();
           });

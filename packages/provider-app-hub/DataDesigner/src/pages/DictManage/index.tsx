@@ -6,15 +6,17 @@ import {
 } from 'antd';
 
 /** 网络请求工具 */
-import Http from '@infra/utils/http';
+import Http, { Msg } from '@infra/utils/http';
 
 /** 基本表单 */
 import BasicForm from '@provider-app/data-designer/src/components/BasicForm';
-import { renderIndexCol, renderOperCol } from '@provider-app/data-designer/src/bizComps/EditableTable';
+import { renderIndexCol, renderOperCol, getColConfig } from '@provider-app/data-designer/src/components/BasicEditTable';
 /**
 * 表头菜单组件
 */
 import TableHeadMenu from '@provider-app/data-designer/src/bizComps/TableHeadMenu';
+
+import { Connector } from '@provider-app/data-designer/src/connector';
 
 import { getModalConfig } from '../../tools/mix';
 import DictForm from './DictForm';
@@ -30,17 +32,52 @@ const DictManage = () => {
   * 字典表单显示隐藏控制
   */
   const [visible, setVisiable] = useState(false);
+  /**
+  * 删除字典
+  */
+  const DelDict = (id) => {
+    Http.delete(`/smart_building/data/v1/tables/${id}`).then((res) => {
+      Msg.success('操作成功');
+      // console.log(res);
+      getList();
+    });
+  };
   /** 操作按钮 */
   const operButs = [
     {
       text: '编辑',
       onClick: (row) => {
-        setFormTitle('编辑字典');
-        setVisiable(true);
+        getDetail({
+          id: row.id,
+          cb: (data) => {
+            data.name = 'test';
+            submitData(data);
+          }
+        });
+        // setFormTitle('编辑字典');
+        // setVisiable(true);
       }
     },
-    { text: '删除', title: '你确定删除这条字典?', onClick: (row) => { } },
+    {
+      text: '删除',
+      title: '你确定删除这条字典?',
+      onClick: (row) => {
+        DelDict(row.id);
+      }
+    },
   ];
+
+  //   createdBy: null
+  // createdUserName: null
+  // description: "性别,男1女0"
+  // gmtCreate: "2020-08-20T17:01:14.802"
+  // gmtModified: "2020-08-20T17:01:14.802"
+  // id: "1296371706025353216"
+  // items: null
+  // modifiedBy: null
+  // modifiedUserName: null
+  // name: "性别"
+  const [tableData, setTableData] = useState([]);
   const columns = [
     // renderIndexCol(pager),
     {
@@ -50,143 +87,66 @@ const DictManage = () => {
     },
     {
       title: '字典描述',
-      dataIndex: 'remark',
+      dataIndex: 'description',
       width: '30%',
     },
     {
       title: '最后修改人',
-      dataIndex: 'remark',
+      dataIndex: 'modifiedUserName',
       width: 140,
     },
     {
       title: '最后修改时间',
-      dataIndex: 'remark',
+      dataIndex: 'gmtModified',
       width: 160,
     },
     renderOperCol(operButs),
 
   ];
 
-  const data = [
-    {
-      key: 1,
-      name: 'John Brown sr.',
-      age: 60,
-      address: 'New York No. 1 Lake Park',
-      children: [
-        {
-          key: 11,
-          name: 'John Brown',
-          age: 42,
-          address: 'New York No. 2 Lake Park',
-        },
-        {
-          key: 12,
-          name: 'John Brown jr.',
-          age: 30,
-          address: 'New York No. 3 Lake Park',
-          children: [
-            {
-              key: 121,
-              name: 'Jimmy Brown',
-              age: 16,
-              address: 'New York No. 3 Lake Park',
-            },
-          ],
-        },
-        {
-          key: 13,
-          name: 'Jim Green sr.',
-          age: 72,
-          address: 'London No. 1 Lake Park',
-          children: [
-            {
-              key: 131,
-              name: 'Jim Green',
-              age: 42,
-              address: 'London No. 2 Lake Park',
-              children: [
-                {
-                  key: 1311,
-                  name: 'Jim Green jr.',
-                  age: 25,
-                  address: 'London No. 3 Lake Park',
-                },
-                {
-                  key: 1312,
-                  name: 'Jimmy Green sr.',
-                  age: 18,
-                  address: 'London No. 4 Lake Park',
-                },
-              ],
-            },
-          ],
-        },
-      ],
-    },
-    {
-      key: 2,
-      name: 'Joe Black',
-      age: 32,
-      address: 'Sidney No. 1 Lake Park',
-    },
-  ];
   /**
   * 提交数据
   * type-
   */
-  const submitData = ({ type, args }) => {
+  const submitData = ({ type, data }) => {
     const reqMethod = {
       add: 'post',
       update: 'put'
     }[type];
-    /**
-  * 新增字段参数
-  */
-    const params = {
-      name: "性别",
-      description: "性别,男1女0",
-      items: [
-        {
-          code: "0",
-          name: "女",
-          renderColor: "#fff"
-        },
-        {
-          code: "1",
-          name: "男",
-          renderColor: "#fff"
-        }
-      ]
-    };
-    Http[reqMethod](' http://{ip}:{port}/paas/ {lesseeCode}/{applicationCode}/data/v1/dictionary/', { data: params }).then((res) => {
-      console.log(res);
+
+    Http[reqMethod]('/smart_building/data/v1/dictionary/', data).then((res) => {
+      Msg.success('操作成功');
+      getList();
+      // console.log(res);
     });
   };
+
   /**
   * 查询字典列表
   */
-  const getList = (params) => {
-    Http.get('http://{ip}:{port}/paas/ {lesseeCode}/{applicationCode}/data/v1/dictionary/list', { params }).then((res) => {
-      console.log(res);
+  const getList = (args = {}) => {
+    const params = Object.assign({}, {
+      name: '', description: "", offset: 0, size: 10,
+    }, args);
+    Http.get('/smart_building/data/v1/dictionary/list', { params }).then((res) => {
+      // console.log(res.data.result);
+      setTableData(res.data.result.data);
     });
   };
+
+  useEffect(() => {
+    getList();
+  }, []);
+
   /**
   * 查询字典详情
   */
-  const getDetail = (id) => {
-    Http.get("http://{ip}:{port}/paas/ {lesseeCode}/{applicationCode}/data/v1/dictionary/{id}", { params: { id } }).then((res) => {
-      console.log(res);
+  const getDetail = ({ id, cb }) => {
+    Http.get(`/smart_building/data/v1/dictionary/${id}`, {}).then((res) => {
+      cb && cb(res.data.result);
     });
   };
-  /**
-  * 删除字典
-  */
-  const delDict = () => {
-    Http.delete("http://{ip}:{port}/paas/ {lesseeCode}/{applicationCode}/data/v1/tables/{id}", { params: { id } }).then((res) => {
-      console.log(res);
-    });
-  };
+
   /**
   * 新增/修改子字典接口
   */
@@ -209,7 +169,7 @@ const DictManage = () => {
     ]
 }
     */
-    Http.put("http://{ip}:{port}/paas/ {lesseeCode}/{applicationCode}/data/v1/dictionary_value/", { data }).then((res) => {
+    Http.put("/smart_building/data/v1/dictionary_value/", { data }).then((res) => {
       console.log(res);
     });
   };
@@ -221,7 +181,7 @@ const DictManage = () => {
     //   dictionaryId
     //   pid
     // }
-    Http.get('http://{ip}:{port}/paas/ {lesseeCode}/{applicationCode}/data/v1/dictionary_value/{dictionaryId}/{pid}', { params }).then((res) => {
+    Http.get('/smart_building/data/v1/dictionary_value/{dictionaryId}/{pid}', { params }).then((res) => {
       console.log(res);
     });
   };
@@ -238,7 +198,7 @@ const DictManage = () => {
     /**
     * "level"=5时 第5级隐藏配置子项,删除子项按钮
     */
-    Http.delete('http://{ip}:{port}/paas/ {lesseeCode}/{applicationCode}/data/v1/dictionary_value/{dictionaryId}/{pid}', { params }).then((res) => {
+    Http.delete('/smart_building/data/v1/dictionary_value/{dictionaryId}/{pid}', { params }).then((res) => {
       console.log(res);
     });
   };
@@ -255,8 +215,30 @@ const DictManage = () => {
       {
         text: '新建',
         onClick: () => {
-          setFormTitle('新增字典');
-          setVisiable(true);
+          submitData({
+            type: 'add',
+            data: {
+              name: `性别-${new Date().getTime()}`,
+              description: "性别,男1女0",
+              items: [
+                {
+                  code: "0",
+                  name: "女",
+                  renderBgColor: "#fff",
+                  renderFontColor: "#fff"
+                },
+                {
+                  code: "1",
+                  name: "男",
+                  renderBgColor: "#fff",
+                  renderFontColor: "#fff"
+                }
+              ]
+            }
+          });
+
+          // setFormTitle('新增字典');
+          // setVisiable(true);
         }
       },
       { text: '导入', onClick: () => {} },
@@ -325,7 +307,7 @@ const DictManage = () => {
                   /**
                      * 列表查询,页码从0开始
                      */
-                  // queryList({ description, name, offset: 0 });
+                  getList({ description, name, offset: 0 });
                 });
             }
           },
@@ -341,16 +323,17 @@ const DictManage = () => {
     }
 
   };
+
+  const cols = columns.map((item) => getColConfig(item));
+
   return (<>
     <BasicForm {...searchProps} />
     <TableHeadMenu {...tableHeadMenus} />
     <Table
       bordered
-      columns={columns.map((item) => {
-        item.key = item.dataIndex;
-        return item;
-      })}
-      dataSource={data}
+      columns={cols}
+      dataSource={tableData}
+      rowKey={(record) => record.id}
       pagination={{
         showTotal: ((total) => {
           return `共 ${total} 条`;
@@ -367,4 +350,5 @@ const DictManage = () => {
   </>);
 };
 
-export default DictManage;
+const DictManageContainer = Connector(DictManage);
+export default DictManageContainer;

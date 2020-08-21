@@ -103,7 +103,7 @@ const TableField = (props) => {
     }),
     []
   );
-    /**
+  /**
    * 共享状态值--表结构分页和树形源数据
    * */
   const { treeData } = useMappedState(mapState);
@@ -548,7 +548,7 @@ const TableField = (props) => {
            */
           // console.log(values);
           // /** 新建表数据提交 */
-          // Http.post('http://{ip}:{port}/paas/{lesseeCode}/{applicationCode}/data/v1/tables/', {
+          // Http.post('http://{ip}:{port}/paas/{lesseeCode}/{applicationCode}/smart_building/data/v1/tables/', {
           //   data: values
           // }).then(() => {
           //   /** 关闭弹窗 */

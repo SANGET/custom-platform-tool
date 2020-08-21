@@ -40,7 +40,7 @@ const StructHeadMenu = (props) => {
         // History.push('/DictManage');
         onNavigate({
           type: "PUSH",
-          route: '/DictManage'
+          route: '/data_designer/dict_manage'
         });
       }
     };

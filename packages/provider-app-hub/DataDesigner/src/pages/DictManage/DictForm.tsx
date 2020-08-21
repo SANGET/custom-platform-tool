@@ -15,6 +15,7 @@ import BasicForm from '@provider-app/data-designer/src/components/BasicForm';
 /**
 * 初始化模态框
 */
+import { Connector } from '@provider-app/data-designer/src/connector';
 import { getModalConfig } from '../../tools/mix';
 
 /**
@@ -303,6 +304,21 @@ const DictForm = (props) => {
         /** 表单项属性 */
         itemAttr: {
           label: "字典描述",
+          rules: [],
+        },
+        /** 表单项包裹组件属性 */
+        compAttr: {
+          type: 'Input',
+          placeholder: '请输入字典描述',
+          onChange: (e) => {
+          }
+        }
+      }
+    },
+    listItems: {
+      name: {
+        /** 表单项属性 */
+        itemAttr: {
           rules: [
             { required: true, message: '请输入名称!' },
             { pattern: /^[\u4e00-\u9fa5_a-zA-Z0-9()]+$/, message: '输入字段可以为中文、英文、数字、下划线、括号' },
@@ -312,7 +328,34 @@ const DictForm = (props) => {
         /** 表单项包裹组件属性 */
         compAttr: {
           type: 'Input',
-          placeholder: '请输入字典描述',
+          placeholder: '请输入字典项名称',
+          onChange: (e) => {
+          }
+        }
+      },
+      code: {
+        /** 表单项属性 */
+        itemAttr: {
+          rules: [
+            { required: true, message: '请输入字典项编码!' },
+          ]
+        },
+        /** 表单项包裹组件属性 */
+        compAttr: {
+          type: 'Input',
+          placeholder: '请输入字典项编码',
+          onChange: (e) => {
+          }
+        }
+      },
+      renderColor: {
+        /** 表单项属性 */
+        itemAttr: {
+        },
+        /** 表单项包裹组件属性 */
+        compAttr: {
+          type: 'Input',
+          placeholder: '请选择字体和背景颜色',
           onChange: (e) => {
           }
         }
@@ -324,7 +367,7 @@ const DictForm = (props) => {
 
     {/* <Input onFocus={() => { openColorPicker(); }}/> */}
     <BasicForm {...formProps}/>
-    <BasicEditTable {...editTableProps} />
+    {/* <BasicEditTable {...editTableProps} /> */}
     <BasicColorPicker {...colorProps} />
   </>);
 };

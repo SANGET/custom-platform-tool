@@ -23,7 +23,7 @@ PinYin.setOptions({
 });
 
 const StructForm = ({
-  form, treeData, queryList, ...rest
+  form, treeData, queryList, PrimayTableEnum, ...rest
 }) => {
   // console.log({ treeData});
   /** 树形属性配置 */
@@ -142,11 +142,10 @@ const StructForm = ({
         rules: [{ required: refShow.auxTable === 'show', message: '请输入主表!' }],
       },
       compAttr: {
-        type: 'Input',
-        placeholder: '请输入主表',
-        onFocus: () => {
-          console.log({});
-        }
+        type: 'BasicSelect',
+        enum: PrimayTableEnum,
+        placeholder: '请选择主表',
+
       }
     },
     moduleId: {

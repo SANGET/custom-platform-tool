@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import {
-  Table, Form, Popconfirm, Button, Space
+  Table, Form, Popconfirm, Button, Space,
+  Tooltip
 } from 'antd';
 
 /**
@@ -183,6 +184,21 @@ const renderOperCol = (operButs) => {
       });
     }
   };
+};
+
+export const getColConfig = (col) => {
+  return Object.assign({}, {
+    key: col.dataIndex,
+    ellipsis: {
+      showTitle: true
+    },
+    render: (text) => (
+      <Tooltip placement="topLeft" title={text}>
+        {text}
+      </Tooltip>
+    ),
+
+  }, { ...col });
 };
 export { renderOperCol, renderIndexCol };
 export default BasicEditTable;

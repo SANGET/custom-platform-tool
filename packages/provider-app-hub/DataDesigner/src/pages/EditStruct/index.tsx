@@ -20,7 +20,11 @@ import { GetMenuTree } from '@provider-app/data-designer/src/api';
 
 import './EditStruct.less';
 
-// import { useMappedState } from 'redux-react-hook';
+import { useMappedState } from 'redux-react-hook';
+/**
+* 连接器的作用给子项目的redux-react-hook提供一个provider,还有限定样式作用域
+*/
+import { Connector } from '@provider-app/data-designer/src/connector';
 
 const { CheckableTag } = Tag;
 
@@ -29,7 +33,7 @@ const { TabPane } = Tabs;
 /**
  * 数据表名称 数据表编码 表类型 归属模块
  */
-const EditStruct = () => {
+const EditStruct = (props) => {
   /**
    * 全局加载动画设置
    */
@@ -40,6 +44,7 @@ const EditStruct = () => {
   // const History = useHistory();
 
   // console.log(History.location.state.id);
+  const { treeData } = props;
 
   const [detailData, setDetailData] = useState({ columns: [] });
 
@@ -47,10 +52,10 @@ const EditStruct = () => {
   const [form] = Form.useForm();
 
   useEffect(() => {
-    // http:// {ip}:{port}/paas/ {lesseeCode}/{applicationCode}/data/v1/tables/00dd1b16e3a84a6fbeed12a661484eba
-    const res = getUrlParams(undefined, undefined, true).id;
-    console.log(res);
-    Http.get(`/data/v1/tables/${History.location.state.id}`, {}).then((res) => {
+    // http:// {ip}:{port}/paas/ {lesseeCode}/{applicationCode}/smart_building/data/v1/tables/00dd1b16e3a84a6fbeed12a661484eba
+    const { id } = getUrlParams(undefined, undefined, true);
+    // console.log(res);
+    Http.get(`/smart_building/data/v1/tables/${id}`, {}).then((res) => {
       // console.log(res);
 
       setDetailData(res.data.result);
@@ -116,7 +121,8 @@ const EditStruct = () => {
       compAttr: {
         type: 'BasicSelect',
         enum: TableTypeEnum,
-        readOnly: true,
+        disabled: true,
+        // readOnly: true,
       }
     },
     moduleId: {
@@ -157,7 +163,7 @@ const EditStruct = () => {
     {
       text: '保存',
       onClick: () => {
-        Http.put('http://{ip}:{port}/paas/ {lesseeCode}/{applicationCode}/data/v1/tables/').then((res) => {
+        Http.put('http://{ip}:{port}/paas/ {lesseeCode}/{applicationCode}/smart_building/data/v1/tables/').then((res) => {
           const submitData = {
           /** 是 表主键 */
             id: '',
@@ -368,4 +374,5 @@ const EditStruct = () => {
     </div>
   );
 };
-export default EditStruct;
+
+export default Connector(EditStruct);

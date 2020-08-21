@@ -18,6 +18,7 @@ import { renderIndexCol, renderOperCol } from '@provider-app/data-designer/src/b
 import TableHeadMenu from '@provider-app/data-designer/src/bizComps/TableHeadMenu';
 
 import DictForm from '@provider-app/data-designer/src/pages/DictManage/DictForm';
+import { Connector } from '@provider-app/data-designer/src/connector';
 import { getModalConfig } from '../../tools/mix';
 
 const DictModal = () => {
@@ -85,7 +86,7 @@ const DictModal = () => {
         }
       ]
     };
-    Http[reqMethod](' http://{ip}:{port}/paas/ {lesseeCode}/{applicationCode}/data/v1/dictionary/', { data: params }).then((res) => {
+    Http[reqMethod](' http://{ip}:{port}/paas/ {lesseeCode}/{applicationCode}/smart_building/data/v1/dictionary/', { data: params }).then((res) => {
       console.log(res);
     });
   };
@@ -93,7 +94,7 @@ const DictModal = () => {
   * 查询字典列表
   */
   const getList = (params) => {
-    Http.get('http://{ip}:{port}/paas/ {lesseeCode}/{applicationCode}/data/v1/dictionary/list', { params }).then((res) => {
+    Http.get('http://{ip}:{port}/paas/ {lesseeCode}/{applicationCode}/smart_building/data/v1/dictionary/list', { params }).then((res) => {
       console.log(res);
     });
   };
@@ -101,7 +102,7 @@ const DictModal = () => {
   * 查询字典详情
   */
   const getDetail = (id) => {
-    Http.get("http://{ip}:{port}/paas/ {lesseeCode}/{applicationCode}/data/v1/dictionary/{id}", { params: { id } }).then((res) => {
+    Http.get("http://{ip}:{port}/paas/ {lesseeCode}/{applicationCode}/smart_building/data/v1/dictionary/{id}", { params: { id } }).then((res) => {
       console.log(res);
     });
   };
@@ -109,7 +110,7 @@ const DictModal = () => {
   * 删除字典
   */
   const delDict = () => {
-    Http.delete("http://{ip}:{port}/paas/ {lesseeCode}/{applicationCode}/data/v1/tables/{id}", { params: { id } }).then((res) => {
+    Http.delete("http://{ip}:{port}/paas/ {lesseeCode}/{applicationCode}/smart_building/data/v1/tables/{id}", { params: { id } }).then((res) => {
       console.log(res);
     });
   };
@@ -135,7 +136,7 @@ const DictModal = () => {
     ]
 }
     */
-    Http.put("http://{ip}:{port}/paas/ {lesseeCode}/{applicationCode}/data/v1/dictionary_value/", { data }).then((res) => {
+    Http.put("http://{ip}:{port}/paas/ {lesseeCode}/{applicationCode}/smart_building/data/v1/dictionary_value/", { data }).then((res) => {
       console.log(res);
     });
   };
@@ -147,7 +148,7 @@ const DictModal = () => {
     //   dictionaryId
     //   pid
     // }
-    Http.get('http://{ip}:{port}/paas/ {lesseeCode}/{applicationCode}/data/v1/dictionary_value/{dictionaryId}/{pid}', { params }).then((res) => {
+    Http.get('http://{ip}:{port}/paas/ {lesseeCode}/{applicationCode}/smart_building/data/v1/dictionary_value/{dictionaryId}/{pid}', { params }).then((res) => {
       console.log(res);
     });
   };
@@ -164,7 +165,7 @@ const DictModal = () => {
     /**
     * "level"=5时 第5级隐藏配置子项,删除子项按钮
     */
-    Http.delete('http://{ip}:{port}/paas/ {lesseeCode}/{applicationCode}/data/v1/dictionary_value/{dictionaryId}/{pid}', { params }).then((res) => {
+    Http.delete('http://{ip}:{port}/paas/ {lesseeCode}/{applicationCode}/smart_building/data/v1/dictionary_value/{dictionaryId}/{pid}', { params }).then((res) => {
       console.log(res);
     });
   };
@@ -279,5 +280,4 @@ const DictModal = () => {
 
   </>);
 };
-
-export default DictModal;
+export default Connector(DictModal);

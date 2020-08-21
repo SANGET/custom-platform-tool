@@ -1,10 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
-  Row, Col, Form, Button
+  Row, Col, Form, Button, Input, Space
 } from 'antd';
 import styled from 'styled-components';
 
-import { DownOutlined, UpOutlined } from '@ant-design/icons';
+import {
+  DownOutlined, UpOutlined, PlusOutlined, MinusOutlined
+} from '@ant-design/icons';
 
 /**
  * 组件仓库,用于动态生成组件
@@ -59,6 +61,10 @@ const BasicForm = (props) => {
     form,
   } = props;
 
+  const listRef = useRef(null);
+  useEffect(() => {
+    listRef.current && listRef.current();
+  }, []);
   /**
   * 按照表单项配置items,动态生成表单
   */
@@ -89,16 +95,102 @@ const BasicForm = (props) => {
     });
   };
 
+  const getList = (listItems, addRow) => {
+    // console.log({ list: props.listItems });
+
+    return (
+      <Form.List name="users">
+        {(fields, { add, remove }) => {
+          listRef.current = add;
+          return (
+            <Row style={{ marginTop: '10px' }}>
+              {fields.map((field) => (
+                <Space key={field.key} style={{ display: 'flex', marginBottom: 8 }} align="start">
+
+                  {
+                    Object.keys(listItems).map((key) => (
+                      <Col span={10} key={key}>
+                        <Form.Item
+                          {...field}
+                          labelCol={0}
+                          name={[field.name, key]}
+                          fieldKey={[field.fieldKey, key]}
+                          rules={listItems[key].itemAttr.rules}
+                        >
+                          <Input />
+                          {/* <BasicStory {...listItems[key].compAttr} /> */}
+                        </Form.Item>
+                      </Col>
+                    ))
+                  }
+                  <Col span={4}>
+                    <PlusOutlined
+                      onClick={() => {
+                        add();
+                      }}
+                    />
+
+                    <MinusOutlined
+                      onClick={() => {
+                        remove(field.name);
+                      }}
+                    />
+                  </Col>
+                </Space>
+              ))}
+            </Row>
+          );
+        }}
+      </Form.List>);
+  };
+
+  // props.listItems && console.log(getList(props.listItems));
   return (
     <Form
       {...formItemLayout}
       layout={layout}
       form={form}
       style={style}
+      name="basic-form"
     >
       <Row gutter={24}>{getFields(items)}</Row>
+      {props.listItems ? getList(props.listItems) : null}
+
     </Form>);
 };
+
+// {fields.map((field) => (
+//   <Space key={field.key} style={{ display: 'flex', marginBottom: 8 }} align="start">
+//     <Form.Item
+//       {...field}
+//       name={[field.name, 'first']}
+//       fieldKey={[field.fieldKey, 'first']}
+//       rules={[{ required: true, message: 'Missing first name' }]}
+//     >
+//       <Input placeholder="First Name" />
+//     </Form.Item>
+//     <Form.Item
+//       {...field}
+//       name={[field.name, 'last']}
+//       fieldKey={[field.fieldKey, 'last']}
+//       rules={[{ required: true, message: 'Missing last name' }]}
+//     >
+//       <Input placeholder="Last Name" />
+//     </Form.Item>
+
+//     <PlusOutlined
+//       onClick={() => {
+//         add();
+//       }}
+//     />
+//     <MinusOutlined
+//       onClick={() => {
+//         remove(field.name);
+//       }}
+//     />
+//   </Space>
+//    ))}
+//    </Form.List>
 
 /**
  * 含有折叠功能的高级表单

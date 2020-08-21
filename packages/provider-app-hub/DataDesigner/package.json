@@ -7,7 +7,7 @@
   "license": "MIT",
   "proxy": {
     "/api": {
-      "target": "http://10.7.1.59:8080/paas/hy/smart_building",
+      "target": "http://10.7.1.59:8081/paas/hy/smart_building",
       "pathRewrite": {
         "^/api": ""
       },

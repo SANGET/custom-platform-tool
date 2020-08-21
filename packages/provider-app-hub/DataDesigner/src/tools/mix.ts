@@ -1,11 +1,12 @@
 /*
  * @Author: wph
  * @Date: 2020-08-15 16:01:41
- * @LastEditTime: 2020-08-20 11:36:25
+ * @LastEditTime: 2020-08-20 21:03:38
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: \custom-platform-v3-frontend\packages\provider-app-hub\DataDesigner\src\tools\mix.ts
  */
+
 /**
  * 生成模态框基本配置
  * @param config 传入的配置
