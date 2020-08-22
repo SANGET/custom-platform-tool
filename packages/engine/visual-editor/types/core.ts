@@ -207,5 +207,7 @@ export interface DragItemClass extends DragItemType {
  * 接受拖 item 的 prop
  */
 export interface DropCollectType {
+  isOver: boolean
   isOverCurrent: boolean
+  canDrop: boolean
 }

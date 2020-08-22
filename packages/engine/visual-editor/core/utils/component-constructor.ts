@@ -1,17 +1,29 @@
 import {
   ENTITY_ID,
-  increaseID
+  increaseID,
+  TEMP_ENTITY_ID
 } from '@engine/visual-editor/utils';
-import { EditorComponentClass, EditorComponentEntity } from '../../../types';
+import { EditorComponentClass, EditorComponentEntity } from '../../types';
+
+export type ConstructCompClass = (
+  componentClass: EditorComponentClass,
+  options?: {
+    extendEntityID?: string
+    state?: string
+  }
+) => EditorComponentEntity
 
 /**
  * 实例化 componentClass
  */
-export const constructCompClass = (
+export const constructCompClass: ConstructCompClass = (
   componentClass: EditorComponentClass,
-  extendEntityID = '',
-  state = 'active'
-): EditorComponentEntity => {
+  options = {}
+) => {
+  const {
+    extendEntityID = '',
+    state = 'active'
+  } = options;
   /** 外部可以通过 entityID 设置 componentClass id */
   let { entityID = '' } = componentClass;
   if (!entityID) {
@@ -36,3 +48,11 @@ export const constructCompClass = (
 
   return entity;
 };
+
+export const constructTempEntity = (props = {}) => ({
+  ...props,
+  id: increaseID(TEMP_ENTITY_ID),
+  _state: TEMP_ENTITY_ID,
+});
+
+export const isTempEntity = (entity) => entity._state === TEMP_ENTITY_ID;

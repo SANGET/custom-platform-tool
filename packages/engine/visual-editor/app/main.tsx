@@ -14,6 +14,7 @@ import { Dispatcher } from "@engine/visual-editor/core/actions";
 
 import { GlobalStyle } from '@engine/visual-editor/style/global-style';
 import { VisualEditorState } from "@engine/visual-editor/core/reducers/reducer";
+import { EditButton } from "../components/PageMetadataEditor";
 
 interface VisualEditorAppProps extends VisualEditorState {
   dispatcher: Dispatcher
@@ -24,16 +25,16 @@ const VisualEditorApp: React.FC<VisualEditorAppProps> = (props) => {
     dispatcher,
     selectedEntities,
     entitiesStateStore,
-    layoutInfo
+    layoutInfo,
+    pageMetadata,
   } = props;
+  // console.log(props);
   // 调整整体的数据结构，通过 redux 描述一份完整的{页面数据}
   const {
     InitApp,
     SelectEntity, InitEntityState, UpdateEntityState,
     SetLayoutInfo, DelEntity, MotifyEntity, AddEntity,
   } = dispatcher;
-
-  console.log(entitiesStateStore);
 
   return (
     <div>
@@ -82,18 +83,19 @@ const VisualEditorApp: React.FC<VisualEditorAppProps> = (props) => {
             item
             className="canvas-container"
           >
+            <EditButton
+              onOK={(e) => {}}
+              onCancel={(e) => {}}
+            >
+              编辑页面属性
+            </EditButton>
             <CanvasStage
               selectedEntities={selectedEntities}
               entitiesStateStore={entitiesStateStore}
               layoutNodeInfo={layoutInfo}
-              selectEntity={SelectEntity}
-              initEntityState={InitEntityState}
-              updateEntityState={UpdateEntityState}
-              SetLayoutInfo={SetLayoutInfo}
-              DelEntity={DelEntity}
-              MotifyEntity={MotifyEntity}
-              AddEntity={AddEntity}
+              pageMetadata={pageMetadata}
               PropEditorRenderer={PropertiesEditor}
+              {...dispatcher}
             />
           </Grid>
         </DndProvider>

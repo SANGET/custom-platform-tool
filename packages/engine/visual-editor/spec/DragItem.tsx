@@ -3,6 +3,7 @@ import {
   useDrag, useDrop, DropTargetMonitor, XYCoord
 } from 'react-dnd';
 import { TargetType } from 'dnd-core';
+import { HasValue } from '@mini-code/base-func';
 import { ItemTypes } from './types';
 import { DragItemClass, DropCollectType } from '../types';
 import { isNodeInChild } from '../utils';
@@ -15,6 +16,7 @@ export interface DnDContext {
 export type DragItemDrop = (entity, dnDContext: DnDContext) => void
 export type DragItemDrag = (entity, dnDContext: DnDContext) => void
 export type DragItemMove = (dragIndex: number, hoverIndex: number, compClass: any) => void
+export type CancelDrag = (originalIndex: number) => void
 
 /**
  * 作用于 dragItem 传递到 drop 容器的参数配置
@@ -24,17 +26,23 @@ interface DragItem {
   type: string
 }
 
-export interface DragItemProps<
-  D = any, C = any
-> extends React.HTMLAttributes<HTMLDivElement>, DragItem {
-  children: React.ReactChild
-  dragItemClass: D
-  dragConfig?: C
-  accept?: TargetType
+export interface DragItemActions {
   onDrop: DragItemDrop
   /** 响应组件的“拖”事件 */
   onDrag?: DragItemDrag
   onMove?: DragItemMove
+  onCancelDrag?: CancelDrag
+}
+
+export interface DragItemProps<
+  D = any, C = any
+> extends DragItem,
+  DragItemActions,
+  Omit<React.HTMLAttributes<HTMLDivElement>, keyof DragItemActions | 'children'> {
+  children: React.ReactChild
+  dragItemClass: D
+  dragConfig?: C
+  accept?: TargetType
 }
 
 /**
@@ -42,13 +50,16 @@ export interface DragItemProps<
  */
 const DragItemComp: React.FC<DragItemProps> = ({
   children, dragItemClass, dragConfig, style,
-  type, id, index, onMove, onDrop, onDrag,
+  type, id, index, onMove, onCancelDrag, onDrop, onDrag,
   accept = [ItemTypes.DragItemEntity, ItemTypes.DragItemClass],
   ...other
 }) => {
   const ref = useRef<HTMLDivElement>(null);
 
-  const [{ isOverCurrent }, drop] = useDrop<DragItemClass, void, DropCollectType>({
+  const [{
+    isOverCurrent,
+    canDrop
+  }, drop] = useDrop<DragItemClass, void, DropCollectType>({
     accept,
     /**
      * ref: https://react-dnd.github.io/react-dnd/docs/api/use-drop
@@ -70,18 +81,20 @@ const DragItemComp: React.FC<DragItemProps> = ({
         });
       }
     },
-    canDrop: ({ dragItemClass: componentClass }, monitor) => {
-      /** 不允许放到自身 */
-      return componentClass.id !== id;
-    },
+    // canDrop: ({ dragItemClass: componentClass }, monitor) => {
+    //   /** 不允许放到自身 */
+    //   return componentClass.id !== id;
+    // },
     collect: (monitor) => {
       return {
         // isOver: !!monitor.isOver(),
+        isOver: monitor.isOver(),
         isOverCurrent: monitor.isOver({ shallow: true }),
+        canDrop: monitor.canDrop(),
       };
     },
-    hover(item: DragItem, monitor: DropTargetMonitor) {
-      if (!ref.current || !onMove) {
+    hover: (item: DragItem, monitor: DropTargetMonitor) => {
+      if (!ref.current || !onMove || !HasValue(index)) {
         return;
       }
       const dragIndex = item.index;
@@ -141,9 +154,18 @@ const DragItemComp: React.FC<DragItemProps> = ({
     collect: (monitor) => ({
       isDragging: !!monitor.isDragging(),
     }),
+    // end: (item, monitor) => {
+    //   const { id: droppedId, originalIndex } = monitor.getItem();
+    //   const didDrop = monitor.didDrop();
+    //   if (!didDrop) {
+    //     onCancelDrag && onCancelDrag(originalIndex);
+    //     // onMove(droppedId, originalIndex);
+    //   }
+    // }
   });
 
-  const opacity = isDragging ? 0 : 1;
+  const opacity = isDragging ? 0.5 : 1;
+  // drag(ref);
   drag(drop(ref));
 
   return (

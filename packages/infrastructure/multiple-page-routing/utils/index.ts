@@ -4,7 +4,7 @@ import { urlParamsToQuery, getUrlParams, UrlParamsRes } from "@mini-code/request
 interface NavigateConfig {
   from?: Location;
   params?: {};
-  type: string;
+  type: 'PUSH' | 'GO_BACK' | 'LINK';
   route: string;
 }
 

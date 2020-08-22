@@ -12,7 +12,9 @@ export const disposeStore = () => {
   store = null;
 };
 
-export default function createChatStore(preloadedState?) {
+export default function createChatStore(
+  preloadedState?: VisualEditorState
+) {
   if (!store) {
     store = createStore(
       AppReducers,

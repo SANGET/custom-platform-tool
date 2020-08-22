@@ -13,7 +13,7 @@ export interface LayoutWrapperContext {
 
 export interface LayoutParserWrapper {
   /** 容器渲染 wrapper 包装函数 */
-  containerWrapper?: (ctx: LayoutWrapperContext) => JSX.Element
+  // containerWrapper?: (ctx: LayoutWrapperContext) => JSX.Element
   /** 组件渲染器，由调用方实现 */
   componentRenderer?: (ctx: LayoutWrapperContext) => JSX.Element
 }
@@ -49,27 +49,43 @@ const renderLayout = (
       const node = layoutNode[i];
 
       const { id } = node;
-      const { containerWrapper, componentRenderer } = wrapper;
+      const { componentRenderer } = wrapper;
       const wrapperContext: LayoutWrapperContext = { id, idx: i, node };
-      switch (node.type) {
-        case 'container':
-          // const { layout } = node;
-          // TODO: 加入布局UI隔离
-          const childOfContainer = renderLayout(node.body, wrapper);
-          let child;
-          if (typeof containerWrapper === 'function') {
-            wrapperContext.children = childOfContainer;
-            child = containerWrapper(wrapperContext);
-          } else {
-            child = childOfContainer;
-          }
+      if (node.body) {
+        // const { layout } = node;
+        // TODO: 加入布局UI隔离
+        const childOfContainer = renderLayout(node.body, wrapper);
+        let child;
+        if (typeof componentRenderer === 'function') {
+          wrapperContext.children = childOfContainer;
+          child = componentRenderer(wrapperContext);
+        } else {
+          child = childOfContainer;
+        }
 
-          res.push(child);
-          break;
-        case 'component':
-          res.push(componentRenderer && componentRenderer(wrapperContext));
-          break;
+        res.push(child);
+      } else {
+        res.push(componentRenderer && componentRenderer(wrapperContext));
       }
+      // switch (node.type) {
+      //   case 'container':
+      //     // const { layout } = node;
+      //     // TODO: 加入布局UI隔离
+      //     const childOfContainer = renderLayout(node.body, wrapper);
+      //     let child;
+      //     if (typeof containerWrapper === 'function') {
+      //       wrapperContext.children = childOfContainer;
+      //       child = containerWrapper(wrapperContext);
+      //     } else {
+      //       child = childOfContainer;
+      //     }
+
+      //     res.push(child);
+      //     break;
+      //   case 'component':
+      //     res.push(componentRenderer && componentRenderer(wrapperContext));
+      //     break;
+      // }
     }
   }
   return res;
@@ -84,11 +100,11 @@ const LayoutRenderer: React.FC<LayoutRendererProps> = (
   const {
     layoutNode,
     RootRender,
-    containerWrapper,
+    // containerWrapper,
     componentRenderer,
   } = props;
   const layoutRenderRes = renderLayout(layoutNode, {
-    containerWrapper,
+    // containerWrapper,
     componentRenderer,
   });
   return typeof RootRender === 'function' ? RootRender(layoutRenderRes) : (
