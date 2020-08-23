@@ -1,4 +1,4 @@
-import { mergeDeep } from "@infra/utils/tools";
+import { produce } from "immer";
 import { PropertyItemConfigFunc, EditorComponentEntity, EditorPropertyItem } from "../../types";
 
 /**
@@ -9,7 +9,7 @@ export const extractPropConfig = (
   entity: EditorComponentEntity
 ): EditorPropertyItem => {
   if (typeof propItemConfigFunc === 'function') {
-    return propItemConfigFunc(mergeDeep(entity));
+    return propItemConfigFunc(produce(entity, (draft) => draft));
   }
   return propItemConfigFunc;
 };

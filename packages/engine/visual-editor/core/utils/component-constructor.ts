@@ -1,9 +1,10 @@
 import {
   ENTITY_ID,
   increaseID,
-  TEMP_ENTITY_ID
 } from '@engine/visual-editor/utils';
-import { EditorComponentClass, EditorComponentEntity } from '../../types';
+import {
+  EditorComponentClass, EditorComponentEntity, TempEntity, TEMP_ENTITY_ID
+} from '../../types';
 
 export type ConstructCompClass = (
   componentClass: EditorComponentClass,
@@ -49,7 +50,7 @@ export const constructCompClass: ConstructCompClass = (
   return entity;
 };
 
-export const constructTempEntity = (props = {}) => ({
+export const constructTempEntity = (props = {}): TempEntity => ({
   ...props,
   id: increaseID(TEMP_ENTITY_ID),
   _state: TEMP_ENTITY_ID,

@@ -3,7 +3,7 @@
  */
 import React from 'react';
 import { Input, Button } from '@infra/ui';
-import { propertiesItemCollection } from '../../mock-data';
+import { Debounce } from '@mini-code/base-func';
 import {
   EditorEntity, EditorEntityState, EditorPropertyItem,
   ComponentBindPropsConfig,
@@ -19,15 +19,16 @@ export type InitEntityStateOfEditor = (entityState: EditorEntityState) => void
 export interface PropertiesEditorProps {
   /** 选中的 entity */
   selectedEntity: EditorEntity
+  propItemsData: any
   /** 属性项组合配置 */
   propertiesConfig: ComponentBindPropsConfig
   /** 属性编辑器的配置，通过该配置生成有层级结构的属性编辑面板 */
   editorConfig?: any
   /** 默认的表单数据state */
   defaultEntityState?: EditorEntityState
-  /** 保存属性的回调 */
+  /** 保存属性 */
   updateEntityState: UpdateEntityStateOfEditor
-  /** 初始化实例的回调 */
+  /** 初始化实例 */
   initEntityState: InitEntityStateOfEditor
 }
 
@@ -47,6 +48,8 @@ const StateBtn = ({
     </Button>
   );
 };
+
+const debounce = new Debounce();
 
 /**
  * 设置实例状态的默认值
@@ -153,6 +156,7 @@ PropertiesEditorProps, PropertiesEditorState
   renderPropItem = () => {
     const {
       selectedEntity,
+      propItemsData,
     } = this.props;
     const { entityState } = this.state;
     // const { bindProps } = selectedEntity;
@@ -171,7 +175,7 @@ PropertiesEditorProps, PropertiesEditorState
          *
          * 此配置为函数，需要在此做过滤
          */
-        propOriginConfigItem = propertiesItemCollection[propID];
+        propOriginConfigItem = propItemsData[propID];
         propItemConfig = extractPropConfig(propOriginConfigItem, selectedEntity);
 
         /**
@@ -222,6 +226,10 @@ PropertiesEditorProps, PropertiesEditorState
                * 更新数据
                */
               this.updateEntityStateForSelf(propConfigRes, nextValue);
+
+              debounce.exec(() => {
+                this.props.updateEntityState(this.state.entityState);
+              }, 300);
             }}
             propID={propID}
             propItemConfig={propItemConfig}
@@ -242,22 +250,24 @@ PropertiesEditorProps, PropertiesEditorState
   }
 
   render() {
-    const {
-      updateEntityState
-    } = this.props;
-    const { entityState } = this.state;
+    // const {
+    //   updateEntityState
+    // } = this.props;
+    // const { entityState } = this.state;
     const hasProps = this.hasPropertiesConfig();
 
     const propFormDOM = hasProps && this.renderPropItem();
 
     return (
-      <div>
-        <div className="action-area mb10">
+      <div
+        className="entity-prop-editor"
+      >
+        {/* <div className="action-area mb10">
           <StateBtn onClick={(e) => {
             updateEntityState(entityState);
           }}
           />
-        </div>
+        </div> */}
         {
           propFormDOM
         }

@@ -7,18 +7,31 @@ import {
 export const INIT_APP = 'app/init';
 export interface InitAppAction {
   type: typeof INIT_APP
-  entity: EditorEntity
+  compPanelData
+  compClassData
+  propItemsData
+  pagePropsData
+  pageData
 }
 
 /**
- * 初始化组件类的状态
+ * 初始化应用数据
  */
-export const InitApp = (
-  entity: EditorEntity
-): InitAppAction => {
+export const InitApp = ({
+  /** 组件类面板数据 */
+  compPanelData,
+  compClassData,
+  propItemsData,
+  pagePropsData,
+  pageData,
+}): InitAppAction => {
   return {
     type: INIT_APP,
-    entity
+    compPanelData,
+    compClassData,
+    propItemsData,
+    pagePropsData,
+    pageData,
   };
 };
 

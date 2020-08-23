@@ -10,14 +10,13 @@ import {
 } from '@engine/layout-renderer';
 import styled from 'styled-components';
 import classnames from 'classnames';
-import { EditorEntityState, EditorComponentEntity } from '@engine/visual-editor/types';
+import { EditorEntityState, EditorComponentEntity, TEMP_ENTITY_ID } from '@engine/visual-editor/types';
 import ComponentWrapperCom from '@engine/visual-editor/spec/template/ComponentWrapperCom';
 import DragItem, {
   DragItemActions
 } from './DragItem';
 import { TempEntityTip } from './template/TempEntityTip';
 import { ItemTypes } from './types';
-import { TEMP_ENTITY_ID } from '../utils';
 // import { Debounce } from '@mini-code/base-func';
 
 export type GetEntityProps = (id: string) => EditorEntityState
@@ -89,7 +88,7 @@ const DragableItemWrapper = styled.div`
  */
 export const dragableItemWrapperFac: DragableItemWrapperFac = (
   {
-    onDrop, onMove, onClick, onDelete, onCancelDrag,
+    onDrop, onMove, onClick, onDelete,
     getLayoutNode, getSelectedState, getEntityProps,
     // getHoveringEntity, setHoveringEntity
   },
@@ -115,7 +114,6 @@ export const dragableItemWrapperFac: DragableItemWrapperFac = (
         index={idx}
         onDrop={onDrop}
         onMove={onMove}
-        onCancelDrag={onCancelDrag}
         dragItemClass={currEntity}
         type={ItemTypes.DragItemEntity}
         accept={[ItemTypes.DragItemEntity, ItemTypes.DragItemClass]}

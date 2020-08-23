@@ -1,5 +1,5 @@
 export const ItemTypes = {
-  DragItemClass: 'DragItemClass',
-  DragItemEntity: 'DragItemEntity',
-  DragContainer: 'DragContainer',
+  DragItemClass: Symbol('DragItemClass'),
+  DragItemEntity: Symbol('DragItemEntity'),
+  DragContainer: Symbol('DragContainer'),
 };

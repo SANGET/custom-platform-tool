@@ -8,8 +8,6 @@
 export interface LayoutNodeInfo {
   /** id */
   id: string;
-  /** 节点类型 */
-  type: "container" | 'component';
   /** 子布局内容 */
-  body: LayoutNodeInfo[]
+  body?: LayoutNodeInfo[]
 }

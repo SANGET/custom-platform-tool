@@ -54,12 +54,14 @@ export const layoutInfoReducer = (
       const {
         dragIndex, hoverIndex, nestingInfo, entity: sortEntity, replace
       } = action;
-      return update(state, {
+      const nextStateForSorting = update(state, {
         $splice: [
           [dragIndex, replace ? 0 : 1],
           [hoverIndex, 0, sortEntity],
         ],
       });
+      console.log(nextStateForSorting);
+      return nextStateForSorting;
     case MOTIFY_ENTITY:
       const { entity: updateEntity } = action;
       const nextState = {

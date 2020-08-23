@@ -1,28 +1,22 @@
 /**
  * CanvasStage
  */
-import React, { useState, useReducer, useEffect } from 'react';
+import React from 'react';
 import { Button, Grid } from '@infra/ui';
-import styled from 'styled-components';
-import classnames from 'classnames';
-import update from 'immutability-helper';
-import {
-  LayoutRenderer
-} from '@engine/layout-renderer';
+import { LayoutRenderer } from '@engine/layout-renderer';
 import { SelectEntityState } from '@engine/visual-editor/core/reducers';
 import { LayoutInfoActionReducerState } from '@engine/visual-editor/core/reducers/layout-info';
 import { ItemTypes } from '@engine/visual-editor/spec/types';
 import {
   EntitiesStateStore,
-  EditorPageEntity
+  EditorPageEntity,
+  TempEntity,
+  EditorComponentEntity
 } from '@engine/visual-editor/types';
 import {
-  dragableItemWrapperFac, FacToComponentProps, WrapperFacOptions, DragableItemWrapperFac
+  dragableItemWrapperFac, WrapperFacOptions, DragableItemWrapperFac
 } from '@engine/visual-editor/spec/dragable-item-wrapper-fac';
-
-import { constructCompClass, constructTempEntity, isTempEntity } from '@engine/visual-editor/core/utils/component-constructor';
-import { HasValue } from '@mini-code/base-func';
-import { PropertiesEditorProps } from '../PropertiesEditor';
+import { constructCompClass, constructTempEntity } from '@engine/visual-editor/core/utils/component-constructor';
 import { Dispatcher } from '../../core/actions';
 import { pageProperties } from '../../mock-data/page-perproties';
 import DropStageContainer from './DropStageContainer';
@@ -44,14 +38,14 @@ const PageEntity: EditorPageEntity = {
 export interface CanvasStageProps extends Dispatcher {
   /** 组件包接入规范  */
   dragableItemWrapper?: DragableItemWrapperFac
-  pageMetadata: {}
+  /** 页面元数据 */
+  pageMetadata: any
+  /** 布局信息 */
   layoutNodeInfo: LayoutInfoActionReducerState
   /** 选中的组件实例 */
   selectedEntities: SelectEntityState
   /** 组件实例的状态集合 */
   entitiesStateStore: EntitiesStateStore
-  /** */
-  PropEditorRenderer: React.ElementType<PropertiesEditorProps>
 }
 
 /**
@@ -145,14 +139,15 @@ class CanvasStage extends React.Component<CanvasStageProps> {
    * 响应元素的拖事件，作用于排序
    */
   onMove = (dragIndex, hoverIndex, dragItem?) => {
+    /** 防止没有 dragIndex 的产生坏数据 */
+    if (typeof dragIndex === 'undefined') return;
     // this.dragItemOriginIdx = dragIndex;
     const {
       layoutNodeInfo,
       SortingEntity,
     } = this.props;
-    let dragEntity = layoutNodeInfo[dragIndex];
+    let dragEntity: TempEntity | EditorComponentEntity = layoutNodeInfo[dragIndex];
     let replaceItem = false;
-    // // console.log(dragEntity);
     if (!dragEntity) {
       /** 如果没有实例，则创建临时实例 */
       dragEntity = constructTempEntity();
@@ -160,16 +155,9 @@ class CanvasStage extends React.Component<CanvasStageProps> {
     }
     /** 将最后的实例 idx 存储下来 */
     this.lastMoveIdx = hoverIndex;
-    // SetLayoutInfo(nextState);
     SortingEntity(dragIndex, hoverIndex, dragEntity, {
       replace: replaceItem
     });
-  }
-
-  /**
-   * 清除由 move 写入的临时实例
-   */
-  onCancelDrag = () => {
   }
 
   /**
@@ -181,107 +169,63 @@ class CanvasStage extends React.Component<CanvasStageProps> {
     getEntityProps: this.getEntityProps,
     onDrop: this.dropDispatcher,
     onMove: this.onMove,
-    onCancelDrag: this.onCancelDrag,
     onDelete: this.deleteElement,
     onClick: this.onSelectEntityForClick,
   };
 
   render() {
     const {
-      selectedEntities,
       entitiesStateStore,
-      PropEditorRenderer,
       layoutNodeInfo,
       SelectEntity,
-      SortingEntity,
-      InitEntityState,
-      UpdateEntityState,
+      DelEntity,
       dragableItemWrapper = dragableItemWrapperFac,
     } = this.props;
 
-    const { activeEntityID, activeEntity } = selectedEntities;
-
     const selectPage = () => {
-      // pageProperties
       SelectEntity(PageEntity);
     };
 
     const pageEntityState = entitiesStateStore[PAGE_ENTITY_ID];
     const pageStyle = pageEntityState?.style;
 
-    // console.log(activeEntity, entitiesStateStore);
-
     return (
       <div
         className="canvas-stage-container"
       >
-        <Grid
-          container
-          space={10}
-        >
-          <Grid
-            lg={9}
-            md={9}
-            sm={9}
-            xs={9}
-            item
-          >
-            <LayoutRenderer
-              layoutNode={layoutNodeInfo}
-              componentRenderer={dragableItemWrapper(
-                this.wrapperContext,
-              )}
-              RootRender={(child) => (
-                <DropStageContainer
-                  triggerCondition={(dragItem) => dragItem && dragItem.type === ItemTypes.DragItemClass}
-                  accept={[ItemTypes.DragItemClass, ItemTypes.DragItemEntity]}
-                  onLeave={(item) => {
-                    // console.log('onLeave', item);
-                    // this.onMove(layoutNodeInfo.length, layoutNodeInfo.length + 1, item);
-                  }}
-                  onEnter={(item) => {
-                    const layoutNodeInfoLen = layoutNodeInfo.length;
-                    item.index = layoutNodeInfoLen;
-                    this.onMove(layoutNodeInfoLen, layoutNodeInfoLen, item);
-                  }}
-                  onDrop={(_dragItemClass, dropOptions) => {
-                    if (dropOptions.type !== ItemTypes.DragItemClass) return;
-                    /** 清除 parentID */
-                    // eslint-disable-next-line no-param-reassign
-                    // delete _dragItemClass.parentID;
-                    this.dropDispatcher(_dragItemClass);
-                  }}
-                  onStageClick={(e) => {
-                    selectPage();
-                  }}
-                  style={pageStyle}
-                >
-                  {child}
-                </DropStageContainer>
-              )}
-            />
-          </Grid>
-          {
-            activeEntity && (
-              <Grid
-                lg={3}
-                md={3}
-                sm={3}
-                xs={3}
-                item
-              >
-                <PropEditorRenderer
-                  key={activeEntityID}
-                  propertiesConfig={activeEntity.bindProps}
-                  selectedEntity={activeEntity}
-                  defaultEntityState={entitiesStateStore[activeEntityID]}
-                  initEntityState={(entityState) => InitEntityState(activeEntity, entityState)}
-                  updateEntityState={(entityState) => UpdateEntityState(activeEntity, entityState)}
-                />
-              </Grid>
-            )
-          }
-        </Grid>
+        <LayoutRenderer
+          layoutNode={layoutNodeInfo}
+          componentRenderer={dragableItemWrapper(
+            this.wrapperContext,
+          )}
+          RootRender={(child) => (
+            <DropStageContainer
+              triggerCondition={(dragItem) => dragItem && dragItem.type === ItemTypes.DragItemClass}
+              accept={[ItemTypes.DragItemClass, ItemTypes.DragItemEntity]}
+              onLeave={(item) => {
+                /** 移出 item */
+                typeof item.index !== 'undefined' && DelEntity(item.index);
+              }}
+              onEnter={(item) => {
+                const layoutNodeInfoLen = layoutNodeInfo.length;
+                /** 设置 dragClass 的 index，用于排序 */
+                // eslint-disable-next-line no-param-reassign
+                item.index = layoutNodeInfoLen;
+                this.onMove(layoutNodeInfoLen, layoutNodeInfoLen, item);
+              }}
+              onDrop={(_dragItemClass, dropOptions) => {
+                if (dropOptions.type !== ItemTypes.DragItemClass) return;
+                this.dropDispatcher(_dragItemClass);
+              }}
+              onStageClick={(e) => {
+                selectPage();
+              }}
+              style={pageStyle}
+            >
+              {child}
+            </DropStageContainer>
+          )}
+        />
       </div>
     );
   }

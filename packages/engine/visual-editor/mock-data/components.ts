@@ -1,5 +1,6 @@
 import { EditorComponentClass } from "../types";
 import { CustomComponent } from "./custom-component-demo";
+import { ApiMock } from "./api-mock";
 
 interface ComponentClassCollection {
   [id: string]: EditorComponentClass
@@ -76,3 +77,5 @@ export const componentClassCollection: ComponentClassCollection = {
     }
   },
 };
+
+export const getCompClassData = ApiMock(componentClassCollection);

@@ -2,18 +2,16 @@ import React from 'react';
 import { LayoutNodeInfo } from '../types';
 
 /**
- * Wrapper 的上下文
+ * LayoutWrapper 上下文
  */
 export interface LayoutWrapperContext {
   id: string
   idx: number
   node: LayoutNodeInfo
-  children?: JSX.Element
+  children?: React.ElementType[]
 }
 
 export interface LayoutParserWrapper {
-  /** 容器渲染 wrapper 包装函数 */
-  // containerWrapper?: (ctx: LayoutWrapperContext) => JSX.Element
   /** 组件渲染器，由调用方实现 */
   componentRenderer?: (ctx: LayoutWrapperContext) => JSX.Element
 }
@@ -24,19 +22,7 @@ export interface LayoutRendererProps extends LayoutParserWrapper {
 }
 
 /**
- * TODO: 完善布局
- */
-// const containerLayoutParser = (layoutInfo): React.CSSProperties => {
-//   return {
-//     display: 'flex'
-//   };
-// };
-
-/**
  * 布局渲染器
- *
- * TODO: 结果缓存，优化性能
- *
  * parserContext 将传入每一个 parser
  */
 const renderLayout = (
@@ -52,8 +38,6 @@ const renderLayout = (
       const { componentRenderer } = wrapper;
       const wrapperContext: LayoutWrapperContext = { id, idx: i, node };
       if (node.body) {
-        // const { layout } = node;
-        // TODO: 加入布局UI隔离
         const childOfContainer = renderLayout(node.body, wrapper);
         let child;
         if (typeof componentRenderer === 'function') {
@@ -65,27 +49,9 @@ const renderLayout = (
 
         res.push(child);
       } else {
-        res.push(componentRenderer && componentRenderer(wrapperContext));
+        const child: any = componentRenderer && componentRenderer(wrapperContext);
+        res.push(child);
       }
-      // switch (node.type) {
-      //   case 'container':
-      //     // const { layout } = node;
-      //     // TODO: 加入布局UI隔离
-      //     const childOfContainer = renderLayout(node.body, wrapper);
-      //     let child;
-      //     if (typeof containerWrapper === 'function') {
-      //       wrapperContext.children = childOfContainer;
-      //       child = containerWrapper(wrapperContext);
-      //     } else {
-      //       child = childOfContainer;
-      //     }
-
-      //     res.push(child);
-      //     break;
-      //   case 'component':
-      //     res.push(componentRenderer && componentRenderer(wrapperContext));
-      //     break;
-      // }
     }
   }
   return res;
@@ -100,11 +66,9 @@ const LayoutRenderer: React.FC<LayoutRendererProps> = (
   const {
     layoutNode,
     RootRender,
-    // containerWrapper,
     componentRenderer,
   } = props;
   const layoutRenderRes = renderLayout(layoutNode, {
-    // containerWrapper,
     componentRenderer,
   });
   return typeof RootRender === 'function' ? RootRender(layoutRenderRes) : (

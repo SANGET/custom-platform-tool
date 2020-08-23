@@ -81,11 +81,17 @@ export interface SortingEntityAction {
 }
 
 export const SortingEntity = (
+  /** 拖起的项的 index */
   dragIndex: number,
+  /** 拖起的项移动到的 index */
   hoverIndex: number,
+  /** 拖起的 entity */
   entity,
+  /** 选项 */
   options?: {
+    /** 嵌套信息 */
     nestingInfo?: number[],
+    /** 是否替换在 hoverIndex 的 entity */
     replace?: boolean
   },
 ): SortingEntityAction => {

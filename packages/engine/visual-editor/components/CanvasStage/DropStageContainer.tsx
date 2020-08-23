@@ -1,7 +1,7 @@
 /**
  * DropStageContainer
  */
-import React, { useState, useReducer, useEffect } from 'react';
+import React from 'react';
 import { useDrop } from 'react-dnd';
 import styled from 'styled-components';
 import classnames from 'classnames';
@@ -14,7 +14,7 @@ import { Call } from '@mini-code/base-func';
 const StageRender = styled.div`
   min-height: 50vh;
   background-color: rgba(0,0,0, 0.05);
-  padding: 10px;
+  /* padding: 10px; */
   border: 1px solid #EEE;
   &:hover {
     background-color: rgba(0,0,0, 0.05);
@@ -33,9 +33,9 @@ export interface DropStageProps {
   onDrop
   onLeave?: (dragItem: DragItemClass) => void
   onEnter?: (dragItem: DragItemClass) => void
-  onStageClick
   /** 触发 onEnter 和 onLeave 的条件 */
   triggerCondition?: (dragItem: DragItemClass) => boolean
+  onStageClick
   style
   className?
   accept

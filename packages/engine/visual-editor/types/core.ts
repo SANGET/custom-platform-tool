@@ -42,8 +42,6 @@ export interface EditorBasicElementClass<C> {
 export interface EditorComponentClass<C = GenericComponentType> extends EditorBasicElementClass<C> {
   id: string
 }
-// EditorContainerClass<C> |
-// EditorCompClass<C>
 
 /// //////////////// 属性 ///////////////////
 
@@ -172,6 +170,16 @@ export interface EditorComponentEntity extends EditorComponentClass {
   _classID: EditorComponentClass['id']
 }
 
+export const TEMP_ENTITY_ID = 'temp-entity';
+/**
+ * 由于拖动产生的临时 entity
+ */
+export interface TempEntity {
+  id: string
+  /** 标志性为临时实例 */
+  _state: typeof TEMP_ENTITY_ID
+}
+
 /**
  * 编辑器的实例种类
  */
@@ -190,8 +198,13 @@ export interface EditorComponentEntityStore {
  * 基本拖拽项
  */
 export interface DragItemType {
+  /** 用于临时记录拖拽时的位置，被拖拽时动态赋值的 */
+  index?: number
+  /** 可拖拽的项的类型 */
   type: string
+  /** 拖拽带的 item 参数 */
   dragItemClass: any
+  /** 自定义的拖拽的配置 */
   dragConfig?: any
 }
 
@@ -199,7 +212,6 @@ export interface DragItemType {
  * 组件类拖拽项
  */
 export interface DragItemClass extends DragItemType {
-  type: string
   dragItemClass: EditorComponentClass
 }
 

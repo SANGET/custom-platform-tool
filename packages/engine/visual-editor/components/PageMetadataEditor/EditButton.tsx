@@ -14,15 +14,13 @@ const editPageMetadata = (onOK, onCancel) => {
 };
 
 export const EditButton = ({
-  onOK, onCancel
+  onOK, onCancel, children
 }) => {
   return (
-    <div>
-      <Button
-        onClick={() => editPageMetadata(onOK, onCancel)}
-      >
-          编辑页面属性
-      </Button>
-    </div>
+    <Button
+      onClick={() => editPageMetadata(onOK, onCancel)}
+    >
+      {children}
+    </Button>
   );
 };

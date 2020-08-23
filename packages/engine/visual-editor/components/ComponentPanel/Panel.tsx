@@ -2,27 +2,13 @@ import React from 'react';
 import { Tabs, Tab } from '@infra/ui';
 
 import DragItem, { DragItemConfig } from '@engine/visual-editor/spec/DragItem';
-import { EditorComponentClass } from '@engine/visual-editor/types';
-import { componentClassCollection } from '../../mock-data';
+import { EditorComponentClass, ComponentPanelConfig } from '@engine/visual-editor/types';
 import { ItemTypes } from '../../spec/types';
-
-export interface PanelItemsGroup {
-  title: string
-  items: string[]
-}
-
-export interface PanelTabGroupItem {
-  title: string
-  itemsGroups: PanelItemsGroup[]
-}
-
-export interface ComponentPanelConfig {
-  tabGroup: PanelTabGroupItem[]
-}
 
 export interface ComponentPanelProps {
   /** 组件 panel 的配置 */
   componentPanelConfig: ComponentPanelConfig
+  compClassData: any
   /** 可拖拽 item 的包装器 interface */
   itemWrapper?: (item: EditorComponentClass) => React.ReactChild
   /** 控制 DragItem 的 drag 配置的 interface，详情参考 react-dnd */
@@ -31,6 +17,7 @@ export interface ComponentPanelProps {
 
 const ComponentPanel = ({
   componentPanelConfig,
+  compClassData,
   itemWrapper,
   getDragItemConfig
 }: ComponentPanelProps) => {
@@ -44,7 +31,9 @@ const ComponentPanel = ({
   };
 
   return (
-    <div>
+    <div
+      className="component-class-panel"
+    >
       <Tabs
         onChangeTab={handleChange}
       >
@@ -67,7 +56,7 @@ const ComponentPanel = ({
                         <h5>{igTitle}</h5>
                         {
                           items.map((componentClassID, __idx) => {
-                            const componentClass = componentClassCollection[componentClassID];
+                            const componentClass = compClassData[componentClassID];
                             const {
                               id, label
                             } = componentClass;
@@ -99,31 +88,6 @@ const ComponentPanel = ({
       </Tabs>
     </div>
   );
-};
-
-ComponentPanel.defaultProps = {
-  componentPanelConfig: {
-    tabGroup: [
-      {
-        title: '控件类型',
-        itemsGroups: [
-          {
-            title: '基础控件',
-            items: [
-              'component-1',
-              'component-table-1',
-            ]
-          },
-          {
-            title: '布局',
-            items: [
-              'container-1'
-            ]
-          },
-        ]
-      },
-    ]
-  }
 };
 
 export default ComponentPanel;

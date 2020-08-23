@@ -8,6 +8,9 @@ import { ItemTypes } from './types';
 import { DragItemClass, DropCollectType } from '../types';
 import { isNodeInChild } from '../utils';
 
+/**
+ * DnD 的回调的 context
+ */
 export interface DnDContext {
   id: string
   idx: number
@@ -22,16 +25,18 @@ export type CancelDrag = (originalIndex: number) => void
  * 作用于 dragItem 传递到 drop 容器的参数配置
  */
 interface DragItem {
-  index: number
+  index?: number
   type: string
 }
 
+/**
+ * 可拖拽的 item 的 actions
+ */
 export interface DragItemActions {
-  onDrop: DragItemDrop
+  onDrop?: DragItemDrop
   /** 响应组件的“拖”事件 */
   onDrag?: DragItemDrag
   onMove?: DragItemMove
-  onCancelDrag?: CancelDrag
 }
 
 export interface DragItemProps<
@@ -39,7 +44,7 @@ export interface DragItemProps<
 > extends DragItem,
   DragItemActions,
   Omit<React.HTMLAttributes<HTMLDivElement>, keyof DragItemActions | 'children'> {
-  children: React.ReactChild
+  children: any
   dragItemClass: D
   dragConfig?: C
   accept?: TargetType
@@ -50,7 +55,7 @@ export interface DragItemProps<
  */
 const DragItemComp: React.FC<DragItemProps> = ({
   children, dragItemClass, dragConfig, style,
-  type, id, index, onMove, onCancelDrag, onDrop, onDrag,
+  type, id, index, onMove, onDrop, onDrag,
   accept = [ItemTypes.DragItemEntity, ItemTypes.DragItemClass],
   ...other
 }) => {
@@ -154,14 +159,6 @@ const DragItemComp: React.FC<DragItemProps> = ({
     collect: (monitor) => ({
       isDragging: !!monitor.isDragging(),
     }),
-    // end: (item, monitor) => {
-    //   const { id: droppedId, originalIndex } = monitor.getItem();
-    //   const didDrop = monitor.didDrop();
-    //   if (!didDrop) {
-    //     onCancelDrag && onCancelDrag(originalIndex);
-    //     // onMove(droppedId, originalIndex);
-    //   }
-    // }
   });
 
   const opacity = isDragging ? 0.5 : 1;
