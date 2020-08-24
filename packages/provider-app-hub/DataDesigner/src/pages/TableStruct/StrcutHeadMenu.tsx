@@ -1,5 +1,5 @@
 /** jsx文件必须包含react作用域 */
-import React from 'react';
+import React, { useEffect } from 'react';
 /** 教程 https://www.npmjs.com/package/emotion */
 
 /** react路由暴露出来的页面跳转方法 */
@@ -12,15 +12,13 @@ import { Menu } from 'antd';
 * 表头菜单组件
 */
 import TableHeadMenu from '@provider-app/data-designer/src/bizComps/TableHeadMenu';
+import { ItemTypes } from '@engine/visual-editor/spec/types';
 
 /**
 * 结构表表头菜单
 * openModal--打开新建表弹窗
 */
-const StructHeadMenu = (props) => {
-  const { openModal } = props;
-  /** react路由跳转方法,必须定义在react 组件中,跳转到编辑表页面时要用 */
-  // const History = useHistory();
+const StructHeadMenu = ({ openModal, form, getList }) => {
   /**
      * 创建权限项下拉按钮菜单点击触发回调
      * 执行模态框内容切换
@@ -68,7 +66,14 @@ const StructHeadMenu = (props) => {
     title: '数据表列表',
     style: { margin: "0 20px", width: "calc(100% - 40px)" },
     menus: [
-      { text: "新建表", onClick: () => openModal() },
+      {
+        text: "新建表",
+        onClick: () => {
+          getList({});
+          form.resetFields();
+          openModal();
+        }
+      },
       {
         text: "标签管理",
         onClick: () => { }

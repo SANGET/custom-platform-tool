@@ -1,7 +1,7 @@
 /*
  * @Author: your name
  * @Date: 2020-08-03 12:22:24
- * @LastEditTime: 2020-08-13 14:20:05
+ * @LastEditTime: 2020-08-24 17:15:06
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: \custom-platform-v3-frontend\packages\provider-app-hub\DataManager\src\store\index.ts
@@ -21,6 +21,8 @@ export interface IState {
   /** 树源数据 */
   treeData:Array<unknown>;
   structTableData:Array<unknown>;
+  structRowData:unknown;
+  structTableEnum:Array<{text:string, value:string}>
 }
 
 /** 共享数据初始值 */
@@ -31,7 +33,31 @@ export const defaultState = {
     pageSize: 10,
   },
   treeData: [],
-  structTableData: []
+  structTableData: [],
+  structRowData: {
+    name: "",
+    code: "",
+    type: "",
+    moduleId: "",
+    moduleName: "",
+    species: "BIS",
+    labels: null,
+    description: "",
+    gmtCreate: "",
+    modifiedBy: null,
+    gmtModified: "",
+    auxTable: {},
+    treeTable: null,
+    sql_view: null,
+    relation_tables: [],
+    columns: [],
+    references: [],
+    foreignKeys: [],
+    combo_uniques: null,
+    indexes: null,
+    table_join_factor: null
+  },
+  structTableEnum: [],
 };
 
 /** 动作集合 */
@@ -47,6 +73,14 @@ export type Action =
   | {
     type: 'setStructTableData'
     structTableData: Array<unknown>;
+  }
+  | {
+    type: 'setStructRowData'
+    structRowData: unknown;
+  }
+  | {
+    type: 'setStructTableEnum'
+    structTableEnum: Array<{text:string, value:string}>;
   }
   | {
     type: 'triggerLoading'

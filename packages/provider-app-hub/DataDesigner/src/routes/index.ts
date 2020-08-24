@@ -1,7 +1,7 @@
 /*
  * @Author: wph
  * @Date: 2020-07-23 10:29:08
- * @LastEditTime: 2020-08-17 21:37:22
+ * @LastEditTime: 2020-08-24 20:49:50
  * @LastEditors: Please set LastEditors
  * @Description: 添加注释
  * @FilePath: \custom-platform-v3-frontend\packages\provider-app-hub\AuthManager\src\routes\index.ts
@@ -15,10 +15,6 @@ import TableStruct from '@provider-app/data-designer/src/pages/TableStruct';
 * 表结构-编辑页入口
 */
 import EditStruct from '@provider-app/data-designer/src/pages/EditStruct';
-
-// import ForeignKeySet from '@provider-app/data-designer/src/pages/EditStruct/ForeignKeySet';
-
-// import ReferenceTable from '@provider-app/data-designer/src/pages/EditStruct/ReferenceTable';
 
 import DictManage from '@provider-app/data-designer/src/pages/DictManage';
 

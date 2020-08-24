@@ -8,24 +8,28 @@ import { TableTypeEnum } from '@provider-app/data-designer/src/tools/constant';
 import BasicForm from '@provider-app/data-designer/src/components/BasicForm';
 
 /**
+ * 通过useMappedState在store 和组件之间，建立起连接
+ */
+import { useMappedState } from 'redux-react-hook';
+
+/**
 * 正则表达式
 */
 import REG from '@provider-app/data-designer/src/tools/reg';
 /** 中文转拼音工具 */
-import PinYin from 'js-pinyin';
-
-/** 中文转换为拼音工具设置选项 */
-PinYin.setOptions({
-  /** 关闭音调转换功能 */
-  checkPolyphone: false,
-  /** 将汉字首字母转换为大写拼音 */
-  charCase: 0,
-});
+import { PinYin } from '@provider-app/data-designer/src/tools/mix';
 
 const StructForm = ({
-  form, treeData, queryList, PrimayTableEnum, ...rest
+  form, treeData, PrimayTableEnum, ...rest
 }) => {
-  // console.log({ treeData});
+  /**
+   * 全局加载动画设置
+   */
+  const { structTableEnum } = useMappedState((state) => ({
+    structTableEnum: state.structTableEnum
+  }));
+
+  // console.log({ treeData, structTableEnum });
   /** 树形属性配置 */
   const tProps = {
     treeData,
@@ -143,7 +147,7 @@ const StructForm = ({
       },
       compAttr: {
         type: 'BasicSelect',
-        enum: PrimayTableEnum,
+        enum: structTableEnum || [],
         placeholder: '请选择主表',
 
       }
@@ -151,7 +155,6 @@ const StructForm = ({
     moduleId: {
       itemAttr: {
         label: "归属模块",
-        className: refShow.normalTable,
         rules: [{ required: true, message: '请选择归属模块' }],
       },
       compAttr: {

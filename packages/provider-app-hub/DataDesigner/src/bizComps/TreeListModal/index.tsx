@@ -7,6 +7,8 @@ import {
  * 组件仓库,用于动态渲染组件
  */
 import BasicStory from '@provider-app/data-designer/src/components/BasicStory';
+/** 基础表单组件 */
+import BasicForm from '@provider-app/data-designer/src/components/BasicForm';
 /** 菜单树业务组件 */
 import MenuTree from '@provider-app/data-designer/src/bizComps/MenuTree';
 
@@ -33,46 +35,11 @@ const formItemLayout = {
  * @param tableProps--模态框中列表属性配置
  */
 const TreeListModal = ({
-  formProps, modalProps, treeProps, searchProps, tableProps, ...rest
+  formConfig, modalProps, treeProps, searchProps, tableProps, ...rest
 }) => {
-  // console.log({ treeProps });
-  const { form, formItemsConfig } = formProps;
-  // console.log({ treeData });
-  /** 表单初始化 */
-  // form.setFieldsValue({
-  //   /** long 引用主键 */
-  //   id: '',
-  //   /**  String 字段编码 */
-  //   fieldCode: '',
-  //   /**  String 字段名称 */
-  //   fieldName: '',
-  //   /**  String 关联表 */
-  //   refTableCode: '',
-  //   /**  String 关联字段 */
-  //   refFieldCode: '',
-  //   /**  String 显示字段 */
-  //   refDisplayFieldCode: '',
-  //   /**  int 排序号 */
-  //   sequence: '',
-  // });
-
   return (
     <>
-      <Form
-        name="biz-form"
-        /** 受控组件实例 */
-        form={form}
-        {...formItemLayout}
-        {...rest}
-      >{
-
-          Object.keys(formItemsConfig).map((key) => (
-            <Form.Item key={key} {...formItemsConfig[key].itemAttr}>
-              <BasicStory {...formItemsConfig[key].compAttr} />
-            </Form.Item>
-          ))
-        }
-      </Form>
+      <BasicForm {...formConfig} />
       <Modal {...modalProps}>
         <Row gutter={16}>
           <Col span={10}>

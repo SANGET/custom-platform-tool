@@ -15,7 +15,6 @@ import { BasicSelect } from '@provider-app/data-designer/src/components/BasicSel
 */
 import TableField from '@provider-app/data-designer/src/pages/EditStruct/TableField';
 import ReferenceTable from '@provider-app/data-designer/src/pages/EditStruct/ReferenceTable';
-import ForeignKeySet from '@provider-app/data-designer/src/pages/EditStruct/ForeignKeySet';
 import ComposeUnique from '@provider-app/data-designer/src/pages/EditStruct/ComposeUnique';
 import IndexSet from '@provider-app/data-designer/src/pages/EditStruct/IndexSet';
 import Trigger from '@provider-app/data-designer/src/pages/EditStruct/Trigger';
@@ -38,7 +37,6 @@ const components = {
   TreeSelect,
   TableField,
   ReferenceTable,
-  ForeignKeySet,
   ComposeUnique,
   IndexSet,
   Trigger,

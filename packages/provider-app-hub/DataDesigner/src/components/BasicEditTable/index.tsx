@@ -20,6 +20,12 @@ import styled from 'styled-components';
 * 编辑表页面样式
 */
 const EditTableStyled = styled.div`
+
+
+.select-row{
+  background-color:#f0f0f0;
+}
+
 .editable-cell {
   position: relative;
 }
@@ -101,10 +107,10 @@ const EditableCell: React.FC<EditableCellProps> = ({
  * @param pagination 分页配置
  * @param rest 其它属性
  */
-const BasicEditTable = (props) => {
-  const {
-    form, dataSource, columns, pagination
-  } = props;
+const BasicEditTable = ({
+  form, dataSource, columns, pagination, rowKey, ...rest
+}) => {
+  const { onClick } = rest;
   return (
     <EditTableStyled>
       <Form form={form} component={false}>
@@ -118,9 +124,17 @@ const BasicEditTable = (props) => {
 
           dataSource={dataSource}
           columns={columns}
+          rowKey={rowKey}
           pagination={pagination}
           bordered
-          rowClassName="editable-row"
+          rowClassName={ rest.rowClassName || "editable-row"}
+          onRow={(record) => {
+            return {
+              onClick: (event) => {
+                onClick(record);
+              }
+            };
+          }}
 
         />
       </Form>

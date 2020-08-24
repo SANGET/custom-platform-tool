@@ -47,7 +47,7 @@ const mapState = (state) => ({
 });
 const List = (props) => {
   const {
-    tableData, scroll, style, title, pagination, queryList, setData
+    tableData, scroll, style, title, pagination, queryList, setData, loading
   } = props;
 
   /** react路由跳转方法,必须定义在react 组件中,跳转到编辑表页面时要用 */
@@ -72,7 +72,7 @@ const List = (props) => {
       {
         text: '编辑',
         onClick: (row) => {
-          console.log(row);
+          // console.log(row);
           onNavigate({
             type: "PUSH",
             route: '/data_designer/edit_struct',
@@ -226,7 +226,7 @@ const List = (props) => {
       form
         .validateFields() /** 表单校验 */
         .then((values) => {
-          console.log(values, form.getFieldsValue());
+          // console.log(values, form.getFieldsValue());
           // value;
           /** 新建表数据提交 */
           ReqCopyTableStructRecord(values).then(() => {
@@ -322,6 +322,7 @@ const List = (props) => {
       <Table
         bordered
         title={title}
+        loading={loading}
         dataSource={tableData}
         columns={columns}
         scroll={scroll}

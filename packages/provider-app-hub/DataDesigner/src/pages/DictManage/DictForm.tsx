@@ -2,22 +2,20 @@ import React, {
   useState, useEffect
 } from 'react';
 
-/** 网络请求工具 */
-import Http from '@infra/utils/http';
 /** 颜色选择器 */
 import BasicColorPicker from '@provider-app/data-designer/src/components/BasicColorPicker';
+/** 拼音转换 */
+import { PinYin } from '@provider-app/data-designer/src/tools/mix';
 /** 基础编辑表格组件 */
-import BasicEditTable, { renderOperCol } from '@provider-app/data-designer/src/components/BasicEditTable';
+import { renderOperCol } from '@provider-app/data-designer/src/components/BasicEditTable';
 import { PlusOutlined, MinusOutlined } from '@ant-design/icons';
-
-import { TableForm } from '@provider-app/data-designer/src/bizComps/TableForm';
 
 /** 基础表单组件 */
 import BasicForm from '@provider-app/data-designer/src/components/BasicForm';
 /**
 * 初始化模态框
 */
-import { Connector } from '@provider-app/data-designer/src/connector';
+
 import { getModalConfig } from '../../tools/mix';
 
 /**
@@ -25,7 +23,7 @@ import { getModalConfig } from '../../tools/mix';
  */
 const DictForm = (props) => {
   /** 导出控制表单 */
-  const { form } = props;
+  const { form, isSub, isAddEditRow } = props;
 
   /**
   * 因为会动态增删父组件传进来的表格数据,所以需要用状态值保存
@@ -36,121 +34,24 @@ const DictForm = (props) => {
   /**
   * 颜色面板颜色设置
   */
-  const [panelColor, setPanelColor] = useState({ fontColor: '#d9d9d9', bgColor: '#fff' });
+  const [panelColor, setPanelColor] = useState({ fontColor: '#000000a6', bgColor: 'transparent' });
   /**
   * 生效颜色设置
   */
-  const [color, setColor] = useState({ fontColor: '#d9d9d9', bgColor: '#fff' });
+  const [color, setColor] = useState({ fontColor: '#000000a6', bgColor: 'transparent' });
   /**
   * 颜色选择器显示隐藏控制
   */
-  const [visible, setVisiable] = useState(false);
+  const [colorPicker, setColorPicker] = useState({ visiable: false, title: '', selectRowIndex: 0 });
 
   /**
-  * 行编辑态设置
-  */
-  const [editingKey, setEditingKey] = useState<number|string>('');
-  /** 操作按钮 */
-  const operButs = [
-    {
-      text: <PlusOutlined />,
-      onClick: (row) => {
-        handleAdd();
-      }
-    },
-    /** 多于一行记录,才显示-号 */
-    { text: <MinusOutlined />, onClick: (row) => { }, isShow: (index) => index },
-  ];
-
-  const openColorPicker = () => {
-    setVisiable(true);
+   * 打开调色板
+   */
+  const openColorPicker = (args) => {
+    setColorPicker({ ...colorPicker, ...args });
   };
-
-  /**
-  * 表字段列属性配置
-  */
-  const columns = [
-    {
-      title: '编码',
-      dataIndex: 'code',
-      editable: true,
-      formConfig: {
-        attrs: { type: 'Input', placeholder: '请输入编码' },
-        rules: [{
-          required: true,
-          message: '请输入编码'
-        }]
-      },
-      width: 200,
-    },
-    {
-      title: '名称',
-      dataIndex: 'itemName',
-      formConfig: {
-        attrs: { type: 'Input', placeholder: '请输入名称', style: { color: color.fontColor, backgroundColor: color.bgColor } },
-        rules: [{
-          required: true,
-          message: '请输入名称'
-        }]
-      },
-      editable: true,
-      width: 200,
-    },
-    {
-      title: '颜色',
-      dataIndex: 'renderColor',
-      formConfig: {
-        attrs: {
-          type: 'BasicColor',
-          color: 'green',
-          onClick: () => {
-            openColorPicker();
-          }
-        },
-        rules: []
-      },
-      editable: true,
-      width: 160,
-    },
-    renderOperCol(operButs),
-  ];
-  /**
-* 给表字段的编辑列添加编辑属性设置
-*/
-  const mergedColumns = columns.map((col:{[propName:string]:unknown}) => {
-    if (!col.editable) {
-      return col;
-    }
-    return {
-      ...col,
-      /**
-    * 传入单元格里面的参数
-    */
-      onCell: (record) => ({
-        record,
-        formConfig: col.formConfig,
-        dataIndex: col.dataIndex,
-        title: col.title,
-        editing: isEditing(record),
-      }),
-    };
-  });
-    /**
-  * 编辑行号与记录行号相符时，设置成编辑状态
-  */
-  const isEditing = (record) => record.key === editingKey;
 
   // console.log(dataSource);
-
-  /**
- * 编辑函数初始值设置
- */
-  const edit = (record) => {
-    form.setFieldsValue({
-      ...record
-    });
-    setEditingKey(record.key);
-  };
 
   useEffect(() => {
     // edit({
@@ -159,90 +60,15 @@ const DictForm = (props) => {
     //   code: '',
     //   renderColor: '#fff'
     // });
-    handleAdd();
+    // handleAdd();
   }, []);
-
-  /**
- * 取消编辑
- */
-  const cancel = () => {
-    setEditingKey('');
-  };
-  /**
- * 保存编辑行的值
- */
-  const save = async (key: React.Key) => {
-    try {
-      const row = (await form.validateFields()) as Item;
-
-      const newData = [...fieldTableData];
-      const index = newData.findIndex((item) => key === item.key);
-      if (index > -1) {
-        const item = newData[index];
-        newData.splice(index, 1, {
-          ...item,
-          ...row,
-        });
-        setFieldTableData(newData);
-        setEditingKey('');
-      } else {
-        newData.push(row);
-        setFieldTableData(newData);
-        setEditingKey('');
-      }
-    } catch (errInfo) {
-      console.log('Validate Failed:', errInfo);
-    }
-  };
-
-  /**
-  * 添加一行记录
-  */
-  const handleAdd = () => {
-    const newData = {
-      key: 2,
-      /** 字典项名称 */
-      name: '',
-      /** 字典项编码 */
-      code: '',
-      /** 背景颜色 */
-      renderBgColor: '',
-      /** 字体颜色 */
-      renderFontColor: '',
-    };
-    fieldTableData.unshift(newData);
-    /**
-  * 为什么直接赋值setData(fieldTableData)不更新,非要写成setData([...fieldTableData])才触发更新
-  */
-    setFieldTableData([...fieldTableData]);
-    edit(newData);
-    console.log(fieldTableData);
-  };
-  /**
-* 删除一行记录
-*/
-  const handleDelete = (key) => {
-    setFieldTableData(fieldTableData.filter((item) => item.key !== key));
-  };
-  // console.log(mergedColumns);
-  /**
-  * 编辑表格属性配置
-  */
-  const editTableProps = {
-    form,
-    dataSource: fieldTableData,
-    columns: mergedColumns,
-    pagination: {
-      onChange: cancel,
-    }
-  };
 
   /**
   * 颜色选择器弹窗设置
   */
   const modalProps = getModalConfig({
-    visible,
-    title: '新增字典',
+    visible: colorPicker.visiable,
+    title: colorPicker.title,
     /**
      * 弹框确定按钮回调
      * @param e  点击按钮事件源
@@ -251,28 +77,37 @@ const DictForm = (props) => {
     onOk: (e) => {
       /** 生效缓存颜色 */
       setColor(panelColor);
-      setVisiable(false);
+      // 将生效颜色设置到form.list对应的行中
+      const values = form.getFieldsValue();
+      const rowIndex = colorPicker.selectRowIndex;
+      values.items[rowIndex].renderFontColor = panelColor.fontColor;
+      values.items[rowIndex].renderBgColor = panelColor.bgColor;
+      form.setFieldsValue({ ...values });
+      setColorPicker({ visiable: false, title: '', selectRowIndex: 0 });
     },
     /** 弹框取消按钮回调 */
     onCancel: (e) => {
       console.log({ color });
       /** 取消时复原 */
       setPanelColor(color);
-      setVisiable(false);
+      setColorPicker({ visiable: false, title: '', selectRowIndex: 0 });
     },
+    width: 420,
   });
   /**
   * 颜色面板属性设置
   */
   const colorProps = {
-    color: panelColor,
+    color: colorPicker.title === '字体颜色' ? panelColor.fontColor : panelColor.bgColor,
     modalProps,
-    onLeftChangeComplete: (obj) => {
+    selectRowIndex: colorPicker.selectRowIndex,
+    onChangeComplete: (obj) => {
       /** 更新颜色选择器展示颜色 */
-      setPanelColor(Object.assign({}, panelColor, { fontColor: obj.hex }));
-    },
-    onRightChangeComplete: (obj) => {
-      setPanelColor(Object.assign({}, panelColor, { bgColor: obj.hex }));
+      if (colorPicker.title === '字体颜色') {
+        setPanelColor(Object.assign({}, panelColor, { fontColor: obj.hex }));
+      } else {
+        setPanelColor(Object.assign({}, panelColor, { bgColor: obj.hex }));
+      }
     },
   };
 
@@ -283,6 +118,16 @@ const DictForm = (props) => {
     form,
     colSpan: 12,
     items: {
+      id: {
+        /** 表单项属性 */
+        itemAttr: {
+          className: 'hide'
+        },
+        /** 表单项包裹组件属性 */
+        compAttr: {
+          type: 'Input',
+        }
+      },
       name: {
         /** 表单项属性 */
         itemAttr: {
@@ -317,62 +162,91 @@ const DictForm = (props) => {
         }
       }
     },
-    // listItems: {
-    //   name: {
-    //     /** 表单项属性 */
-    //     itemAttr: {
-    //       rules: [
-    //         { required: true, message: '请输入名称!' },
-    //         { pattern: /^[\u4e00-\u9fa5_a-zA-Z0-9()]+$/, message: '输入字段可以为中文、英文、数字、下划线、括号' },
-    //         { max: 64, message: '最多只能输入64个字符' },
-    //       ],
-    //     },
-    //     /** 表单项包裹组件属性 */
-    //     compAttr: {
-    //       type: 'Input',
-    //       placeholder: '请输入字典项名称',
-    //       onChange: (e) => {
-    //       }
-    //     }
-    //   },
-    //   code: {
-    //     /** 表单项属性 */
-    //     itemAttr: {
-    //       rules: [
-    //         { required: true, message: '请输入字典项编码!' },
-    //       ]
-    //     },
-    //     /** 表单项包裹组件属性 */
-    //     compAttr: {
-    //       type: 'Input',
-    //       placeholder: '请输入字典项编码',
-    //       onChange: (e) => {
-    //       }
-    //     }
-    //   },
-    //   renderColor: {
-    //     /** 表单项属性 */
-    //     itemAttr: {
-    //     },
-    //     /** 表单项包裹组件属性 */
-    //     compAttr: {
-    //       type: 'Input',
-    //       placeholder: '请选择字体和背景颜色',
-    //       onChange: (e) => {
-    //       }
-    //     }
-    //   }
-    // }
+    listItems: {
+      name: {
+        /** 表单项属性 */
+        itemAttr: {
+          rules: [
+            { required: true, message: '请输入字典项名称' },
+            { pattern: /^[\u4e00-\u9fa5_a-zA-Z0-9()]+$/, message: '输入字段可以为中文、英文、数字、下划线、括号' },
+            { max: 64, message: '最多只能输入64个字符' },
+          ],
+        },
+        /** 表单项包裹组件属性 */
+        compAttr: {
+          type: 'Input',
+          placeholder: '请输入字典项名称',
+          onChange: (e, index) => {
+            /** 将表格名称转换为汉字首字母拼音 */
+            const values = form.getFieldsValue();
+            values.items[index].code = PinYin.getCamelChars(values.items[index].name);
+            form.setFieldsValue({ ...values });
+          }
+        }
+      },
+      code: {
+        /** 表单项属性 */
+        itemAttr: {
+          rules: [
+            { required: true, message: '请输入字典项编码!' },
+          ]
+        },
+        /** 表单项包裹组件属性 */
+        compAttr: {
+          type: 'Input',
+          placeholder: '请输入字典项编码',
+          onChange: (e) => {
+          }
+        }
+      },
+      renderFontColor: {
+        /** 表单项属性 */
+        itemAttr: {
+          rules: [],
+        },
+        /** 表单项包裹组件属性 */
+        compAttr: {
+          type: 'BasicColor',
+          color: color.fontColor,
+          placeholder: '请选择字体颜色',
+          onClick: (e, selectRowIndex) => {
+            openColorPicker({ title: '字体颜色', visiable: true, selectRowIndex });
+          },
+        }
+      },
+      renderBgColor: {
+        /** 表单项属性 */
+        itemAttr: {
+          rules: [],
+        },
+        /** 表单项包裹组件属性 */
+        compAttr: {
+          type: 'BasicColor',
+          color: color.bgColor,
+          placeholder: '请选择字体颜色',
+          onClick: (e, selectRowIndex) => {
+            openColorPicker({ title: '背景颜色', visiable: true, selectRowIndex });
+          },
+        }
+      },
+    }
   };
 
-  return (<>
+  const getFormConfig = (isSub, formProps) => {
+    if (isSub) {
+      delete formProps.items;
+    }
 
-    {/* <Input onFocus={() => { openColorPicker(); }}/> */}
-    <BasicForm {...formProps}/>
-    {/* <TableForm /> */}
-    {/* <BasicEditTable {...editTableProps} /> */}
+    return formProps;
+  };
+
+  const formConfig = getFormConfig(isSub, formProps);
+  // console.log(formConfig);
+
+  return (<div className="data-designer">
+    <BasicForm {...formConfig} isAddEditRow={isAddEditRow}/>
     <BasicColorPicker {...colorProps} />
-  </>);
+  </div>);
 };
 
 export default DictForm;

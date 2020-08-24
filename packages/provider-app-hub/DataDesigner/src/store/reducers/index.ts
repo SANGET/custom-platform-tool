@@ -1,18 +1,11 @@
 /*
  * @Author: your name
  * @Date: 2020-08-03 12:24:31
- * @LastEditTime: 2020-08-13 15:55:53
+ * @LastEditTime: 2020-08-24 16:13:56
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: \custom-platform-v3-frontend\packages\provider-app-hub\DataManager\src\reducers\index.ts
  */
-/** 导入状态值接口定义 */
-import { Action, IState } from '@provider-app/data-designer/src/store/initState';
-
-// const reducer = (
-//   state: IState | null | undefined,
-//   action: Action,
-// ) => {
 /** 动作定义 */
 const reducer = (
   state,
@@ -36,6 +29,22 @@ const reducer = (
       return {
         ...state,
         structTableData: action.structTableData
+      };
+    }
+
+    /** 设置表结构列表枚举 */
+    case 'setStructTableEnum': {
+      // console.log(action.structTableEnum);
+      return {
+        ...state,
+        structTableEnum: action.structTableEnum
+      };
+    }
+    /** 设置表结构列表数据 */
+    case 'setStructRowData': {
+      return {
+        ...state,
+        structRowData: action.structRowData
       };
     }
     /** 改变表结构页码 */

@@ -13,6 +13,30 @@ import {
  */
 import BasicStory from '@provider-app/data-designer/src/components/BasicStory';
 
+const FormStyled = styled.div`
+#basic-form{
+  margin:16px 20px 0 20px;
+  
+}
+
+.ant-row{
+  margin-bottom:16px;
+}
+.search-form{
+  margin:16px  0;
+  .ant-row{
+    margin-bottom:0
+  }
+}
+
+.ant-col.ant-col-18.ant-form-item-control{
+  max-width: 100%; 
+}
+.ant-input-number{
+  width:100%;
+}
+`;
+
 /**
 *搜素表单样式
 */
@@ -35,6 +59,8 @@ const SearchStyled = styled.div`
   flex: 1;
 }
 `;
+
+// padding: '16px 20px'
 /**
  * 基本的内联搜索表单
  * @param formItemLayout-labelCol   label列的宽度 栅格布局 一个表单项单元总共24列
@@ -52,18 +78,27 @@ const BasicForm = (props) => {
       labelCol: { span: 6 },
       wrapperCol: { span: 18 },
     },
-    style = { padding: '16px 20px' },
+    style = { },
     layout = 'inline',
+    listName = 'items',
     colSpan = 6,
     btnSpan = 6,
     gutter = 24,
     items,
     form,
+    isAddEditRow,
+    className,
   } = props;
 
   const listRef = useRef(null);
   useEffect(() => {
-    listRef.current && listRef.current();
+    // console.log({ isAddEditRow });
+    /**
+     * 是否要设置一行动态表单编辑行
+     */
+    if (isAddEditRow) {
+      listRef.current && listRef.current();
+    }
   }, []);
   /**
   * 按照表单项配置items,动态生成表单
@@ -76,7 +111,7 @@ const BasicForm = (props) => {
       * 2.没有itemAttr配置
       */
       return key === 'btns' ? (
-        <Col span={btnSpan} key={key}>
+        <Col span={btnSpan} key={key} >
           <Form.Item>
             {
               items[key].compAttr.map((props) => {
@@ -86,7 +121,7 @@ const BasicForm = (props) => {
           </Form.Item>
         </Col>
       ) : (
-        <Col span={colSpan} key={key}>
+        <Col span={colSpan} key={key} className={items[key].itemAttr.className}>
           <Form.Item name={key} {...items[key].itemAttr}>
             <BasicStory {...items[key].compAttr} />
           </Form.Item>
@@ -95,35 +130,61 @@ const BasicForm = (props) => {
     });
   };
 
-  const getList = (listItems, addRow) => {
-    // console.log({ list: props.listItems });
+  /**
+   * 设置每行的字体和背景色
+   * @param name-字体色/背景色的key
+   * @param name-字体色/背景色的key
+   */
+  const getColor = ({ name, index }) => {
+    // console.log(name, index, form.getFieldValue('items'));
+    if (form.getFieldValue('items') && form.getFieldValue('items')[index]) {
+      if (name === 'renderFontColor') {
+        return form.getFieldValue('items')[index][name];
+      }
+      return form.getFieldValue('items')[index][name];
+    }
+    if (name === 'renderFontColor') {
+      return '#000000a6';
+    }
+    return 'transparent';
+  };
 
+  const getList = (listItems, addRow) => {
     return (
-      <Form.List name="users">
+      <Form.List name={listName} >
         {(fields, { add, remove }) => {
           listRef.current = add;
           return (
-            <Row style={{ marginTop: '10px' }}>
-              {fields.map((field) => (
-                <Space key={field.key} style={{ display: 'flex', marginBottom: 8 }} align="start">
 
-                  {
-                    Object.keys(listItems).map((key) => (
-                      <Col span={10} key={key}>
-                        <Form.Item
-                          {...field}
-                          labelCol={0}
-                          name={[field.name, key]}
-                          fieldKey={[field.fieldKey, key]}
-                          rules={listItems[key].itemAttr.rules}
-                        >
-                          <Input />
-                          {/* <BasicStory {...listItems[key].compAttr} /> */}
-                        </Form.Item>
-                      </Col>
-                    ))
-                  }
-                  <Col span={4}>
+            fields.map((field, index) => (
+
+              <Row
+                gutter={10}
+                key={field.key}
+                style={{ display: 'flex', alignItems: '' }}
+              >
+                {
+                  Object.keys(listItems).map((key) => (
+                    <Col span={5} key={key}>
+                      <Form.Item
+                        {...field}
+                        name={[field.name, key]}
+                        fieldKey={[field.fieldKey, key]}
+                        rules={listItems[key].itemAttr.rules}
+                      >
+                        <BasicStory
+                          {...listItems[key].compAttr}
+                          onClick={listItems[key].compAttr.onClick ? (e) => { listItems[key].compAttr.onClick(e, index); } : null}
+                          onChange={listItems[key].compAttr.onChange ? (e) => { listItems[key].compAttr.onChange(e, index); } : null}
+                          color={ listItems[key].compAttr.color ? getColor({ name: key, index }) : null}
+
+                        />
+                      </Form.Item>
+                    </Col>
+                  ))
+                }
+                <Col span={4}>
+                  <Space style={{ marginTop: 6 }}>
                     <PlusOutlined
                       onClick={() => {
                         add();
@@ -131,66 +192,41 @@ const BasicForm = (props) => {
                     />
 
                     <MinusOutlined
+                      className={index ? 'show' : 'hide'}
                       onClick={() => {
                         remove(field.name);
                       }}
                     />
-                  </Col>
-                </Space>
-              ))}
-            </Row>
+                  </Space>
+                </Col>
+
+              </Row>
+
+            ))
+
           );
         }}
       </Form.List>);
   };
 
-  // props.listItems && console.log(getList(props.listItems));
   return (
-    <Form
-      {...formItemLayout}
-      layout={layout}
-      form={form}
-      style={style}
-      name="basic-form"
-    >
-      <Row gutter={24}>{getFields(items)}</Row>
-      {props.listItems ? getList(props.listItems) : null}
+    <FormStyled >
+      <Form
+        {...formItemLayout}
+        layout={layout}
+        form={form}
+        style={style}
+        name="basic-form"
+        className={className}
+      >
+        {items ? <Row
+          gutter={gutter} style={{ marginLeft: 0, marginRight: 0, marginBottom: 20 }}
+        >{getFields(items)}</Row> : null}
+        {props.listItems ? getList(props.listItems) : null}
 
-    </Form>);
+      </Form>
+    </FormStyled>);
 };
-
-// {fields.map((field) => (
-//   <Space key={field.key} style={{ display: 'flex', marginBottom: 8 }} align="start">
-//     <Form.Item
-//       {...field}
-//       name={[field.name, 'first']}
-//       fieldKey={[field.fieldKey, 'first']}
-//       rules={[{ required: true, message: 'Missing first name' }]}
-//     >
-//       <Input placeholder="First Name" />
-//     </Form.Item>
-//     <Form.Item
-//       {...field}
-//       name={[field.name, 'last']}
-//       fieldKey={[field.fieldKey, 'last']}
-//       rules={[{ required: true, message: 'Missing last name' }]}
-//     >
-//       <Input placeholder="Last Name" />
-//     </Form.Item>
-
-//     <PlusOutlined
-//       onClick={() => {
-//         add();
-//       }}
-//     />
-//     <MinusOutlined
-//       onClick={() => {
-//         remove(field.name);
-//       }}
-//     />
-//   </Space>
-//    ))}
-//    </Form.List>
 
 /**
  * 含有折叠功能的高级表单
