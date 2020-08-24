@@ -1,36 +1,48 @@
+import * as AppActions from './app';
 import * as CanvasActions from './canvas';
-import * as LayoutActions from './layout';
-import * as EngityStateActions from './entity-state';
+import * as EntityStateActions from './entity-state';
 
+export * from './app';
 export * from './canvas';
-export * from './layout';
 export * from './entity-state';
+
+export const AllDispatcherActions = {
+  ...AppActions,
+  ...CanvasActions,
+  ...EntityStateActions,
+};
+
+export {
+  AppActions,
+  CanvasActions,
+  EntityStateActions,
+};
 
 /**
  * 操作画布的 actions
  */
 export interface AppDispatcher {
-  InitApp: typeof CanvasActions['InitApp']
-  SelectEntity: typeof CanvasActions['SelectEntity']
+  InitApp: typeof AppActions['InitApp']
 }
 
 /**
  * 操作实例状态的 actions
  */
-export interface EngityStateDispatcher {
-  InitEntityState: typeof EngityStateActions['InitEntityState']
-  UpdateEntityState: typeof EngityStateActions['UpdateEntityState']
+export interface EntityStateDispatcher {
+  InitEntityState: typeof EntityStateActions['InitEntityState']
+  UpdateEntityState: typeof EntityStateActions['UpdateEntityState']
 }
 
 /**
  * 操作实例状态的 actions
  */
-export interface LayoutDispatcher {
-  SetLayoutInfo: typeof LayoutActions['SetLayoutInfo']
-  SortingEntity: typeof LayoutActions['SortingEntity']
-  DelEntity: typeof LayoutActions['DelEntity']
-  MotifyEntity: typeof LayoutActions['MotifyEntity']
-  AddEntity: typeof LayoutActions['AddEntity']
+export interface CanvasDispatcher {
+  SetLayoutInfo: typeof CanvasActions['SetLayoutInfo']
+  SortingEntity: typeof CanvasActions['SortingEntity']
+  DelEntity: typeof CanvasActions['DelEntity']
+  MotifyEntity: typeof CanvasActions['MotifyEntity']
+  AddEntity: typeof CanvasActions['AddEntity']
+  SelectEntity: typeof AppActions['SelectEntity']
 }
 
-export interface Dispatcher extends AppDispatcher, EngityStateDispatcher, LayoutDispatcher{}
+export interface Dispatcher extends AppDispatcher, EntityStateDispatcher, CanvasDispatcher{}

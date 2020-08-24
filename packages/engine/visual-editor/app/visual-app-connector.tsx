@@ -3,7 +3,7 @@ import React from 'react';
 import { Provider as ReduxProvider, connect, ConnectedProps } from 'react-redux';
 
 import createStore from '../core/store';
-import * as VisualEditorActions from '../core/actions';
+import { AllDispatcherActions } from '../core/actions';
 import { VisualEditorState } from '../core/reducers/reducer';
 
 /** TODO: 完善 state */
@@ -17,8 +17,8 @@ const mapDispatchToProps = (dispatch) => {
   if (!dispatcherCache) {
     const tempActions = (function () {
       const obj = {};
-      for (const item in VisualEditorActions) {
-        const _dispatch = VisualEditorActions[item];
+      for (const item in AllDispatcherActions) {
+        const _dispatch = AllDispatcherActions[item];
         if (typeof _dispatch === 'function') {
           obj[item] = (...args) => {
             dispatch(_dispatch(...args));
@@ -41,7 +41,9 @@ const connector = connect(mapStateToProps, mapDispatchToProps);
 
 type PropsFromRedux = ConnectedProps<typeof connector>
 
-const Connector = (ConnectApp): React.FC<PropsFromRedux> => () => {
+const Connector = (
+  ConnectApp
+): React.FC<PropsFromRedux> => () => {
   const ConnectedApp = connector(ConnectApp);
   return (
     <ReduxProvider store={appStore}>
