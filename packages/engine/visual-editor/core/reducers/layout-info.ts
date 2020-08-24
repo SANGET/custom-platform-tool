@@ -2,26 +2,10 @@ import update from 'immutability-helper';
 import { EditorComponentEntity } from "../../types";
 import {
   ADD_ENTITY, MOTIFY_ENTITY, SET_LAYOUT_STATE, DEL_ENTITY,
-  AddEntityAction, MotifyEntityAction, DelEntityAction, SetLayoutAction
+  AddEntityAction, MotifyEntityAction, DelEntityAction, SetLayoutAction,
+  SortingEntityAction,
+  SORTING_ENTITY
 } from '../actions';
-
-// interface AddElementAction {
-//   type: 'add'
-//   entity: EditorComponentEntity
-//   idx: number
-// }
-// interface UpdateElementAction {
-//   type: 'motify'
-//   entity: EditorComponentEntity
-// }
-// interface DelElementAction {
-//   type: 'del'
-//   entityIdx: number
-// }
-// interface SetElementAction {
-//   type: 'set'
-//   state: LayoutInfoActionReducerState
-// }
 
 /**
  * action types
@@ -30,7 +14,8 @@ export type LayoutInfoActionReducerAction =
   AddEntityAction |
   MotifyEntityAction |
   DelEntityAction |
-  SetLayoutAction
+  SetLayoutAction |
+  SortingEntityAction
 
 /**
  * state 的数据结构
@@ -65,6 +50,18 @@ export const layoutInfoReducer = (
       });
 
       return addNextState;
+    case SORTING_ENTITY:
+      const {
+        dragIndex, hoverIndex, nestingInfo, entity: sortEntity, replace
+      } = action;
+      const nextStateForSorting = update(state, {
+        $splice: [
+          [dragIndex, replace ? 0 : 1],
+          [hoverIndex, 0, sortEntity],
+        ],
+      });
+      console.log(nextStateForSorting);
+      return nextStateForSorting;
     case MOTIFY_ENTITY:
       const { entity: updateEntity } = action;
       const nextState = {
@@ -81,7 +78,6 @@ export const layoutInfoReducer = (
           [action.entityIdx, 1],
         ],
       });
-      // return state;
     default:
       return state;
   }

@@ -1,9 +1,9 @@
 import {
   SELECT_ENTITY, INIT_ENTITY_STATE, SelectEntity,
   SelectEntityAction, InitEntityStateAction,
-  UPDATE_ENTITY_STATE, UpdateEntityStateAction, INIT_APP, CLEAR_SELECT,
-  ClearSelectAction, InitAppAction
-} from "../actions/canvas";
+  UPDATE_ENTITY_STATE, UpdateEntityStateAction, INIT_APP, UNSELECT_ENTITY,
+  UnselectEntityAction, InitAppAction, ADD_ENTITY, AddEntityAction
+} from "../actions";
 import { EditorEntity, EntitiesStateStore, EditorEntityState } from "../../types";
 
 /**
@@ -31,13 +31,14 @@ export const defaultSelectedEntities = {
  */
 export function selectedEntitiesReducer(
   state: SelectEntityState = defaultSelectedEntities,
-  action: SelectEntityAction | ClearSelectAction | InitAppAction
+  action: SelectEntityAction | UnselectEntityAction | InitAppAction | AddEntityAction
 ) {
   switch (action.type) {
     case INIT_APP:
       return defaultSelectedEntities;
-    case CLEAR_SELECT:
+    case UNSELECT_ENTITY:
       return defaultSelectedEntities;
+    case ADD_ENTITY:
     case SELECT_ENTITY:
       const { entity } = action;
       const entityID = entity.id;

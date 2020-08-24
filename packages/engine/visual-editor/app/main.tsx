@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 
-import { Grid } from '@infra/ui';
+import { Grid, Button } from '@infra/ui';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 
@@ -14,6 +14,14 @@ import { Dispatcher } from "@engine/visual-editor/core/actions";
 
 import { GlobalStyle } from '@engine/visual-editor/style/global-style';
 import { VisualEditorState } from "@engine/visual-editor/core/reducers/reducer";
+import { EditButton } from "../components/PageMetadataEditor";
+import { wrapPageData } from "../core/utils/wrap-page-data";
+import {
+  getCompClassData,
+  getCompPanelData,
+  getPagePropsData,
+  getPropertyItems,
+} from "../mock-data";
 
 interface VisualEditorAppProps extends VisualEditorState {
   dispatcher: Dispatcher
@@ -24,18 +32,35 @@ const VisualEditorApp: React.FC<VisualEditorAppProps> = (props) => {
     dispatcher,
     selectedEntities,
     entitiesStateStore,
-    layoutInfo
+    layoutInfo,
+    pageMetadata,
+    appContext,
   } = props;
+  // console.log(props);
   // 调整整体的数据结构，通过 redux 描述一份完整的{页面数据}
   const {
     InitApp,
     SelectEntity, InitEntityState, UpdateEntityState,
     SetLayoutInfo, DelEntity, MotifyEntity, AddEntity,
   } = dispatcher;
+  const { activeEntityID, activeEntity } = selectedEntities;
 
-  console.log(entitiesStateStore);
+  useEffect(() => {
+    /** 初始化数据 */
+    Promise.all([getCompClassData(), getCompPanelData(), getPagePropsData(), getPropertyItems()])
+      .then(([compClassData, compPanelData, pagePropsData, propItemsData]) => {
+        InitApp({
+          compPanelData,
+          compClassData,
+          propItemsData,
+          pagePropsData,
+          /** 回填数据的入口 */
+          pageData: {}
+        });
+      });
+  }, []);
 
-  return (
+  return appContext.ready ? (
     <div>
       <Grid
         container
@@ -72,33 +97,76 @@ const VisualEditorApp: React.FC<VisualEditorAppProps> = (props) => {
             item
             className="left-panel"
           >
-            <ComponentPanel />
+            <ComponentPanel
+              componentPanelConfig={appContext.compPanelData}
+              compClassData={appContext.compClassData}
+            />
           </Grid>
           <Grid
-            lg={10}
-            md={10}
-            sm={10}
-            xs={10}
+            lg={8}
+            md={8}
+            sm={8}
+            xs={8}
             item
             className="canvas-container"
           >
+            <div className="mb10">
+              <EditButton
+                onOK={(e) => {}}
+                onCancel={(e) => {}}
+              >
+                编辑页面属性
+              </EditButton>
+              <Button
+                className="ml10"
+                onClick={(e) => {
+                  const pageData = wrapPageData({
+                    pageMetadata,
+                    layoutInfo,
+                    entitiesStateStore
+                  });
+                }}
+              >
+                保存页面
+              </Button>
+            </div>
             <CanvasStage
               selectedEntities={selectedEntities}
               entitiesStateStore={entitiesStateStore}
               layoutNodeInfo={layoutInfo}
-              selectEntity={SelectEntity}
-              initEntityState={InitEntityState}
-              updateEntityState={UpdateEntityState}
-              SetLayoutInfo={SetLayoutInfo}
-              DelEntity={DelEntity}
-              MotifyEntity={MotifyEntity}
-              AddEntity={AddEntity}
-              PropEditorRenderer={PropertiesEditor}
+              pageMetadata={pageMetadata}
+              {...dispatcher}
             />
           </Grid>
         </DndProvider>
+        {
+          activeEntity && (
+            <Grid
+              lg={2}
+              md={2}
+              sm={2}
+              xs={2}
+              item
+            >
+              <PropertiesEditor
+                key={activeEntityID}
+                propItemsData={appContext.propItemsData}
+                propertiesConfig={activeEntity.bindProps}
+                selectedEntity={activeEntity}
+                defaultEntityState={entitiesStateStore[activeEntityID]}
+                initEntityState={(entityState) => InitEntityState(activeEntity, entityState)}
+                updateEntityState={(entityState) => UpdateEntityState(activeEntity, entityState)}
+              />
+            </Grid>
+          )
+        }
       </Grid>
       <GlobalStyle />
+    </div>
+  ) : (
+    // TODO: 优化
+    <div>
+      Loading data
     </div>
   );
 };

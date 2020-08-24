@@ -30,6 +30,7 @@
     "html-webpack-plugin": "4.3.0",
     "identity-obj-proxy": "3.0.0",
     "is-wsl": "^1.1.0",
+    "immer": "^7.0.7",
     "less": "^3.11.3",
     "less-loader": "^6.2.0",
     "long": "^4.0.0",

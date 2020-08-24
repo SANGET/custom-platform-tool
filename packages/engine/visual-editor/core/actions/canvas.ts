@@ -1,61 +1,12 @@
+/**
+ * @author zxj
+ * 在画布中的 actions
+ */
+
 import {
-  EditorComponentEntity, EditorEntityState, EditorPageEntity, EditorEntity
+  EditorComponentEntity,
+  EditorEntity
 } from "../../types";
-
-/// app /////////////////
-
-export const INIT_APP = 'app/init';
-export interface InitAppAction {
-  type: typeof INIT_APP
-  entity: EditorEntity
-}
-
-/**
- * 初始化组件类的状态
- */
-export const InitApp = (
-  entity: EditorEntity
-): InitAppAction => {
-  return {
-    type: INIT_APP,
-    entity
-  };
-};
-
-/// entity /////////////////
-
-/**
- * 初始化组件类的状态
- */
-export const CLEAR_SELECT = 'entity/unselect';
-export interface ClearSelectAction {
-  type: typeof CLEAR_SELECT
-}
-
-export const ClearSelect = (
-): ClearSelectAction => {
-  return {
-    type: CLEAR_SELECT,
-  };
-};
-
-/**
- * 选择组件实例
- */
-export const SELECT_ENTITY = 'entity/select';
-export interface SelectEntityAction {
-  type: typeof SELECT_ENTITY
-  entity: EditorEntity
-}
-
-export const SelectEntity = (
-  entity: EditorEntity
-): SelectEntityAction => {
-  return {
-    type: SELECT_ENTITY,
-    entity
-  };
-};
 
 /**
  * 添加组件实例
@@ -117,6 +68,51 @@ export const DelEntity = (
 /**
  * 设置 layout info 的值
  */
+export const SORTING_ENTITY = 'entity/sorting';
+export interface SortingEntityAction {
+  type: typeof SORTING_ENTITY
+  /** 拖动的元素的 index */
+  dragIndex: number
+  /** 拖动的元素移动到了的 index */
+  hoverIndex: number
+  entity
+  /**
+   * 记录嵌套信息
+   *
+   * 例如 [0] 代表最外层的第 0 个元素中进行排序
+   * 例如 [0, 1, 2] 代表最外层第 0 个元素中的第 1 个元素中的第 2 个元素
+   */
+  nestingInfo?: number[]
+  replace?: boolean
+}
+
+export const SortingEntity = (
+  /** 拖起的项的 index */
+  dragIndex: number,
+  /** 拖起的项移动到的 index */
+  hoverIndex: number,
+  /** 拖起的 entity */
+  entity,
+  /** 选项 */
+  options?: {
+    /** 嵌套信息 */
+    nestingInfo?: number[],
+    /** 是否替换在 hoverIndex 的 entity */
+    replace?: boolean
+  },
+): SortingEntityAction => {
+  return {
+    type: SORTING_ENTITY,
+    dragIndex,
+    hoverIndex,
+    entity,
+    ...options,
+  };
+};
+
+/**
+ * 设置 layout info 的值
+ */
 export const SET_LAYOUT_STATE = 'layout/state/set';
 export interface SetLayoutAction {
   type: typeof SET_LAYOUT_STATE
@@ -132,46 +128,37 @@ export const SetLayoutInfo = (
   };
 };
 
-/// entityState /////////////////
-
-export const INIT_ENTITY_STATE = 'entityState/init';
-export interface InitEntityStateAction {
-  type: typeof INIT_ENTITY_STATE
-  entity: EditorEntity
-  defaultEntityState
-}
+/// entity /////////////////
 
 /**
  * 初始化组件类的状态
  */
-export const InitEntityState = (
-  entity: EditorEntity,
-  defaultEntityState
-): InitEntityStateAction => {
+export const UNSELECT_ENTITY = 'entity/unselect';
+export interface UnselectEntityAction {
+  type: typeof UNSELECT_ENTITY
+}
+
+export const UnselectEntity = (
+): UnselectEntityAction => {
   return {
-    type: INIT_ENTITY_STATE,
-    entity,
-    defaultEntityState
+    type: UNSELECT_ENTITY,
   };
 };
 
-export const UPDATE_ENTITY_STATE = 'entityState/update';
-export interface UpdateEntityStateAction {
-  type: typeof UPDATE_ENTITY_STATE
-  entityID: string,
-  formState: EditorEntityState
+/**
+ * 选择组件实例
+ */
+export const SELECT_ENTITY = 'entity/select';
+export interface SelectEntityAction {
+  type: typeof SELECT_ENTITY
+  entity: EditorEntity
 }
 
-/**
- * 更新组件实例的状态
- */
-export const UpdateEntityState = (
-  entity: EditorEntity,
-  formState: EditorEntityState
-): UpdateEntityStateAction => {
+export const SelectEntity = (
+  entity: EditorEntity
+): SelectEntityAction => {
   return {
-    type: UPDATE_ENTITY_STATE,
-    entityID: entity.id,
-    formState
+    type: SELECT_ENTITY,
+    entity
   };
 };

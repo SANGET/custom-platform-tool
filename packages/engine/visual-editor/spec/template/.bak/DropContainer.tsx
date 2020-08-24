@@ -75,7 +75,9 @@ const DropContainer: React.FC<DropContainerProps> = ({
     collect: (monitor) => {
       return {
         // isOver: !!monitor.isOver(),
+        isOver: monitor.isOver(),
         isOverCurrent: monitor.isOver({ shallow: true }),
+        canDrop: monitor.canDrop(),
       };
     },
   });

@@ -10,8 +10,13 @@ import {
 } from '@engine/layout-renderer';
 import styled from 'styled-components';
 import classnames from 'classnames';
-import { EditorEntityState, EditorComponentEntity } from '@engine/visual-editor/types';
-import { DragItemDrop, DragItemDrag, DragItemMove } from './DragItem';
+import { EditorEntityState, EditorComponentEntity, TEMP_ENTITY_ID } from '@engine/visual-editor/types';
+import ComponentWrapperCom from '@engine/visual-editor/spec/template/ComponentWrapperCom';
+import DragItem, {
+  DragItemActions
+} from './DragItem';
+import { TempEntityTip } from './template/TempEntityTip';
+import { ItemTypes } from './types';
 // import { Debounce } from '@mini-code/base-func';
 
 export type GetEntityProps = (id: string) => EditorEntityState
@@ -19,13 +24,6 @@ export type GetSelectedState = (id: string) => boolean
 export type GetHoveringEntity = (id: string) => boolean
 export type SetHoveringEntity = (id: string) => void
 export type GetLayoutNode = (idx: number) => EditorComponentEntity
-
-// export interface WrapperOveringTipContext {
-//   /** 获取组件实例的 props */
-//   setHoveringEntity: SetHoveringEntity
-//   /** 获取组件实例的 props */
-//   getHoveringEntity: GetHoveringEntity
-// }
 
 export interface WrapperFacContext {
   /** 获取选中的组件实例的状态 */
@@ -36,15 +34,9 @@ export interface WrapperFacContext {
   getLayoutNode: GetLayoutNode
 }
 
-export interface WrapperFacActions {
-  /** 响应组件的“放”事件 */
-  onDrop: DragItemDrop
-  /** 响应组件的“拖”事件 */
-  onDrag?: DragItemDrag
+export interface WrapperFacActions extends DragItemActions {
   /** 响应组件点击事件 */
   onClick: (event, { entity: EditorComponentEntity, idx: number }) => void
-  /** 响应组件点击事件 */
-  onMove: DragItemMove
   /** 响应组件点击事件 */
   onDelete: (event, { idx: number, entity: EditorComponentEntity }) => void
 }
@@ -58,14 +50,13 @@ export interface WrapperFacOptions extends WrapperFacContext, WrapperFacActions 
 /**
  * 包装器传给被包装的组件的 props
  */
-interface FacToComponentPropsTemp extends WrapperFacOptions, LayoutWrapperContext {
+export interface FacToComponentProps extends LayoutWrapperContext {
+  onClick
   currEntity: EditorComponentEntity
+  entityState: EditorEntityState
 }
 
-export type FacToComponentProps = Omit<FacToComponentPropsTemp, 'getLayoutNode', 'onDelete'>
-
-export type ContainerWrapperFac = (
-  wrapperComponent: React.ElementType<FacToComponentProps>,
+export type DragableItemWrapperFac = (
   wrapperFacOptions: WrapperFacOptions
 ) => (
   props: LayoutWrapperContext
@@ -93,10 +84,9 @@ const DragableItemWrapper = styled.div`
 // const debounce = new Debounce();
 
 /**
- * wrapper 生成器
+ * 可视化编辑器引擎的组件抽象实现
  */
-export const dragableItemWrapperFac: ContainerWrapperFac = (
-  WrapperComponent,
+export const dragableItemWrapperFac: DragableItemWrapperFac = (
   {
     onDrop, onMove, onClick, onDelete,
     getLayoutNode, getSelectedState, getEntityProps,
@@ -105,41 +95,50 @@ export const dragableItemWrapperFac: ContainerWrapperFac = (
 ) => (propsForChild) => {
   const { id, idx, children } = propsForChild;
   const isSelected = getSelectedState(id);
+  const entityState = getEntityProps(id);
+  const currEntity = getLayoutNode(idx);
   // const isHovering = getHoveringEntity(id);
   const classes = classnames([
     // isHovering && 'hovering',
     isSelected && 'selected',
   ]);
-  const currEntity = getLayoutNode(idx);
+  const isTempEntity = currEntity._state === TEMP_ENTITY_ID;
 
-  return (
+  return isTempEntity ? <TempEntityTip key={id} /> : (
     <DragableItemWrapper
       className={classes}
       key={id}
     >
-      <WrapperComponent
-        {...propsForChild}
-        onClick={(e) => {
-          e.stopPropagation();
-          onClick(e, { entity: currEntity, idx });
-        }}
+      <DragItem
+        id={id}
+        index={idx}
         onDrop={onDrop}
-        currEntity={currEntity}
-        getSelectedState={getSelectedState}
-        getEntityProps={getEntityProps}
         onMove={onMove}
+        dragItemClass={currEntity}
+        type={ItemTypes.DragItemEntity}
+        accept={[ItemTypes.DragItemEntity, ItemTypes.DragItemClass]}
       >
-        {children}
-      </WrapperComponent>
-      <div
-        className="t_red rm-btn"
-        onClick={(e) => {
-          e.stopPropagation();
-          onDelete(e, { idx, entity: currEntity });
-        }}
-      >
+        <ComponentWrapperCom
+          {...propsForChild}
+          onClick={(e) => {
+            e.stopPropagation();
+            onClick(e, { entity: currEntity, idx });
+          }}
+          currEntity={currEntity}
+          entityState={entityState}
+        >
+          {children}
+        </ComponentWrapperCom>
+        <div
+          className="t_red rm-btn"
+          onClick={(e) => {
+            e.stopPropagation();
+            onDelete(e, { idx, entity: currEntity });
+          }}
+        >
         删除
-      </div>
+        </div>
+      </DragItem>
       <div className="hoving state-mark fill"></div>
       <div className="selected state-mark fill"></div>
     </DragableItemWrapper>

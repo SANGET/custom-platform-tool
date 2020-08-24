@@ -1,5 +1,6 @@
 import { EditorComponentClass } from "../types";
 import { CustomComponent } from "./custom-component-demo";
+import { ApiMock } from "./api-mock";
 
 interface ComponentClassCollection {
   [id: string]: EditorComponentClass
@@ -8,7 +9,6 @@ interface ComponentClassCollection {
 export const componentClassCollection: ComponentClassCollection = {
   'component-1': {
     id: 'component-1',
-    type: 'component',
     label: '文本框',
     component: {
       type: 'Input'
@@ -22,13 +22,15 @@ export const componentClassCollection: ComponentClassCollection = {
   },
   'container-1': {
     id: 'con1',
-    type: 'container',
-    layout: {
-      type: 'flex', // 布局方式
+    component: {
+      type: 'container',
       props: {
-        justifyContent: 'start',
-        justifyItems: 'start'
-      }
+        type: 'flex', // 布局方式
+        values: {
+          justifyContent: 'start',
+          justifyItems: 'start'
+        }
+      },
     },
     label: 'Flex 布局',
     bindProps: {
@@ -40,7 +42,6 @@ export const componentClassCollection: ComponentClassCollection = {
   },
   'component-table-1': {
     id: 'component-table-1',
-    type: 'component',
     label: '表格',
     component: {
       type: 'Table'
@@ -76,3 +77,5 @@ export const componentClassCollection: ComponentClassCollection = {
     }
   },
 };
+
+export const getCompClassData = ApiMock(componentClassCollection);

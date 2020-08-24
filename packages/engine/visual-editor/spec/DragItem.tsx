@@ -3,10 +3,14 @@ import {
   useDrag, useDrop, DropTargetMonitor, XYCoord
 } from 'react-dnd';
 import { TargetType } from 'dnd-core';
+import { HasValue } from '@mini-code/base-func';
 import { ItemTypes } from './types';
 import { DragItemClass, DropCollectType } from '../types';
 import { isNodeInChild } from '../utils';
 
+/**
+ * DnD 的回调的 context
+ */
 export interface DnDContext {
   id: string
   idx: number
@@ -15,26 +19,35 @@ export interface DnDContext {
 export type DragItemDrop = (entity, dnDContext: DnDContext) => void
 export type DragItemDrag = (entity, dnDContext: DnDContext) => void
 export type DragItemMove = (dragIndex: number, hoverIndex: number, compClass: any) => void
+export type CancelDrag = (originalIndex: number) => void
 
 /**
  * 作用于 dragItem 传递到 drop 容器的参数配置
  */
 interface DragItem {
-  index: number
+  index?: number
   type: string
+}
+
+/**
+ * 可拖拽的 item 的 actions
+ */
+export interface DragItemActions {
+  onDrop?: DragItemDrop
+  /** 响应组件的“拖”事件 */
+  onDrag?: DragItemDrag
+  onMove?: DragItemMove
 }
 
 export interface DragItemProps<
   D = any, C = any
-> extends React.HTMLAttributes<HTMLDivElement>, DragItem {
-  children: React.ReactChild
+> extends DragItem,
+  DragItemActions,
+  Omit<React.HTMLAttributes<HTMLDivElement>, keyof DragItemActions | 'children'> {
+  children: any
   dragItemClass: D
   dragConfig?: C
   accept?: TargetType
-  onDrop: DragItemDrop
-  /** 响应组件的“拖”事件 */
-  onDrag?: DragItemDrag
-  onMove?: DragItemMove
 }
 
 /**
@@ -48,7 +61,10 @@ const DragItemComp: React.FC<DragItemProps> = ({
 }) => {
   const ref = useRef<HTMLDivElement>(null);
 
-  const [{ isOverCurrent }, drop] = useDrop<DragItemClass, void, DropCollectType>({
+  const [{
+    isOverCurrent,
+    canDrop
+  }, drop] = useDrop<DragItemClass, void, DropCollectType>({
     accept,
     /**
      * ref: https://react-dnd.github.io/react-dnd/docs/api/use-drop
@@ -70,18 +86,20 @@ const DragItemComp: React.FC<DragItemProps> = ({
         });
       }
     },
-    canDrop: ({ dragItemClass: componentClass }, monitor) => {
-      /** 不允许放到自身 */
-      return componentClass.id !== id;
-    },
+    // canDrop: ({ dragItemClass: componentClass }, monitor) => {
+    //   /** 不允许放到自身 */
+    //   return componentClass.id !== id;
+    // },
     collect: (monitor) => {
       return {
         // isOver: !!monitor.isOver(),
+        isOver: monitor.isOver(),
         isOverCurrent: monitor.isOver({ shallow: true }),
+        canDrop: monitor.canDrop(),
       };
     },
-    hover(item: DragItem, monitor: DropTargetMonitor) {
-      if (!ref.current || !onMove) {
+    hover: (item: DragItem, monitor: DropTargetMonitor) => {
+      if (!ref.current || !onMove || !HasValue(index)) {
         return;
       }
       const dragIndex = item.index;
@@ -143,7 +161,8 @@ const DragItemComp: React.FC<DragItemProps> = ({
     }),
   });
 
-  const opacity = isDragging ? 0 : 1;
+  const opacity = isDragging ? 0.5 : 1;
+  // drag(ref);
   drag(drop(ref));
 
   return (

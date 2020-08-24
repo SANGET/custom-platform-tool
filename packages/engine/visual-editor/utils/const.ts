@@ -1,1 +1,1 @@
-export const ENTITY_ID = 'entity-id';
+export const ENTITY_ID = 'entity';
