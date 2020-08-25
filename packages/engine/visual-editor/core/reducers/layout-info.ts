@@ -117,7 +117,7 @@ export function flatLayoutItemsReducer(
   switch (action.type) {
     case INIT_APP:
       const { pageData } = action;
-      if (pageData.content) {
+      if (pageData?.content) {
         const flatContent = flatArrayToNode(pageData.content);
         return flatContent;
       }

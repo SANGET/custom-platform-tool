@@ -1,3 +1,5 @@
+/* eslint-disable no-param-reassign */
+import produce from 'immer';
 import {
   ENTITY_ID,
   increaseID,
@@ -41,13 +43,11 @@ export const constructCompClass: ConstructCompClass = (
    *
    * 下划线前缀为内部字段，用于表示已经实例化
    */
-  const entity = Object.assign({}, componentClass, {
-    // propState: {},
-    id: entityID,
-    /** 备份 classID */
-    _classID: componentClass.id,
-    /** 当前实例是激活的 */
-    _state: state,
+  const entity = produce(componentClass, (draft) => {
+    delete draft.bindProps;
+    draft.id = entityID;
+    draft._classID = componentClass.id;
+    draft._state = state;
   });
 
   return entity;
@@ -55,7 +55,7 @@ export const constructCompClass: ConstructCompClass = (
 
 export const constructTempEntity = (props = {}): TempEntity => ({
   ...props,
-  id: increaseID(TEMP_ENTITY_ID),
+  id: increaseID(123, TEMP_ENTITY_ID),
   _state: TEMP_ENTITY_ID,
 });
 
