@@ -40,10 +40,11 @@ interface VisualEditorAppProps extends VisualEditorState {
 const VisualEditorApp: React.FC<VisualEditorAppProps> = (props) => {
   const {
     dispatcher,
-    selectedEntities,
+    selectedInfo,
     layoutInfo,
     pageMetadata,
     appContext,
+    flatLayoutItems,
   } = props;
   // console.log(props);
   // 调整整体的数据结构，通过 redux 描述一份完整的{页面数据}
@@ -52,7 +53,7 @@ const VisualEditorApp: React.FC<VisualEditorAppProps> = (props) => {
     SelectEntity, InitEntityState, UpdateEntityState,
     SetLayoutInfo, DelEntity, AddEntity,
   } = dispatcher;
-  const { activeEntityID, activeEntity } = selectedEntities;
+  const { id: activeEntityID, entity: activeEntity } = selectedInfo;
 
   useEffect(() => {
     /** 初始化数据 */
@@ -162,7 +163,7 @@ const VisualEditorApp: React.FC<VisualEditorAppProps> = (props) => {
               </Button>
             </div>
             <CanvasStage
-              selectedEntities={selectedEntities}
+              selectedInfo={selectedInfo}
               layoutNodeInfo={layoutInfo}
               pageMetadata={pageMetadata}
               onStageClick={() => {
@@ -187,8 +188,8 @@ const VisualEditorApp: React.FC<VisualEditorAppProps> = (props) => {
                 propertiesConfig={activeEntity.bindProps}
                 selectedEntity={activeEntity}
                 defaultEntityState={activeEntity.propState}
-                initEntityState={(entityState) => InitEntityState(selectedEntities, entityState)}
-                updateEntityState={(entityState) => UpdateEntityState(selectedEntities, entityState)}
+                initEntityState={(entityState) => InitEntityState(selectedInfo, entityState)}
+                updateEntityState={(entityState) => UpdateEntityState(selectedInfo, entityState)}
               />
             </Grid>
           )

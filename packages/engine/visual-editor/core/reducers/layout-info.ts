@@ -1,6 +1,6 @@
 import update from 'immutability-helper';
 import produce from 'immer';
-import { LayoutInfoActionReducerState } from "../../types";
+import { LayoutInfoActionReducerState, FlatLayoutItems } from "../../types";
 import {
   ADD_ENTITY, SET_LAYOUT_STATE, DEL_ENTITY,
   AddEntityAction, DelEntityAction, SetLayoutAction,
@@ -77,7 +77,7 @@ export const layoutInfoReducer = (
       });
     case INIT_ENTITY_STATE:
       const { selectedEntityInfo: initSInfo, defaultEntityState } = action;
-      const { activeEntityNestingIdx: initIdx } = initSInfo;
+      const { nestingIdx: initIdx } = initSInfo;
       const nextStateInit = produce(state, (draftState) => {
         const targetData = getItemFromNestingItemsByBody(draftState, initIdx);
         // eslint-disable-next-line no-param-reassign
@@ -87,7 +87,7 @@ export const layoutInfoReducer = (
       return nextStateInit;
     case UPDATE_ENTITY_STATE:
       const { selectedEntityInfo: updateSInfo, formState } = action;
-      const { activeEntityNestingIdx: updateIdx } = updateSInfo;
+      const { nestingIdx: updateIdx } = updateSInfo;
       return produce(state, (draftState) => {
         const targetData = getItemFromNestingItemsByBody(draftState, updateIdx);
         targetData.propState = formState;
@@ -97,3 +97,38 @@ export const layoutInfoReducer = (
       return state;
   }
 };
+
+/**
+ * 将嵌套的数组转为 nodeTree 结构
+ */
+const flatArrayToNode = (items: any[], idKey = 'id') => {
+  const array = items.flat();
+  const resTree = {};
+  for (const item of array) {
+    resTree[item[idKey]] = item;
+  }
+  return resTree;
+};
+
+export function flatLayoutItemsReducer(
+  state: FlatLayoutItems = {},
+  action: LayoutInfoActionReducerAction
+): FlatLayoutItems {
+  switch (action.type) {
+    case INIT_APP:
+      const { pageData } = action;
+      if (pageData.content) {
+        const flatContent = flatArrayToNode(pageData.content);
+        return flatContent;
+      }
+      return state;
+    case ADD_ENTITY:
+      const { entity } = action;
+      return {
+        ...state,
+        [entity.id]: entity
+      };
+    default:
+      return state;
+  }
+}

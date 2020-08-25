@@ -11,13 +11,11 @@ import { getItemFromNestingItemsByBody } from './utils';
 const mapStateToProps = (state: VisualEditorState) => {
   return produce(state, (draft) => {
     /** 设置 activeEntity */
-    const { layoutInfo, selectedEntities } = draft;
-    const { activeEntityNestingIdx } = selectedEntities;
-    if (!activeEntityNestingIdx) return draft;
+    const { layoutInfo, selectedInfo, flatLayoutItems } = draft;
+    const { nestingIdx, id } = selectedInfo;
+    // if (!nestingIdx) return draft;
     // eslint-disable-next-line no-param-reassign
-    draft.selectedEntities.activeEntity = getItemFromNestingItemsByBody(
-      layoutInfo, activeEntityNestingIdx
-    );
+    draft.selectedInfo.entity = flatLayoutItems[id];
     return draft;
   });
 };

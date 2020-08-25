@@ -21,7 +21,7 @@ interface VisualEditorAppProps extends VisualEditorState {
 const PageDesignerApp: React.FC<VisualEditorAppProps> = (props) => {
   const {
     dispatcher,
-    selectedEntities,
+    selectedInfo,
     entitiesStateStore,
     layoutInfo
   } = props;
@@ -79,7 +79,7 @@ const PageDesignerApp: React.FC<VisualEditorAppProps> = (props) => {
             className="canvas-container"
           >
             <CanvasStage
-              selectedEntities={selectedEntities}
+              selectedInfo={selectedInfo}
               entitiesStateStore={entitiesStateStore}
               layoutNodeInfo={layoutInfo}
               selectEntity={SelectEntity}

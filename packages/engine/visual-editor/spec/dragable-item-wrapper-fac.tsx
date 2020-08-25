@@ -22,6 +22,7 @@ import { ItemTypes } from './types';
 export interface GetStateContext {
   nestingInfo
   idx
+  id
 }
 
 export type GetEntityProps = (ctx: GetStateContext) => EditorEntityState | undefined
@@ -99,9 +100,10 @@ export const dragableItemWrapperFac: DragableItemWrapperFac = (
   const {
     id, idx, nestingInfo, children
   } = propsForChild;
-  const isSelected = getSelectedState({ idx, nestingInfo });
-  const entityState = getEntityProps({ idx, nestingInfo });
-  const currEntity = getLayoutNode({ idx, nestingInfo });
+  const ctx = { idx, id, nestingInfo };
+  const isSelected = getSelectedState(ctx);
+  const entityState = getEntityProps(ctx);
+  const currEntity = getLayoutNode(ctx);
   // const isHovering = getHoveringEntity(id);
   const classes = classnames([
     // isHovering && 'hovering',
