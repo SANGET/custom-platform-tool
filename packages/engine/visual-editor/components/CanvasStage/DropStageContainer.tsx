@@ -3,28 +3,12 @@
  */
 import React from 'react';
 import { useDrop } from 'react-dnd';
-import styled from 'styled-components';
 import classnames from 'classnames';
 import {
   DragItemClass, DropCollectType, EntitiesStateStore,
   EditorPageEntity
 } from '@engine/visual-editor/types';
 import { Call } from '@mini-code/base-func';
-
-const StageRender = styled.div`
-  min-height: 50vh;
-  background-color: rgba(0,0,0, 0.05);
-  /* padding: 10px; */
-  border: 1px solid #EEE;
-  &:hover {
-    background-color: rgba(0,0,0, 0.05);
-  }
-  &.renderer {
-    &.overing {
-      background-color: rgba(0,0,0, 0.08);
-    }
-  }
-`;
 
 /**
  * 中央舞台组件的 props
@@ -132,7 +116,7 @@ const DropStageContainer: React.FC<DropStageProps> = ({
   ]);
 
   return (
-    <StageRender
+    <div
       ref={drop}
       onClick={(e) => {
         onStageClick && onStageClick();
@@ -141,7 +125,7 @@ const DropStageContainer: React.FC<DropStageProps> = ({
       style={style}
     >
       {children}
-    </StageRender>
+    </div>
   );
 };
 

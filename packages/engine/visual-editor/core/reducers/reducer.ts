@@ -2,19 +2,23 @@ import { combineReducers } from "redux";
 
 import {
   // entitiesStateStoreReducer,
-  selectedEntitiesReducer,
+  selectedInfoReducer,
   // getEntityDefaultState,
 } from './canvas-state';
 import { pageMetadataReducer, appContextReducer } from './page-state';
-import { layoutInfoReducer } from "./layout-info";
+import {
+  layoutInfoReducer,
+  flatLayoutItemsReducer
+} from "./layout-info";
 
 /**
  * 将 reducer 合成
  */
 const VisualEditorStateReducer = combineReducers({
   // entitiesStateStore: entitiesStateStoreReducer,
-  selectedEntities: selectedEntitiesReducer,
+  selectedInfo: selectedInfoReducer,
   layoutInfo: layoutInfoReducer,
+  flatLayoutItems: flatLayoutItemsReducer,
   pageMetadata: pageMetadataReducer,
   appContext: appContextReducer,
 });

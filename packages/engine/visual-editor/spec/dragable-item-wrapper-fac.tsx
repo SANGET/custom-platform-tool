@@ -22,6 +22,7 @@ import { ItemTypes } from './types';
 export interface GetStateContext {
   nestingInfo
   idx
+  id
 }
 
 export type GetEntityProps = (ctx: GetStateContext) => EditorEntityState | undefined
@@ -71,6 +72,9 @@ const DragableItemWrapper = styled.div`
     >.state-mark {
       border-color: #a6bcf8;
     }
+    .rm-btn {
+      display: block;
+    }
   }
   &.hovering {
     >.state-mark {
@@ -81,6 +85,9 @@ const DragableItemWrapper = styled.div`
     >.state-mark {
       border-color: #376BFB;
     }
+  }
+  .rm-btn {
+    display: none;
   }
 `;
 
@@ -99,9 +106,10 @@ export const dragableItemWrapperFac: DragableItemWrapperFac = (
   const {
     id, idx, nestingInfo, children
   } = propsForChild;
-  const isSelected = getSelectedState({ idx, nestingInfo });
-  const entityState = getEntityProps({ idx, nestingInfo });
-  const currEntity = getLayoutNode({ idx, nestingInfo });
+  const ctx = { idx, id, nestingInfo };
+  const isSelected = getSelectedState(ctx);
+  const entityState = getEntityProps(ctx);
+  const currEntity = getLayoutNode(ctx);
   // const isHovering = getHoveringEntity(id);
   const classes = classnames([
     // isHovering && 'hovering',
@@ -141,7 +149,7 @@ export const dragableItemWrapperFac: DragableItemWrapperFac = (
             onDelete(e, { idx, entity: currEntity });
           }}
         >
-        删除
+          删除
         </div>
       </DragItem>
       <div className="hoving state-mark fill"></div>

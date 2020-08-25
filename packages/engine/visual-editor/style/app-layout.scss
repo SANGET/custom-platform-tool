@@ -1,0 +1,59 @@
+// 这里只是做总体的布局，样式调整在 layout-look.scss 中
+
+.visual-app {
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+  bottom: 0;
+  .app-header {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    // bottom: $layout-header-height;
+    height: $layout-header-height;
+  }
+  .app-content {
+    position: absolute;
+    top: $layout-header-height;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    .comp-panel {
+      position: absolute;
+      top: 0;
+      left: 0;
+      // right: 0;
+      bottom: 0;
+      width: $layout-left-panel-width;
+      overflow-y: auto;
+    }
+    .canvas-container {
+      position: absolute;
+      top: 0;
+      left: $layout-left-panel-width;
+      right: $layout-right-panel-width;
+      bottom: 0;
+      // width: $layout-left-panel-width;
+    }
+    .prop-panel {
+      position: absolute;
+      top: 0;
+      // left: 0;
+      right: 0;
+      bottom: 0;
+      width: $layout-left-panel-width;
+      overflow-y: auto;
+    }
+  }
+  .app-footer {
+
+  }
+}
+
+.canvas-stage-container {
+  // max-height: 100vh;
+  height: 100%;
+  overflow-y: auto;
+}

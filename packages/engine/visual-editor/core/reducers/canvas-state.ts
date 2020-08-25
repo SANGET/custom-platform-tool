@@ -2,30 +2,40 @@ import {
   SELECT_ENTITY, INIT_ENTITY_STATE,
   SelectEntityAction, InitEntityStateAction,
   UPDATE_ENTITY_STATE, UpdateEntityStateAction, INIT_APP, UNSELECT_ENTITY,
-  UnselectEntityAction, InitAppAction, ADD_ENTITY, AddEntityAction
+  UnselectEntityAction, InitAppAction, ADD_ENTITY, AddEntityAction,
+  SORTING_ENTITY, SortingEntityAction
 } from "../actions";
 import { EditorEntity, EntitiesStateStore, EditorEntityState } from "../../types";
 import { SelectEntityState } from "../types";
 
-export const defaultSelectedEntities = {
+export const defaultSelectedEntities: SelectEntityState = {
   selectedList: {},
-  activeEntityID: '',
-  activeEntityNestingIdx: [],
-  activeEntity: undefined
+  id: '',
+  nestingIdx: [],
+  entity: undefined
 };
+
+type SelectedEntitiesActions =
+  SelectEntityAction |
+  UnselectEntityAction |
+  InitAppAction |
+  AddEntityAction |
+  SortingEntityAction
 
 /**
  * 组件选择状态管理。如果组件未被实例化，则实例化后被选择
  */
-export function selectedEntitiesReducer(
+export function selectedInfoReducer(
   state: SelectEntityState = defaultSelectedEntities,
-  action: SelectEntityAction | UnselectEntityAction | InitAppAction | AddEntityAction
+  action: SelectedEntitiesActions
 ): SelectEntityState {
   switch (action.type) {
     case INIT_APP:
       return defaultSelectedEntities;
     case UNSELECT_ENTITY:
       return defaultSelectedEntities;
+    case SORTING_ENTITY:
+      return state;
     case ADD_ENTITY:
     case SELECT_ENTITY:
       const { entity, idx } = action;
@@ -34,9 +44,9 @@ export function selectedEntitiesReducer(
         // selectedList: {
         //   [entityID]: entity
         // },
-        activeEntityNestingIdx: [idx],
-        activeEntityIdx: idx,
-        activeEntityID: entityID,
+        nestingIdx: [idx],
+        index: idx,
+        id: entityID,
         // activeEntity: entity
       };
     default:

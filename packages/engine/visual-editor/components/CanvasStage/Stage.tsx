@@ -35,7 +35,7 @@ export interface CanvasStageProps extends Dispatcher {
   /** 布局信息 */
   layoutNodeInfo: LayoutInfoActionReducerState
   /** 选中的组件实例 */
-  selectedEntities: SelectEntityState
+  selectedInfo: SelectEntityState
   /** 点击舞台的事件回调 */
   onStageClick?: () => void
 }
@@ -62,8 +62,8 @@ class CanvasStage extends React.Component<CanvasStageProps> {
    * 查看组件实例是否被选中
    * @param entityID entityID
    */
-  getSelectedState = ({ idx }: GetStateContext) => {
-    return this.props.selectedEntities.activeEntityIdx === idx;
+  getSelectedState = ({ id }: GetStateContext) => {
+    return this.props.selectedInfo.id === id;
   };
 
   getEntityProps = ({ nestingInfo }: GetStateContext) => {

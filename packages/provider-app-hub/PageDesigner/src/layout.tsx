@@ -21,17 +21,45 @@ interface VisualEditorAppProps extends VisualEditorState {
 const PageDesignerApp: React.FC<VisualEditorAppProps> = (props) => {
   const {
     dispatcher,
-    selectedEntities,
-    entitiesStateStore,
-    layoutInfo
+    selectedInfo,
+    layoutInfo,
+    pageMetadata,
+    appContext,
+    flatLayoutItems,
   } = props;
+  // console.log(props);
+  // 调整整体的数据结构，通过 redux 描述一份完整的{页面数据}
   const {
     InitApp,
     SelectEntity, InitEntityState, UpdateEntityState,
     SetLayoutInfo, DelEntity, AddEntity,
   } = dispatcher;
+  const { id: activeEntityID, entity: activeEntity } = selectedInfo;
 
-  return (
+  useEffect(() => {
+    /** 初始化数据 */
+    Promise.all([getCompClassData(), getCompPanelData(), getPagePropsData(), getPropertyItems()])
+      .then(([compClassData, compPanelData, pagePropsData, propItemsData]) => {
+        ApiGetPageData(MOCK_PAGE_ID)
+          .then((pageData) => {
+            InitApp({
+              compPanelData,
+              compClassData,
+              propItemsData,
+              pagePropsData,
+              /** 回填数据的入口 */
+              pageData
+            });
+          });
+
+        // SelectEntity(PageEntity);
+      })
+      .catch((err) => {
+        // TODO: 处理异常
+      });
+  }, []);
+
+  return appContext.ready ? (
     <div>
       <Grid
         container
@@ -44,7 +72,7 @@ const PageDesignerApp: React.FC<VisualEditorAppProps> = (props) => {
           lg={2}
           md={3}
         >
-          <h3>页面设计器</h3>
+          <h3>Visual editor</h3>
         </Grid>
         <Grid
           item
@@ -68,32 +96,92 @@ const PageDesignerApp: React.FC<VisualEditorAppProps> = (props) => {
             item
             className="left-panel"
           >
-            <ComponentPanel />
+            <ComponentPanel
+              componentPanelConfig={appContext.compPanelData}
+              compClassData={appContext.compClassData}
+            />
           </Grid>
           <Grid
-            lg={10}
-            md={10}
-            sm={10}
-            xs={10}
+            lg={8}
+            md={8}
+            sm={8}
+            xs={8}
             item
             className="canvas-container"
           >
+            <div className="mb10">
+              <EditButton
+                onOK={(e) => {}}
+                onCancel={(e) => {}}
+              >
+                编辑页面属性
+              </EditButton>
+              <Button
+                className="ml10"
+                color="green"
+                onClick={(e) => {
+                  const pageData = wrapPageData({
+                    id: MOCK_PAGE_ID,
+                    pageID: MOCK_PAGE_ID,
+                    name: '测试页面',
+                    pageMetadata,
+                    layoutInfo,
+                  });
+                  ApiSavePage(pageData);
+                }}
+              >
+                保存页面
+              </Button>
+              <Button
+                className="ml10"
+                color="red"
+                onClick={(e) => {
+                  localStorage.clear();
+                  location.reload();
+                }}
+              >
+                清除页面数据
+              </Button>
+            </div>
             <CanvasStage
-              selectedEntities={selectedEntities}
-              entitiesStateStore={entitiesStateStore}
+              selectedInfo={selectedInfo}
               layoutNodeInfo={layoutInfo}
-              selectEntity={SelectEntity}
-              initEntityState={InitEntityState}
-              updateEntityState={UpdateEntityState}
-              SetLayoutInfo={SetLayoutInfo}
-              DelEntity={DelEntity}
-              AddEntity={AddEntity}
-              PropEditorRenderer={PropertiesEditor}
+              pageMetadata={pageMetadata}
+              onStageClick={() => {
+                // SelectEntity(PageEntity);
+              }}
+              {...dispatcher}
             />
           </Grid>
         </DndProvider>
+        {
+          activeEntity && (
+            <Grid
+              lg={2}
+              md={2}
+              sm={2}
+              xs={2}
+              item
+            >
+              <PropertiesEditor
+                key={activeEntityID}
+                propItemsData={appContext.propItemsData}
+                propertiesConfig={activeEntity.bindProps}
+                selectedEntity={activeEntity}
+                defaultEntityState={activeEntity.propState}
+                initEntityState={(entityState) => InitEntityState(selectedInfo, entityState)}
+                updateEntityState={(entityState) => UpdateEntityState(selectedInfo, entityState)}
+              />
+            </Grid>
+          )
+        }
       </Grid>
       <GlobalStyle />
+    </div>
+  ) : (
+    // TODO: 优化样式
+    <div>
+      Loading data
     </div>
   );
 };
