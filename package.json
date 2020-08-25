@@ -12,7 +12,6 @@
     "packages/spec/*"
   ],
   "scripts": {
-    "pull:all": "git pull origin master --rebase",
     "lerna:bootstrap": "lerna bootstrap",
     "start:all": "lerna run --parallel --stream start",
     "start:provider-app": "cd ./packages/provider-app-hub/EntryHall && npm start",

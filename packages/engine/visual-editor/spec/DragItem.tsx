@@ -16,6 +16,8 @@ export interface DnDContext {
   idx: number
 }
 
+export type DragItemConfig = any;
+
 export type DragItemDrop = (entity, dnDContext: DnDContext) => void
 export type DragItemDrag = (entity, dnDContext: DnDContext) => void
 export type DragItemMove = (dragIndex: number, hoverIndex: number, compClass: any) => void
@@ -26,7 +28,7 @@ export type CancelDrag = (originalIndex: number) => void
  */
 interface DragItem {
   index?: number
-  type: string
+  type: string | symbol
 }
 
 /**

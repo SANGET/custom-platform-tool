@@ -6,3 +6,19 @@
   z-index: 1;
   padding: 3px 10px;
 }
+
+.component-class-panel {
+  .drag-item-group {
+    .drag-items {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      .drag-comp-item {
+        padding: 5px 20px;
+        background-color: #fafafa;
+        width: 47%;
+        border: 1px solid #EEE;
+      }
+    }
+  }
+}

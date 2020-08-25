@@ -1,5 +1,5 @@
 import { createStore, applyMiddleware } from 'redux';
-
+import { createLogger } from 'redux-logger';
 import AppReducers, { VisualEditorState } from '../reducers';
 
 let store: VisualEditorState | null;
@@ -12,6 +12,10 @@ export const disposeStore = () => {
   store = null;
 };
 
+const logger = createLogger({
+  // ...options
+});
+
 export default function createChatStore(
   preloadedState?: VisualEditorState
 ) {
@@ -20,6 +24,7 @@ export default function createChatStore(
       AppReducers,
       preloadedState,
       applyMiddleware(
+        // logger
       )
     );
   }

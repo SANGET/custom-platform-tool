@@ -41,6 +41,8 @@ export interface EditorBasicElementClass<C> {
  */
 export interface EditorComponentClass<C = GenericComponentType> extends EditorBasicElementClass<C> {
   id: string
+  /** 可以指定组件类被实例化时的 id */
+  entityID?: string
 }
 
 /// //////////////// 属性 ///////////////////
@@ -104,9 +106,10 @@ export interface EntityStyle extends React.CSSProperties {
  */
 export interface EditorEntityState {
   /** 原始的实例状态数据 */
-  propOriginState?: {
-    [stateID: string]: EditorEntityStateItem
-  }
+  // propOriginState?: {
+  //   [stateID: string]: any
+  //   // [stateID: string]: EditorEntityStateItem
+  // }
   // /** 绑定的页面内唯一数据 ID */
   // dataID?: string
   /** 样式 */
@@ -121,22 +124,6 @@ export interface EntitiesStateStore {
 }
 
 /// //////////////// 实例状态 ///////////////////
-
-// export interface EditorComponentEntityProps {
-//   /** 实例 id */
-//   id: string
-//   // /** horizontal 横向排序 */
-//   // hOrder: number
-//   // /** vertical 垂直排序 */
-//   // vOrder: number
-//   /** 组件实例状态数据 */
-//   // entityState: EditorEntityState
-//   /** 实例化后的状态 */
-//   _state: string
-//   // _state: 'active' | 'disable'
-//   /** 实例化后的 class id */
-//   _classID: EditorComponentClass['id']
-// }
 
 /**
  * 页面元数据
@@ -163,6 +150,8 @@ export interface EditorComponentEntity extends EditorComponentClass {
   /** 组件实例状态数据 */
   // entityState: EditorEntityState
   body?: EditorComponentEntity[]
+  /** 存储组件实例的状态 */
+  propState?: EditorEntityState
   /** 实例化后的状态 */
   _state: string
   // _state: 'active' | 'disable'

@@ -189,10 +189,9 @@ PropertiesEditorProps, PropertiesEditorState
       /**
        * 将实例状态回填到属性项
        */
-      const activeState = entityState?.propOriginState
-        ? entityState.propOriginState[propID]
+      const activeState = entityState
+        ? entityState[propID]
         : undefined;
-      const currValue = activeState?.value;
 
       /** 确保 propItemConfig 的 ID 与集合中的 ID 一致 */
       propItemConfig.id = propID;
@@ -214,12 +213,12 @@ PropertiesEditorProps, PropertiesEditorState
           key={propID}
         >
           <PropItemRenderer
-            componentState={currValue}
+            componentState={activeState}
             onChange={(nextValue, propConfigRes) => {
               /**
                * 性能优化部分
                */
-              const prevState = currValue;
+              const prevState = activeState;
               if (nextValue === prevState) return;
 
               /**

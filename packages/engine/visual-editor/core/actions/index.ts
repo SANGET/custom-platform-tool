@@ -40,9 +40,8 @@ export interface CanvasDispatcher {
   SetLayoutInfo: typeof CanvasActions['SetLayoutInfo']
   SortingEntity: typeof CanvasActions['SortingEntity']
   DelEntity: typeof CanvasActions['DelEntity']
-  MotifyEntity: typeof CanvasActions['MotifyEntity']
   AddEntity: typeof CanvasActions['AddEntity']
-  SelectEntity: typeof AppActions['SelectEntity']
+  SelectEntity: typeof CanvasActions['SelectEntity']
 }
 
 export interface Dispatcher extends AppDispatcher, EntityStateDispatcher, CanvasDispatcher{}

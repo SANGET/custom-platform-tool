@@ -1,21 +1,35 @@
-import { INIT_APP, InitAppAction } from "../actions";
-import { ComponentPanelConfig } from "../../types";
+import produce from 'immer';
+import {
+  INIT_APP, InitAppAction,
+  ADD_ENTITY, AddEntityAction
+} from "../actions";
+import { ComponentPanelConfig, PageMetadata } from "../../types";
 
-export interface PageMetadata {
-  dataSource
-  content
-  /** 页面标准接口 */
-  pageInterface
-}
+const DefaultPageMeta: PageMetadata = {
+  lastCompID: 0,
+  dataSource: {},
+  pageInterface: {}
+};
 
 /**
  * 组件选择状态管理。如果组件未被实例化，则实例化后被选择
  */
 export function pageMetadataReducer(
-  state = {},
-  action
+  state: PageMetadata = DefaultPageMeta,
+  action: InitAppAction | AddEntityAction
 ) {
   switch (action.type) {
+    case INIT_APP:
+      const {
+        pageData
+      } = action;
+      return produce(pageData, (draft) => (draft ? draft.meta : state));
+    case ADD_ENTITY:
+      return produce(state, (draft) => {
+        // eslint-disable-next-line no-param-reassign
+        draft.lastCompID += 1;
+        return draft;
+      });
     default:
       return state;
   }

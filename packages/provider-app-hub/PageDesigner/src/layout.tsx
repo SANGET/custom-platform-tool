@@ -28,7 +28,7 @@ const PageDesignerApp: React.FC<VisualEditorAppProps> = (props) => {
   const {
     InitApp,
     SelectEntity, InitEntityState, UpdateEntityState,
-    SetLayoutInfo, DelEntity, MotifyEntity, AddEntity,
+    SetLayoutInfo, DelEntity, AddEntity,
   } = dispatcher;
 
   return (
@@ -87,7 +87,6 @@ const PageDesignerApp: React.FC<VisualEditorAppProps> = (props) => {
               updateEntityState={UpdateEntityState}
               SetLayoutInfo={SetLayoutInfo}
               DelEntity={DelEntity}
-              MotifyEntity={MotifyEntity}
               AddEntity={AddEntity}
               PropEditorRenderer={PropertiesEditor}
             />

@@ -1,5 +1,5 @@
 import React from 'react';
-import { LayoutNodeInfo } from '../types';
+import { LayoutNodeInfo, ElemNestingInfo } from '../types';
 
 /**
  * LayoutWrapper 上下文
@@ -7,6 +7,7 @@ import { LayoutNodeInfo } from '../types';
 export interface LayoutWrapperContext {
   id: string
   idx: number
+  nestingInfo: ElemNestingInfo
   node: LayoutNodeInfo
   children?: React.ElementType[]
 }
@@ -31,14 +32,20 @@ const renderLayout = (
 ) => {
   const res: React.ElementType[] = [];
   if (Array.isArray(layoutNode)) {
+    let nestingDeep = 0;
+    const nestingInfo: number[] = [];
     for (let i = 0; i < layoutNode.length; i++) {
       const node = layoutNode[i];
+      nestingInfo[nestingDeep] = i;
 
       const { id } = node;
       const { componentRenderer } = wrapper;
-      const wrapperContext: LayoutWrapperContext = { id, idx: i, node };
+      const wrapperContext: LayoutWrapperContext = {
+        id, idx: i, node, nestingInfo
+      };
       if (node.body) {
         const childOfContainer = renderLayout(node.body, wrapper);
+        nestingDeep += 1;
         let child;
         if (typeof componentRenderer === 'function') {
           wrapperContext.children = childOfContainer;

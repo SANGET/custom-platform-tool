@@ -1,5 +1,6 @@
+/* eslint-disable no-param-reassign */
+import produce from 'immer';
 import { EditorEntityState, EditorPropertyItem } from "../../types";
-import { increaseID } from "../../utils";
 
 interface EntityStateItemParams {
   value: any,
@@ -59,17 +60,11 @@ export const entityStateMergeRule: EntityStateMergeRule = (
   const srcEntityStateCopy = srcEntityState || {};
   const propID = propItemConfig.id;
 
-  const resState: EditorEntityState = Object.assign({},
-    srcEntityStateCopy,
-    {
-      propOriginState: Object.assign({}, srcEntityState.propOriginState, {
-        [propID]: {
-          value
-        }
-      }),
-      style: Object.assign({}, srcEntityState.style, getStyle(entityStateItemParams)),
-      // dataID: srcEntityStateCopy.dataID ? srcEntityStateCopy.dataID : increaseID()
-    }, mergeGeneralProp(entityStateItemParams));
+  const resState = produce(srcEntityStateCopy, (darftData) => {
+    darftData.style = Object.assign({}, srcEntityState.style, getStyle(entityStateItemParams));
+    darftData[propID] = value;
+    Object.assign(darftData, mergeGeneralProp(entityStateItemParams));
+  });
 
   return resState;
 };
