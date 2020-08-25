@@ -1,13 +1,14 @@
 import {
   EditorEntityState, EditorEntity
 } from "../../types";
+import { SelectEntityState } from "../types";
 
 /// entityState /////////////////
 
 export const INIT_ENTITY_STATE = 'entityState/init';
 export interface InitEntityStateAction {
   type: typeof INIT_ENTITY_STATE
-  entity: EditorEntity
+  selectedEntityInfo: SelectEntityState
   defaultEntityState
 }
 
@@ -15,12 +16,12 @@ export interface InitEntityStateAction {
  * 初始化组件类的状态
  */
 export const InitEntityState = (
-  entity: EditorEntity,
+  selectedEntityInfo: SelectEntityState,
   defaultEntityState
 ): InitEntityStateAction => {
   return {
     type: INIT_ENTITY_STATE,
-    entity,
+    selectedEntityInfo,
     defaultEntityState
   };
 };
@@ -28,7 +29,7 @@ export const InitEntityState = (
 export const UPDATE_ENTITY_STATE = 'entityState/update';
 export interface UpdateEntityStateAction {
   type: typeof UPDATE_ENTITY_STATE
-  entityID: string,
+  selectedEntityInfo: SelectEntityState,
   formState: EditorEntityState
 }
 
@@ -36,12 +37,12 @@ export interface UpdateEntityStateAction {
  * 更新组件实例的状态
  */
 export const UpdateEntityState = (
-  entity: EditorEntity,
+  selectedEntityInfo: SelectEntityState,
   formState: EditorEntityState
 ): UpdateEntityStateAction => {
   return {
     type: UPDATE_ENTITY_STATE,
-    entityID: entity.id,
+    selectedEntityInfo,
     formState
   };
 };

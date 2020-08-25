@@ -52,17 +52,18 @@ const ComponentPanel = ({
                       items
                     } = ig;
                     return (
-                      <div key={`${idx}_${_idx}`}>
+                      <div key={`${idx}_${_idx}`} className="drag-item-group">
                         <h5>{igTitle}</h5>
-                        {
-                          items.map((componentClassID, __idx) => {
-                            const componentClass = compClassData[componentClassID];
-                            const {
-                              id, label
-                            } = componentClass;
-                            return (
-                              <div key={id}>
+                        <div className="drag-items">
+                          {
+                            items.map((componentClassID, __idx) => {
+                              const componentClass = compClassData[componentClassID];
+                              const {
+                                id, label
+                              } = componentClass;
+                              return (
                                 <DragItem
+                                  key={id} className="drag-comp-item"
                                   type={ItemTypes.DragItemClass}
                                   dragConfig={getDragItemConfig ? getDragItemConfig(componentClass) : {}}
                                   dragItemClass={{
@@ -73,10 +74,10 @@ const ComponentPanel = ({
                                     typeof itemWrapper === 'function' ? itemWrapper(componentClass) : label
                                   }
                                 </DragItem>
-                              </div>
-                            );
-                          })
-                        }
+                              );
+                            })
+                          }
+                        </div>
                       </div>
                     );
                   })

@@ -22,16 +22,25 @@ import {
   getPagePropsData,
   getPropertyItems,
 } from "../mock-data";
+import { ApiGetPageData, ApiSavePage } from "../mock-api/edit-page";
+import { MOCK_PAGE_ID } from "../mock-data/page";
 
 interface VisualEditorAppProps extends VisualEditorState {
   dispatcher: Dispatcher
 }
 
+// const PAGE_ENTITY_ID = '__PAGE__ENTITY__ID__';
+// const PageEntity: EditorPageEntity = {
+//   id: PAGE_ENTITY_ID,
+//   pageID: '',
+//   bindProps: {
+//     rawProp: pagePropsData
+//   },
+// };
 const VisualEditorApp: React.FC<VisualEditorAppProps> = (props) => {
   const {
     dispatcher,
     selectedEntities,
-    entitiesStateStore,
     layoutInfo,
     pageMetadata,
     appContext,
@@ -41,7 +50,7 @@ const VisualEditorApp: React.FC<VisualEditorAppProps> = (props) => {
   const {
     InitApp,
     SelectEntity, InitEntityState, UpdateEntityState,
-    SetLayoutInfo, DelEntity, MotifyEntity, AddEntity,
+    SetLayoutInfo, DelEntity, AddEntity,
   } = dispatcher;
   const { activeEntityID, activeEntity } = selectedEntities;
 
@@ -49,14 +58,22 @@ const VisualEditorApp: React.FC<VisualEditorAppProps> = (props) => {
     /** 初始化数据 */
     Promise.all([getCompClassData(), getCompPanelData(), getPagePropsData(), getPropertyItems()])
       .then(([compClassData, compPanelData, pagePropsData, propItemsData]) => {
-        InitApp({
-          compPanelData,
-          compClassData,
-          propItemsData,
-          pagePropsData,
-          /** 回填数据的入口 */
-          pageData: {}
-        });
+        ApiGetPageData(MOCK_PAGE_ID)
+          .then((pageData) => {
+            InitApp({
+              compPanelData,
+              compClassData,
+              propItemsData,
+              pagePropsData,
+              /** 回填数据的入口 */
+              pageData
+            });
+          });
+
+        // SelectEntity(PageEntity);
+      })
+      .catch((err) => {
+        // TODO: 处理异常
       });
   }, []);
 
@@ -119,22 +136,38 @@ const VisualEditorApp: React.FC<VisualEditorAppProps> = (props) => {
               </EditButton>
               <Button
                 className="ml10"
+                color="green"
                 onClick={(e) => {
                   const pageData = wrapPageData({
+                    id: MOCK_PAGE_ID,
+                    pageID: MOCK_PAGE_ID,
+                    name: '测试页面',
                     pageMetadata,
                     layoutInfo,
-                    entitiesStateStore
                   });
+                  ApiSavePage(pageData);
                 }}
               >
                 保存页面
               </Button>
+              <Button
+                className="ml10"
+                color="red"
+                onClick={(e) => {
+                  localStorage.clear();
+                  location.reload();
+                }}
+              >
+                清除页面数据
+              </Button>
             </div>
             <CanvasStage
               selectedEntities={selectedEntities}
-              entitiesStateStore={entitiesStateStore}
               layoutNodeInfo={layoutInfo}
               pageMetadata={pageMetadata}
+              onStageClick={() => {
+                // SelectEntity(PageEntity);
+              }}
               {...dispatcher}
             />
           </Grid>
@@ -153,9 +186,9 @@ const VisualEditorApp: React.FC<VisualEditorAppProps> = (props) => {
                 propItemsData={appContext.propItemsData}
                 propertiesConfig={activeEntity.bindProps}
                 selectedEntity={activeEntity}
-                defaultEntityState={entitiesStateStore[activeEntityID]}
-                initEntityState={(entityState) => InitEntityState(activeEntity, entityState)}
-                updateEntityState={(entityState) => UpdateEntityState(activeEntity, entityState)}
+                defaultEntityState={activeEntity.propState}
+                initEntityState={(entityState) => InitEntityState(selectedEntities, entityState)}
+                updateEntityState={(entityState) => UpdateEntityState(selectedEntities, entityState)}
               />
             </Grid>
           )
@@ -164,7 +197,7 @@ const VisualEditorApp: React.FC<VisualEditorAppProps> = (props) => {
       <GlobalStyle />
     </div>
   ) : (
-    // TODO: 优化
+    // TODO: 优化样式
     <div>
       Loading data
     </div>

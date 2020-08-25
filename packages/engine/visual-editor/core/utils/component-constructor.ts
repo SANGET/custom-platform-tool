@@ -9,6 +9,7 @@ import {
 export type ConstructCompClass = (
   componentClass: EditorComponentClass,
   options?: {
+    idCount?: number
     extendEntityID?: string
     state?: string
   }
@@ -22,6 +23,7 @@ export const constructCompClass: ConstructCompClass = (
   options = {}
 ) => {
   const {
+    idCount,
     extendEntityID = '',
     state = 'active'
   } = options;
@@ -29,7 +31,7 @@ export const constructCompClass: ConstructCompClass = (
   let { entityID = '' } = componentClass;
   if (!entityID) {
     /** 如果外部没有传入，则通过生成器生成 ID */
-    entityID = increaseID(ENTITY_ID);
+    entityID = increaseID(idCount, ENTITY_ID);
   } else {
     entityID = extendEntityID;
   }
@@ -40,6 +42,7 @@ export const constructCompClass: ConstructCompClass = (
    * 下划线前缀为内部字段，用于表示已经实例化
    */
   const entity = Object.assign({}, componentClass, {
+    // propState: {},
     id: entityID,
     /** 备份 classID */
     _classID: componentClass.id,

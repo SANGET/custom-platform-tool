@@ -5,7 +5,8 @@
 
 import {
   EditorComponentEntity,
-  EditorEntity
+  EditorEntity,
+  ElemNestingInfo
 } from "../../types";
 
 /**
@@ -20,7 +21,7 @@ export interface AddEntityAction {
 
 export const AddEntity = (
   entity: EditorComponentEntity,
-  idx
+  idx: number
 ): AddEntityAction => {
   return {
     type: ADD_ENTITY,
@@ -30,38 +31,20 @@ export const AddEntity = (
 };
 
 /**
- * 更改组件实例
- */
-export const MOTIFY_ENTITY = 'entity/motify';
-export interface MotifyEntityAction {
-  type: typeof MOTIFY_ENTITY
-  entity: EditorComponentEntity
-}
-
-export const MotifyEntity = (
-  entity: EditorComponentEntity
-): MotifyEntityAction => {
-  return {
-    type: MOTIFY_ENTITY,
-    entity
-  };
-};
-
-/**
  * 删除组件实例
  */
 export const DEL_ENTITY = 'entity/del';
 export interface DelEntityAction {
   type: typeof DEL_ENTITY
-  entityIdx: number
+  idx: number
 }
 
 export const DelEntity = (
-  entityIdx: number
+  idx: number
 ): DelEntityAction => {
   return {
     type: DEL_ENTITY,
-    entityIdx
+    idx
   };
 };
 
@@ -82,7 +65,7 @@ export interface SortingEntityAction {
    * 例如 [0] 代表最外层的第 0 个元素中进行排序
    * 例如 [0, 1, 2] 代表最外层第 0 个元素中的第 1 个元素中的第 2 个元素
    */
-  nestingInfo?: number[]
+  nestingInfo?: ElemNestingInfo
   replace?: boolean
 }
 
@@ -96,7 +79,7 @@ export const SortingEntity = (
   /** 选项 */
   options?: {
     /** 嵌套信息 */
-    nestingInfo?: number[],
+    nestingInfo?: ElemNestingInfo,
     /** 是否替换在 hoverIndex 的 entity */
     replace?: boolean
   },
@@ -152,13 +135,15 @@ export const SELECT_ENTITY = 'entity/select';
 export interface SelectEntityAction {
   type: typeof SELECT_ENTITY
   entity: EditorEntity
+  idx: number
 }
 
 export const SelectEntity = (
-  entity: EditorEntity
+  entity: EditorEntity, idx
 ): SelectEntityAction => {
   return {
     type: SELECT_ENTITY,
-    entity
+    entity,
+    idx
   };
 };

@@ -2,35 +2,23 @@
  * CanvasStage
  */
 import React from 'react';
-import { Button, Grid } from '@infra/ui';
 import { LayoutRenderer } from '@engine/layout-renderer';
-import { SelectEntityState } from '@engine/visual-editor/core/reducers';
-import { LayoutInfoActionReducerState } from '@engine/visual-editor/core/reducers/layout-info';
+import {
+  LayoutInfoActionReducerState,
+  TempEntity,
+  EditorComponentEntity,
+  PageMetadata
+} from '@engine/visual-editor/types';
 import { ItemTypes } from '@engine/visual-editor/spec/types';
 import {
-  EntitiesStateStore,
-  EditorPageEntity,
-  TempEntity,
-  EditorComponentEntity
-} from '@engine/visual-editor/types';
-import {
-  dragableItemWrapperFac, WrapperFacOptions, DragableItemWrapperFac
+  dragableItemWrapperFac, WrapperFacOptions, DragableItemWrapperFac, GetStateContext
 } from '@engine/visual-editor/spec/dragable-item-wrapper-fac';
 import { constructCompClass, constructTempEntity } from '@engine/visual-editor/core/utils/component-constructor';
 import { Dispatcher } from '../../core/actions';
-import { pageProperties } from '../../mock-data/page-perproties';
 import DropStageContainer from './DropStageContainer';
 import { DnDContext } from '../../spec/DragItem';
-
-const PAGE_ENTITY_ID = '__PAGE__ENTITY__ID__';
-
-const PageEntity: EditorPageEntity = {
-  id: PAGE_ENTITY_ID,
-  pageID: '',
-  bindProps: {
-    rawProp: pageProperties
-  },
-};
+import { getItemFromNestingItems } from '../../core/utils';
+import { SelectEntityState } from '../../core/types';
 
 /**
  * 中央舞台组件的 props
@@ -38,14 +26,18 @@ const PageEntity: EditorPageEntity = {
 export interface CanvasStageProps extends Dispatcher {
   /** 组件包接入规范  */
   dragableItemWrapper?: DragableItemWrapperFac
+  /** 页面的状态 */
+  pageEntityState?: {
+    style: CSSStyleRule
+  }
   /** 页面元数据 */
-  pageMetadata: any
+  pageMetadata: PageMetadata
   /** 布局信息 */
   layoutNodeInfo: LayoutInfoActionReducerState
   /** 选中的组件实例 */
   selectedEntities: SelectEntityState
-  /** 组件实例的状态集合 */
-  entitiesStateStore: EntitiesStateStore
+  /** 点击舞台的事件回调 */
+  onStageClick?: () => void
 }
 
 /**
@@ -58,24 +50,24 @@ class CanvasStage extends React.Component<CanvasStageProps> {
   /** 用于记录被拖动的实例的原 idx */
   dragItemOriginIdx!: number | undefined
 
-  componentDidMount() {
-    this.props.SelectEntity(PageEntity);
+  getItemFromNesting = (nestingInfo) => {
+    return getItemFromNestingItems(this.props.layoutNodeInfo, nestingInfo, 'body');
   }
 
-  getLayoutNode = (entityIdx: number) => {
-    return this.props.layoutNodeInfo[entityIdx];
+  getLayoutNode = ({ nestingInfo }: GetStateContext) => {
+    return this.getItemFromNesting(nestingInfo);
   }
 
   /**
    * 查看组件实例是否被选中
    * @param entityID entityID
    */
-  getSelectedState = (entityID: string) => {
-    return !!this.props.selectedEntities.selectedList[entityID];
+  getSelectedState = ({ idx }: GetStateContext) => {
+    return this.props.selectedEntities.activeEntityIdx === idx;
   };
 
-  getEntityProps = (entityID: string) => {
-    return this.props.entitiesStateStore[entityID];
+  getEntityProps = ({ nestingInfo }: GetStateContext) => {
+    return this.getItemFromNesting(nestingInfo)?.propState;
   };
 
   /**
@@ -85,6 +77,8 @@ class CanvasStage extends React.Component<CanvasStageProps> {
   dropDispatcher = (componentClass, dropCtx?: DnDContext) => {
     const {
       layoutNodeInfo,
+      pageMetadata,
+      AddEntity
     } = this.props;
     const { id: parentID = null, idx } = dropCtx || {};
     let _idx = idx;
@@ -107,19 +101,15 @@ class CanvasStage extends React.Component<CanvasStageProps> {
 
     if (!isMotify) {
       /** 实例化组件类 */
-      const entity = constructCompClass(itemClassCopy);
+      const entity = constructCompClass(itemClassCopy, {
+        idCount: pageMetadata.lastCompID
+      });
       _entity = entity;
-      this.addElement(_entity, _idx);
+      AddEntity(_entity, _idx);
     }
 
-    /** 选中被操作的组件 */
-    // setTimeout(() => SelectEntity(_entity));
     this.lastMoveIdx = undefined;
   };
-
-  addElement = (entity, idx) => {
-    this.props.AddEntity(entity, idx);
-  }
 
   deleteElement = (event, { idx, entity }) => {
     this.props.DelEntity(idx);
@@ -132,7 +122,7 @@ class CanvasStage extends React.Component<CanvasStageProps> {
     const {
       SelectEntity
     } = this.props;
-    SelectEntity(entity);
+    SelectEntity(entity, idx);
   };
 
   /**
@@ -175,18 +165,13 @@ class CanvasStage extends React.Component<CanvasStageProps> {
 
   render() {
     const {
-      entitiesStateStore,
       layoutNodeInfo,
-      SelectEntity,
+      pageEntityState,
+      onStageClick,
       DelEntity,
       dragableItemWrapper = dragableItemWrapperFac,
     } = this.props;
 
-    const selectPage = () => {
-      SelectEntity(PageEntity);
-    };
-
-    const pageEntityState = entitiesStateStore[PAGE_ENTITY_ID];
     const pageStyle = pageEntityState?.style;
 
     return (
@@ -217,9 +202,7 @@ class CanvasStage extends React.Component<CanvasStageProps> {
                 if (dropOptions.type !== ItemTypes.DragItemClass) return;
                 this.dropDispatcher(_dragItemClass);
               }}
-              onStageClick={(e) => {
-                selectPage();
-              }}
+              onStageClick={onStageClick}
               style={pageStyle}
             >
               {child}

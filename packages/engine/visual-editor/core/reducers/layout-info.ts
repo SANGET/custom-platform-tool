@@ -1,26 +1,32 @@
 import update from 'immutability-helper';
-import { EditorComponentEntity } from "../../types";
+import produce from 'immer';
+import { LayoutInfoActionReducerState } from "../../types";
 import {
-  ADD_ENTITY, MOTIFY_ENTITY, SET_LAYOUT_STATE, DEL_ENTITY,
-  AddEntityAction, MotifyEntityAction, DelEntityAction, SetLayoutAction,
+  ADD_ENTITY, SET_LAYOUT_STATE, DEL_ENTITY,
+  AddEntityAction, DelEntityAction, SetLayoutAction,
   SortingEntityAction,
-  SORTING_ENTITY
+  SORTING_ENTITY,
+  UPDATE_ENTITY_STATE,
+  UpdateEntityStateAction,
+  InitEntityStateAction,
+  INIT_ENTITY_STATE,
+  INIT_APP,
+  InitAppAction
 } from '../actions';
+import { getItemFromNestingItemsByBody } from '../utils';
 
 /**
  * action types
  */
 export type LayoutInfoActionReducerAction =
   AddEntityAction |
-  MotifyEntityAction |
   DelEntityAction |
   SetLayoutAction |
-  SortingEntityAction
+  SortingEntityAction |
+  UpdateEntityStateAction |
+  InitEntityStateAction |
+  InitAppAction
 
-/**
- * state 的数据结构
- */
-export type LayoutInfoActionReducerState = EditorComponentEntity[]
 // /**
 //  * state 的数据结构
 //  */
@@ -36,13 +42,11 @@ export const layoutInfoReducer = (
   action: LayoutInfoActionReducerAction
 ): LayoutInfoActionReducerState => {
   switch (action.type) {
+    case INIT_APP:
+      const { pageData } = action;
+      return produce(pageData, (draft) => (draft ? draft.content : state));
     case ADD_ENTITY:
       const { entity: addEntity, idx } = action;
-      /** 防止嵌套 */
-      // if (!!addEntity.id && addEntity.id === addEntity.parentID) {
-      //   console.log('nesting');
-      //   return state;
-      // }
       const addNextState = update(state, {
         $splice: [
           [idx, 1, addEntity],
@@ -52,7 +56,8 @@ export const layoutInfoReducer = (
       return addNextState;
     case SORTING_ENTITY:
       const {
-        dragIndex, hoverIndex, nestingInfo, entity: sortEntity, replace
+        dragIndex, hoverIndex, nestingInfo,
+        entity: sortEntity, replace
       } = action;
       const nextStateForSorting = update(state, {
         $splice: [
@@ -60,23 +65,33 @@ export const layoutInfoReducer = (
           [hoverIndex, 0, sortEntity],
         ],
       });
-      console.log(nextStateForSorting);
       return nextStateForSorting;
-    case MOTIFY_ENTITY:
-      const { entity: updateEntity } = action;
-      const nextState = {
-        ...state,
-      };
-      nextState[updateEntity.id] = updateEntity;
-      return nextState;
     case SET_LAYOUT_STATE:
       const { state: _state } = action;
       return _state;
     case DEL_ENTITY:
       return update(state, {
         $splice: [
-          [action.entityIdx, 1],
+          [action.idx, 1],
         ],
+      });
+    case INIT_ENTITY_STATE:
+      const { selectedEntityInfo: initSInfo, defaultEntityState } = action;
+      const { activeEntityNestingIdx: initIdx } = initSInfo;
+      const nextStateInit = produce(state, (draftState) => {
+        const targetData = getItemFromNestingItemsByBody(draftState, initIdx);
+        // eslint-disable-next-line no-param-reassign
+        targetData.propState = defaultEntityState;
+        return draftState;
+      });
+      return nextStateInit;
+    case UPDATE_ENTITY_STATE:
+      const { selectedEntityInfo: updateSInfo, formState } = action;
+      const { activeEntityNestingIdx: updateIdx } = updateSInfo;
+      return produce(state, (draftState) => {
+        const targetData = getItemFromNestingItemsByBody(draftState, updateIdx);
+        targetData.propState = formState;
+        return draftState;
       });
     default:
       return state;

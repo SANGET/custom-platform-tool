@@ -1,28 +1,16 @@
 import {
-  SELECT_ENTITY, INIT_ENTITY_STATE, SelectEntity,
+  SELECT_ENTITY, INIT_ENTITY_STATE,
   SelectEntityAction, InitEntityStateAction,
   UPDATE_ENTITY_STATE, UpdateEntityStateAction, INIT_APP, UNSELECT_ENTITY,
   UnselectEntityAction, InitAppAction, ADD_ENTITY, AddEntityAction
 } from "../actions";
 import { EditorEntity, EntitiesStateStore, EditorEntityState } from "../../types";
-
-/**
- * 选中的组件实例的数据结构
- */
-export interface SelectEntityState {
-  /** 选中的组件实例 ID */
-  activeEntityID: string,
-  /** 选中的组件实例 */
-  activeEntity?: EditorEntity
-  /** 可支持多选 */
-  selectedList: {
-    [id: string]: EditorEntity
-  }
-}
+import { SelectEntityState } from "../types";
 
 export const defaultSelectedEntities = {
   selectedList: {},
   activeEntityID: '',
+  activeEntityNestingIdx: [],
   activeEntity: undefined
 };
 
@@ -32,7 +20,7 @@ export const defaultSelectedEntities = {
 export function selectedEntitiesReducer(
   state: SelectEntityState = defaultSelectedEntities,
   action: SelectEntityAction | UnselectEntityAction | InitAppAction | AddEntityAction
-) {
+): SelectEntityState {
   switch (action.type) {
     case INIT_APP:
       return defaultSelectedEntities;
@@ -40,46 +28,47 @@ export function selectedEntitiesReducer(
       return defaultSelectedEntities;
     case ADD_ENTITY:
     case SELECT_ENTITY:
-      const { entity } = action;
+      const { entity, idx } = action;
       const entityID = entity.id;
       return {
-        selectedList: {
-          [entityID]: entity
-        },
+        // selectedList: {
+        //   [entityID]: entity
+        // },
+        activeEntityNestingIdx: [idx],
+        activeEntityIdx: idx,
         activeEntityID: entityID,
-        activeEntity: entity
+        // activeEntity: entity
       };
-      // case INIT_ENTITY_STATE:
-
-    //   return;
     default:
       return state;
   }
 }
 
 /**
+ * 弃用
+ *
  * 用于存储组件实例的状态集合
  */
-export function entitiesStateStoreReducer(
-  state: EntitiesStateStore = {},
-  action: InitEntityStateAction | UpdateEntityStateAction
-): EntitiesStateStore {
-  switch (action.type) {
-    case UPDATE_ENTITY_STATE:
-      const { entityID, formState } = action;
-      return {
-        ...state,
-        [entityID]: {
-          ...formState
-        }
-      };
-    case INIT_ENTITY_STATE:
-      const { entity, defaultEntityState } = action;
-      return {
-        ...state,
-        [entity.id]: defaultEntityState
-      };
-    default:
-      return state;
-  }
-}
+// export function entitiesStateStoreReducer(
+//   state: EntitiesStateStore = {},
+//   action: InitEntityStateAction | UpdateEntityStateAction
+// ): EntitiesStateStore {
+//   switch (action.type) {
+//     // case UPDATE_ENTITY_STATE:
+//     //   const { entityID, formState } = action;
+//     //   return {
+//     //     ...state,
+//     //     [entityID]: {
+//     //       ...formState
+//     //     }
+//     //   };
+//     // case INIT_ENTITY_STATE:
+//     //   const { entity, defaultEntityState } = action;
+//     //   return {
+//     //     ...state,
+//     //     [entity.id]: defaultEntityState
+//     //   };
+//     default:
+//       return state;
+//   }
+// }

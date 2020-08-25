@@ -1,7 +1,7 @@
 import { combineReducers } from "redux";
 
 import {
-  entitiesStateStoreReducer,
+  // entitiesStateStoreReducer,
   selectedEntitiesReducer,
   // getEntityDefaultState,
 } from './canvas-state';
@@ -12,7 +12,7 @@ import { layoutInfoReducer } from "./layout-info";
  * 将 reducer 合成
  */
 const VisualEditorStateReducer = combineReducers({
-  entitiesStateStore: entitiesStateStoreReducer,
+  // entitiesStateStore: entitiesStateStoreReducer,
   selectedEntities: selectedEntitiesReducer,
   layoutInfo: layoutInfoReducer,
   pageMetadata: pageMetadataReducer,

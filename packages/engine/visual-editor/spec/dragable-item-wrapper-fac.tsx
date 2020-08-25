@@ -19,11 +19,14 @@ import { TempEntityTip } from './template/TempEntityTip';
 import { ItemTypes } from './types';
 // import { Debounce } from '@mini-code/base-func';
 
-export type GetEntityProps = (id: string) => EditorEntityState
-export type GetSelectedState = (id: string) => boolean
-export type GetHoveringEntity = (id: string) => boolean
-export type SetHoveringEntity = (id: string) => void
-export type GetLayoutNode = (idx: number) => EditorComponentEntity
+export interface GetStateContext {
+  nestingInfo
+  idx
+}
+
+export type GetEntityProps = (ctx: GetStateContext) => EditorEntityState | undefined
+export type GetSelectedState = (ctx: GetStateContext) => boolean
+export type GetLayoutNode = (ctx: GetStateContext) => EditorComponentEntity
 
 export interface WrapperFacContext {
   /** 获取选中的组件实例的状态 */
@@ -93,10 +96,12 @@ export const dragableItemWrapperFac: DragableItemWrapperFac = (
     // getHoveringEntity, setHoveringEntity
   },
 ) => (propsForChild) => {
-  const { id, idx, children } = propsForChild;
-  const isSelected = getSelectedState(id);
-  const entityState = getEntityProps(id);
-  const currEntity = getLayoutNode(idx);
+  const {
+    id, idx, nestingInfo, children
+  } = propsForChild;
+  const isSelected = getSelectedState({ idx, nestingInfo });
+  const entityState = getEntityProps({ idx, nestingInfo });
+  const currEntity = getLayoutNode({ idx, nestingInfo });
   // const isHovering = getHoveringEntity(id);
   const classes = classnames([
     // isHovering && 'hovering',
