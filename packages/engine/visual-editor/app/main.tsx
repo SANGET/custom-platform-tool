@@ -64,6 +64,7 @@ const VisualEditorApp: React.FC<VisualEditorAppProps> = (props) => {
       .then(([compClassData, compPanelData, pagePropsData, propItemsData]) => {
         ApiGetPageData(MOCK_PAGE_ID)
           .then((pageData) => {
+            console.log(pageData);
             InitApp({
               compPanelData,
               compClassData,
