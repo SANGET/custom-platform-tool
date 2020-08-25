@@ -25,6 +25,9 @@ import {
 import { ApiGetPageData, ApiSavePage } from "../mock-api/edit-page";
 import { MOCK_PAGE_ID } from "../mock-data/page";
 
+import '../style/index.scss';
+import { FrameLayout } from "../components/LayoutFrame";
+
 interface VisualEditorAppProps extends VisualEditorState {
   dispatcher: Dispatcher
 }
@@ -79,89 +82,57 @@ const VisualEditorApp: React.FC<VisualEditorAppProps> = (props) => {
   }, []);
 
   return appContext.ready ? (
-    <div>
-      <Grid
-        container
-        alignItems="center"
-        space={10}
-      >
-        <Grid
-          item
-          className="logo"
-          lg={2}
-          md={3}
-        >
-          <h3>Visual editor</h3>
-        </Grid>
-        <Grid
-          item
-          className=""
-          lg={9}
-          md={10}
-        >
-          <ToolBar />
-        </Grid>
-      </Grid>
-      <Grid
-        container
-        space={10}
-      >
+    <div className="visual-app">
+      <header className="app-header">
+        <ToolBar />
+        <div className="p10">
+          <EditButton
+            onOK={(e) => {}}
+            onCancel={(e) => {}}
+          >
+                编辑页面属性
+          </EditButton>
+          <Button
+            className="ml10"
+            color="green"
+            onClick={(e) => {
+              const pageData = wrapPageData({
+                id: MOCK_PAGE_ID,
+                pageID: MOCK_PAGE_ID,
+                name: '测试页面',
+                pageMetadata,
+                layoutInfo,
+              });
+              ApiSavePage(pageData);
+            }}
+          >
+                保存页面
+          </Button>
+          <Button
+            className="ml10"
+            color="red"
+            onClick={(e) => {
+              localStorage.clear();
+              location.reload();
+            }}
+          >
+                清除页面数据
+          </Button>
+        </div>
+      </header>
+      <div className="app-content">
         <DndProvider backend={HTML5Backend}>
-          <Grid
-            lg={2}
-            md={2}
-            sm={2}
-            xs={2}
-            item
-            className="left-panel"
+          <div
+            className="comp-panel"
           >
             <ComponentPanel
               componentPanelConfig={appContext.compPanelData}
               compClassData={appContext.compClassData}
             />
-          </Grid>
-          <Grid
-            lg={8}
-            md={8}
-            sm={8}
-            xs={8}
-            item
+          </div>
+          <div
             className="canvas-container"
           >
-            <div className="mb10">
-              <EditButton
-                onOK={(e) => {}}
-                onCancel={(e) => {}}
-              >
-                编辑页面属性
-              </EditButton>
-              <Button
-                className="ml10"
-                color="green"
-                onClick={(e) => {
-                  const pageData = wrapPageData({
-                    id: MOCK_PAGE_ID,
-                    pageID: MOCK_PAGE_ID,
-                    name: '测试页面',
-                    pageMetadata,
-                    layoutInfo,
-                  });
-                  ApiSavePage(pageData);
-                }}
-              >
-                保存页面
-              </Button>
-              <Button
-                className="ml10"
-                color="red"
-                onClick={(e) => {
-                  localStorage.clear();
-                  location.reload();
-                }}
-              >
-                清除页面数据
-              </Button>
-            </div>
             <CanvasStage
               selectedInfo={selectedInfo}
               layoutNodeInfo={layoutInfo}
@@ -171,30 +142,26 @@ const VisualEditorApp: React.FC<VisualEditorAppProps> = (props) => {
               }}
               {...dispatcher}
             />
-          </Grid>
+          </div>
         </DndProvider>
-        {
-          activeEntity && (
-            <Grid
-              lg={2}
-              md={2}
-              sm={2}
-              xs={2}
-              item
-            >
+        <div
+          className="prop-panel"
+        >
+          {
+            activeEntity && (
               <PropertiesEditor
                 key={activeEntityID}
                 propItemsData={appContext.propItemsData}
-                propertiesConfig={activeEntity.bindProps}
+                propertiesConfig={appContext?.compClassData[activeEntity?._classID]?.bindProps}
                 selectedEntity={activeEntity}
                 defaultEntityState={activeEntity.propState}
                 initEntityState={(entityState) => InitEntityState(selectedInfo, entityState)}
                 updateEntityState={(entityState) => UpdateEntityState(selectedInfo, entityState)}
               />
-            </Grid>
-          )
-        }
-      </Grid>
+            )
+          }
+        </div>
+      </div>
       <GlobalStyle />
     </div>
   ) : (

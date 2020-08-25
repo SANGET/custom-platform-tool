@@ -72,6 +72,9 @@ const DragableItemWrapper = styled.div`
     >.state-mark {
       border-color: #a6bcf8;
     }
+    .rm-btn {
+      display: block;
+    }
   }
   &.hovering {
     >.state-mark {
@@ -82,6 +85,9 @@ const DragableItemWrapper = styled.div`
     >.state-mark {
       border-color: #376BFB;
     }
+  }
+  .rm-btn {
+    display: none;
   }
 `;
 
@@ -143,7 +149,7 @@ export const dragableItemWrapperFac: DragableItemWrapperFac = (
             onDelete(e, { idx, entity: currEntity });
           }}
         >
-        删除
+          删除
         </div>
       </DragItem>
       <div className="hoving state-mark fill"></div>
