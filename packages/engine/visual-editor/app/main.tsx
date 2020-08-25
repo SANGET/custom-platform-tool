@@ -86,15 +86,26 @@ const VisualEditorApp: React.FC<VisualEditorAppProps> = (props) => {
       <header className="app-header">
         <ToolBar />
         <div className="p10">
+          <Button
+            hola
+            className="mr10"
+            onClick={(e) => {
+              localStorage.clear();
+              location.reload();
+            }}
+          >
+            调试用 - 清除页面数据
+          </Button>
           <EditButton
+            hola
+            className="mr10"
             onOK={(e) => {}}
             onCancel={(e) => {}}
           >
-                编辑页面属性
+            编辑页面属性
           </EditButton>
           <Button
-            className="ml10"
-            color="green"
+            className="mr10"
             onClick={(e) => {
               const pageData = wrapPageData({
                 id: MOCK_PAGE_ID,
@@ -106,17 +117,7 @@ const VisualEditorApp: React.FC<VisualEditorAppProps> = (props) => {
               ApiSavePage(pageData);
             }}
           >
-                保存页面
-          </Button>
-          <Button
-            className="ml10"
-            color="red"
-            onClick={(e) => {
-              localStorage.clear();
-              location.reload();
-            }}
-          >
-                清除页面数据
+            保存页面
           </Button>
         </div>
       </header>

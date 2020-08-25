@@ -14,10 +14,11 @@ const editPageMetadata = (onOK, onCancel) => {
 };
 
 export const EditButton = ({
-  onOK, onCancel, children
+  onOK, onCancel, children, ...btnProps
 }) => {
   return (
     <Button
+      {...btnProps}
       onClick={() => editPageMetadata(onOK, onCancel)}
     >
       {children}
