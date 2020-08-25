@@ -128,6 +128,20 @@ export function flatLayoutItemsReducer(
         ...state,
         [entity.id]: entity
       };
+    case UPDATE_ENTITY_STATE:
+      const { selectedEntityInfo: updateSInfo, formState } = action;
+      const { id: updateId } = updateSInfo;
+      return produce(state, (draftState) => {
+        draftState[updateId].propState = formState;
+        return draftState;
+      });
+    case DEL_ENTITY:
+      return produce(state, (draft) => {
+        const { idx, entity: delE } = action;
+        // eslint-disable-next-line no-param-reassign
+        delete draft[delE.id];
+        return draft;
+      });
     default:
       return state;
   }

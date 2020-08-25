@@ -112,7 +112,7 @@ class CanvasStage extends React.Component<CanvasStageProps> {
   };
 
   deleteElement = (event, { idx, entity }) => {
-    this.props.DelEntity(idx);
+    this.props.DelEntity(idx, entity);
   };
 
   /**
@@ -189,7 +189,7 @@ class CanvasStage extends React.Component<CanvasStageProps> {
               accept={[ItemTypes.DragItemClass, ItemTypes.DragItemEntity]}
               onLeave={(item) => {
                 /** 移出 item */
-                typeof item.index !== 'undefined' && DelEntity(item.index);
+                typeof item.index !== 'undefined' && DelEntity(item.index, item);
               }}
               onEnter={(item) => {
                 const layoutNodeInfoLen = layoutNodeInfo.length;
