@@ -37,13 +37,16 @@ export const DEL_ENTITY = 'entity/del';
 export interface DelEntityAction {
   type: typeof DEL_ENTITY
   idx: number
+  entity: EditorComponentEntity
 }
 
 export const DelEntity = (
-  idx: number
+  idx: number,
+  entity
 ): DelEntityAction => {
   return {
     type: DEL_ENTITY,
+    entity,
     idx
   };
 };
