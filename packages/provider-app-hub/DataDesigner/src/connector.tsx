@@ -1,7 +1,7 @@
 /*
  * @Author: your name
  * @Date: 2020-08-19 17:25:29
- * @LastEditTime: 2020-08-22 14:51:37
+ * @LastEditTime: 2020-08-25 15:20:50
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: \custom-platform-v3-frontend\packages\provider-app-hub\DataDesigner\src\tools\connector.ts

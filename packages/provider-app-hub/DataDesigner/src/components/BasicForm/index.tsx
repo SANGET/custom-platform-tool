@@ -16,16 +16,15 @@ import BasicStory from '@provider-app/data-designer/src/components/BasicStory';
 const FormStyled = styled.div`
 #basic-form{
   margin:16px 20px 0 20px;
-  
 }
 
 .ant-row{
   margin-bottom:16px;
 }
 .search-form{
-  margin:16px  0;
+  margin:0 !important;
   .ant-row{
-    margin-bottom:0
+    margin:0 !important;
   }
 }
 

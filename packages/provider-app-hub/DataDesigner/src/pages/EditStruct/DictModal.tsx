@@ -149,7 +149,7 @@ const DictModal = ({ onChange, ...rest }) => {
   };
   const rowSelection = {
     onChange: (selectedRowKeys, selectedRows) => {
-      // onChange(selectedRowKeys[0]);
+      onChange(selectedRows);
       // console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
     },
   };
@@ -161,6 +161,7 @@ const DictModal = ({ onChange, ...rest }) => {
   /** 搜索条件-表名称 */
   const searchProps = {
     form: searchForm,
+    className:'search-form',
     colSpan: 9,
     btnSpan: 6,
     items: {
@@ -215,7 +216,7 @@ const DictModal = ({ onChange, ...rest }) => {
 
   };
 
-  return (<>
+  return (<div className="data-designer">
     <BasicForm {...searchProps} />
     <TableHeadMenu {...tableHeadMenus} />
     <Table
@@ -247,4 +248,4 @@ const DictModal = ({ onChange, ...rest }) => {
 
   </>);
 };
-export default Connector(DictModal);
+export default DictModal;

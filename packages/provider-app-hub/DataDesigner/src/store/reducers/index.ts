@@ -1,7 +1,7 @@
 /*
  * @Author: your name
  * @Date: 2020-08-03 12:24:31
- * @LastEditTime: 2020-08-24 16:13:56
+ * @LastEditTime: 2020-08-25 15:28:51
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: \custom-platform-v3-frontend\packages\provider-app-hub\DataManager\src\reducers\index.ts
@@ -42,6 +42,7 @@ const reducer = (
     }
     /** 设置表结构列表数据 */
     case 'setStructRowData': {
+      console.log({ columns: action.structRowData.columns, test: Object.assign({}, state, action.structRowData) });
       return {
         ...state,
         structRowData: action.structRowData

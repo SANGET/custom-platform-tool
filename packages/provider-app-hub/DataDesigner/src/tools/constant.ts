@@ -1,7 +1,7 @@
 /*
  * @Author: wph
  * @Date: 2020-07-22 09:23:52
- * @LastEditTime: 2020-08-25 02:03:44
+ * @LastEditTime: 2020-08-25 10:18:06
  * @LastEditors: Please set LastEditors
  * @Description: 权限功能单元与页面状态无关的方法
  * @FilePath: \custom-platform-v3-frontend\packages\provider-app-hub\AuthManager\src\features\authItem\authItem.ts
@@ -60,7 +60,6 @@ export const FieldTypeEnum :Array<IFieldType> = [
   { value: "DATE", text: "日期" },
   { value: "DATETIME", text: "日期时间" },
   { value: "TEXT", text: "超大文本" },
-  { value: "BIGINT", text: "字符串" },
 ];
 
 /**

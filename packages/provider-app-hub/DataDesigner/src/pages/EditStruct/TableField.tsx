@@ -20,7 +20,8 @@ import ReferenceForm from '@provider-app/data-designer/src/pages/EditStruct/Refe
 /**
 * 字典管理组件
 */
-import DictManage from '@provider-app/data-designer/src/pages/DictManage';
+// import DictManage from '@provider-app/data-designer/src/pages/DictManage';
+import DictModal from '@provider-app/data-designer/src/pages/EditStruct/DictModal';
 
 /** 状态管理方法 */
 import { useMappedState, useDispatch } from 'redux-react-hook';
@@ -67,44 +68,37 @@ const TableField = ({ tableData }) => {
   }[modalTitle];
 
   /**
-  * 表字段列表的值是通过父组件 EditStruct传进来的
+  * 更新表结构详情
+  * 主要是更新表字段 关联字段 外键字段这几个数组
   */
-  // console.log({ tableData });
+  const updateTableData = (data?) => {
+    const list = data || structRowData[PageKey];
+    dispatch({
+      type: 'setStructRowData',
+      structRowData: Object.assign({},
+        structRowData,
+        {
+          [PageKey]: list.map((item, index) => {
+            /** 序号后端要求必填,页面不需展示 */
+            item.sequence = index;
+            return item;
+          })
+        })
+    });
+  };
 
   /**
-  * 将后端返回的列表值转换成页面的显示值
+  * 显示隐藏系统字段标题
   */
-
-  const toShow = (data) => {
-    return data.map((row) => {
-    /**
-    * 唯一,必填,转换成拼音 这几项后端返回的值是一个对象,页面展示需要进行拆解
-    */
-      /** 有可能没有值 */
-      if (row.fieldProperty) {
-        row.unique = codeToText({ arr: YNTypeEnum, val: row.fieldProperty.unique }) || '';
-        row.required = codeToText({ arr: YNTypeEnum, val: row.fieldProperty.required }) || '';
-        row.pinyinConvent = codeToText({ arr: YNTypeEnum, val: row.fieldProperty.pinyinConvent }) || '';
-      } else {
-        row.unique = '';
-        row.required = '';
-        row.pinyinConvent = '';
-      }
-      /**
-    * 数据类型代码转文本
-    */
-      row.dataType = codeToText({ arr: DataTypeEnum, val: row.dataType });
-      /**
-    * 字段类型代码转文本
-    */
-      row.fieldType = codeToText({ arr: FieldTypeEnum, val: row.fieldType });
-      /**
-    * 分类代码转文本
-    */
-      row.species = codeToText({ arr: SpeciesTypeEnum, val: row.species });
-      row.key = row.code;
-      return row;
-    });
+  const [sysBtnTitle, setSysBtnTitle] = useState('显示');
+  /**
+   * 是否显示隐藏系统字段,需要使用两个数组对象且这两个对象，可以更新视图
+   * useState的变量有时数据更新了,不渲染页面,用redux管理状态比较好
+   * @param structRowData.columns 存放完整的表字段数据,编辑的数据要同步给structRowData.columns
+   * @param fullCols 会根据是否显示隐藏系统字段内容会发生变化
+   */
+  const parseTableData = () => {
+    return sysBtnTitle === '显示' ? toShow(structRowData.columns) : toShow(structRowData.columns).filter((item) => item.species === '业务');
   };
 
   /**
@@ -113,14 +107,14 @@ const TableField = ({ tableData }) => {
   */
   // const [fieldTableData, setFieldTableData] = useState([]);
 
-  const [fullCols, setFullCols] = useState([]);
-  useEffect(() => {
-    setFullCols(toShow(structRowData.columns));
-    // const data = toShow(structRowData.columns);
-    // console.log({ data });
-    // structRowData.columns = data.filter((item) => item.species !== '系统');
-    // updateTableData();
-  }, []);
+  // const [fullCols, setFullCols] = useState([]);
+  // useEffect(() => {
+  //   setFullCols(toShow(structRowData.columns));
+  //   // const data = toShow(structRowData.columns);
+  //   // console.log({ data });
+  //   // structRowData.columns = data.filter((item) => item.species !== '系统');
+  //   // updateTableData();
+  // }, []);
 
   /** 创建+字典字段弹窗表单实例 */
   // const [dictForm] = Form.useForm();
@@ -163,26 +157,62 @@ const TableField = ({ tableData }) => {
         * 先进行表单校验,校验通过可以拿到该行的表单值
         */
       const row = (await fieldForm.validateFields());
+
       /**
        * 复制一份表格数据
        */
       const newData = [...structRowData[PageKey]];
       /** 找到编辑行的索引号 */
       const index = newData.findIndex((item) => key === item.key);
+
       /** 如果找到,把新值合并到旧值对象上,替换掉原有的那一行记录 */
       if (index > -1) {
         const item = newData[index];
-        newData.splice(index, 1, {
+        newData[index] = {
           ...item,
           ...row,
-        });
+        };
       } else {
         /** 没有找到该记录,插入一条新记录,显示在第一行 */
         newData.unshift(row);
       }
       /** 更新表格数据 */
-      structRowData[PageKey] = [...newData];
-      updateTableData();
+      // structRowData[PageKey] = newData.slice(0);
+
+      const t = Object.assign({},
+        structRowData,
+
+        {
+          columns: [...newData].map((item, index) => {
+            /** 序号后端要求必填,页面不需展示 */
+            item.sequence = index;
+            return item;
+          })
+        });
+
+      // console.log(
+      //   // structRowData[PageKey],
+      //   [...newData],
+      //   JSON.parse(JSON.stringify(t)),
+      //   Object.assign({},
+      //     structRowData,
+      //     {
+      //       columns: [...newData].map((item, index) => {
+      //         /** 序号后端要求必填,页面不需展示 */
+      //         item.sequence = index;
+      //         return item;
+      //       })
+      //     })
+      // );
+
+      console.log({ dispatch: JSON.parse(JSON.stringify(t)) });
+      dispatch({
+        type: 'setStructRowData',
+        structRowData: JSON.parse(JSON.stringify(t))
+        // structRowData: JSON.parse(JSON.stringify(t))
+      });
+
+      // updateTableData(JSON.parse(JSON.stringify(newData)));
 
       /** 清除编辑行的key */
       setEditingKey('');
@@ -197,12 +227,60 @@ const TableField = ({ tableData }) => {
     setEditingKey('');
   };
     /**
+  * 将后端返回的列表值转换成页面的显示值
+  */
+
+  const toShow = (data) => {
+    // console.log({ toShow: data });
+    const copyData = JSON.parse(JSON.stringify(data));
+    return copyData.map((row, index) => {
+      /**
+  * 唯一,必填,转换成拼音 这几项后端返回的值是一个对象,页面展示需要进行拆解
+  */
+      /** 有可能没有值 */
+      if (row.fieldProperty) {
+        row.unique = codeToText({ arr: YNTypeEnum, val: row.fieldProperty.unique }) || '';
+        row.required = codeToText({ arr: YNTypeEnum, val: row.fieldProperty.required }) || '';
+        row.pinyinConvent = codeToText({ arr: YNTypeEnum, val: row.fieldProperty.pinyinConvent }) || '';
+      }
+      //  else {
+      //   row.unique = '';
+      //   row.required = '';
+      //   row.pinyinConvent = '';
+      // }
+
+      /** 前后端的数据结构不一致,后端将 unique required pinyinConvent 写在一个对象中,前端是分开的,所以要做转换 */
+      row.unique = codeToText({ arr: YNTypeEnum, val: row.unique }) || '';
+      row.required = codeToText({ arr: YNTypeEnum, val: row.required }) || '';
+      row.pinyinConvent = codeToText({ arr: YNTypeEnum, val: row.pinyinConvent }) || '';
+
+      /**
+  * 数据类型代码转文本
+  */
+      row.dataType = codeToText({ arr: DataTypeEnum, val: row.dataType });
+      /**
+  * 字段类型代码转文本
+  */
+      row.fieldType = codeToText({ arr: FieldTypeEnum, val: row.fieldType });
+      /** 只有系统类型,会出现BIGINT,与产品协商,将BIGINT转换成数字 */
+      if (row.fieldType === 'BIGINT') {
+        row.fieldType = '数字';
+      }
+
+      /**
+  * 分类代码转文本
+  */
+      row.species = codeToText({ arr: SpeciesTypeEnum, val: row.species });
+      return row;
+    });
+  };
+    /**
   * 添加一行记录
   */
   const handleAdd = (args = { id: '', name: '', code: '' }) => {
     const { id, name, code } = args;
     const newData = {
-      key: `${new Date().getTime()}`,
+      key: structRowData[PageKey].length,
       id: id || '',
       /** 字段名称 */
       name: name || '',
@@ -220,15 +298,18 @@ const TableField = ({ tableData }) => {
       required: 'false',
       /** 唯一 */
       unique: 'false',
+      dictionaryForeign: '',
+      fieldSize: 0,
       /** 转换成拼音 */
       pinyinConvent: 'true',
     };
 
     // console.log(PageKey, structRowData);
+
+    // console.log(structRowData[PageKey], newData);
+    edit(newData);
     structRowData[PageKey].unshift(newData);
     updateTableData();
-
-    edit(newData);
   };
   /**
    * 删除一行记录
@@ -238,16 +319,18 @@ const TableField = ({ tableData }) => {
     /** 要用store缓存起来,刷新页面时，可以恢复数据 */
     /** 页面销毁时,要清楚所有的localStorage中的内容 */
     const { id: key, code } = row;
+    console.log(key);
     if (key) {
-      Http.delete(`/smart_building/data/v1/tables/column/allowedDeleted/${key}`).then((res) => {
+      Http.get(`/smart_building/data/v1/tables/column/allowedDeleted/${key}`).then((res) => {
       /**
         * true 存在与页面控件相互绑定,false没有与页面控件相互绑定
         */
-        if (res.data.result) {
-          Msg.error('该字段与页面控件相绑定，不能删除');
-        } else {
+        console.log(res);
+        if (res.data.result === 'false') {
           structRowData[PageKey] = structRowData[PageKey].filter((item) => item.key !== key);
           updateTableData();
+        } else {
+          Msg.error('该字段与页面控件相绑定，不能删除');
         }
       });
     } else {
@@ -526,7 +609,7 @@ const TableField = ({ tableData }) => {
                 return Promise.resolve();
               }
               if (!REG.plusInt.test(value)) {
-                return Promise.reject(new Error('必须是正整数'));
+                return Promise.reject(new Error('必须是正整数2-64之间'));
               }
 
               if (value < 2 || value > 64) {
@@ -693,14 +776,14 @@ const TableField = ({ tableData }) => {
 
   const [clickRow, setClickRow] = useState({});
 
-  console.log(structRowData.columns);
+  // console.log(structRowData.columns);
 
   /**
   * 编辑表格属性配置
   */
   const editTableProps = {
     form: fieldForm,
-    dataSource: toShow(structRowData.columns),
+    dataSource: parseTableData(),
     columns: mergedColumns,
     rowKey: (record) => record.code,
     rowClassName: (record) => (clickRow.code === record.code ? 'select-row editable-row' : 'editable-row'),
@@ -711,11 +794,6 @@ const TableField = ({ tableData }) => {
       onChange: cancel,
     }
   };
-
-  /**
-  * 显示隐藏系统字段标题
-  */
-  const [sysBtnTitle, setSysBtnTitle] = useState('显示');
 
   /**
   * 字段列表属性配置
@@ -782,9 +860,9 @@ const TableField = ({ tableData }) => {
           //   return title === '显示' ? item.species === '业务' : true;
           // });
           // }
-          updateTableData(() => {
+          // updateTableData(() => {
 
-          });
+          // });
         }
       },
     ]
@@ -792,6 +870,20 @@ const TableField = ({ tableData }) => {
 
   // console.log({ tableData, fieldTableData });
   const [dictFieldVisible, setDictFieldVisible] = useState(false);
+  /**
+  * 感觉不需要渲染页面的变量或参数,没有必要用useState
+  */
+  let selDictKey:Array<{name, code}> = [];
+
+  /** 选择字典 DictModal组件属性 */
+  const dictManageProps = {
+    isModal: true,
+    /** 点击事件  */
+    onChange: (key) => {
+      selDictKey = key;
+      // console.log({ 单击选中的key: key });
+    }
+  };
   /**
   * +字典字段弹窗属性
   */
@@ -804,34 +896,22 @@ const TableField = ({ tableData }) => {
    * @param { fieldForm-新建表可控表单实例 }
    */
     onOk: (e) => {
-      // dictForm
-      //   .validateFields() /** 表单校验 */
-      //   .then((values) => {
-      //     /**
-      //      * 与后端协商,只提交页面上有的字段,没有的不传
-      //      */
-      //     // console.log(values);
-      //     // /** 新建表数据提交 */
-      //     // Http.post('http://{ip}:{port}/paas/{lesseeCode}/{applicationCode}/smart_building/data/v1/tables/', {
-      //     //   data: values
-      //     // }).then(() => {
-      //     //   /** 关闭弹窗 */
-      //     //   setDictFieldVisible(false);
-      //     // });
-      //   })
-      //   .catch((errorInfo) => {
-      //     /** 校验未通过 */
-      //     console.log(errorInfo);
-      //   });
-      // }
+      /**
+      * 表字典-字典显示的是name,向后端穿的是 dictionaryForeign:{
+      * refTableCode String 是 字典表名
+      * refFieldCode String 是 字典保存字段,写死code值
+      * refDisplayFieldCode String 是 字典显示字段,写死name值
+      * }
+      */
+      selDictKey.length && fieldForm.setFieldsValue({
+        dictionaryForeign: selDictKey[0].name
+      });
+      setDictFieldVisible(false);
     },
     /** 弹框取消按钮回调 */
     onCancel: (e) => {
       setDictFieldVisible(false);
     },
-    onChange: (key) => {
-      console.log({ 单击选中的key: key });
-    }
   });
 
   /**
@@ -856,10 +936,13 @@ const TableField = ({ tableData }) => {
         .validateFields() /** 表单校验 */
         .then((values) => {
           setRefModalVisible(false);
+          console.log({ values });
           // 全部是新增操作
+          structRowData[PageKey] = structRowData[PageKey] || [];
           structRowData[PageKey].push(values);
           updateTableData();
           Msg.success('操作成功');
+          refForm.resetFields();
         })
         .catch((errorInfo) => {
         /** 校验未通过 */
@@ -872,19 +955,7 @@ const TableField = ({ tableData }) => {
       refForm.resetFields();
     },
   });
-  const updateTableData = (cb) => {
-    dispatch({
-      type: 'setStructRowData',
-      structRowData: Object.assign({},
-        structRowData,
-        {
-          [PageKey]: structRowData[PageKey].map((item, index) => {
-            item.sequence = index;
-            return item;
-          })
-        })
-    });
-  };
+
   /**
   * 引用字段表单组件属性
   * 将一个组件的相关属性放在一起
@@ -895,9 +966,6 @@ const TableField = ({ tableData }) => {
     treeData,
     tableData: []
   };
-  const dictManageProps = {
-    isModal: true
-  };
   return (
     <div>
       <TableHeadMenu {...tableHeadMenuProps} />
@@ -905,7 +973,7 @@ const TableField = ({ tableData }) => {
       <BasicEditTable {...editTableProps} />
       <Modal {...DictManageProps}>
         {/* +字典字段弹窗表单 */}
-        <DictManage {...dictManageProps} />
+        <DictModal {...dictManageProps} />
       </Modal>
       {/* +引用字段弹窗表单 */}
       <Modal {...refModalProps}>

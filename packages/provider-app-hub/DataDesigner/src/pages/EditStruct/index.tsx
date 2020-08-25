@@ -1,6 +1,5 @@
-import React, { FC, useState, useEffect } from 'react';
-/** react路由暴露出来的页面跳转方法 */
-// import { useHistory, Location } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+/** 可以缓存页面状态的路由 */
 import { onNavigate, getUrlParams } from 'multiple-page-routing';
 import {
   Tabs, Form, Tag, Row, Col, Button
@@ -13,69 +12,66 @@ import Http, { Msg } from '@infra/utils/http';
  * 在antd Select组件基础上封装的选择框组件
  */
 import BasicStory from '@provider-app/data-designer/src/components/BasicStory';
-/** 表结构类型 */
-import { TableTypeEnum, FieldTypeEnum } from '@provider-app/data-designer/src/tools/constant';
-
+/** 表类型枚举 */
+import { TableTypeEnum } from '@provider-app/data-designer/src/tools/constant';
+/** 归属模块-TreeSelect组件的数据源 */
 import { GetMenuTree } from '@provider-app/data-designer/src/api';
 
 import './EditStruct.less';
-
+/** 可以简化redux书写的语法糖 */
 import { useDispatch, useMappedState } from 'redux-react-hook';
 /**
 * 连接器的作用给子项目的redux-react-hook提供一个provider,还有限定样式作用域
+* 用到redux-react-hook的地方，都要用链接器包裹
 */
 import { Connector } from '@provider-app/data-designer/src/connector';
 
+/** 关联页面要用到的tag组件 */
 const { CheckableTag } = Tag;
-
+/** tab面板 */
 const { TabPane } = Tabs;
 
 /**
- * 数据表名称 数据表编码 表类型 归属模块
+ * 编辑表组件
  */
 const EditStruct = ({ treeData }) => {
   /**
-   * 表编辑详情
+   * 表编辑详情数据存储在store中,因为多个组件都会用到这里的状态
    */
   const dispatch = useDispatch();
   const { structRowData } = useMappedState((state) => ({
     structRowData: state.structRowData
   }));
 
-  const { columns, relationTables: tagsData } = structRowData;
-  // const [cols, setCols] = useState([]);
-  // console.log({ columns });
+  /** tagsData没有值时后端返回null，而页面会对这个数组进行遍历,要默认设置成空数组 */
+  const { columns, relationTables: tagsData = [] } = structRowData;
 
-  /** 创建可控表单实例--用于新建表 */
+  /** 创建可控表单实例--用于编辑表 */
   const [form] = Form.useForm();
 
   useEffect(() => {
-    // http:// {ip}:{port}/paas/ {lesseeCode}/{applicationCode}/smart_building/data/v1/tables/00dd1b16e3a84a6fbeed12a661484eba
+    /** 获取表结构列表带过来的行记录id */
     const { id } = getUrlParams(undefined, undefined, true);
-    // console.log({ id });
-    // console.log(res);
+
+    /** 查询表结构详情 */
     Http.get(`/smart_building/data/v1/tables/${id}`, {}).then((res) => {
-      // console.log(res);
-      /** 设置详情 */
+      /** 设置表结构详情 */
       dispatch({
         type: 'setStructRowData',
         structRowData: res.data.result
       });
-      // console.log(res.data.result);
-      // setCols(res.data.result.columns);
 
-      /** 编辑表公共信息 */
+      /** 编辑表表单公共信息 */
       const {
         name, code, type, moduleId
       } = res.data.result;
 
+      /** 设置表结构编辑表单公共信息 */
       form.setFieldsValue({
         name, code, type, moduleId
       });
     });
   }, []);
-
-  // console.log({ structTableData });
 
   /** 表单项label和content的宽度 */
   const formItemLayout = {
@@ -248,7 +244,7 @@ const EditStruct = ({ treeData }) => {
       <Row gutter={24}>
         <Col span={20} style={{ display: 'flex' }}>
           {/* 关联页面label宽度 */}
-          <div className="ant-form-item-label" style={{ width: '100px' }}>
+          <div className="ant-form-item-label" style={{ width: '115px' }}>
             <label title="数据表名称">关联页面</label>
           </div>
           {/* 关联页面内容 */}

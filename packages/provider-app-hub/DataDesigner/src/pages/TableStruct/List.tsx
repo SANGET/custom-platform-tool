@@ -159,7 +159,7 @@ const List = (props) => {
       },
       {
         title: '最后修改人员',
-        dataIndex: 'modifiedBy',
+        dataIndex: 'modifiedUserName',
         width: 140,
       },
       {
