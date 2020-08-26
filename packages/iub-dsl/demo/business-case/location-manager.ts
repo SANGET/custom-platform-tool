@@ -1,4 +1,4 @@
-import { TypeOfIUBDSL } from '@iub-dsl/core';
+import { TypeOfIUBDSL, ComplexType, FoundationType } from '@iub-dsl/core';
 
 export const MockLocationType = [
   {
@@ -76,22 +76,22 @@ const locationManage: TypeOfIUBDSL = {
         tableName: 'location',
         columns: {
           fieldId1: {
-            type: 'string',
+            type: FoundationType.string,
             field: 'id',
             len: 32
           },
           fieldId2: {
-            type: 'string',
+            type: FoundationType.string,
             field: 'location_name',
             len: 32
           },
           fieldId3: {
-            type: 'string',
+            type: FoundationType.string,
             field: 'pid',
             len: 32
           },
           fieldId4: {
-            type: 'string',
+            type: FoundationType.string,
             field: 'location_type',
             len: 32
           },
@@ -103,17 +103,17 @@ const locationManage: TypeOfIUBDSL = {
         tableName: 'location_type',
         columns: {
           fieldId1: {
-            type: 'string',
+            type: FoundationType.string,
             field: 'id',
             len: 32
           },
           fieldId2: {
-            type: 'string',
+            type: FoundationType.string,
             field: 'type',
             len: 32
           },
           fieldId3: {
-            type: 'string',
+            type: FoundationType.string,
             field: 'name',
             len: 32
           }
@@ -124,38 +124,38 @@ const locationManage: TypeOfIUBDSL = {
   schemas: {
     // 输入表单三个
     dId1: {
-      type: 'string',
+      type: FoundationType.string,
       desc: '位置名称',
       alias: 'location_name',
       fieldMapping: '',
     },
     dId2: {
-      type: 'string',
+      type: FoundationType.string,
       desc: '位置类型',
       defaultVal: '建分组',
       alias: 'location_type',
       fieldMapping: ''
     },
     dId3: {
-      type: 'string',
+      type: FoundationType.string,
       desc: '上级位置',
       alias: 'pid',
       defaultVal: '',
       fieldMapping: ''
     },
     dId4: {
-      type: 'structArray',
+      type: ComplexType.structArray,
       desc: '位置类型数据',
       alias: '',
       struct: {
         sdId1: {
-          type: 'string',
+          type: FoundationType.string,
           fieldTag: 'type',
           fieldMapping: '',
           desc: '显示值'
         },
         sdId2: {
-          type: 'string',
+          type: FoundationType.string,
           fieldMapping: '',
           fieldTag: 'name',
           desc: '实际值'
@@ -163,30 +163,30 @@ const locationManage: TypeOfIUBDSL = {
       }
     },
     dId5: {
-      type: 'structArray',
+      type: ComplexType.structArray,
       desc: '上级位置信息',
       alias: '',
       struct: {
         sdId1: {
-          type: 'string',
+          type: FoundationType.string,
           fieldTag: 'id',
           fieldMapping: '',
           desc: 'id'
         },
         sdId2: {
-          type: 'string',
+          type: FoundationType.string,
           fieldTag: 'locationName',
           fieldMapping: '',
           desc: '位置名称'
         },
         sdId3: {
-          type: 'string',
+          type: FoundationType.string,
           fieldTag: 'locationType',
           fieldMapping: '',
           desc: '位置类型'
         },
         sdId4: {
-          type: 'string',
+          type: FoundationType.string,
           fieldTag: 'pid',
           fieldMapping: '',
           desc: 'pid'
@@ -194,35 +194,35 @@ const locationManage: TypeOfIUBDSL = {
       }
     },
     dId6: {
-      type: 'boolean',
+      type: FoundationType.boolean,
       desc: '控制选择上级显示隐藏',
       alias: '',
     },
     dId7: {
-      type: 'structObject',
+      type: ComplexType.structObject,
       struct: {
         sdId0: {
-          type: 'structObject',
+          type: ComplexType.structObject,
           struct: {
             ssdId1: {
-              type: 'string',
+              type: FoundationType.string,
             },
             ssdId2: {
-              type: 'string'
+              type: FoundationType.string
             }
           }
         },
         sdId1: {
-          type: 'string',
+          type: FoundationType.string,
         },
         sdId2: {
-          type: 'structObject',
+          type: ComplexType.structObject,
           struct: {
             ssdId1: {
-              type: 'string',
+              type: FoundationType.string,
             },
             ssdId2: {
-              type: 'string'
+              type: FoundationType.string
             }
           }
         }

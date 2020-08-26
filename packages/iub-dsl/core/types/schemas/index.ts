@@ -2,8 +2,17 @@
 // import PageSchemas from "./page-schemas";
 // import FlowSchemas from "./flow-schemas";
 
-export type StructType = 'structArray' | 'structObject'
-export type FoundationType = 'number' | 'string' | 'boolean'
+export enum ComplexType {
+  structArray = 'structArray',
+  structObject = 'structObject',
+}
+export enum FoundationType {
+  number = 'number',
+  string = 'string',
+  boolean = 'boolean'
+}
+
+export type AllType = FoundationType | ComplexType
 
 interface BaseScheams {
   // rules?: Rule[]; // 规则也应该是属于关系的扩展来的,因为他是有多方的依赖
@@ -27,7 +36,7 @@ export interface FoundationTypeSchemas extends BaseScheams {
 }
 
 export interface ComplexTypeSchemas extends BaseScheams {
-  type: StructType;
+  type: ComplexType;
   struct: {
     [UUID: string]: SchemaItem
   }
