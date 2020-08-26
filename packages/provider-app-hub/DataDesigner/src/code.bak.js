@@ -1,11 +1,57 @@
 /*
  * @Author: your name
  * @Date: 2020-08-07 14:22:42
- * @LastEditTime: 2020-08-17 10:57:17
+ * @LastEditTime: 2020-08-26 17:33:03
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: \custom-platform-v3-frontend\packages\provider-app-hub\DataDesign\src\codeBak.js
  */
+
+/**
+ * 表字段后端接口返回值，属性对象与前端页面展示值有差异,需要处理一下
+ */
+// interface Item {
+//   id ? :string|number;
+//   key: string|number;
+//   /** 字段名称 */
+//   name: string;
+//   /** 字段编码 */
+//   code:string;
+//   /** 字段类型-VARCHAR(字符串)INT(整型)TIME(时间)DATE(日期时间)TEXT(超大文本) */
+//   fieldType:"VARCHAR"|"INT"|"TIME"|"DATE"|"TEXT";
+//   /** 数据类型 NORMAL(普通字段)PK(主键字段)QUOTE(引用字段)DICT(字典字段)FK(外键字段) */
+//   dataType:'NORMAL'|"PK"|"QUOTE"|"DICT"|"FK";
+//   /** 业务字段类型 */
+//   species:string;
+//   /** 小数位 */
+//   decimalSize:number;
+//   /** 属性对象 */
+//   fieldProperty?:{
+//     /** 必填 */
+//     required:'true'|'false';
+//     /** 唯一 */
+//     unique:'true'|'false';
+//     /** 转换成拼音 */
+//     pinyinConvent: 'true'|'false';
+//     regular?:unknown;
+//   }
+//   /** 字典对象 */
+//   dictionaryForeign?:{
+//     /** 字典主键 */
+//     id?:string|number;
+//     /** 表名 */
+//     tableName:string;
+//     /** 字典字段 */
+//     fieldCode:string;
+//     /** 字典保存字段表中文名 */
+//     refTableName:string;
+//     /** 字典保存字段,写死code值 */
+//     refFieldCode:string;
+//     /** 字典显示字段,写死name值 */
+//     refDisplayFieldCode:string;
+//   }
+//   [propName: string]: unknown;
+// }
 
 /** 自定义校验器 */
 // ({ getFieldValue }) => ({
@@ -100,10 +146,10 @@
 
 // console.log('占位 click ', e.key);
 // setTimeout(() => {
-//   dispatch({ type: 'triggerLoading', isShowLoading: !isShowLoading });
+//   dispatch({ type: 'setLoading', isShowLoading: !isShowLoading });
 // }, 1000);
 
-// dispatch({ type: 'triggerLoading', isShowLoading: !isShowLoading });
+// dispatch({ type: 'setLoading', isShowLoading: !isShowLoading });
 
 // <h1>
 

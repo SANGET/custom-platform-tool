@@ -1,9 +1,11 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useImperativeHandle } from 'react';
+
 import {
   Table, Form, Popconfirm, Button, Space,
   Tooltip
 } from 'antd';
 
+/** randomNum-生成5位随机数  */
 /**
 * 组件仓库,动态渲染组件时要使用
 */
@@ -15,6 +17,9 @@ import BasicStory from '@provider-app/data-designer/src/components/BasicStory';
 import { Rule } from 'rc-field-form/lib/interface';
 
 import styled from 'styled-components';
+import { PinYin, randomNum } from '@provider-app/data-designer/src/tools/mix';
+
+/** 中文转拼音 */
 
 /**
 * 编辑表页面样式
@@ -58,11 +63,16 @@ interface EditableCellProps extends React.HTMLAttributes<HTMLElement> {
   dataIndex: string;
   title: string;
   formConfig:{
-    attrs:{
+    compAttr:{
       type:'InputNumber' | 'Input' | 'BasicSelect';
       enum?:Array<{value, text}>;
+      placeholder?:string;
+      [propName:string]:unknown
     }
-    rules:Rule[];
+    itemAttr:{
+      rules?:Rule[];
+      [propName:string]:unknown
+    }
   }
   record: unknown;
   index: number;
@@ -70,8 +80,16 @@ interface EditableCellProps extends React.HTMLAttributes<HTMLElement> {
 }
 
 /**
-*  编辑表格设置,这里是重点
-*/
+ * 编辑行单元格设置,这里是重点
+ * @param editing- true 列单元渲染成表单项  false 列单元渲染成文字
+ * @param dataIndex-列单元的key
+ * @param title-列单元标题
+ * @param formConfig-列单元表单项配置
+ * @param record-列单元数据记录
+ * @param index-第几列
+ * @param children-列单元文本元素ReactNode
+ * @param title-列单元标题
+ */
 const EditableCell: React.FC<EditableCellProps> = ({
   editing,
   dataIndex,
@@ -87,9 +105,9 @@ const EditableCell: React.FC<EditableCellProps> = ({
       {editing ? (
         <Form.Item
           name={dataIndex}
-          rules={formConfig.rules}
+          {...formConfig.itemAttr}
         >
-          <BasicStory {...formConfig.attrs} />
+          <BasicStory {...formConfig.compAttr} />
         </Form.Item>
       ) : (
         <Form.Item>
@@ -100,21 +118,225 @@ const EditableCell: React.FC<EditableCellProps> = ({
   );
 };
 /**
- * 可以编辑的表格
- * @param form 受控表单
- * @param dataSource 表格数据源
- * @param columns 表格列属性配置
+ * 可编辑表格
+ * @param ref   子组件的引用
+ * @param form   行编辑受控表单
+ * @param listData 表格数据源
+ * @param showListData 展示数据源(对数据字段做了转译,与提交数据不同)
+ * @param columns 表格列属性配置(不含操作列)
  * @param pagination 分页配置
+ * @param rowKey 每一行的唯一标识key的属性名,antd table要求每行要有一个唯一标识
+ * @param updateListData 更新列表数据函数,入参是要更新的列表数据
+ * @param onDelRow 添加额外的行记录删除逻辑
  * @param rest 其它属性
  */
 const BasicEditTable = ({
-  form, dataSource, columns, pagination, rowKey, ...rest
+  childRef, form, columns, rowKey, listData, updateListData, ...rest
 }) => {
-  const { onClick } = rest;
+  /** 属性书写顺序,  数据在前,事件在后 , 相关项写在一起 */
+  const {
+    showListData, pagination, rowBtnDis, onClick, onDelRow
+  } = rest;
+  /** 列表显示数据有时与提交数据一致,有时不一致 */
+  const dataSource = showListData || listData;
+
+  useImperativeHandle(childRef, () => ({
+    // newRowData 是子组件暴露给父组件的方法
+    onAddRow: (newRowData) => {
+      edit(newRowData);
+      listData.unshift(newRowData);
+      updateListData(listData);
+    }
+  }));
+
+  /**
+  * 每一行有一个唯一的key,用 row key设置那一行处于编辑态
+  */
+  const [editingKey, setEditingKey] = useState<number|string>('');
+  /**
+   * 编辑行号与记录行号相等时，设置成编辑状态
+   */
+  const isEditing = (record) => {
+    // console.log(record.id, editingKey);
+    return record[rowKey] === editingKey;
+  };
+
+  /**
+   * 取消编辑
+   */
+  const cancel = () => {
+    setEditingKey('');
+  };
+
+  /**
+ * 编辑函数初始值设置
+ */
+  const edit = (record) => {
+    // console.log({ record, editingKey });
+    /**
+    * 将行记录的值设置到表单-这里前端显示值和后端返回值可能并不完全一样，需要转换
+    */
+    form.setFieldsValue({
+      ...record
+    });
+    /**
+   * 设置编辑行--编辑行的按钮是保存和取消
+   */
+    setEditingKey(record.id);
+  };
+
+  /**
+   * 记录复制
+   * @param row --原始行信息
+   */
+  const copy = (row) => {
+    const { name } = row;
+    const copyName = `${name}_副本_${randomNum(10000, 99999)}`;
+    const newRowData = Object.assign({}, row,
+      {
+        id: `${new Date().getTime()}`,
+        name: copyName,
+        code: PinYin.getCamelChars(copyName),
+        isUnSubmit: true
+      });
+
+    const index = listData.findIndex((item) => row.id === item.id);
+
+    listData.splice(index, 0, newRowData);
+    edit(newRowData);
+    updateListData(listData);
+  };
+
+  /**
+  * 保存编辑行的值
+  * key-编辑行的key
+  * rowKey--每行数据的唯一标识key的属性名
+  */
+  const save = async ({ key, rowKey }) => {
+    // console.log({ key, rowKey });
+    try {
+      /**
+       * 先进行表单校验,校验通过可以拿到该行的表单值
+       */
+      const row = (await form.validateFields());
+
+      /**
+      * 复制一份表格数据
+      */
+      const newData = [...listData];
+      /** 找到编辑行的索引号 */
+      const index = newData.findIndex((item) => key === item[rowKey]);
+
+      /** 如果找到,把新值合并到旧值对象上,替换掉原有的那一行记录 */
+      if (index > -1) {
+        const item = newData[index];
+        newData[index] = {
+          ...item,
+          ...row,
+        };
+      } else {
+        /** 没有找到该记录,插入一条新记录,显示在第一行 */
+        newData.unshift(row);
+      }
+      /** 更新表格数据 */
+      updateListData(JSON.parse(JSON.stringify(newData)));
+
+      /** 清除编辑行的key */
+      setEditingKey('');
+    } catch (errInfo) {
+      console.log('Validate Failed:', errInfo);
+    }
+  };
+  /**
+   * 删除一行记录回调
+   */
+  const handleDelete = (row, rowKey) => {
+    /** 如果定义了onDelRow方法,执行自定义删除逻辑 */
+    if (onDelRow) {
+      onDelRow(row);
+    } else {
+    /** 否则执行通用删除逻辑 */
+    /** 过滤是否写死使用id,这个写法不通用,但是适合后端返回数据 */
+      listData = listData.filter((item) => item[rowKey] !== row[rowKey]);
+      updateListData(listData);
+    }
+  };
+
+  /**
+  * 公共操作列
+  * 因为这里有判断逻辑,所以没有调用生成通用操作列的renderOperCol 方法
+  */
+  const operCol = {
+    title: '操作',
+    dataIndex: 'operation',
+    fixed: 'right',
+    width: 180,
+    render: (text, record, index) => {
+      const editable = isEditing(record);
+      /** 系统类型,隐藏操作列按钮 */
+      const isShowBtn = (rowBtnDis && rowBtnDis(record)) ? 'hide' : 'show';
+      return editable ? (
+        <Space>
+          {/* 编辑行,展示保存和取消按钮 */}
+          <Button type='link' onClick={() => save({ key: record[rowKey], rowKey })}>
+            保存
+          </Button>
+          <Button type='link' onClick={cancel}>取消</Button>
+        </Space>
+      ) : (
+        <Space>
+          {/* 非编辑行，展示编辑和删除按钮,如果有一行处于编辑态,禁用编辑按钮 */}
+          <Button type='link' className={isShowBtn} disabled={editingKey !== ''} onClick={() => edit(record)}>
+          编辑
+          </Button>
+          <Button type='link' className={isShowBtn} disabled={editingKey !== '' } onClick={() => copy(record)}>
+          复制
+          </Button>
+
+          <Popconfirm title="你确定要删除吗?" okText="确定" cancelText="取消" onConfirm={() => handleDelete(record, rowKey)}>
+            <Button type='link' className={isShowBtn} >删除</Button>
+          </Popconfirm>
+        </Space>
+      );
+    },
+  };
+
+  /** 将操作列合并到表格列属性配置中 */
+  const cols = columns.concat(operCol);
+  /**
+  * 给表字段的编辑列添加编辑属性设置
+  */
+  const mergedColumns = cols.map((col) => {
+    col.key = col.dataIndex;
+    if (!col.editable) {
+      return col;
+    }
+    return {
+      ...col,
+
+      /**
+    * 传入单元格里面的参数,每次页面状态更新,都会执行onCell方法
+    * 某一行的key与设置编辑行的key相等时,该行每列元素就会变成可编辑态
+    */
+      onCell: (record) => ({
+        record,
+        formConfig: col.formConfig,
+        dataIndex: col.dataIndex,
+        title: col.title,
+        editing: isEditing(record),
+      }),
+    };
+  });
+
+  /** 分页配置 */
+  const pagerConf = {
+    onChange: cancel,
+    ...pagination,
+  };
+
   return (
     <EditTableStyled>
       <Form form={form} component={false}>
-
         <Table
           components={{
             body: {
@@ -123,15 +345,15 @@ const BasicEditTable = ({
           }}
 
           dataSource={dataSource}
-          columns={columns}
-          rowKey={rowKey}
-          pagination={pagination}
+          columns={mergedColumns}
+          rowKey={(record) => record[rowKey]}
+          pagination={pagerConf}
           bordered
           rowClassName={ rest.rowClassName || "editable-row"}
           onRow={(record) => {
             return {
               onClick: (event) => {
-                onClick(record);
+                onClick && onClick(record);
               }
             };
           }}
@@ -216,49 +438,3 @@ export const getColConfig = (col) => {
 };
 export { renderOperCol, renderIndexCol };
 export default BasicEditTable;
-
-/**
- * 表字段后端接口返回值，属性对象与前端页面展示值有差异,需要处理一下
- */
-// interface Item {
-//   id ? :string|number;
-//   key: string|number;
-//   /** 字段名称 */
-//   name: string;
-//   /** 字段编码 */
-//   code:string;
-//   /** 字段类型-VARCHAR(字符串)INT(整型)TIME(时间)DATE(日期时间)TEXT(超大文本) */
-//   fieldType:"VARCHAR"|"INT"|"TIME"|"DATE"|"TEXT";
-//   /** 数据类型 NORMAL(普通字段)PK(主键字段)QUOTE(引用字段)DICT(字典字段)FK(外键字段) */
-//   dataType:'NORMAL'|"PK"|"QUOTE"|"DICT"|"FK";
-//   /** 业务字段类型 */
-//   species:string;
-//   /** 小数位 */
-//   decimalSize:number;
-//   /** 属性对象 */
-//   fieldProperty?:{
-//     /** 必填 */
-//     required:'true'|'false';
-//     /** 唯一 */
-//     unique:'true'|'false';
-//     /** 转换成拼音 */
-//     pinyinConvent: 'true'|'false';
-//     regular?:unknown;
-//   }
-//   /** 字典对象 */
-//   dictionaryForeign?:{
-//     /** 字典主键 */
-//     id?:string|number;
-//     /** 表名 */
-//     tableName:string;
-//     /** 字典字段 */
-//     fieldCode:string;
-//     /** 字典保存字段表中文名 */
-//     refTableName:string;
-//     /** 字典保存字段,写死code值 */
-//     refFieldCode:string;
-//     /** 字典显示字段,写死name值 */
-//     refDisplayFieldCode:string;
-//   }
-//   [propName: string]: unknown;
-// }

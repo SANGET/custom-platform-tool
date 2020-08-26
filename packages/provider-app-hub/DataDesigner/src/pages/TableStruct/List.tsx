@@ -333,7 +333,7 @@ const List = (props) => {
             return `共 ${total} 条`;
           }),
           onChange: (page, pageSize) => {
-            dispatch({ type: 'triggerStructPager', structPager: { page, pageSize } });
+            dispatch({ type: 'setStructPager', structPager: { page, pageSize } });
             pagination && pagination(page, pageSize);
           }
         }}

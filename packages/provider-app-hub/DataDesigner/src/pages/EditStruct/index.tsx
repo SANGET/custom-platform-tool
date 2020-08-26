@@ -20,6 +20,8 @@ import { GetMenuTree } from '@provider-app/data-designer/src/api';
 import './EditStruct.less';
 /** 可以简化redux书写的语法糖 */
 import { useDispatch, useMappedState } from 'redux-react-hook';
+/** 提交数据后重置表结构行记录详情要用 */
+import { defaultState } from '@provider-app/data-designer/src/store/initState';
 /**
 * 连接器的作用给子项目的redux-react-hook提供一个provider,还有限定样式作用域
 * 用到redux-react-hook的地方，都要用链接器包裹
@@ -43,18 +45,63 @@ const EditStruct = ({ treeData }) => {
     structRowData: state.structRowData
   }));
 
-  /** tagsData没有值时后端返回null，而页面会对这个数组进行遍历,要默认设置成空数组 */
-  const { columns, relationTables: tagsData = [] } = structRowData;
+  /** 关联页面 */
+  const { relationTables = [] } = structRowData;
+
+  // 关联页面配置--选中的tag集合
+  const [selectedTags, setSelectedTags] = useState([]);
+  /** 选中页面 */
+  const handleTagChange = (tag, checked) => {
+    /** 更新选中项 */
+    setSelectedTags([tag]);
+    onNavigate({
+      type: "PUSH",
+      route: tag.id
+    });
+  };
+
+  /**
+  * 更新表结构行记录详情-主要是更新表字段 关联字段 外键字段这几个数组对象
+  * key-表字段 关联字段 外键字段列表数组在行记录详情对象中对应的key
+  * data-要更新的数据
+  * 为了是函数有扩展性,函数所需要的参数都通过传递,而不是在函数中直接使用全局变量
+  */
+  const updateListData = (key, data) => {
+    dispatch({
+      type: 'setStructRowData',
+      structRowData: Object.assign({},
+        structRowData,
+        {
+          [key]: data.map((item, index) => {
+          /** 序号后端要求必填,页面不需展示 */
+            item.sequence = index;
+            return item;
+          })
+        })
+    });
+  };
 
   /** 创建可控表单实例--用于编辑表 */
   const [form] = Form.useForm();
 
+  /**
+   * 凡是http请求，放在useEffect中时,第一个参数要从一个空数组,代表组件mount生命周期,不这样做,页面会出现死循环
+   */
   useEffect(() => {
+    /** 请求左侧树要用到的数据,因为是动态数据,所以每次进入页面都要发请求 */
+    fetchSelectTreeData();
+
+    /** 如果有记录存在,不在请求后端,不然会覆盖掉还未提交到后端的记录 */
+    if (structRowData.id) { return; }
+
     /** 获取表结构列表带过来的行记录id */
     const { id } = getUrlParams(undefined, undefined, true);
-
+    // console.log({ id });
+    /** 发现页面刷新时,从表结构列表传过来的id会丢失,而redux中的数据,会被存储到localStorage中 */
+    /** 如果id丢失,就从localStorage中取之前缓存的id */
+    const rowId = id || structRowData.id;
     /** 查询表结构详情 */
-    Http.get(`/smart_building/data/v1/tables/${id}`, {}).then((res) => {
+    Http.get(`/smart_building/data/v1/tables/${rowId}`, {}).then((res) => {
       /** 设置表结构详情 */
       dispatch({
         type: 'setStructRowData',
@@ -84,7 +131,9 @@ const EditStruct = ({ treeData }) => {
       span: 17
     }
   };
-
+  /**
+   * 表结构-新建表表单配置
+   */
   const formItemsConfigInit = {
     name: {
     /** 表单项属性 */
@@ -139,7 +188,8 @@ const EditStruct = ({ treeData }) => {
       }
     },
   };
-
+  /** 把formItemsConfig定义成state数据,是因为formItemsConfig的moduleId.compAttr.treeData属性要被更新  */
+  /** 把formItemsConfig定义成普通对象,更新formItemsConfig的moduleId.compAttr.treeData属性时组件不渲染  */
   const [formItemsConfig, setFormItemsConfig] = useState(formItemsConfigInit);
   /**
   * 获取树选择数据
@@ -148,26 +198,38 @@ const EditStruct = ({ treeData }) => {
     const data = await GetMenuTree();
     formItemsConfig.moduleId.compAttr.treeData = data as never[];
     /**
-    * 更新表单渲染数据
+    * 更新表单项--所属模块 TreeSelect组件需要用到的渲染数据
     */
     setFormItemsConfig({ ...formItemsConfig });
   };
 
-  /**
-   * 凡是http请求，都会造成页面死循环,都要放在useEffect中
-   */
-  useEffect(() => {
-    fetchSelectTreeData();
-  }, []);
+  /** 重置store状态,主要是为了清除localStorage中的数据,因为store中的数据用localStorage做了持久化 */
+  const resetStore = () => {
+    dispatch({
+      type: 'setStructRowData',
+      structRowData: defaultState.structRowData
+    });
+    dispatch({
+      type: 'setSysFieldCtrl',
+      sysFieldCtrl: defaultState.sysFieldCtrl
+    });
+  };
 
+  /**
+   * 编辑表右侧的两个表单按钮
+   */
   const formButs = [
     {
       text: '保存',
       onClick: () => {
-        Http.put('/smart_building/data/v1/tables/', structRowData).then((res) => {
-          Msg.success('操作成功');
-          onNavigate({
-            type: "GO_BACK",
+        /** 编辑表的主表单在点击保存按钮的时候校验,每个tab中国的表单,在tab页中的子表单中校验 */
+        form.validateFields().then(() => {
+          Http.put('/smart_building/data/v1/tables/', structRowData).then((res) => {
+            resetStore();
+            Msg.success('操作成功');
+            onNavigate({
+              type: "GO_BACK",
+            });
           });
         });
       }
@@ -175,6 +237,7 @@ const EditStruct = ({ treeData }) => {
     {
       text: '返回',
       onClick: () => {
+        resetStore();
         onNavigate({
           type: "GO_BACK",
         });
@@ -182,13 +245,7 @@ const EditStruct = ({ treeData }) => {
     },
   ];
 
-  // console.log({ tagsData });
-  const [selectedTags, setSelectedTags] = useState([]);
-  const handleTagChange = (tag, checked) => {
-    const nextSelectedTags = checked ? [tag] : selectedTags.filter((t) => t !== tag);
-    setSelectedTags(nextSelectedTags);
-  };
-
+  /** tabs面板配置 */
   const tabsConf = {
     attr: {
       defaultActiveKey: 'TableField',
@@ -200,9 +257,13 @@ const EditStruct = ({ treeData }) => {
       },
     },
     panes: [
-      { tab: '表字段', key: 'TableField', tableData: columns },
-      { tab: '引用表', key: 'ReferenceTable', },
-      { tab: '外键设置', key: 'ForeignKeySet', alias: 'ReferenceTable' },
+      { tab: '表字段', key: 'TableField', updateListData },
+      { tab: '引用表', key: 'ReferenceTable', updateListData },
+      /** 引用表和外键设置,共用一个组件,而tab面板的key不能重复, */
+      /** 而tab面板内容组件是通过传递key值给仓库组件动态渲染出来的, 这里就产生了冲突,需要用multiplex传递真正要渲染的组件 */
+      {
+        tab: '外键设置', key: 'ForeignKeySet', multiplex: 'ReferenceTable', updateListData
+      },
       { tab: '组合唯一', key: 'ComposeUnique', },
       { tab: '索引设置', key: 'IndexSet', },
       { tab: '触发器', key: 'Trigger', },
@@ -249,11 +310,11 @@ const EditStruct = ({ treeData }) => {
           </div>
           {/* 关联页面内容 */}
           <div style={{ border: '1px solid #ccc', width: '100%', padding: '6px 16px', }}>
-            {tagsData.map((tag) => (
+            {relationTables.map((tag) => (
               <CheckableTag
                 key={tag.name}
                 checked={selectedTags.indexOf(tag.name as never) > -1}
-                onChange={(checked) => handleTagChange(tag.name, checked)}
+                onChange={(checked) => handleTagChange(tag, checked)}
               >
                 <a>{tag.name}</a>
               </CheckableTag>
@@ -266,7 +327,7 @@ const EditStruct = ({ treeData }) => {
         {
           tabsConf.panes.map((item) => (
             <TabPane tab={item.tab} key={item.key}>
-              <BasicStory {...item} type={item.alias || item.key} />
+              <BasicStory {...item} type={item.multiplex || item.key} />
             </TabPane>
           ))
         }

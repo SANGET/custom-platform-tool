@@ -1,8 +1,11 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import {
-  Popconfirm, Form, Button, Modal
-} from 'antd';
-import { PinYin } from '@provider-app/data-designer/src/tools/mix';
+import React, { useState, useRef } from 'react';
+import { Form, Modal } from 'antd';
+
+/** 状态管理方法 */
+import { useMappedState, useDispatch } from 'redux-react-hook';
+
+/** getModalConfig-弹窗公共配置, 中文转拼音 */
+import { PinYin, getModalConfig } from '@provider-app/data-designer/src/tools/mix';
 
 /**
 *  可编辑单元格组件
@@ -13,20 +16,19 @@ import BasicEditTable from '@provider-app/data-designer/src/components/BasicEdit
 */
 import TableHeadMenu from '@provider-app/data-designer/src/bizComps/TableHeadMenu';
 /**
-* 关联表单组件
+* 关联表-外键设置 共用表单组件
 */
 import ReferenceForm from '@provider-app/data-designer/src/pages/EditStruct/ReferenceForm';
 
+/** 字段类型与数据类型，数据类型与长度 小数位 必填 唯一 字典 是否转拼音 编码规则联动关系 */
+import { fieldLinkObj } from '@provider-app/data-designer/src/pages/EditStruct/fieldLink';
+
 /**
-* 字典管理组件
+* 字典管理弹窗组件
 */
 // import DictManage from '@provider-app/data-designer/src/pages/DictManage';
 import DictModal from '@provider-app/data-designer/src/pages/EditStruct/DictModal';
 
-/** 状态管理方法 */
-import { useMappedState, useDispatch } from 'redux-react-hook';
-
-// import { Connector } from '@provider-app/data-designer/src/connector';
 /** 表类型枚举--表格列代码转文字时 要用 */
 import {
   DataTypeEnum, FieldTypeEnum, YNTypeEnum, SpeciesTypeEnum
@@ -42,246 +44,49 @@ import { codeToText } from '@provider-app/data-designer/src/tools/format';
 import REG from '@provider-app/data-designer/src/tools/reg';
 
 import Http, { Msg } from '@infra/utils/http';
-import { getModalConfig, randomNum } from '../../tools/mix';
 
 /**
  * 表字段组件
+ * updateListData-更新数据函数
 */
-const TableField = ({ tableData }) => {
+const TableField = ({ updateListData }) => {
   /**
-  * 树形数据在多个地方要使用,因此保存在store中
+  * 树形数据,表编辑行记录详情,  在多个地方要使用, 表字段 是否过滤系统类型行记录页面刷新时要保持记忆 因此保存在store中
   */
   const dispatch = useDispatch();
-  const { structRowData, treeData } = useMappedState((state) => ({
+  const { structRowData, treeData, sysFieldCtrl } = useMappedState((state) => ({
     structRowData: state.structRowData,
-    treeData: state.treeData
+    treeData: state.treeData,
+    sysFieldCtrl: state.sysFieldCtrl
   }));
 
   /**
   * 设置+引用字段，+外键字段弹窗标题
   */
   const [modalTitle, setModalTitle] = useState('表字段');
+  /** 页面名称与行记录详情数据中的key对应关系 */
   const PageKey = {
     外键关联表信息: 'foreignKeys',
     关联表信息: 'references',
     表字段: 'columns'
   }[modalTitle];
 
-  /**
-  * 更新表结构详情
-  * 主要是更新表字段 关联字段 外键字段这几个数组
-  */
-  const updateTableData = (data?) => {
-    const list = data || structRowData[PageKey];
-    dispatch({
-      type: 'setStructRowData',
-      structRowData: Object.assign({},
-        structRowData,
-        {
-          [PageKey]: list.map((item, index) => {
-            /** 序号后端要求必填,页面不需展示 */
-            item.sequence = index;
-            return item;
-          })
-        })
-    });
-  };
-
-  /**
-  * 显示隐藏系统字段标题
-  */
-  const [sysBtnTitle, setSysBtnTitle] = useState('显示');
-  /**
-   * 是否显示隐藏系统字段,需要使用两个数组对象且这两个对象，可以更新视图
-   * useState的变量有时数据更新了,不渲染页面,用redux管理状态比较好
-   * @param structRowData.columns 存放完整的表字段数据,编辑的数据要同步给structRowData.columns
-   * @param fullCols 会根据是否显示隐藏系统字段内容会发生变化
-   */
-  const parseTableData = () => {
-    return sysBtnTitle === '显示' ? toShow(structRowData.columns) : toShow(structRowData.columns).filter((item) => item.species === '业务');
-  };
-
-  /**
-  * 因为会动态增删父组件传进来的表格数据,所以需要用状态值保存
-  * 只会初始化一次,发现dataSource有值之后,不会再被执行
-  */
-  // const [fieldTableData, setFieldTableData] = useState([]);
-
-  // const [fullCols, setFullCols] = useState([]);
-  // useEffect(() => {
-  //   setFullCols(toShow(structRowData.columns));
-  //   // const data = toShow(structRowData.columns);
-  //   // console.log({ data });
-  //   // structRowData.columns = data.filter((item) => item.species !== '系统');
-  //   // updateTableData();
-  // }, []);
-
   /** 创建+字典字段弹窗表单实例 */
   // const [dictForm] = Form.useForm();
 
-  /** 创建+表字段行内表单实例 */
+  /** 创建+表字段 行记录编辑表单实例 */
   const [fieldForm] = Form.useForm();
-  /**
-  * 每一行都有一个唯一的key,记录编辑行是哪一行
-  */
-  const [editingKey, setEditingKey] = useState<number|string>('');
-  /**
-  * 编辑行号与记录行号相符时，设置成编辑状态
-  */
-  const isEditing = (record) => record.key === editingKey;
-
-  // console.log(dataSource);
-  /**
-  * 编辑函数初始值设置
-  */
-  const edit = (record) => {
-    /**
-     * 将行记录的值设置到表单-这里前端显示值和后端返回值可能并不完全一样，需要转换
-     */
-    fieldForm.setFieldsValue({
-      ...record
-    });
-    /**
-    * 设置编辑行--编辑行的按钮是保存和取消
-    */
-    setEditingKey(record.key);
-  };
 
   /**
-   * 保存编辑行的值
-   * key-编辑行的key
-   */
-  const save = async (key: React.Key) => {
-    try {
-      /**
-        * 先进行表单校验,校验通过可以拿到该行的表单值
-        */
-      const row = (await fieldForm.validateFields());
-
-      /**
-       * 复制一份表格数据
-       */
-      const newData = [...structRowData[PageKey]];
-      /** 找到编辑行的索引号 */
-      const index = newData.findIndex((item) => key === item.key);
-
-      /** 如果找到,把新值合并到旧值对象上,替换掉原有的那一行记录 */
-      if (index > -1) {
-        const item = newData[index];
-        newData[index] = {
-          ...item,
-          ...row,
-        };
-      } else {
-        /** 没有找到该记录,插入一条新记录,显示在第一行 */
-        newData.unshift(row);
-      }
-      /** 更新表格数据 */
-      // structRowData[PageKey] = newData.slice(0);
-
-      const t = Object.assign({},
-        structRowData,
-
-        {
-          columns: [...newData].map((item, index) => {
-            /** 序号后端要求必填,页面不需展示 */
-            item.sequence = index;
-            return item;
-          })
-        });
-
-      // console.log(
-      //   // structRowData[PageKey],
-      //   [...newData],
-      //   JSON.parse(JSON.stringify(t)),
-      //   Object.assign({},
-      //     structRowData,
-      //     {
-      //       columns: [...newData].map((item, index) => {
-      //         /** 序号后端要求必填,页面不需展示 */
-      //         item.sequence = index;
-      //         return item;
-      //       })
-      //     })
-      // );
-
-      console.log({ dispatch: JSON.parse(JSON.stringify(t)) });
-      dispatch({
-        type: 'setStructRowData',
-        structRowData: JSON.parse(JSON.stringify(t))
-        // structRowData: JSON.parse(JSON.stringify(t))
-      });
-
-      // updateTableData(JSON.parse(JSON.stringify(newData)));
-
-      /** 清除编辑行的key */
-      setEditingKey('');
-    } catch (errInfo) {
-      console.log('Validate Failed:', errInfo);
-    }
-  };
-    /**
-  * 取消编辑
-  */
-  const cancel = () => {
-    setEditingKey('');
-  };
-    /**
-  * 将后端返回的列表值转换成页面的显示值
-  */
-
-  const toShow = (data) => {
-    // console.log({ toShow: data });
-    const copyData = JSON.parse(JSON.stringify(data));
-    return copyData.map((row, index) => {
-      /**
-  * 唯一,必填,转换成拼音 这几项后端返回的值是一个对象,页面展示需要进行拆解
-  */
-      /** 有可能没有值 */
-      if (row.fieldProperty) {
-        row.unique = codeToText({ arr: YNTypeEnum, val: row.fieldProperty.unique }) || '';
-        row.required = codeToText({ arr: YNTypeEnum, val: row.fieldProperty.required }) || '';
-        row.pinyinConvent = codeToText({ arr: YNTypeEnum, val: row.fieldProperty.pinyinConvent }) || '';
-      }
-      //  else {
-      //   row.unique = '';
-      //   row.required = '';
-      //   row.pinyinConvent = '';
-      // }
-
-      /** 前后端的数据结构不一致,后端将 unique required pinyinConvent 写在一个对象中,前端是分开的,所以要做转换 */
-      row.unique = codeToText({ arr: YNTypeEnum, val: row.unique }) || '';
-      row.required = codeToText({ arr: YNTypeEnum, val: row.required }) || '';
-      row.pinyinConvent = codeToText({ arr: YNTypeEnum, val: row.pinyinConvent }) || '';
-
-      /**
-  * 数据类型代码转文本
-  */
-      row.dataType = codeToText({ arr: DataTypeEnum, val: row.dataType });
-      /**
-  * 字段类型代码转文本
-  */
-      row.fieldType = codeToText({ arr: FieldTypeEnum, val: row.fieldType });
-      /** 只有系统类型,会出现BIGINT,与产品协商,将BIGINT转换成数字 */
-      if (row.fieldType === 'BIGINT') {
-        row.fieldType = '数字';
-      }
-
-      /**
-  * 分类代码转文本
-  */
-      row.species = codeToText({ arr: SpeciesTypeEnum, val: row.species });
-      return row;
-    });
-  };
-    /**
   * 添加一行记录
+  * @param args name-code 复制行记录的时候要传入默认值
   */
-  const handleAdd = (args = { id: '', name: '', code: '' }) => {
-    const { id, name, code } = args;
-    const newData = {
-      key: structRowData[PageKey].length,
-      id: id || '',
+  const handleAdd = (args = { name: '', code: '' }) => {
+    const { name, code } = args;
+    const newRowData = {
+      /** 还未提交到后端的数据标记, 删除要进行类型区分 */
+      isUnSubmit: true,
+      id: `${new Date().getTime()}`,
       /** 字段名称 */
       name: name || '',
       /** 字段编码 */
@@ -299,17 +104,11 @@ const TableField = ({ tableData }) => {
       /** 唯一 */
       unique: 'false',
       dictionaryForeign: '',
-      fieldSize: 0,
+      fieldSize: 2,
       /** 转换成拼音 */
       pinyinConvent: 'true',
     };
-
-    // console.log(PageKey, structRowData);
-
-    // console.log(structRowData[PageKey], newData);
-    edit(newData);
-    structRowData[PageKey].unshift(newData);
-    updateTableData();
+    editTableRef.current.onAddRow(newRowData);
   };
   /**
    * 删除一行记录
@@ -318,173 +117,48 @@ const TableField = ({ tableData }) => {
     /** 用key,过滤掉这一行数据 */
     /** 要用store缓存起来,刷新页面时，可以恢复数据 */
     /** 页面销毁时,要清楚所有的localStorage中的内容 */
-    const { id: key, code } = row;
-    console.log(key);
-    if (key) {
-      Http.get(`/smart_building/data/v1/tables/column/allowedDeleted/${key}`).then((res) => {
-      /**
+
+    const delRow = (row) => {
+      structRowData[PageKey] = structRowData[PageKey].filter((item) => item.id !== row.key);
+      updateListData(PageKey, structRowData[PageKey]);
+    };
+    /**
+     * 数据未提交之前,前端要判断要删除的表字段是否被引用
+     */
+    if (row.isUnSubmit) {
+      const useTableObj = {
+        foreignKeys: '外键关联表',
+        references: '关联表',
+      };
+      let useTable;
+      const isUsed = ['foreignKeys', 'references'].some((key) => {
+        useTable = useTableObj[key];
+        return structRowData[key].some((item) => item.code === row.code);
+      });
+      /** 正在使用中,不能删除 */
+      if (isUsed) {
+        Msg.error(`该字段被${useTable}引用，不能删除`);
+      } else {
+        delRow(row);
+      }
+    } else {
+      /** 已提交数据,由后端判断是否已经被使用 */
+      Http.get(`/smart_building/data/v1/tables/column/allowedDeleted/${row.id}`).then((res) => {
+        /**
         * true 存在与页面控件相互绑定,false没有与页面控件相互绑定
         */
-        console.log(res);
+        // console.log(res);
         if (res.data.result === 'false') {
-          structRowData[PageKey] = structRowData[PageKey].filter((item) => item.key !== key);
-          updateTableData();
+          delRow(row);
         } else {
           Msg.error('该字段与页面控件相绑定，不能删除');
         }
       });
-    } else {
-      structRowData[PageKey] = structRowData[PageKey].filter((item) => item.code !== code);
-      updateTableData();
     }
   };
-  /**
-  * 字段类型与数据类型
-  * 数据类型与长度 小数位 必填 唯一 字典 是否转拼音 编码规则联动关系
-  */
-  const linkageObj = {
-    VARCHAR: {
-      DataTypeEnum: [
-        { value: "PK", text: "主键字段" },
-        { value: "QUOTE", text: "引用字段" },
-        { value: "DICT", text: "字典字段" },
-        { value: "FK", text: "外键字段" },
-        { value: "pic", text: "图片" },
-        { value: "attach", text: "附件" },
-        { value: "video", text: "视频" },
-        { value: "audio", text: "音频" },
-      ],
-      Empty: {
-        isDisabledFieldSize: true,
-        isDisabledDeciSize: false,
-        isDisabledRequired: true,
-        isDisabledUni: true,
-        isDisabledDict: false,
-        isDisabledPY: true,
-        isDisabledRule: true
-      },
-      PK: {
-        isDisabledFieldSize: true,
-        isDisabledRequired: true,
-        isDisabledUni: true,
-        isDisabledPY: true,
-      },
-      FK: {
-        isDisabledFieldSize: true,
-        isDisabledRequired: true,
-      },
-      QUOTE: {
-        isDisabledFieldSize: true,
-        isDisabledRequired: true,
-      },
-      DICT: {
-        isDisabledFieldSize: true,
-        isDisabledRequired: true,
-        isDisabledDict: true,
-      },
-      pic: {
-        isDisabledRequired: true,
-      },
-      attach: {
-        isDisabledRequired: true,
-      },
-      video: {
-        isDisabledRequired: true,
-      },
-      audio: {
-        isDisabledRequired: true,
-      },
-    },
-    INT: {
-      DataTypeEnum: [
-        { value: "PK", text: "主键字段" },
-        { value: "QUOTE", text: "引用字段" },
-        { value: "FK", text: "外键字段" },
-      ],
-      Empty: {
-        isDisabledFieldSize: true,
-        isDisabledDeciSize: true,
-        isDisabledRequired: true,
-        isDisabledUni: true,
-        isDisabledRule: true
-      },
-      PK: {
-        isDisabledFieldSize: true,
-        isDisabledDeciSize: true,
-        isDisabledRequired: true,
-        isDisabledUni: true,
-      },
-      FK: {
-        isDisabledFieldSize: true,
-        isDisabledDeciSize: true,
-        isDisabledRequired: true,
-      },
-      QUOTE: {
-        isDisabledFieldSize: true,
-        isDisabledDeciSize: true,
-        isDisabledRequired: true,
-      },
-    },
-    TIME: {
-      DataTypeEnum: [
-        { value: "PK", text: "主键字段" },
-        { value: "QUOTE", text: "引用字段" },
-        { value: "FK", text: "外键字段" },
-      ],
-      Empty: {
-        isDisabledRequired: true,
-        isDisabledUni: true,
-        isDisabledRule: true
-      },
-      PK: {
-        isDisabledRequired: true,
-        isDisabledUni: true,
-      },
-      FK: {
-        isDisabledRequired: true,
-      },
-      QUOTE: {
-        isDisabledRequired: true,
-      },
-    },
-    DATE: {
-      DataTypeEnum: [
-        { value: "PK", text: "主键字段" },
-        { value: "QUOTE", text: "引用字段" },
-        { value: "FK", text: "外键字段" },
-      ],
-      Empty: {
-        isDisabledFieldSize: true,
-        isDisabledRequired: true,
-        isDisabledUni: true,
-        isDisabledRule: true
-      },
-      PK: {
-        isDisabledFieldSize: true,
-        isDisabledRequired: true,
-        isDisabledUni: true,
-      },
-      FK: {
-        isDisabledFieldSize: true,
-        isDisabledRequired: true,
-      },
-      QUOTE: {
-        isDisabledRequired: true,
-      },
-    },
-    TEXT: {
-      DataTypeEnum: [],
-      Empty: {
-        isDisabledFieldSize: true,
-        isDisabledRequired: true,
-        isDisabledUni: true,
-      },
-    },
-  };
-
   /** fieldType 必须配置初始值 */
   const [link, setLink] = useState({ dataType: 'PK', fieldType: 'VARCHAR' });
-  // console.log(linkageObj[link.fieldType].DataTypeEnum);
+  // console.log(fieldLinkObj[link.fieldType].DataTypeEnum);
 
   /**
    * 是否禁用长度 小数位 必填 唯一 字典 是否转拼音 编码规则属性
@@ -501,7 +175,7 @@ const TableField = ({ tableData }) => {
       return false;
     }
 
-    return !linkageObj[fieldType][dataType][key] || false;
+    return !fieldLinkObj[fieldType][dataType][key] || false;
   };
 
   /**
@@ -524,17 +198,19 @@ const TableField = ({ tableData }) => {
       dataIndex: 'name',
       editable: true,
       formConfig: {
-        attrs: {
+        compAttr: {
           type: 'Input',
           onChange: () => {
             /** 将表格名称转换为汉字首字母拼音 */
             fieldForm.setFieldsValue({ code: PinYin.getCamelChars(fieldForm.getFieldValue('name')) });
           }
         },
-        rules: [{
-          required: true,
-          message: '请输入字段名称'
-        }]
+        itemAttr: {
+          rules: [{
+            required: true,
+            message: '请输入字段名称'
+          }]
+        }
       },
       width: 200,
     },
@@ -542,11 +218,13 @@ const TableField = ({ tableData }) => {
       title: '字段编码',
       dataIndex: 'code',
       formConfig: {
-        attrs: { type: 'Input' },
-        rules: [{
-          required: true,
-          message: '请输入字段编码'
-        }]
+        compAttr: { type: 'Input' },
+        itemAttr: {
+          rules: [{
+            required: true,
+            message: '请输入字段编码'
+          }]
+        }
       },
       editable: true,
       width: 200,
@@ -555,20 +233,22 @@ const TableField = ({ tableData }) => {
       title: '字段类型',
       dataIndex: 'fieldType',
       formConfig: {
-        attrs: {
+        compAttr: {
           type: 'BasicSelect',
           enum: FieldTypeEnum,
           onChange: (fieldType) => {
             // console.log(fieldType);
             setLink({ ...link, fieldType });
             fieldForm.setFieldsValue({ dataType: '' });
-            // console.log({ ...link, fieldType }, linkageObj[link.fieldType]);
+            // console.log({ ...link, fieldType }, fieldLinkObj[link.fieldType]);
           }
         },
-        rules: [{
-          required: true,
-          message: '请选择字段类型'
-        }]
+        itemAttr: {
+          rules: [{
+            required: true,
+            message: '请选择字段类型'
+          }]
+        }
       },
       editable: true,
       width: 160,
@@ -577,17 +257,19 @@ const TableField = ({ tableData }) => {
       title: '数据类型',
       dataIndex: 'dataType',
       formConfig: {
-        attrs: {
+        compAttr: {
           type: 'BasicSelect',
-          enum: linkageObj[link.fieldType].DataTypeEnum,
+          enum: fieldLinkObj[link.fieldType].DataTypeEnum,
           onChange: (dataType) => {
             setLink({ ...link, dataType });
           }
         },
-        rules: [{
-          required: true,
-          message: '请选择数据类型'
-        }]
+        itemAttr: {
+          rules: [{
+            required: true,
+            message: '请选择数据类型'
+          }]
+        }
       },
       editable: true,
       width: 160,
@@ -596,29 +278,31 @@ const TableField = ({ tableData }) => {
       title: '长度',
       dataIndex: 'fieldSize',
       formConfig: {
-        attrs: {
+        compAttr: {
           type: 'InputNumber',
           placeholder: '正整数,2-64',
           disabled: isDisabled({ fieldType: link.fieldType, dataType: link.dataType, key: 'isDisabledFieldSize' })
         },
-        rules: [
-        /** 自定义校验器 */
-          ({ getFieldValue }) => ({
-            validator(rule, value) {
-              if (value === '' || value === undefined) {
-                return Promise.resolve();
-              }
-              if (!REG.plusInt.test(value)) {
-                return Promise.reject(new Error('必须是正整数2-64之间'));
-              }
+        itemAttr: {
+          rules: [
+            /** 自定义校验器 */
+            ({ getFieldValue }) => ({
+              validator(rule, value) {
+                if (value === '' || value === undefined) {
+                  return Promise.resolve();
+                }
+                if (!REG.plusInt.test(value)) {
+                  return Promise.reject(new Error('必须是正整数2-64之间'));
+                }
 
-              if (value < 2 || value > 64) {
-                return Promise.reject(new Error('必须在2-64之间'));
-              }
-              return Promise.resolve();
-            },
-          }),
-        ]
+                if (value < 2 || value > 64) {
+                  return Promise.reject(new Error('必须在2-64之间'));
+                }
+                return Promise.resolve();
+              },
+            }),
+          ]
+        }
       },
       editable: true,
       width: 200,
@@ -627,14 +311,10 @@ const TableField = ({ tableData }) => {
       title: '小数点',
       dataIndex: 'decimalSize',
       formConfig: {
-        attrs: {
+        compAttr: {
           type: 'InputNumber',
           disabled: isDisabled({ fieldType: link.fieldType, dataType: link.dataType, key: 'isDisabledDeciSize' })
         },
-        // rules: [{
-        //   required: true,
-        //   message: '请输入小数点位数'
-        // }]
       },
       editable: true,
       width: 160
@@ -643,15 +323,11 @@ const TableField = ({ tableData }) => {
       title: '必填',
       dataIndex: 'required',
       formConfig: {
-        attrs: {
+        compAttr: {
           type: 'BasicSelect',
           enum: YNTypeEnum,
           disabled: isDisabled({ fieldType: link.fieldType, dataType: link.dataType, key: 'isDisabledRequired' })
         },
-        // rules: [{
-        //   required: true,
-        //   message: '请选择'
-        // }]
       },
       editable: true,
       width: 100
@@ -660,15 +336,11 @@ const TableField = ({ tableData }) => {
       title: '唯一',
       dataIndex: 'unique',
       formConfig: {
-        attrs: {
+        compAttr: {
           type: 'BasicSelect',
           enum: YNTypeEnum,
           disabled: isDisabled({ fieldType: link.fieldType, dataType: link.dataType, key: 'isDisabledUni' })
         },
-        // rules: [{
-        //   required: true,
-        //   message: '请选择'
-        // }]
       },
       editable: true,
       width: 100,
@@ -677,7 +349,7 @@ const TableField = ({ tableData }) => {
       title: '字典',
       dataIndex: 'dictionaryForeign',
       formConfig: {
-        attrs: {
+        compAttr: {
           type: 'Input',
           disabled: isDisabled({ fieldType: link.fieldType, dataType: link.dataType, key: 'isDisabledDict' }),
           onFocus: () => {
@@ -685,10 +357,6 @@ const TableField = ({ tableData }) => {
             setDictFieldVisible(true);
           }
         },
-        // rules: [{
-        //   required: true,
-        //   message: '请选择字典'
-        // }]
       },
       editable: true,
       width: 200,
@@ -697,15 +365,11 @@ const TableField = ({ tableData }) => {
       title: '转换成拼音',
       dataIndex: 'pinyinConvent',
       formConfig: {
-        attrs: {
+        compAttr: {
           type: 'BasicSelect',
           enum: YNTypeEnum,
           disabled: isDisabled({ fieldType: link.fieldType, dataType: link.dataType, key: 'isDisabledPY' }),
         },
-        // rules: [{
-        //   required: true,
-        //   message: '请选择'
-        // }]
       },
       editable: true,
       width: 160,
@@ -720,79 +384,82 @@ const TableField = ({ tableData }) => {
       dataIndex: 'species',
       width: 120
     },
-    {
-      title: '操作',
-      dataIndex: 'operation',
-      fixed: 'right',
-      width: 180,
-      render: (text, record, index) => {
-        /**
-        * 如果该行的key与记录的编辑行的key相等,则展示保存和取消按钮
-        */
-        const editable = isEditing(record);
-        return editable ? (
-          <span>
-            <Button type='link' onClick={() => save(record.key)} style={{ marginRight: 8 }}>
-              保存
-            </Button>
-            <Button type='link' onClick={cancel}>取消</Button>
-          </span>
-        ) : (
-          <span>
-            {/* 正在编辑的话,禁用其它行的编辑按钮 */}
-            <Button type='link' disabled={editingKey !== ''} style={{ marginRight: 8 }} onClick={() => edit(record)}>
-            编辑
-            </Button>
-            <Popconfirm title="你确定要删除吗?" okText="确定" cancelText="取消" onConfirm={() => handleDelete(record)}>
-              <Button type='link'>删除</Button>
-            </Popconfirm>
-          </span>
-        );
-      },
-    },
   ];
-  /**
-  * 给表字段的编辑列添加编辑属性设置
-  */
-  const mergedColumns = columns.map((col) => {
-    if (!col.editable) {
-      return col;
-    }
-    return {
-      ...col,
-      /**
-      * 传入单元格里面的参数,每次页面状态更新,都会执行onCell方法
-      * 某一行的key与设置编辑行的key相等时,该行每列元素就会变成可编辑态
-      */
-      onCell: (record) => ({
-        record,
-        formConfig: col.formConfig,
-        dataIndex: col.dataIndex,
-        title: col.title,
-        editing: isEditing(record),
-      }),
-    };
-  });
 
-  const [clickRow, setClickRow] = useState({});
+  const [clickRow, setClickRow] = useState({ id: '' });
 
   // console.log(structRowData.columns);
 
   /**
+  * 将后端返回的列表值转换成页面的显示值
+  */
+  const toShow = (data) => {
+  // console.log({ toShow: data });
+    const copyData = JSON.parse(JSON.stringify(data));
+    return copyData.map((row, index) => {
+    /**
+    * 唯一,必填,转换成拼音 这几项后端返回的值是一个对象,页面展示需要进行拆解
+    */
+      /** 有可能没有值 */
+      if (row.fieldProperty) {
+        row.unique = codeToText({ arr: YNTypeEnum, val: row.fieldProperty.unique }) || '';
+        row.required = codeToText({ arr: YNTypeEnum, val: row.fieldProperty.required }) || '';
+        row.pinyinConvent = codeToText({ arr: YNTypeEnum, val: row.fieldProperty.pinyinConvent }) || '';
+      }
+      //  else {
+      //   row.unique = '';
+      //   row.required = '';
+      //   row.pinyinConvent = '';
+      // }
+
+      /** 前后端的数据结构不一致,后端将 unique required pinyinConvent 写在一个对象中,前端是分开的,所以要做转换 */
+      row.unique = codeToText({ arr: YNTypeEnum, val: row.unique }) || '';
+      row.required = codeToText({ arr: YNTypeEnum, val: row.required }) || '';
+      row.pinyinConvent = codeToText({ arr: YNTypeEnum, val: row.pinyinConvent }) || '';
+
+      /**
+* 数据类型代码转文本
+*/
+      row.dataType = codeToText({ arr: DataTypeEnum, val: row.dataType });
+      /**
+* 字段类型代码转文本
+*/
+      row.fieldType = codeToText({ arr: FieldTypeEnum, val: row.fieldType });
+      /** 只有系统类型,会出现BIGINT,与产品协商,将BIGINT转换成数字 */
+      if (row.fieldType === 'BIGINT') {
+        row.fieldType = '数字';
+      }
+
+      /**
+* 分类代码转文本
+*/
+      row.species = codeToText({ arr: SpeciesTypeEnum, val: row.species });
+      return row;
+    });
+  };
+  /**
+   * 是否显示隐藏系统字段,需要使用两个数组对象且这两个对象，可以更新视图
+   */
+  const filterTableData = () => {
+    return sysFieldCtrl.isShow ? toShow(structRowData.columns) : toShow(structRowData.columns).filter((item) => item.species === '业务');
+  };
+
+  const editTableRef = useRef();
+  /**
   * 编辑表格属性配置
   */
   const editTableProps = {
+    columns,
+    rowKey: 'id',
+    childRef: editTableRef,
     form: fieldForm,
-    dataSource: parseTableData(),
-    columns: mergedColumns,
-    rowKey: (record) => record.code,
-    rowClassName: (record) => (clickRow.code === record.code ? 'select-row editable-row' : 'editable-row'),
-    onClick: (row) => {
-      setClickRow(row);
-    },
-    pagination: {
-      onChange: cancel,
-    }
+    listData: structRowData[PageKey],
+    showListData: filterTableData(),
+    rowClassName: (row) => (clickRow.id === row.id ? 'select-row editable-row' : 'editable-row'),
+    onClick: (row) => setClickRow(row),
+    onDelRow: handleDelete,
+    updateListData: (data) => updateListData(PageKey, data),
+    rowBtnDis: (record) => record.species === '系统'
   };
 
   /**
@@ -828,50 +495,24 @@ const TableField = ({ tableData }) => {
           setRefModalVisible(true);
         }
       },
-      {
-        text: "复制",
-        onClick: () => {
-          if (!clickRow.code) {
-            return Msg.warning('请先选择一行');
-          }
-          const { name, id } = clickRow;
-          const copyName = `${name}_副本_${randomNum(10000, 99999)}`;
-
-          /** 有参数 */
-          handleAdd({ id, name: copyName, code: PinYin.getCamelChars(copyName) });
-        }
-      },
       // { text: "删除", onClick: () => {} },
       {
-        text: `${sysBtnTitle}系统字段`,
+        text: `${sysFieldCtrl.title}系统字段`,
         onClick: () => {
-          /**
-          * 因为setXXX之后不能立刻拿到最新值,所以需要借助变量,获取最新值
-          */
-          const title = sysBtnTitle === "显示" ? '隐藏' : "显示";
-          setSysBtnTitle(title);
-          // if (title === '')
-          // // console.log({ title, dataSource });
-          // {
-          // structRowData.columns = fullCols.filter((item) => {
-          //   /**
-          //   * 当按钮为显示时,过滤掉系统类型字段,否则显示系统字段
-          //   */
-          //   return title === '显示' ? item.species === '业务' : true;
-          // });
-          // }
-          // updateTableData(() => {
-
-          // });
+          const title = sysFieldCtrl.title === "显示" ? '隐藏' : "显示";
+          const isShow = !sysFieldCtrl.isShow;
+          dispatch({
+            type: 'setSysFieldCtrl',
+            sysFieldCtrl: { title, isShow }
+          });
         }
       },
     ]
   };
 
-  // console.log({ tableData, fieldTableData });
   const [dictFieldVisible, setDictFieldVisible] = useState(false);
   /**
-  * 感觉不需要渲染页面的变量或参数,没有必要用useState
+  * 不需要渲染页面的变量或参数,没有必要用useState
   */
   let selDictKey:Array<{name, code}> = [];
 
@@ -940,7 +581,7 @@ const TableField = ({ tableData }) => {
           // 全部是新增操作
           structRowData[PageKey] = structRowData[PageKey] || [];
           structRowData[PageKey].push(values);
-          updateTableData();
+          updateListData(PageKey, structRowData[PageKey]);
           Msg.success('操作成功');
           refForm.resetFields();
         })
@@ -969,7 +610,7 @@ const TableField = ({ tableData }) => {
   return (
     <div>
       <TableHeadMenu {...tableHeadMenuProps} />
-      {/* 组件传参格式的写法很重要,如果组件的参数是通过列举的方式展开,那么延展符这种写法就是错误的,会导致页面报错 */}
+      {/* 表字段可编辑表格 */}
       <BasicEditTable {...editTableProps} />
       <Modal {...DictManageProps}>
         {/* +字典字段弹窗表单 */}
