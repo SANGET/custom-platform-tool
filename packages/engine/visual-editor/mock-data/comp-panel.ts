@@ -20,6 +20,30 @@ export const compPanelData = {
         },
       ]
     },
+    {
+      title: '数据源',
+      itemsGroups: [
+        {
+          title: '基础控件',
+          items: [
+            'component-1',
+            'component-table-1',
+          ]
+        },
+      ]
+    },
+    {
+      title: '控件模版',
+      itemsGroups: [
+        {
+          title: '基础控件',
+          items: [
+            'component-1',
+            'component-table-1',
+          ]
+        },
+      ]
+    },
   ]
 };
 

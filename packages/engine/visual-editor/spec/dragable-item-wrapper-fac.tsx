@@ -8,7 +8,6 @@ import React from 'react';
 import {
   LayoutWrapperContext
 } from '@engine/layout-renderer';
-import styled from 'styled-components';
 import classnames from 'classnames';
 import { EditorEntityState, EditorComponentEntity, TEMP_ENTITY_ID } from '@engine/visual-editor/types';
 import ComponentWrapperCom from '@engine/visual-editor/spec/template/ComponentWrapperCom';
@@ -66,31 +65,6 @@ export type DragableItemWrapperFac = (
   props: LayoutWrapperContext
 ) => JSX.Element
 
-const DragableItemWrapper = styled.div`
-  position: relative;
-  &:hover {
-    >.state-mark {
-      border-color: #a6bcf8;
-    }
-    .rm-btn {
-      display: block;
-    }
-  }
-  &.hovering {
-    >.state-mark {
-      border-color: #a6bcf8;
-    }
-  }
-  &.selected {
-    >.state-mark {
-      border-color: #376BFB;
-    }
-  }
-  .rm-btn {
-    display: none;
-  }
-`;
-
 // const debounce = new Debounce();
 
 /**
@@ -113,12 +87,13 @@ export const dragableItemWrapperFac: DragableItemWrapperFac = (
   // const isHovering = getHoveringEntity(id);
   const classes = classnames([
     // isHovering && 'hovering',
+    'dragable-item',
     isSelected && 'selected',
   ]);
   const isTempEntity = currEntity._state === TEMP_ENTITY_ID;
 
   return isTempEntity ? <TempEntityTip key={id} /> : (
-    <DragableItemWrapper
+    <div
       className={classes}
       key={id}
     >
@@ -154,6 +129,6 @@ export const dragableItemWrapperFac: DragableItemWrapperFac = (
       </DragItem>
       <div className="hoving state-mark fill"></div>
       <div className="selected state-mark fill"></div>
-    </DragableItemWrapper>
+    </div>
   );
 };
