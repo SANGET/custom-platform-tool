@@ -9,6 +9,7 @@ import {
 } from "multiple-page-routing";
 
 /** Components */
+import IUBDSLParser from "@iub-dsl/parser/engin";
 import { Nav } from "./Navigator";
 import { PageContainer } from "../PageContainer";
 
@@ -76,24 +77,12 @@ export class AppContainer extends RouterMultiple<AppContainerProps, AppContainer
           } else {
             LoadPage(pageID)
               .then((pageData) => {
-                pageCache[pageID] = pageData;
-                // pageCache[pageID] = IUBDSLParser({
-                //   // 接口反射，UI 验证
-                //   context: {
-                //     setContext: () => ({}),
-                //   },
-                //   authUI: (UIID) => AuthUIByUIID(UIID, pageAuthCache[pageID]),
-                //   dsl: pageData
-                // });
-                console.log(pageCache[pageID]);
-                // this.selectTab(pageID);
+                pageCache[pageID] = IUBDSLParser({ dsl: pageData });
                 this.setState({
                   preparingPage: false
                 });
               })
-              .catch((err) => {
-                console.log(err);
-              });
+              .catch((err) => {});
           }
         }
       })
