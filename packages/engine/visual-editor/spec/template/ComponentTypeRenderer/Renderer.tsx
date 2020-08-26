@@ -12,8 +12,15 @@ export interface ComponentTypeRendererProps {
 }
 
 const ComponentWrapper = styled.div`
-  padding: 0.1px;
+  /* padding: 0.1px; */
 `;
+
+const FormLabel = ({ children, className = '', ...props }) => (children ? (
+  <div
+    className="control-label form-title"
+    {...props}
+  >{children}</div>
+) : null);
 
 /**
  * 根据 component entity 解析的组件渲染器
@@ -35,7 +42,7 @@ export const ComponentTypeRenderer: React.FC<ComponentTypeRendererProps> = (prop
     case 'Input':
       Com = (
         <div className="__Input">
-          <div className="control-label">{label}</div>
+          <FormLabel>{label}</FormLabel>
           <Input
             {...compProps}
           />
@@ -45,7 +52,7 @@ export const ComponentTypeRenderer: React.FC<ComponentTypeRendererProps> = (prop
     case 'Table':
       Com = (
         <div className="__Table">
-          <div className="control-label">{label}</div>
+          <FormLabel>{label}</FormLabel>
           <EditableTable
             {...compProps}
           />
@@ -61,7 +68,10 @@ export const ComponentTypeRenderer: React.FC<ComponentTypeRendererProps> = (prop
       break;
   }
   return (
-    <ComponentWrapper style={style}>
+    <ComponentWrapper
+      className="comp-renderer"
+      style={style}
+    >
       {Com}
     </ComponentWrapper>
   );

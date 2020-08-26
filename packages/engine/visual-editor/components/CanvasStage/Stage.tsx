@@ -10,6 +10,7 @@ import {
   PageMetadata
 } from '@engine/visual-editor/types';
 import { ItemTypes } from '@engine/visual-editor/spec/types';
+import { Debounce } from '@mini-code/base-func';
 import {
   dragableItemWrapperFac, WrapperFacOptions, DragableItemWrapperFac, GetStateContext
 } from '@engine/visual-editor/spec/dragable-item-wrapper-fac';
@@ -39,6 +40,8 @@ export interface CanvasStageProps extends Dispatcher {
   /** 点击舞台的事件回调 */
   onStageClick?: () => void
 }
+
+const debounceAddTempEntity = new Debounce();
 
 /**
  * 中央舞台组件
@@ -132,6 +135,8 @@ class CanvasStage extends React.Component<CanvasStageProps> {
     /** 防止没有 dragIndex 的产生坏数据 */
     if (typeof dragIndex === 'undefined') return;
     // this.dragItemOriginIdx = dragIndex;
+    /** 取消由进入画布时触发的添加临时组件 */
+    debounceAddTempEntity.cancel();
     const {
       layoutNodeInfo,
       SortingEntity,
@@ -196,7 +201,12 @@ class CanvasStage extends React.Component<CanvasStageProps> {
                 /** 设置 dragClass 的 index，用于排序 */
                 // eslint-disable-next-line no-param-reassign
                 item.index = layoutNodeInfoLen;
-                this.onMove(layoutNodeInfoLen, layoutNodeInfoLen, item);
+                /**
+                 * 延后将临时组件实例添加到画布，属于交互体验优化
+                 */
+                debounceAddTempEntity.exec(() => {
+                  this.onMove(layoutNodeInfoLen, layoutNodeInfoLen, item);
+                }, 100);
               }}
               onDrop={(_dragItemClass, dropOptions) => {
                 if (dropOptions.type !== ItemTypes.DragItemClass) return;

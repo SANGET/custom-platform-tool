@@ -55,7 +55,7 @@ export const constructCompClass: ConstructCompClass = (
 
 export const constructTempEntity = (props = {}): TempEntity => ({
   ...props,
-  id: increaseID(123, TEMP_ENTITY_ID),
+  id: increaseID(Math.random(), TEMP_ENTITY_ID),
   _state: TEMP_ENTITY_ID,
 });
 

@@ -8,7 +8,7 @@
 }
 
 .component-class-panel {
-  padding: 20px;
+  padding: 10px;
   .drag-item-group {
     .drag-items {
       display: flex;
@@ -21,5 +21,41 @@
         border: 1px solid #EEE;
       }
     }
+  }
+  .tabs-container .tab-group .tab .tab-label {
+    padding: 10px;
+  }
+}
+
+.comp-renderer {
+  padding: 10px;
+  .form-title {
+    margin-bottom: 10px;
+    font-size: 16px;
+  }
+}
+
+.dragable-item {
+  position: relative;
+  &:hover {
+    >.state-mark {
+      border-color: #a6bcf8;
+    }
+    .rm-btn {
+      display: block;
+    }
+  }
+  &.hovering {
+    >.state-mark {
+      border-color: #a6bcf8;
+    }
+  }
+  &.selected {
+    >.state-mark {
+      border-color: #376BFB;
+    }
+  }
+  .rm-btn {
+    display: none;
   }
 }
