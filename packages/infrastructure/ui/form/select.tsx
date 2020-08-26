@@ -1,5 +1,5 @@
-import { Dropdown } from '@deer-ui/core/dropdown';
+import { Dropdown as Selector } from '@deer-ui/core/dropdown';
 
 export {
-  Dropdown
+  Selector
 };

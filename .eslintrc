@@ -12,16 +12,18 @@
     // "@typescript-eslint/explicit-function-return-type": 0,
     "@typescript-eslint/explicit-member-accessibility": 0,
     "@typescript-eslint/explicit-module-boundary-types": 0,
+    "@typescript-eslint/no-empty-function": 0,
     "indent": ["error", 2, { "SwitchCase": 1 }],
     "semi": ["error", "always"],
     "no-unused-vars": [
       1,
       {
         "vars": "all",
-        "args": "after-used",
+        "args": "none",
         "ignoreRestSiblings": false
       }
     ],
+    "linebreak-style": 0,
     "import/prefer-default-export": 0,
     "no-underscore-dangle": 0,
     "no-console": 0,

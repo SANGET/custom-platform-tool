@@ -1,7 +1,10 @@
 import React from "react";
 import ReactDOM from 'react-dom';
 
-import App from './connect-app';
+import Connector from '../core/visual-app-connector';
+import VisualEditorApp from './main';
+
+const App = Connector(VisualEditorApp);
 
 ReactDOM.render(
   <App />,

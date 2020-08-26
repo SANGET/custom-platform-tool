@@ -6,12 +6,14 @@
   "scripts": {
     "start": "cross-env PORT=6689 minictl start"
   },
+  "peerDependencies": {
+    "react": "^16.13.1",
+    "react-dom": "^16.13.1"
+  },
   "devDependencies": {
-    "@infra/env-scripts": "^0.0.1"
+    "@infra/react-dev-env-scripts": "^0.0.1"
   },
   "dependencies": {
-    "react": "16.13.1",
-    "react-dom": "16.13.1"
   },
   "author": "SANGET",
   "license": "MIT",

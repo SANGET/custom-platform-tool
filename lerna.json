@@ -4,7 +4,8 @@
     "packages/iub-dsl/*",
     "packages/engine/*",
     "packages/infrastructure/*",
-    "packages/consumer-app/*"
+    "packages/consumer-app/*",
+    "packages/spec/*"
   ],
   "version": "0.0.1"
 }

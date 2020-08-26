@@ -12,15 +12,23 @@
 
 ## 技术选型
 
-建议学习
-
-- react
-- redux
-- webpack
-- lerna
-- less
-- styled-components
-- node
+- 页面渲染
+  - react
+  - less
+  - sass
+  - styled-components
+- 数据管理
+  - redux
+- 基础工具
+  - rxjs
+- 拖拽技术
+  - react-dnd
+- 工程管理
+  - webpack
+  - yarn
+  - lerna
+- 服务
+  - node
 
 -----
 
@@ -67,20 +75,6 @@
 - `package.json` - 工程 package json 配置
 - `README.md` - 工程总说明文档
 - `tsconfig.json` - typescript 的配置
-
------
-
-## 技术选型
-
-- 页面渲染
-  - react
-- 拖拽技术（选一）
-  - react-dnd
-  - sortablejs
-- 工程化
-  - webpack
-  - yarn
-  - lerna
 
 -----
 
@@ -166,6 +160,8 @@ moduleName();
 ## 测试
 
 通过 jest 测试，可以在需要测试的模块的目录下新建 `__test__` 目录并且写测试用例。然后在项目根目录执行 `yarn test` 即可进行测试。
+
+每一个子应用都可以在自身目录的根目录下创建 `__test__` 文件夹，并且添加单元测试用例。
 
 -----
 

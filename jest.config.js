@@ -147,6 +147,7 @@ module.exports = {
 
   // The regexp pattern Jest uses to detect test files
   // testRegex: "",
+  testRegex: '(/__tests__/.*|(\\.|/)(test|spec))\\.(jsx?|tsx?)$',
 
   // This option allows the use of a custom results processor
   // testResultsProcessor: null,
@@ -162,6 +163,9 @@ module.exports = {
 
   // A map from regular expressions to paths to transformers
   // transform: null,
+  transform: {
+    "^.+\\.tsx?$": "ts-jest"
+  },
 
   // An array of regexp pattern strings that are matched against all source file paths, matched files will skip transformation
   // transformIgnorePatterns: [

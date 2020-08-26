@@ -1,0 +1,15 @@
+.search-container {
+  position: relative;
+  padding: 10px;
+  transition: all ease 0.3s;
+
+  .all-content {
+    max-height: 200px;
+    overflow-y: auto;
+    margin-top: 10px;
+  }
+
+  .menu-item {
+    display: block;
+  }
+}

@@ -1,0 +1,48 @@
+import {
+  EditorEntityState, EditorEntity
+} from "../../types";
+import { SelectEntityState } from "../types";
+
+/// entityState /////////////////
+
+export const INIT_ENTITY_STATE = 'entityState/init';
+export interface InitEntityStateAction {
+  type: typeof INIT_ENTITY_STATE
+  selectedEntityInfo: SelectEntityState
+  defaultEntityState
+}
+
+/**
+ * 初始化组件类的状态
+ */
+export const InitEntityState = (
+  selectedEntityInfo: SelectEntityState,
+  defaultEntityState
+): InitEntityStateAction => {
+  return {
+    type: INIT_ENTITY_STATE,
+    selectedEntityInfo,
+    defaultEntityState
+  };
+};
+
+export const UPDATE_ENTITY_STATE = 'entityState/update';
+export interface UpdateEntityStateAction {
+  type: typeof UPDATE_ENTITY_STATE
+  selectedEntityInfo: SelectEntityState,
+  formState: EditorEntityState
+}
+
+/**
+ * 更新组件实例的状态
+ */
+export const UpdateEntityState = (
+  selectedEntityInfo: SelectEntityState,
+  formState: EditorEntityState
+): UpdateEntityStateAction => {
+  return {
+    type: UPDATE_ENTITY_STATE,
+    selectedEntityInfo,
+    formState
+  };
+};

@@ -1,12 +1,12 @@
-import DataManager from "@provider-app/data-manager/app";
+import TableStruct from "@provider-app/data-designer/src/pages/TableStruct";
 import PageManager from "@provider-app/page-manager/app";
 import MenuManager from "@provider-app/menu-manager/app";
-import { PageDesignerApp } from "@provider-app/page-designer/src/app";
+import PageDesignerApp from "@provider-app/page-designer/src/app";
 
 const Router = {
   '/menu-manager': MenuManager,
   '/page-manager': PageManager,
-  '/data-manager': DataManager,
+  '/TableStruct': TableStruct,
   '/page-designer': PageDesignerApp,
 };
 

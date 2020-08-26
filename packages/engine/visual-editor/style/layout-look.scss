@@ -1,0 +1,31 @@
+
+.visual-app {
+  .app-header {
+    box-shadow: 0 0 6px rgba(#000, 0.1);
+  }
+  .app-content {
+    .comp-panel {
+    }
+    .canvas-container {
+      border-left: 1px solid #EEE;
+      border-right: 1px solid #EEE;
+      padding: 10px;
+    }
+    .prop-panel {
+    }
+  }
+  .app-footer {
+
+  }
+}
+
+.entity-prop-editor {
+  padding: 10px;
+}
+
+.canvas-stage-container {
+}
+
+.canvas-stage {
+  height: 100%;
+}

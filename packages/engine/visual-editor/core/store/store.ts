@@ -1,13 +1,8 @@
 import { createStore, applyMiddleware } from 'redux';
+import { createLogger } from 'redux-logger';
+import AppReducers, { VisualEditorState } from '../reducers';
 
-import AppReducers from '../reducers';
-import { layoutContentState } from '../reducers/canvas-state';
-
-export interface VisualEditorStore {
-  layoutContentState: layoutContentState
-}
-
-let store: VisualEditorStore | null;
+let store: VisualEditorState | null;
 
 export const getStore = () => {
   return store;
@@ -17,12 +12,19 @@ export const disposeStore = () => {
   store = null;
 };
 
-export default function createChatStore(preloadedState?) {
+const logger = createLogger({
+  // ...options
+});
+
+export default function createChatStore(
+  preloadedState?: VisualEditorState
+) {
   if (!store) {
-    store = createStore<VisualEditorStore>(
+    store = createStore(
       AppReducers,
       preloadedState,
       applyMiddleware(
+        // logger
       )
     );
   }

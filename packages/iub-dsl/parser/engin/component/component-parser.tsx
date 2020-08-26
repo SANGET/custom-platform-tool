@@ -186,7 +186,7 @@ const ComponentCollectionParser = (
   let temp: ComponentElement;
   const componentIdArr = Object.keys(componentCollection);
 
-  componentIdArr.map((compId) => {
+  componentIdArr.forEach((compId) => {
     temp = componentCollection[compId];
     switch (temp.type) {
       case 'component':

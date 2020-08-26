@@ -1,6 +1,5 @@
 {
   "recommendations": [
-    "dbaeumer.vscode-eslint",
     "wayou.vscode-todo-highlight",
     "formulahendry.auto-close-tag",
     "hookyqr.beautify",
@@ -11,6 +10,6 @@
     "shd101wyy.markdown-preview-enhanced",
     "davidanson.vscode-markdownlint",
     "esbenp.prettier-vscode",
-    "jpoissonnier.vscode-styled-components",
+    "jpoissonnier.vscode-styled-components"
   ]
 }
