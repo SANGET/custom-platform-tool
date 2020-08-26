@@ -129,6 +129,13 @@ const columnsInfo = [
   },
 ];
 
+// const columnsInfo = [
+//   { title: '主键', key: 'columns1[0]', },
+//   { title: '上级位置', key: 'columns1[1]', },
+//   { title: '位置名称', key: 'columns2', },
+//   { title: '位置类型', key: 'columns3', },
+// ];
+
 const TableCompParser: React.FC<any> = ({
   id,
   style, dataSource, sourcePath, events: { onClick }
