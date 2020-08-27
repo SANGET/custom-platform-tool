@@ -28,6 +28,11 @@ import { defaultState } from '@provider-app/data-designer/src/store/initState';
 */
 import { Connector } from '@provider-app/data-designer/src/connector';
 
+/** 表类型枚举--表格列代码转文字时 要用 */
+import {
+  DataTypeEnum, FieldTypeEnum, YNTypeEnum, SpeciesTypeEnum
+} from '@provider-app/data-designer/src/tools/constant';
+
 /** 关联页面要用到的tag组件 */
 const { CheckableTag } = Tag;
 /** tab面板 */
@@ -36,7 +41,7 @@ const { TabPane } = Tabs;
 /**
  * 编辑表组件
  */
-const EditStruct = ({ treeData }) => {
+const EditStruct = () => {
   /**
    * 表编辑详情数据存储在store中,因为多个组件都会用到这里的状态
    */
@@ -67,6 +72,29 @@ const EditStruct = ({ treeData }) => {
   * 为了是函数有扩展性,函数所需要的参数都通过传递,而不是在函数中直接使用全局变量
   */
   const updateListData = (key, data) => {
+    if (key === 'columns') {
+      /** 表格中的文本会破坏表单中的选项，要进行逆转换 */
+      data = data.map((item) => {
+        const enumMap = [
+          { key: 'fieldType', enumArr: FieldTypeEnum },
+          { key: 'dataType', enumArr: DataTypeEnum },
+          { key: 'species', enumArr: SpeciesTypeEnum },
+        ];
+
+        enumMap.forEach((enumItem) => {
+          const { key, enumArr } = enumItem;
+          const obj = enumArr.find((sub) => sub.text === item[key]);
+          if (obj) {
+            item[key] = obj.value;
+          }
+        });
+        return item;
+        //  YNTypeEnum, SpeciesTypeEnum
+      });
+
+      console.log(data);
+    }
+
     dispatch({
       type: 'setStructRowData',
       structRowData: Object.assign({},
@@ -104,8 +132,8 @@ const EditStruct = ({ treeData }) => {
     /** 获取表结构列表带过来的行记录id */
     const { id } = getUrlParams(undefined, undefined, true);
     // console.log({ id });
-    /** 发现页面刷新时,从表结构列表传过来的id会丢失,而redux中的数据,会被存储到localStorage中 */
-    /** 如果id丢失,就从localStorage中取之前缓存的id */
+    /** 发现页面刷新时,从表结构列表通过路由跳转传过来的id会丢失,而redux中的数据,会被存储到localStorage中 */
+    /** 如果id丢失,就从localStorage中取缓存的id */
     const rowId = id || structRowData.id;
     /** 查询表结构详情 */
     Http.get(`/smart_building/data/v1/tables/${rowId}`, {}).then((res) => {
@@ -119,17 +147,17 @@ const EditStruct = ({ treeData }) => {
         name, code, type, moduleId
       });
 
-      const cols = columns.map((item) => {
-        /** 字典字段转换  */
+      /** 表结构-字典字段 提交到页面显示数据格式转换 */
+      res.data.result.columns = columns.map((item) => {
         if (item.dictionaryForeign) {
-          /** 给后端提交的数据是一个对象 */
+          /** 后端返回的字典数据是一个对象 */
           item.dictionaryForeignSubmit = item.dictionaryForeign;
           /** 页面需要展示中文字典名 */
           item.dictionaryForeign = item.dictionaryForeign.refTableName;
         }
+        return item;
       });
 
-      res.data.result.columns = cols;
       /** 设置表结构详情 */
       dispatch({
         type: 'setStructRowData',
@@ -137,6 +165,68 @@ const EditStruct = ({ treeData }) => {
       });
     });
   }, []);
+  /**
+   * 编辑表右侧的两个表单按钮
+   */
+  const formButs = [
+    {
+      text: '保存',
+      onClick: () => {
+        /** 编辑表的主表单在点击保存按钮的时候校验,每个tab中国的表单,在tab页中的子表单中校验 */
+        form.validateFields().then(() => {
+          /** 新增数据,提交时要清空id,让后端填充 */
+          ['foreignKeys', 'references', 'columns'].forEach((key) => {
+            structRowData[key] = structRowData[key].map((item, index) => {
+              if (item.isUnSubmit) {
+                delete item.isUnSubmit;
+              }
+              /** 排序号后端要求必须填写 */
+              item.sequence = index + 1;
+              return item;
+            });
+          });
+
+          /** 表字段 页面数据转提交数据 */
+          structRowData.columns = structRowData.columns.map((item) => {
+            // console.log(item);
+            item.fieldProperty = item.fieldProperty || {};
+            ['pinyinConvent', 'required', 'unique'].forEach((key) => {
+              if (item[key]) {
+                item.fieldProperty[key] = item[key];
+              }
+              item[key] !== undefined && delete item[key];
+            });
+            /** 字典字段转换 页面展示时是一个字符值,提交时是一个对象 */
+            if (item.dictionaryForeignSubmit) {
+              item.dictionaryForeign = item.dictionaryForeignSubmit;
+              delete item.dictionaryForeignSubmit;
+            }
+
+            return item;
+          });
+
+          // console.log({ structRowData });
+
+          Http.put('/smart_building/data/v1/tables/', structRowData).then((res) => {
+            resetStore();
+            Msg.success('操作成功');
+            onNavigate({
+              type: "GO_BACK",
+            });
+          });
+        });
+      }
+    },
+    {
+      text: '返回',
+      onClick: () => {
+        resetStore();
+        onNavigate({
+          type: "GO_BACK",
+        });
+      }
+    },
+  ];
 
   /** 表单项label和content的宽度 */
   const formItemLayout = {
@@ -232,70 +322,6 @@ const EditStruct = ({ treeData }) => {
       sysFieldCtrl: defaultState.sysFieldCtrl
     });
   };
-
-  /**
-   * 编辑表右侧的两个表单按钮
-   */
-  const formButs = [
-    {
-      text: '保存',
-      onClick: () => {
-        /** 编辑表的主表单在点击保存按钮的时候校验,每个tab中国的表单,在tab页中的子表单中校验 */
-        form.validateFields().then(() => {
-          /** 新增数据,提交时要清空id,让后端填充 */
-          ['foreignKeys', 'references', 'columns'].forEach((key) => {
-            structRowData[key] = structRowData[key].map((item, index) => {
-              if (item.isUnSubmit) {
-                delete item.id;
-                delete item.isUnSubmit;
-              }
-              /** 排序号后端要求必须填写 */
-              item.sequence = index + 1;
-              return item;
-            });
-          });
-
-          /** 表字段 页面数据转提交数据 */
-          structRowData.columns = structRowData.columns.map((item) => {
-            // console.log(item);
-            item.fieldProperty = item.fieldProperty || {};
-            ['pinyinConvent', 'required', 'unique'].forEach((key) => {
-              if (item[key]) {
-                item.fieldProperty[key] = item[key];
-              }
-              item[key] !== undefined && delete item[key];
-            });
-            /** 字典字段转换 页面展示时是一个值,提交时是一个对象 */
-            if (item.dictionaryForeignSubmit) {
-              item.dictionaryForeign = item.dictionaryForeignSubmit;
-              delete item.dictionaryForeignSubmit;
-            }
-
-            return item;
-          });
-
-          // console.log({ structRowData });
-
-          Http.put('/smart_building/data/v1/tables/', structRowData).then((res) => {
-            resetStore();
-            Msg.success('操作成功');
-            onNavigate({
-              type: "GO_BACK",
-            });
-          });
-        });
-      }
-    },
-    {
-      text: '返回',
-      onClick: () => {
-        resetStore();
-        onNavigate({
-          type: "GO_BACK",
-        });
-      }
-    },
-  ];
 
   /** tabs面板配置 */
   const tabsConf = {

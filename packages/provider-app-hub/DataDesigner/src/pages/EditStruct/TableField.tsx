@@ -124,7 +124,7 @@ const TableField = ({ updateListData }) => {
     /** 页面销毁时,要清楚所有的localStorage中的内容 */
 
     const delRow = (row) => {
-      structRowData[PageKey] = structRowData[PageKey].filter((item) => item.id !== row.key);
+      structRowData[PageKey] = structRowData[PageKey].filter((item) => item.id !== row.id);
       updateListData(PageKey, structRowData[PageKey]);
     };
     /**
@@ -138,7 +138,7 @@ const TableField = ({ updateListData }) => {
       let useTable;
       const isUsed = ['foreignKeys', 'references'].some((key) => {
         useTable = useTableObj[key];
-        return structRowData[key].some((item) => item.code === row.code);
+        return structRowData[key].some((item) => item.id === row.id);
       });
       /** 正在使用中,不能删除 */
       if (isUsed) {
@@ -459,7 +459,10 @@ const TableField = ({ updateListData }) => {
     onClick: (row) => setClickRow(row),
     onDelRow: handleDelete,
     updateListData: (data) => updateListData(PageKey, data),
-    rowBtnDis: (record) => record.species === '系统'
+    /** 系统类型不能修改，复制，不能删除 */
+    rowEditBtnDis: (record) => record.species === '系统',
+    /** 系统元数据,业务元数据 可以修改 不能删除 */
+    rowDelBtnDis: (record) => ['系统', '系统元数据', '业务元数据'].includes(record.species)
   };
 
   /**
@@ -545,7 +548,7 @@ const TableField = ({ updateListData }) => {
       * }
       */
       selDictKey.length && fieldForm.setFieldsValue({
-        dictionaryForeign: selDictKey[0].name
+        dictionaryForeign: selDictKey[0].code
       });
       setDictFieldVisible(false);
     },

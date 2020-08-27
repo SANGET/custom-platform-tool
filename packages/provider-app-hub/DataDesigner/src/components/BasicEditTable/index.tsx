@@ -135,7 +135,7 @@ const BasicEditTable = ({
 }) => {
   /** 属性书写顺序,  数据在前,事件在后 , 相关项写在一起 */
   const {
-    showListData, pagination, rowBtnDis, onClick, onDelRow
+    showListData, pagination, rowEditBtnDis, rowDelBtnDis, onClick, onDelRow
   } = rest;
   /** 列表显示数据有时与提交数据一致,有时不一致 */
   const dataSource = showListData || listData;
@@ -212,13 +212,15 @@ const BasicEditTable = ({
   * key-编辑行的key
   * rowKey--每行数据的唯一标识key的属性名
   */
-  const save = async ({ key, rowKey }) => {
+  const save = async ({ key, rowKey, id }) => {
     // console.log({ key, rowKey });
     try {
       /**
        * 先进行表单校验,校验通过可以拿到该行的表单值
        */
       const row = (await form.validateFields());
+      /** 选项值为code */
+      // const row = listData.find((item) => item.id === id);
 
       /** 字典字段 页面上拿到的是名称,提交时按照接口约定的字段对象属性提交 */
       if (row.dictionaryForeign) {
@@ -247,6 +249,7 @@ const BasicEditTable = ({
         /** 没有找到该记录,插入一条新记录,显示在第一行 */
         newData.unshift(row);
       }
+
       /** 更新表格数据 */
       updateListData(JSON.parse(JSON.stringify(newData)));
 
@@ -282,12 +285,15 @@ const BasicEditTable = ({
     width: 180,
     render: (text, record, index) => {
       const editable = isEditing(record);
-      /** 系统类型,隐藏操作列按钮 */
-      const isShowBtn = (rowBtnDis && rowBtnDis(record)) ? 'hide' : 'show';
+      /** 系统类型--不能编辑,不能删除 */
+      const isShowEditBtn = (rowEditBtnDis && rowEditBtnDis(record)) ? 'hide' : 'show';
+
+      /** 系统元数据 业务元数据 可以编辑，不能删除 */
+      const isShowDelBtn = (rowDelBtnDis && rowDelBtnDis(record)) ? 'hide' : 'show';
       return editable ? (
         <Space>
           {/* 编辑行,展示保存和取消按钮 */}
-          <Button type='link' onClick={() => save({ key: record[rowKey], rowKey })}>
+          <Button type='link' onClick={() => save({ key: record[rowKey], rowKey, id: record.id })}>
             保存
           </Button>
           <Button type='link' onClick={cancel}>取消</Button>
@@ -295,15 +301,15 @@ const BasicEditTable = ({
       ) : (
         <Space>
           {/* 非编辑行，展示编辑和删除按钮,如果有一行处于编辑态,禁用编辑按钮 */}
-          <Button type='link' className={isShowBtn} disabled={editingKey !== ''} onClick={() => edit(record)}>
+          <Button type='link' className={isShowEditBtn} disabled={editingKey !== ''} onClick={() => edit(record)}>
           编辑
           </Button>
-          <Button type='link' className={isShowBtn} disabled={editingKey !== '' } onClick={() => copy(record)}>
+          <Button type='link' className={isShowEditBtn} disabled={editingKey !== '' } onClick={() => copy(record)}>
           复制
           </Button>
 
           <Popconfirm title="你确定要删除吗?" okText="确定" cancelText="取消" onConfirm={() => handleDelete(record, rowKey)}>
-            <Button type='link' className={isShowBtn} >删除</Button>
+            <Button type='link' className={isShowDelBtn } >删除</Button>
           </Popconfirm>
         </Space>
       );
