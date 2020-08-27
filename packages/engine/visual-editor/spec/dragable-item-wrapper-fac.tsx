@@ -113,7 +113,7 @@ export const dragableItemWrapperFac: DragableItemWrapperFac = (
             onClick(e, { entity: currEntity, idx });
           }}
           currEntity={currEntity}
-          entityState={entityState}
+          entityState={entityState || {}}
         >
           {children}
         </ComponentWrapperCom>

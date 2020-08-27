@@ -1,19 +1,13 @@
 import React from 'react';
-import { Input, Table } from '@infra/ui';
-import styled from 'styled-components';
 import { EditorComponentEntity, EditorEntityState } from '@engine/visual-editor/types';
-import { EditableTable } from './Table';
-import ContainerWrapperCom from '../ContainerWrapperCom';
+import ContainerWrapperCom from './ContainerWrapperCom';
+import { getComp } from '../registerComp';
 
 export interface ComponentTypeRendererProps {
   entity: EditorComponentEntity
   entityState: EditorEntityState
   node
 }
-
-const ComponentWrapper = styled.div`
-  /* padding: 0.1px; */
-`;
 
 const FormLabel = ({ children, className = '', ...props }) => (children ? (
   <div
@@ -25,7 +19,7 @@ const FormLabel = ({ children, className = '', ...props }) => (children ? (
 /**
  * 根据 component entity 解析的组件渲染器
  */
-export const ComponentTypeRenderer: React.FC<ComponentTypeRendererProps> = (props) => {
+export const ComponentRenderer: React.FC<ComponentTypeRendererProps> = (props) => {
   const {
     entity,
     entityState = {}
@@ -40,6 +34,7 @@ export const ComponentTypeRenderer: React.FC<ComponentTypeRendererProps> = (prop
   const { type, ...compProps } = component;
   switch (type) {
     case 'Input':
+      const Input = getComp(type);
       Com = (
         <div className="__Input">
           <FormLabel>{label}</FormLabel>
@@ -50,6 +45,7 @@ export const ComponentTypeRenderer: React.FC<ComponentTypeRendererProps> = (prop
       );
       break;
     case 'Table':
+      const EditableTable = getComp(type);
       Com = (
         <div className="__Table">
           <FormLabel>{label}</FormLabel>
@@ -68,11 +64,11 @@ export const ComponentTypeRenderer: React.FC<ComponentTypeRendererProps> = (prop
       break;
   }
   return (
-    <ComponentWrapper
+    <div
       className="comp-renderer"
       style={style}
     >
       {Com}
-    </ComponentWrapper>
+    </div>
   );
 };
