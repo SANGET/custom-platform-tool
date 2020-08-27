@@ -41,7 +41,7 @@ const StructForm = ({
   /**
   * 表类型联动对象
   */
-  const refShowInit = { normalTable: 'show', tree: 'hide', auxTable: 'hide' };
+  const refShowInit = { normalTable: 'show', tree: 'hide', AUX_TABLE: 'hide' };
   /**
   * 表类型联动状态设置
   */
@@ -56,7 +56,7 @@ const StructForm = ({
       return prev;
     }, {});
     // console.log({ showObj });
-    setRefShow(showObj as { normalTable: string; tree: string; auxTable: string; });
+    setRefShow(showObj as { normalTable: string; tree: string; AUX_TABLE: string; });
   };
 
   /**
@@ -141,9 +141,9 @@ const StructForm = ({
     mainTableCode: {
       itemAttr: {
         label: "主表",
-        className: refShow.auxTable,
+        className: refShow.AUX_TABLE,
         /** 表类型为附属表时关联必填 */
-        rules: [{ required: refShow.auxTable === 'show', message: '请输入主表!' }],
+        rules: [{ required: refShow.AUX_TABLE === 'show', message: '请输入主表!' }],
       },
       compAttr: {
         type: 'BasicSelect',

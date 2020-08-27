@@ -18,6 +18,8 @@ import { Connector } from '@provider-app/data-designer/src/connector';
 /** 状态管理方法 */
 import { useMappedState, useDispatch } from 'redux-react-hook';
 
+/** 提交数据后重置表结构行记录详情要用 */
+import { defaultState } from '@provider-app/data-designer/src/store/initState';
 /** 基本表单 */
 import BasicForm from '@provider-app/data-designer/src/components/BasicForm';
 
@@ -107,6 +109,17 @@ import './TableStruct.less';
  */
 
 const TableStruct = () => {
+  /** 在网络请求工具中,要用dispatch更改共享状态 */
+  const dispatch = useDispatch();
+  // dispatch({
+  //   type: 'setStructRowData',
+  //   structRowData: defaultState.structRowData
+  // });
+  // dispatch({
+  //   type: 'setSysFieldCtrl',
+  //   sysFieldCtrl: defaultState.sysFieldCtrl
+  // });
+
   // http:// 10.7.1.59:8080/paas/hy/manage/v1/users/login
   // /smart_building
 
@@ -125,8 +138,6 @@ const TableStruct = () => {
     []
   );
 
-  /** 在网络请求工具中,要用dispatch更改共享状态 */
-  const dispatch = useDispatch();
   /** structPager显示列表序号的时候要用 treeData 左侧菜单树要用 */
   /**
    * 共享状态值--表结构分页和树形源数据
@@ -154,8 +165,8 @@ const TableStruct = () => {
       name: '',
       /**  long 否 模块主键 */
       moduleId: '',
-      /**  String 否 表类型normalTable(普通表)tree(树形表)auxTable(附属表) */
-      // type: ['normalTable', 'tree', 'auxTable'],
+      /**  String 否 表类型normalTable(普通表)tree(树形表)AUX_TABLE(附属表) */
+      // type: ['normalTable', 'tree', 'AUX_TABLE'],
       /**  int 是 分页查询起始位置,从0开始 */
       offset: 0,
       /**  int 是 每页查询记录数 */
@@ -177,7 +188,7 @@ const TableStruct = () => {
   const refreshStructTableEnum = (args = {}) => {
     getList({
       params: Object.assign({
-        type: ['normalTable', 'tree', 'auxTable'],
+        type: ['TABLE', 'TREE', 'AUX_TABLE'],
       }, args),
       cb: (res) => {
         res.data && dispatch({
@@ -232,7 +243,7 @@ const TableStruct = () => {
    */
   const getTableEnum = () => {
     getList({
-      params: { type: ['primaryTable', 'tree', 'auxTable'] },
+      params: { type: ['TABLE', 'TREE', 'AUX_TABLE'] },
       cb: (res) => {
         const tableOpts = res.data.map((row) => {
           return {
@@ -321,13 +332,13 @@ const TableStruct = () => {
            */
           const formData = { ...values };
           const { mainTableCode, maxLevel, type } = formData;
-          /** 附属表,才有auxTable属性 */
-          if (type === "auxTable") {
-            formData.auxTable = {
+          /** 附属表,才有AUX_TABLE属性 */
+          if (type === "AUX_TABLE") {
+            formData.AUX_TABLE = {
               mainTableCode
             };
             delete formData.mainTableCode;
-          } else if (type === 'tree') {
+          } else if (type === 'TREE') {
             /** 树形表,才有maxLevel属性 */
             formData.treeTable = {
               maxLevel

@@ -1,7 +1,7 @@
 /*
  * @Author: your name
  * @Date: 2020-08-11 09:29:22
- * @LastEditTime: 2020-08-26 21:23:55
+ * @LastEditTime: 2020-08-27 14:22:28
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: \custom-platform-v3-frontend\packages\provider-app-hub\DataDesigner\src\pages\EditStruct\ReferenceTable.js
@@ -78,10 +78,8 @@ const ReferenceTable = ({ tab, updateListData }) => {
       refTableCode: '',
       /** String 是 关联字段 */
       refFieldCode: '',
-      refFieldCodeName: '',
       /** String 是 显示字段 */
       refDisplayFieldCode: '',
-      refDisplayFieldCodeName: '',
       /** int 是 排序号 */
       sequence: 0
     };
@@ -177,20 +175,6 @@ const ReferenceTable = ({ tab, updateListData }) => {
       width: 160,
     },
     {
-      title: '关联字段名称',
-      className: 'hide',
-      dataIndex: 'refFieldCodeName',
-      width: 160,
-      formConfig: {
-        compAttr: {
-          type: 'Input',
-        },
-        itemAttr: {
-          rules: []
-        }
-      },
-    },
-    {
       title: '显示字段',
       dataIndex: 'refDisplayFieldCode',
       formConfig: {
@@ -205,20 +189,6 @@ const ReferenceTable = ({ tab, updateListData }) => {
       },
       editable: true,
       width: 160,
-    },
-    {
-      title: '显示字段名称',
-      className: 'hide',
-      width: 160,
-      dataIndex: 'refDisplayFieldCodeName',
-      formConfig: {
-        compAttr: {
-          type: 'Input',
-        },
-        itemAttr: {
-          rules: []
-        }
-      },
     },
   ];
 
@@ -264,7 +234,7 @@ const ReferenceTable = ({ tab, updateListData }) => {
   * 将后端返回的列表值转换成页面的显示值
   */
   const toShow = (type, data) => {
-    console.log({ toShow: data });
+    // console.log({ toShow: data });
     const copyData = JSON.parse(JSON.stringify(data));
     return copyData.map((row, index) => {
       const enumArr = [
@@ -275,16 +245,6 @@ const ReferenceTable = ({ tab, updateListData }) => {
         const { key, enumList } = item;
         row[key] = codeToText({ arr: enumList, val: row[key] });
       });
-
-      ['refFieldCode', 'refDisplayFieldCode'].forEach((key) => {
-        row[key] = row[`${key}Name`];
-      });
-
-      // ItemTypes.name=codeToText({})
-      // row.refTableCode = codeToText({ arr: , val: row.refTableCode });
-      // ['refFieldCode', 'refDisplayFieldCode'].forEach((key) => {
-      //   row[key] = codeToText({ arr: refTableCodeEnum, val: row[key] });
-      // })
 
       if (type === '外键设置') {
         ['deleteStrategy', 'updateStrategy'].forEach((key) => {

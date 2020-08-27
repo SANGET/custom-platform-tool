@@ -52,7 +52,7 @@ export const defaultState = {
     gmtCreate: "",
     modifiedBy: null,
     gmtModified: "",
-    auxTable: {},
+    AUX_TABLE: {},
     treeTable: null,
     sql_view: null,
     relation_tables: [],

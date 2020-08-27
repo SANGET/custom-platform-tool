@@ -3,7 +3,7 @@
   * 数据类型与长度 小数位 必填 唯一 字典 是否转拼音 编码规则联动关系
   */
 export const fieldLinkObj = {
-  VARCHAR: {
+  STRING: {
     DataTypeEnum: [
       { value: "PK", text: "主键字段" },
       { value: "QUOTE", text: "引用字段" },

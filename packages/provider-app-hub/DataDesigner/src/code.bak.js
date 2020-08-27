@@ -17,8 +17,8 @@
 //   name: string;
 //   /** 字段编码 */
 //   code:string;
-//   /** 字段类型-VARCHAR(字符串)INT(整型)TIME(时间)DATE(日期时间)TEXT(超大文本) */
-//   fieldType:"VARCHAR"|"INT"|"TIME"|"DATE"|"TEXT";
+//   /** 字段类型-STRING(字符串)INT(整型)TIME(时间)DATE(日期时间)TEXT(超大文本) */
+//   fieldType:"STRING"|"INT"|"TIME"|"DATE"|"TEXT";
 //   /** 数据类型 NORMAL(普通字段)PK(主键字段)QUOTE(引用字段)DICT(字典字段)FK(外键字段) */
 //   dataType:'NORMAL'|"PK"|"QUOTE"|"DICT"|"FK";
 //   /** 业务字段类型 */

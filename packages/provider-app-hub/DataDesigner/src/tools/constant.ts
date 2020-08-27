@@ -1,7 +1,7 @@
 /*
  * @Author: wph
  * @Date: 2020-07-22 09:23:52
- * @LastEditTime: 2020-08-25 10:18:06
+ * @LastEditTime: 2020-08-27 16:48:10
  * @LastEditors: Please set LastEditors
  * @Description: 权限功能单元与页面状态无关的方法
  * @FilePath: \custom-platform-v3-frontend\packages\provider-app-hub\AuthManager\src\features\authItem\authItem.ts
@@ -47,14 +47,14 @@ export const DataTypeEnum :Array<IDataType> = [
  * 字段类型约束
 */
 interface IFieldType{
-  value:"VARCHAR" | "INT" | "TIME"|"DATE"|"DATETIME"|"TEXT"|"BIGINT";
+  value:"STRING" | "INT" | "TIME"|"DATE"|"DATETIME"|"TEXT"|"BIGINT";
   text:"字符串"|"整型"|"时间"|"日期时间"|"超大文本"|"长整型"|"日期";
 }
 /**
  * 字段类型枚举
  */
 export const FieldTypeEnum :Array<IFieldType> = [
-  { value: "VARCHAR", text: "字符串" },
+  { value: "STRING", text: "字符串" },
   { value: "INT", text: "整型" },
   { value: "TIME", text: "时间" },
   { value: "DATE", text: "日期" },
@@ -66,8 +66,8 @@ export const FieldTypeEnum :Array<IFieldType> = [
  * 业务字段类型约束
 */
 interface ISpeciesType{
-  value:"SYS" | "BIS" ;
-  text:"系统"|"业务";
+  value:"SYS" | "BIS" | "SYS_TMPL" | "BIS_TMPL";
+  text:"系统"|"业务"|"系统元数据"|"业务元数据";
 }
 /**
  * 业务字段类型枚举
@@ -75,13 +75,15 @@ interface ISpeciesType{
 export const SpeciesTypeEnum :Array<ISpeciesType> = [
   { value: "SYS", text: "系统" },
   { value: "BIS", text: "业务" },
+  { value: "SYS_TMPL", text: "系统元数据" },
+  { value: "BIS_TMPL", text: "业务元数据" },
 ];
 
 /**
  * 表类型枚举
 */
 interface ITableType{
-  value:"normalTable" | "tree" | "auxTable";
+  value:"TABLE" | "TREE" | "AUX_TABLE";
   text:"普通表"|"树形表"|"附属表";
 }
 
@@ -89,9 +91,9 @@ interface ITableType{
  * 表类型枚举
  */
 export const TableTypeEnum :Array<ITableType> = [
-  { value: "normalTable", text: "普通表" },
-  { value: "tree", text: "树形表" },
-  { value: "auxTable", text: "附属表" }
+  { value: "TABLE", text: "普通表" },
+  { value: "TREE", text: "树形表" },
+  { value: "AUX_TABLE", text: "附属表" }
 ];
 
 /**

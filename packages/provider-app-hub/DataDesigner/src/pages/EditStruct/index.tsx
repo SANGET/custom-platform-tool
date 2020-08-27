@@ -92,7 +92,14 @@ const EditStruct = ({ treeData }) => {
     fetchSelectTreeData();
 
     /** 如果有记录存在,不在请求后端,不然会覆盖掉还未提交到后端的记录 */
-    if (structRowData.id) { return; }
+    /** 但要过滤掉新增的什么都没填写的无效记录 */
+    // if (structRowData.id) {
+    //   ['foreignKeys', 'references', 'columns'].forEach((key) => {
+    //     structRowData[key] = structRowData[key].filter((item) => item.isUnSubmit && (item.code || item.fieldCode));
+    //     updateListData(key, structRowData[key]);
+    //   });
+    //   // return;
+    // }
 
     /** 获取表结构列表带过来的行记录id */
     const { id } = getUrlParams(undefined, undefined, true);
@@ -102,20 +109,31 @@ const EditStruct = ({ treeData }) => {
     const rowId = id || structRowData.id;
     /** 查询表结构详情 */
     Http.get(`/smart_building/data/v1/tables/${rowId}`, {}).then((res) => {
-      /** 设置表结构详情 */
-      dispatch({
-        type: 'setStructRowData',
-        structRowData: res.data.result
-      });
-
       /** 编辑表表单公共信息 */
       const {
-        name, code, type, moduleId
+        name, code, type, moduleId, columns,
       } = res.data.result;
 
       /** 设置表结构编辑表单公共信息 */
       form.setFieldsValue({
         name, code, type, moduleId
+      });
+
+      const cols = columns.map((item) => {
+        /** 字典字段转换  */
+        if (item.dictionaryForeign) {
+          /** 给后端提交的数据是一个对象 */
+          item.dictionaryForeignSubmit = item.dictionaryForeign;
+          /** 页面需要展示中文字典名 */
+          item.dictionaryForeign = item.dictionaryForeign.refTableName;
+        }
+      });
+
+      res.data.result.columns = cols;
+      /** 设置表结构详情 */
+      dispatch({
+        type: 'setStructRowData',
+        structRowData: res.data.result
       });
     });
   }, []);
@@ -224,6 +242,40 @@ const EditStruct = ({ treeData }) => {
       onClick: () => {
         /** 编辑表的主表单在点击保存按钮的时候校验,每个tab中国的表单,在tab页中的子表单中校验 */
         form.validateFields().then(() => {
+          /** 新增数据,提交时要清空id,让后端填充 */
+          ['foreignKeys', 'references', 'columns'].forEach((key) => {
+            structRowData[key] = structRowData[key].map((item, index) => {
+              if (item.isUnSubmit) {
+                delete item.id;
+                delete item.isUnSubmit;
+              }
+              /** 排序号后端要求必须填写 */
+              item.sequence = index + 1;
+              return item;
+            });
+          });
+
+          /** 表字段 页面数据转提交数据 */
+          structRowData.columns = structRowData.columns.map((item) => {
+            // console.log(item);
+            item.fieldProperty = item.fieldProperty || {};
+            ['pinyinConvent', 'required', 'unique'].forEach((key) => {
+              if (item[key]) {
+                item.fieldProperty[key] = item[key];
+              }
+              item[key] !== undefined && delete item[key];
+            });
+            /** 字典字段转换 页面展示时是一个值,提交时是一个对象 */
+            if (item.dictionaryForeignSubmit) {
+              item.dictionaryForeign = item.dictionaryForeignSubmit;
+              delete item.dictionaryForeignSubmit;
+            }
+
+            return item;
+          });
+
+          // console.log({ structRowData });
+
           Http.put('/smart_building/data/v1/tables/', structRowData).then((res) => {
             resetStore();
             Msg.success('操作成功');
@@ -253,7 +305,7 @@ const EditStruct = ({ treeData }) => {
       size: 'small' as const,
       style: { marginTop: '20px' },
       onTabClick: (activeKey) => {
-        console.log(activeKey);
+        // console.log(activeKey);
       },
     },
     panes: [

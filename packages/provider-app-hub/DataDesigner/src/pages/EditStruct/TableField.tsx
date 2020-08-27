@@ -91,8 +91,8 @@ const TableField = ({ updateListData }) => {
       name: name || '',
       /** 字段编码 */
       code: code || '',
-      /** 字段类型-VARCHAR(字符串)INT(整型)TIME(时间)DATE(日期时间)TEXT(超大文本) */
-      fieldType: "VARCHAR",
+      /** 字段类型-STRING(字符串)INT(整型)TIME(时间)DATE(日期时间)TEXT(超大文本) */
+      fieldType: "STRING",
       /** 数据类型 NORMAL(普通字段)PK(主键字段)QUOTE(引用字段)DICT(字典字段)FK(外键字段) */
       dataType: 'FK',
       /** 业务字段类型 SYS(系统元数据)BIS(业务元数据) */
@@ -103,7 +103,12 @@ const TableField = ({ updateListData }) => {
       required: 'false',
       /** 唯一 */
       unique: 'false',
-      dictionaryForeign: '',
+      /**
+       * refTableCode	String	是	字典表名
+       * refFieldCode	String	是	字典保存字段,写死code值
+       * refDisplayFieldCode
+       */
+      dictionaryForeign: null,
       fieldSize: 2,
       /** 转换成拼音 */
       pinyinConvent: 'true',
@@ -157,7 +162,7 @@ const TableField = ({ updateListData }) => {
     }
   };
   /** fieldType 必须配置初始值 */
-  const [link, setLink] = useState({ dataType: 'PK', fieldType: 'VARCHAR' });
+  const [link, setLink] = useState({ dataType: 'PK', fieldType: 'STRING' });
   // console.log(fieldLinkObj[link.fieldType].DataTypeEnum);
 
   /**
@@ -397,7 +402,7 @@ const TableField = ({ updateListData }) => {
   // console.log({ toShow: data });
     const copyData = JSON.parse(JSON.stringify(data));
     return copyData.map((row, index) => {
-    /**
+      /**
     * 唯一,必填,转换成拼音 这几项后端返回的值是一个对象,页面展示需要进行拆解
     */
       /** 有可能没有值 */
@@ -406,11 +411,6 @@ const TableField = ({ updateListData }) => {
         row.required = codeToText({ arr: YNTypeEnum, val: row.fieldProperty.required }) || '';
         row.pinyinConvent = codeToText({ arr: YNTypeEnum, val: row.fieldProperty.pinyinConvent }) || '';
       }
-      //  else {
-      //   row.unique = '';
-      //   row.required = '';
-      //   row.pinyinConvent = '';
-      // }
 
       /** 前后端的数据结构不一致,后端将 unique required pinyinConvent 写在一个对象中,前端是分开的,所以要做转换 */
       row.unique = codeToText({ arr: YNTypeEnum, val: row.unique }) || '';
@@ -418,12 +418,12 @@ const TableField = ({ updateListData }) => {
       row.pinyinConvent = codeToText({ arr: YNTypeEnum, val: row.pinyinConvent }) || '';
 
       /**
-* 数据类型代码转文本
-*/
+      * 数据类型代码转文本
+      */
       row.dataType = codeToText({ arr: DataTypeEnum, val: row.dataType });
       /**
-* 字段类型代码转文本
-*/
+      * 字段类型代码转文本
+      */
       row.fieldType = codeToText({ arr: FieldTypeEnum, val: row.fieldType });
       /** 只有系统类型,会出现BIGINT,与产品协商,将BIGINT转换成数字 */
       if (row.fieldType === 'BIGINT') {
@@ -431,8 +431,8 @@ const TableField = ({ updateListData }) => {
       }
 
       /**
-* 分类代码转文本
-*/
+      * 分类代码转文本
+      */
       row.species = codeToText({ arr: SpeciesTypeEnum, val: row.species });
       return row;
     });
@@ -580,7 +580,7 @@ const TableField = ({ updateListData }) => {
           console.log({ values });
           // 全部是新增操作
           structRowData[PageKey] = structRowData[PageKey] || [];
-          structRowData[PageKey].push(values);
+          structRowData[PageKey].push({ ...values, id: `${new Date().getTime()}`, isUnSubmit: true });
           updateListData(PageKey, structRowData[PageKey]);
           Msg.success('操作成功');
           refForm.resetFields();

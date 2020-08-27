@@ -220,6 +220,15 @@ const BasicEditTable = ({
        */
       const row = (await form.validateFields());
 
+      /** 字典字段 页面上拿到的是名称,提交时按照接口约定的字段对象属性提交 */
+      if (row.dictionaryForeign) {
+        row.dictionaryForeignSubmit = {
+          refTableCode: row.dictionaryForeign,
+          refFieldCode: 'code',
+          refDisplayFieldCode: 'name'
+        };
+      }
+
       /**
       * 复制一份表格数据
       */

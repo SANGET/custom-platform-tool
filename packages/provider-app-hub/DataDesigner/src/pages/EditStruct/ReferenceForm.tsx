@@ -13,7 +13,7 @@ import { ForeignKeyStgyEnum } from '@provider-app/data-designer/src/tools/consta
 */
 import REG from '@provider-app/data-designer/src/tools/reg';
 /** 网络请求工具 */
-import Http, { Msg } from '@infra/utils/http';
+import Http from '@infra/utils/http';
 import { useMappedState } from 'redux-react-hook';
 /**
  * +引用字段弹窗组件
@@ -26,15 +26,7 @@ const ReferenceForm = ({
   const { structTableEnum } = useMappedState((state) => ({
     structTableEnum: state.structTableEnum
   }));
-  /**
-   * 引用字段--关联字段，显示字段下拉选项值
-   */
-  const RefFieldEnum = tableData.map((item) => {
-    return {
-      text: item.name,
-      value: item.code,
-    };
-  });
+
   /**
    * 选择关联表弹窗--左侧菜单树点击的节点值
    */
@@ -220,19 +212,8 @@ const ReferenceForm = ({
       compAttr: {
         type: 'BasicSelect',
         enum: refFieldEnum,
-        // onChange: onTypeChange
       }
     },
-    // sequence: {
-    //   itemAttr: {
-    //     label: "排序号",
-    //     rules: [{ required: true, message: '请输入排序号!' }],
-    //   },
-    //   compAttr: {
-    //     type: 'Input',
-    //     // onChange: onTypeChange
-    //   }
-    // },
 
   };
 
@@ -249,7 +230,6 @@ const ReferenceForm = ({
           compAttr: {
             type: 'BasicSelect',
             enum: ForeignKeyStgyEnum,
-          // onChange: onTypeChange
           }
         },
         updateStrategy: {
@@ -260,7 +240,6 @@ const ReferenceForm = ({
           compAttr: {
             type: 'BasicSelect',
             enum: ForeignKeyStgyEnum,
-          // onChange: onTypeChange
           }
         }
       });
