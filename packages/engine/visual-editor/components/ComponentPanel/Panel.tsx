@@ -15,12 +15,12 @@ export interface ComponentPanelProps {
   getDragItemConfig?: (item: EditorComponentClass) => DragItemConfig
 }
 
-const ComponentPanel = ({
+const ComponentPanel: React.FC<ComponentPanelProps> = ({
   componentPanelConfig,
   compClassData,
   itemWrapper,
   getDragItemConfig
-}: ComponentPanelProps) => {
+}) => {
   const { tabGroup } = componentPanelConfig;
 
   /**

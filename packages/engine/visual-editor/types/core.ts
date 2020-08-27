@@ -22,10 +22,6 @@ export interface ComponentBindPropsConfig {
 export interface EditorBasicElementClass<C> {
   /** 组件类型 id */
   id: string
-  // /** 父级 ID */
-  // parentID?: string
-  // /** 实例 ID */
-  // entityID?: string
   /** 组件类面板的显示名 */
   label: string;
   /** 组件类面板的显示名 */
@@ -143,12 +139,7 @@ export interface EditorPageEntity {
 export interface EditorComponentEntity extends EditorComponentClass {
   /** 实例 id */
   id: string
-  // /** horizontal 横向排序 */
-  // hOrder: number
-  // /** vertical 垂直排序 */
-  // vOrder: number
-  /** 组件实例状态数据 */
-  // entityState: EditorEntityState
+  /** 子元素 */
   body?: EditorComponentEntity[]
   /** 存储组件实例的状态 */
   propState?: EditorEntityState

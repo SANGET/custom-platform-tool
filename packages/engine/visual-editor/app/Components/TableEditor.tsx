@@ -1,7 +1,7 @@
 import React from 'react';
 import { Input } from '@infra/ui';
 
-export class TableEditor extends React.Component {
+export default class TableEditor extends React.Component {
   render() {
     const {
       onChange

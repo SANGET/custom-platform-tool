@@ -1,8 +1,8 @@
 import React from 'react';
 import { Input, Table, ShowModal } from '@infra/ui';
-import { TableEditor } from './TableEditor';
+import TableEditor from './TableEditor';
 
-export const EditableTable = () => {
+export default () => {
   return (
     <div>
       <span
