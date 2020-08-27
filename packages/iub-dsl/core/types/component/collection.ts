@@ -2,9 +2,13 @@ import { ElementBasic } from "@engine/layout-renderer/types";
 import {
   Selector, TreeSelector, Table, Button, Input
 } from "./components";
+import { CommonObjStruct } from "../public";
 
-/** 直接引用 action */
-// import { Action } from "../actions/action-collection";
+/**
+ * 1. 通过某种结构在解析的时候区分是否为静态
+ * 2. 针对不同的类型进行采用不同增强器解析/运行
+ * 3. UI接入的时候将统一的props, 转换成为真实组件使用的props
+ */
 
 /** 直接引用 action */
 type ActionDirectType = {
@@ -44,28 +48,44 @@ export interface ComponentElement extends ElementBasic {
   id: string;
   type: "component";
   /**
-   * 对应的 component
-   * TODO: 完善所有 component 的 mapping
-   */
-  component: ComponentType;
-  /** 存储通用 props 编辑后生成的数据 */
-  props?: {
-    /** 支持部分通用样式 */
-    style?: {};
-  };
-  /**
    * 用户操作触发的事件
    * TODO: 完善更多事件的定义
-   */
+  */
   actions?: Events;
-  // actions?: {
-  //   /** 鼠标点击 */
-  //   onClick?: ActionTypes;
-  //   /** 移动端手势处罚 */
-  //   onTap?: ActionTypes;
-  //   /** 值改变时的回调 */
-  //   onChange?: ActionTypes;
-  //   /** 获取焦点时的回调 */
-  //   onFocus?: ActionTypes;
+
+  /** UI隔离的唯一标示 */
+  componentType: string | 'Input'; // TODO
+  // schemasMapping: string;
+
+  /** 静态的props或style */
+  staticProps?: CommonObjStruct;
+  staticStyle?: CommonObjStruct;
+
+  // ! ⬆TODO:
+
+  /** 对应配置的style */
+  // style: {
+  //   display: {
+  //     type: 'codeControl',
+  //     when: [],
+  //     // condition: true,
+  //     condition: {
+  //       type: 'lowcode',
+  //       expression: '',
+  //       paramRes: [],
+  //     },
+  //     successValue: 'block',
+  //     faildValue: 'none'
+  //   }
   // };
+  props?: any;
+  // props: {
+  //   rules: [
+  //     {
+  //       type: 'sysRule',
+  //       rule: string;
+  //       faileTips: string
+  //     }
+  //   ]
+  // }
 }

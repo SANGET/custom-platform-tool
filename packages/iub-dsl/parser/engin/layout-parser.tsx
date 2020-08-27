@@ -23,9 +23,9 @@ export interface LayoutParserParams extends LayoutParserWrapper {
  * TODO: 完善布局
  */
 const containerLayoutParser = (layoutInfo, parseContext): React.CSSProperties => {
-  const visibility = typeof layoutInfo.props.visibility !== 'undefined' && parseContext.pageRuntimeState.data_UUID === false ? 'none' : 'flex';
+  // const visibility = typeof layoutInfo.props.visibility !== 'undefined' && parseContext.pageRuntimeState.data_UUID === false ? 'none' : 'flex';
   return {
-    display: visibility,
+    display: 'flex',
   };
 };
 
@@ -65,7 +65,9 @@ const renderLayout = (
           : childOfContainer;
       case 'componentRef':
         const Component = parserContext.bindComponent(node.componentID);
-        return Component;
+        return typeof componentWrapper === 'function'
+          ? componentWrapper(Component, { id, idx })
+          : Component;
     }
   });
 };

@@ -134,11 +134,33 @@ const SimpleCreateUser: TypeOfIUBDSL = {
   },
 
   /** 数据模型 */
+  // 表单数据、输入展示数据、  TODO: 隐藏字段? 后台的冗余数据?、 与其他交互的数据结构
+  // 思考上述这些方向是错的.
+  // 实际上是单个还是多个,都不知道的,但是都应该支持
   schemas: {
+    // 实际数据、
+    // 1-6绑定输入框  「关系处理?」
+    // 姓名、年龄
+    // TODO: 结构解析? 结构扩展?
+    // struct: {
+    //   show: {
+    //     type: 'string',
+    //     fieldMapping: 'location_UUID.field_UUID2',
+    //   },
+    //   value: {
+    //     type: 'string',
+    //     fieldMapping: 'location_UUID.field_UUID1'
+    //   }
+    // }
     data_UUID1: {
       type: 'string',
       defaultVal: '张三',
       fieldMapping: 'userTable_UUID.field_UUID1',
+      rules: [
+        { require: true },
+        { maxLength: '32' },
+        { minLength: '3' }
+      ],
     },
     data_UUID2: {
       type: 'num',
@@ -195,6 +217,8 @@ const SimpleCreateUser: TypeOfIUBDSL = {
         },
       }
     },
+    // 单独的部门和区域... 一个部分划分了很多个区域「关系」.. 三张表
+    // 部门列表
     data_UUID7: {
       type: 'structArray',
       struct: {
@@ -383,6 +407,7 @@ const SimpleCreateUser: TypeOfIUBDSL = {
   },
 
   /** 组件集合 */
+  // TODO: 表单提交校验放在哪？
   componentsCollection: {
     compUUID1: {
       id: "compUUID1",

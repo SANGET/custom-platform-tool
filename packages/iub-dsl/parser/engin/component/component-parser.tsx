@@ -1,137 +1,176 @@
-import React from "react";
+import React, {
+  useLayoutEffect,
+  Fragment, useState, useCallback, useMemo, useEffect
+} from "react";
 import { ComponentElement, ActionTypes } from "@iub-dsl/core/types/component/collection";
-import { UserBehavior } from "@iub-dsl/core";
+import { isPlainObject } from "lodash";
 import GetUIParser from "./ui";
 
-interface ComponentParseRes {
-  [compID: string]: JSX.Element
-}
-type ActionAnalysisResult = {
-  [action in UserBehavior]: (...any) => unknown;
+const testWithSchemas = (text: string) => /^@\(schemas\)/.test(text);
+const replaceWithSchemas = (text: string) => text.replace(/^@\(schemas\)/, '');
+
+/**
+ * 调度解析, 静态的props和需要被额外解析的props
+ * @param props 组件的所有props
+ */
+const propsParserScheduler = (props) => {
+  const propsKeys = Object.keys(props);
+  let propsItem;
+  const staticProps = {};
+  const runProps = {};
+  propsKeys.forEach((key) => {
+    propsItem = props[key];
+    if (typeof propsItem === 'string') {
+      if (testWithSchemas(propsItem)) {
+        runProps[key] = {
+          type: 'stateManage',
+          how: 'getState',
+          filed: replaceWithSchemas(propsItem)
+        };
+      } else {
+        staticProps[key] = propsItem;
+      }
+    }
+    // 如: 低代码的描述
+    if (isPlainObject(propsItem)) {}
+  });
+
+  return {
+    staticProps, runProps
+  };
 };
 
-interface EntityCompParam {
-  props: { [str: string]: unknown };
-  actions: ActionAnalysisResult;
-  dataSource?: any;
-  id: string;
-  value?: string;
-  text?: string;
-}
+const styleParserScheduler = (style) => {
+  const styleKeys = Object.keys(style);
+  let styleItem;
+  const staticStyle = {};
+  const runStyle = {};
+  styleKeys.forEach((key) => {
+    styleItem = style[key];
+    if (typeof styleItem === 'string') {
+      if (testWithSchemas(styleItem)) {
+        runStyle[key] = {
+          type: 'stateManage',
+          how: 'getState',
+          filed: replaceWithSchemas(styleItem)
+        };
+      } else {
+        staticStyle[key] = styleItem;
+      }
+    }
+    // 如: 低代码的描述
+    if (isPlainObject(styleItem)) {}
+  });
 
-interface EntityComp {
-  (param: EntityCompParam, context): JSX.Element;
-}
-
-const getfield = (str: string) => {
-  return str ? str.replace('@(schemas)', 'pageRuntimeState.').split('.').map((_) => _.trim()) : [];
+  return {
+    staticStyle, runStyle
+  };
 };
 
-const posfield = (posArr, parserContext) => {
-  return posArr.reduce((res, pos) => {
-    res = res[pos] || res.state[pos];
+const actionParserScheduler = (actons) => {
+
+};
+
+const resolveRunProps = (IUBRuntimeContext, runProps) => {
+  let temp;
+  return Object.keys(runProps).reduce((res, key) => {
+    temp = runProps[key];
+    // console.log(temp);
+    res.sourcePath[key] = temp.filed;
+    if (isPlainObject(temp)) {
+      res.resolveVal[key] = IUBRuntimeContext[temp.type][temp.how](temp.filed);
+    } else {
+      res.resolveVal[key] = '';
+    }
     return res;
-  }, parserContext);
+  }, {
+    resolveVal: {},
+    sourcePath: {}
+  });
 };
 
-const parsePublicProps = (props) => {
-  return props;
-};
-
-// 额外的转换
-const transformInputChange = (fn, compInfo, context) => {
-  return (value, elm): unknown => {
-    // console.log(value, elm);
-    // console.log(context);
-    // 统一接口规范处理
-    let { field } = compInfo;
-    field = field.replace('@(schemas)', '');
-    context.setPageRuntimeState({
-      [field]: value
-    });
-    return fn({
-      value, elm, field, context
-    });
-  };
-};
-
-// 处理弹窗选择的
-const transformInputClick = (fn, compInfo, context) => {
-  // Demo: 1、显示页面、2、等待页面信号 3、值的改变  ==>  数据变更关系
-  return (e: Event) => {
-    console.log(fn, compInfo, context);
-  };
-};
-
-const transformButtonClick = (fn, compInfo, context) => {
-  return (e: Event) => {
-    e.preventDefault();
-    e.stopPropagation();
-    const queryParam = context.dataCollection.getCollectionData('user');
-    console.log(queryParam);
-    return fn(e, queryParam);
-  };
-};
-
-// 额外的转换 -- EDN Demo用
-
-// const sysConfigKey = ['value', ]
-const resolveSysString = (str: string, context) => {
-  if (/@\(schemas\)/.test(str)) {
-    str = str.replace('@(schemas)', '');
-    return context.pageRuntimeState[str];
-  }
-  return str;
-};
-
-const sysCompConfigParser = (compConfig, context) => {
-  return Object.keys(compConfig).reduce((res, confKey) => {
-    const compConfigItem = compConfig[confKey];
-    if (typeof compConfigItem === 'string') {
-      res[confKey] = resolveSysString(compConfigItem, context);
-      // res[confKey] = JSON.stringify(res[confKey]);
-      if (typeof res[confKey] === 'object') {
-        res[confKey] = res[confKey].show;
+const resolveRunStyle = (IUBRuntimeContext, runStyle) => {
+  let temp;
+  let stateValue;
+  return Object.keys(runStyle).reduce((res, key) => {
+    temp = runStyle[key];
+    // console.log(temp);
+    if (isPlainObject(temp)) {
+      stateValue = IUBRuntimeContext[temp.type][temp.how](temp.filed);
+      // 低代码!!
+      if (key === 'display') {
+        res[key] = stateValue ? 'block' : 'none';
       }
     } else {
-      res[confKey] = compConfigItem;
+      res[key] = '';
     }
     return res;
   }, {});
 };
 
-const parseComponent = (compId, componentElement: ComponentElement, parserContext) => {
-  const pubPropsRes = parsePublicProps(componentElement.props);
-  let temp: ActionTypes;
-  const compUseActions = typeof componentElement.actions === 'object' ? componentElement.actions : {};
-  const actions = Object.keys(compUseActions).reduce((r, actionType) => {
-    temp = compUseActions[actionType];
-    r[actionType] = temp.type === 'actionRef' ? parserContext.bindAction(temp.actionID) : () => {};
-    if (actionType === 'onChange') {
-      r[actionType] = transformInputChange(r[actionType], componentElement.component, parserContext);
-    } else if (actionType === 'onClick' && componentElement.component.type === 'Button') {
-      r[actionType] = transformButtonClick(r[actionType], componentElement.component, parserContext);
-    } else if (actionType === 'onClick' && componentElement.component.type === 'Input') {
-      r[actionType] = transformInputClick(r[actionType], componentElement.component, parserContext);
+/**
+ * 解析要素
+ * 1. 获取组件「组件Comp」
+ * 2. 解析props「静态props、动态增强解析的props」
+ * 3. 事件容器绑定
+ *
+ * 1. 组件特有props // 实际上,应该是并不知道的, 而是有内部隔离的实现
+ * 2. 需求公共props
+ * 3. 需求的style
+ * 4. 业务逻辑导致的style
+ * 5. 业务逻辑导致props
+ */
+const parseComponent = (compId: string, componentElement: ComponentElement, parserContext) => {
+  const CompConstructor: React.FC<any> = GetUIParser(componentElement.componentType);
+  const { actions = {}, props = {}, style = {} } = componentElement;
+
+  const { staticProps, runProps } = propsParserScheduler(props);
+
+  const { staticStyle, runStyle } = styleParserScheduler(style);
+
+  //  解析动作
+  let resolvedEvents;
+
+  // CompConstructor
+  return (IUBRuntimeContext) => {
+    if (!resolvedEvents) {
+      resolvedEvents = Object.keys(actions || {}).reduce((res, key) => {
+        res[key] = parserContext.bindAction(actions[key].actionID)(IUBRuntimeContext);
+        return res;
+      }, {});
     }
-    return r;
-  }, {} as ActionAnalysisResult);
+    // TODO: 是否再包裹一层
+    // console.log({ staticProps, runProps });
+    // console.log({ staticStyle, runStyle });
 
-  // 接口反射、中间件、代理??
+    // useEffect(() => {
+    //   if (Reflect.has(newEvents, 'onMount')) {
+    //     newEvents.onMount();
+    //   }
+    //   return () => {
+    //     console.log('unMount');
+    //   };
+    // }, []);
+    const { resolveVal, sourcePath } = resolveRunProps(IUBRuntimeContext, runProps);
 
-  const UIParser = GetUIParser(componentElement.component.type);
-
-  // 解析组件特定的参数
-  const compConfig = UIParser.parseCompProps(
-    sysCompConfigParser(componentElement.component, parserContext)
-  );
-
-  return UIParser.renderComp({
-    pubPropsRes,
-    actions,
-    compId,
-    componentConfig: compConfig
-  });
+    return (
+      <CompConstructor
+        id={compId}
+        events={resolvedEvents}
+        sourcePath={sourcePath}
+        // setStyle={staticStyle}
+        style= {{
+          ...resolveRunStyle(IUBRuntimeContext, runStyle)
+        }}
+        {
+          ...staticProps
+        }
+        {
+          ...resolveVal
+        }
+      ></CompConstructor>
+    );
+  };
 };
 
 /**
@@ -141,7 +180,9 @@ const ComponentCollectionParser = (
   componentCollection: { [compID: string]: ComponentElement },
   parserContext // 依赖~
 ) => {
-  const parseResult: ComponentParseRes = {};
+  /** 一次解析仅有一个解析后的Comp */
+  const resolvedComp = {};
+  const parseResult = {};
   let temp: ComponentElement;
   const componentIdArr = Object.keys(componentCollection);
 
