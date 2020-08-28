@@ -1,7 +1,7 @@
 /*
  * @Author: your name
  * @Date: 2020-07-22 09:23:52
- * @LastEditTime: 2020-08-27 18:01:41
+ * @LastEditTime: 2020-08-28 14:10:16
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: \custom-platform-v3-frontend\packages\infrastructure\utils\http.ts
@@ -18,8 +18,9 @@ export const { CancelToken } = axios;
 /** 创建axios实例 默认设置如下 */
 const Http = axios.create({
   /** baseURL将自动加在 url 前面,除非 url 是一个绝对 URL */
-  baseURL: process.env.NODE_ENV === "development" ? '/api' : '',
-  // baseURL: 'http://10.7.1.59:8080/paas/hy',
+  // baseURL: process.env.NODE_ENV === "development" ? '/api' : '',
+  /** 后端设置了允许跨域访问请求 */
+  baseURL: 'http://10.7.1.59:8080/paas/hy',
   /** timeout 指定请求超时的毫秒数(0 表示无超时时间), 如果请求话费了超过 timeout 的时间，请求将被中断 */
   timeout: 30 * 1000,
   /** withCredentials 表示请求跨域时是否带上cookie */

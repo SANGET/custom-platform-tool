@@ -72,13 +72,18 @@ const EditStruct = () => {
   * 为了是函数有扩展性,函数所需要的参数都通过传递,而不是在函数中直接使用全局变量
   */
   const updateListData = (key, data) => {
+    /** 表字段提交数据处理逻辑 */
     if (key === 'columns') {
-      /** 表格中的文本会破坏表单中的选项，要进行逆转换 */
+      /** 当表格中的行编辑表单有选项框时, 退出编辑状态时, 表单选项值原本的code,会被赋值成文本, */
+      /* 与后端要求的提交格式不一致, 所以要将选项文本值转换成对应的代码 */
       data = data.map((item) => {
         const enumMap = [
           { key: 'fieldType', enumArr: FieldTypeEnum },
           { key: 'dataType', enumArr: DataTypeEnum },
           { key: 'species', enumArr: SpeciesTypeEnum },
+          { key: 'pinyinConvent', enumArr: YNTypeEnum },
+          { key: 'required', enumArr: YNTypeEnum },
+          { key: 'unique', enumArr: YNTypeEnum },
         ];
 
         enumMap.forEach((enumItem) => {
@@ -92,7 +97,7 @@ const EditStruct = () => {
         //  YNTypeEnum, SpeciesTypeEnum
       });
 
-      console.log(data);
+      // console.log(data);
     }
 
     dispatch({
