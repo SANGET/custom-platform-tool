@@ -3,7 +3,7 @@ import CanvasStage from '@engine/visual-editor/components/CanvasStage';
 
 const CanvasStageCustom = (props) => {
   return (
-    <div>
+    <div style={{ height: '100%' }}>
       <CanvasStage {...props} />
     </div>
   );

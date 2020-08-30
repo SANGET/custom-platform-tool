@@ -12,15 +12,7 @@ const ToolbarCustom = ({
   ...otherProps
 }) => {
   return (
-    <div>
-      <Button onClick={(e) => {
-        onReleasePage && onReleasePage();
-      }}
-      >
-        发布页面
-      </Button>
-      <Toolbar {...otherProps} />
-    </div>
+    <Toolbar {...otherProps} />
   );
 };
 

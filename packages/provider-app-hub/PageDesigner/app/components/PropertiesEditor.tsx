@@ -10,7 +10,6 @@ const PropertiesEditor = ({
 }: PropsEditorProps) => {
   return (
     <div>
-      PropertiesEditor
       <Editor {...otherProps} />
     </div>
   );
