@@ -75,7 +75,8 @@ export default class LoginPanel extends Component<LoginPanelProps> {
         break;
     }
     return (
-      <div className={`login-panel fixbg ${fixed ? 'fixed' : ''}`}
+      <div
+        className={`login-panel fixbg ${fixed ? 'fixed' : ''}`}
         style={{
           backgroundImage
         }}

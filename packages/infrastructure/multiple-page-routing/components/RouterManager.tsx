@@ -1,11 +1,3 @@
-/*
- * @Author: your name
- * @Date: 2020-08-05 20:52:58
- * @LastEditTime: 2020-08-19 17:14:39
- * @LastEditors: Please set LastEditors
- * @Description: In User Settings Edit
- * @FilePath: \custom-platform-v3-frontend\packages\infrastructure\multiple-page-routing\components\RouterManager.tsx
- */
 import React, { Component } from "react";
 
 import { getUrlParams, UrlParamsRes } from "@mini-code/request/url-resolve";
@@ -39,9 +31,13 @@ export interface RouterEntity {
 }
 
 export interface RouterState {
+  /** 用于存储路由列表 */
   routers: string[];
+  /** 用于存储路由数据的 tree 结构 */
   routerInfo: RouterEntity;
+  /** 当前激活的路由 index */
   activeRouteIdx: number;
+  /** 当前激活的路由名 */
   activeRoute: string;
 }
 
@@ -55,7 +51,7 @@ let cachedState = Object.assign({}, defaultState);
 
 const getAllUrlParams = () => {
   const res = getUrlParams(undefined, undefined, true);
-  const nextRes: {} = typeof res === "string"
+  const nextRes = typeof res === "string"
     ? {
       _R: res,
     }
@@ -199,7 +195,7 @@ class MultipleRouterManager<
       if (currComIdx === -1) {
         nextRouters = [...routers, activeRoute];
         /** 做最大路由控制 */
-        if (nextRouters.length > maxRouters) {
+        if (maxRouters && nextRouters.length > maxRouters) {
           const [target, ...other] = nextRouters;
           nextRouters = other;
           delete nextRouterInfo[target];
@@ -222,7 +218,6 @@ class MultipleRouterManager<
     // let initRoute = resolvePath(location.hash)[0];
     const { defaultPath } = this;
     const initRouteInfo = getUrlParams(undefined, undefined, true);
-    console.log(initRouteInfo);
     const initRoute = initRouteInfo[getRouteKey()];
 
     defaultPath

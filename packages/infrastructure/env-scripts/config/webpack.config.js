@@ -55,7 +55,7 @@ module.exports = function (webpackEnv) {
     : isEnvDevelopment && '';
   const env = getClientEnvironment(publicUrl);
 
-  const getStyleLoaders = (cssOptions, preProcessor) => {
+  const getStyleLoaders = (cssOptions, preProcessor, preProcessorOptions = {}) => {
     const loaders = [
       isEnvDevelopment && require.resolve('style-loader'),
       isEnvProduction && {
@@ -89,6 +89,7 @@ module.exports = function (webpackEnv) {
         loader: require.resolve(preProcessor),
         options: {
           sourceMap: isEnvProduction && shouldUseSourceMap,
+          ...preProcessorOptions
         },
       });
     }
@@ -295,7 +296,12 @@ module.exports = function (webpackEnv) {
                   importLoaders: 2,
                   sourceMap: isEnvProduction && shouldUseSourceMap,
                 },
-                'less-loader'
+                'less-loader',
+                {
+                  lessOptions: {
+                    javascriptEnabled: true,
+                  }
+                }
               ),
               sideEffects: true,
             },
@@ -308,7 +314,12 @@ module.exports = function (webpackEnv) {
                   modules: true,
                   getLocalIdent: getCSSModuleLocalIdent,
                 },
-                'less-loader'
+                'less-loader',
+                {
+                  lessOptions: {
+                    javascriptEnabled: true,
+                  }
+                }
               ),
             },
             {

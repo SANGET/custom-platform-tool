@@ -101,11 +101,11 @@ checkBrowsers(paths.appPath, isInteractive)
     // Load proxy config
     const proxySetting = require(paths.appPackageJson).proxy;
     /**
-    * 如果从子项目的package.json 读取的proxy配置是对象,调用prepareProxy会出错,也特别处理一下
-    */
-    if (typeof proxySetting === 'object' && proxySetting.dataDesigner) {
+     * 如果从子项目的package.json 读取的proxy配置是对象,调用prepareProxy会出错,也特别处理一下
+     */
+    if (typeof proxySetting === 'object') {
       serverConfig = createDevServerConfig(
-        proxySetting.dataDesigner,
+        proxySetting,
         urls.lanUrlForConfig
       );
     } else {
