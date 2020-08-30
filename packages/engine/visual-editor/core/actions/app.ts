@@ -14,6 +14,7 @@ export interface InitAppAction {
   propItemsData
   pagePropsData
   pageData: BasePageData
+  options?: any
 }
 
 /**
@@ -26,6 +27,7 @@ export const InitApp = ({
   propItemsData,
   pagePropsData,
   pageData,
+  options = {}
 }): InitAppAction => {
   return {
     type: INIT_APP,
@@ -34,6 +36,7 @@ export const InitApp = ({
     propItemsData,
     pagePropsData,
     pageData,
+    options,
   };
 };
 

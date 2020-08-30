@@ -1,7 +1,9 @@
+import { ProviderAppContext } from './src/types';
+
 /**
  * 子应用接入规范
  */
-export interface SubAppSpec {
+export interface SubAppSpec extends ProviderAppContext {
   pageContext
 }
 

@@ -9,7 +9,7 @@ import ComponentPanel from './components/ComponentPanel';
 import CanvasStage from './components/CanvasStage';
 import PropertiesEditor from './components/PropertiesEditor';
 import {
-  getCompClassData, getCompPanelData, getPagePropsData, getPropertyItems, MOCK_PAGE_ID
+  getCompClassData, getCompPanelData, getPagePropsData, getPropertyItems
 } from "../mock-data";
 import { ApiGetPageData, ApiSavePage } from "../mock-api/edit-page";
 import { EditButton } from "./PageMetadataEditor/EditButton";
@@ -30,6 +30,7 @@ const PageDesignerApp: React.FC<VisualEditorAppProps> = (props) => {
     pageMetadata,
     appContext,
     flatLayoutItems,
+    appKey,
   } = props;
   // console.log(props);
   // 调整整体的数据结构，通过 redux 描述一份完整的{页面数据}
@@ -44,7 +45,7 @@ const PageDesignerApp: React.FC<VisualEditorAppProps> = (props) => {
     /** 初始化数据 */
     Promise.all([getCompClassData(), getCompPanelData(), getPagePropsData(), getPropertyItems()])
       .then(([compClassData, compPanelData, pagePropsData, propItemsData]) => {
-        ApiGetPageData(MOCK_PAGE_ID)
+        ApiGetPageData(appKey)
           .then((pageData) => {
             InitApp({
               compPanelData,
@@ -52,7 +53,10 @@ const PageDesignerApp: React.FC<VisualEditorAppProps> = (props) => {
               propItemsData,
               pagePropsData,
               /** 回填数据的入口 */
-              pageData
+              pageData,
+              options: {
+                appKey
+              }
             });
           });
 
@@ -90,8 +94,8 @@ const PageDesignerApp: React.FC<VisualEditorAppProps> = (props) => {
             className="mr10"
             onClick={(e) => {
               const pageData = wrapPageData({
-                id: MOCK_PAGE_ID,
-                pageID: MOCK_PAGE_ID,
+                id: appKey,
+                pageID: appKey,
                 name: '测试页面',
                 pageMetadata,
                 layoutInfo,
@@ -155,8 +159,6 @@ const PageDesignerApp: React.FC<VisualEditorAppProps> = (props) => {
   );
 };
 
-export {
-  PageDesignerApp
-};
+// const createPageDesignerApp = () => PageDesignerApp
 
 export default PageDesignerApp;

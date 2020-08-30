@@ -54,7 +54,7 @@ export default class App extends RouterMultiple<AppContainerProps, AppContainerS
   }
 
   appContext = {
-    location: this.history.location,
+    history: this.history,
     onNavigate: this.onNavigate
   }
 
@@ -84,23 +84,25 @@ export default class App extends RouterMultiple<AppContainerProps, AppContainerS
                 />
                 <div className="pages-container">
                   {
-                    Object.keys(routerInfo).map((pageID, idx) => {
-                      const pageItemInfo = routerInfo[pageID];
-                      const pageAuthInfo = pageAuthCache[pageID];
-                      const isShow = pageID === activeRoute;
-                      const pageKey = pageID;
+                    Object.keys(routerInfo).map((pagePath, idx) => {
+                      const pageItemInfo = routerInfo[pagePath];
+                      const pageAuthInfo = pageAuthCache[pagePath];
+                      const isShow = pagePath === activeRoute;
+                      const pageKey = pagePath;
 
-                      // TODO: 优化加载页面
-                      const C = router[pageID] || 'div';
+                      /**
+                       * 从路由配置中找到 pagePath 对应的页面
+                       */
+                      const C = router[pagePath.split('?')[0]] || 'div';
 
                       return (
                         <PageContainer
-                          pageID={pageID}
+                          pagePath={pagePath}
                           pageAuthInfo={pageAuthInfo}
                           appContext={this.appContext}
+                          location={this.location}
                           className="page"
                           key={pageKey}
-                          id={pageID}
                           style={{
                             display: isShow ? 'block' : 'none'
                           }}

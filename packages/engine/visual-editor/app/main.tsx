@@ -21,7 +21,6 @@ import {
 } from "../mock-data";
 import Style from './style';
 import { ApiGetPageData, ApiSavePage } from "../mock-api/edit-page";
-import { MOCK_PAGE_ID } from "../mock-data/page";
 
 import '../style/index.scss';
 import { FrameLayout } from "../components/LayoutFrame";
@@ -46,6 +45,7 @@ const VisualEditorApp: React.FC<VisualEditorAppProps> = (props) => {
     pageMetadata,
     appContext,
     flatLayoutItems,
+    appKey,
   } = props;
   // console.log(props);
   // 调整整体的数据结构，通过 redux 描述一份完整的{页面数据}
@@ -60,7 +60,7 @@ const VisualEditorApp: React.FC<VisualEditorAppProps> = (props) => {
     /** 初始化数据 */
     Promise.all([getCompClassData(), getCompPanelData(), getPagePropsData(), getPropertyItems()])
       .then(([compClassData, compPanelData, pagePropsData, propItemsData]) => {
-        ApiGetPageData(MOCK_PAGE_ID)
+        ApiGetPageData(appKey)
           .then((pageData) => {
             console.log(pageData);
             InitApp({
@@ -107,8 +107,8 @@ const VisualEditorApp: React.FC<VisualEditorAppProps> = (props) => {
             className="mr10"
             onClick={(e) => {
               const pageData = wrapPageData({
-                id: MOCK_PAGE_ID,
-                pageID: MOCK_PAGE_ID,
+                id: appKey,
+                pageID: appKey,
                 name: '测试页面',
                 pageMetadata,
                 layoutInfo,

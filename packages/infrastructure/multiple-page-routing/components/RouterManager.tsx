@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import produce from "immer";
 
 import { getUrlParams, UrlParamsRes } from "@mini-code/request/url-resolve";
 import { Call } from "@mini-code/base-func";
@@ -83,6 +84,8 @@ class MultipleRouterManager<
 
   handleHistoryChange!: (pageID) => void;
 
+  location = history.location
+
   constructor(props) {
     super(props);
 
@@ -92,6 +95,7 @@ class MultipleRouterManager<
     this.unlisten = history.listen(this.handleHistory);
 
     this.state = cacheState ? cachedState : defaultState;
+    this.setLocation(history.location);
   }
 
   componentDidMount() {
@@ -106,6 +110,16 @@ class MultipleRouterManager<
     });
   };
 
+  setLocation = (location) => {
+    const params = getAllUrlParams();
+    this.location = produce(location, (draft) => {
+      return {
+        ...draft,
+        ...params
+      };
+    });
+  }
+
   handleHistory = (location, action) => {
     switch (action) {
       case "POP":
@@ -117,8 +131,11 @@ class MultipleRouterManager<
     }
     const { hash, state = {} } = location;
     // const activeRoute = resolvePath(hash)[0];
-    const activeRoute = getAllUrlParams()[getRouteKey()];
+    const params = getAllUrlParams();
+    const activeRoute = params[getRouteKey()];
     const nextRouterState = state.nextRouters;
+
+    this.setLocation(location);
     this.selectTab(activeRoute, nextRouterState);
 
     // hook 函数

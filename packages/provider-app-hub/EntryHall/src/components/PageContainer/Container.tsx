@@ -6,41 +6,50 @@ import React from 'react';
 import { ProviderAppContext } from '../../types';
 
 export interface ProviderPageContext extends ProviderAppContext {
-  pageID
+  pagePath
   pageAuthInfo
 }
 
 interface PageContainerProps extends React.DetailedHTMLProps<React.HTMLAttributes<HTMLDivElement>, HTMLDivElement> {
-  pageID?: string;
+  pagePath?: string;
   pageAuthInfo?: any;
+  location
   appContext: ProviderAppContext
   children: (pageContext: ProviderPageContext) => JSX.Element
   ChildComp: React.ElementType
 }
 
+const loadChild = (Child, props) => {
+  let C;
+  if (typeof Child === 'function') {
+    C = Child(props);
+    if (React.isValidElement(C)) {
+      return C;
+    }
+  }
+  return <C {...props} />;
+};
+
 export const PageContainer = (props: PageContainerProps) => {
   const {
-    pageID, pageAuthInfo, appContext,
-    children, className, ChildComp,
+    pagePath, pageAuthInfo, appContext, id,
+    children, className, ChildComp, location,
     ...otherProps
   } = props;
-  React.useEffect(() => {
-    return () => {
-      console.log('unmountPageContainer');
-    };
-  }, []);
+  const pageContext = {
+    pagePath,
+    pageAuthInfo,
+    location,
+    ...appContext
+  };
 
   return (
     <div
       {...otherProps}
     >
-      <ChildComp
-        pageID={pageID}
-        pageAuthInfo={pageAuthInfo}
-        {
-          ...appContext
-        }
-      />
+      {
+        loadChild(ChildComp, pageContext)
+      }
     </div>
   );
 };

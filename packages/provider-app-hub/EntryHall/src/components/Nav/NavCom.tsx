@@ -15,6 +15,7 @@ export const Nav = ({
     <div className="app-nav">
       {/* <span>LOGO</span> */}
       <Menu onClick={handleClick} mode="horizontal">
+        <Link to="/page-manager" className="" params={{ title: '页面管理' }}>页面管理</Link>
         <SubMenu key="sub1" icon={<MailOutlined />} title="页面设计">
           <Menu.Item key="111">
             <Link to="/page-manager" params={{ title: '页面管理' }}>页面管理</Link>

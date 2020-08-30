@@ -2,32 +2,40 @@ import { createStore, applyMiddleware } from 'redux';
 import { createLogger } from 'redux-logger';
 import AppReducers, { VisualEditorState } from '../reducers';
 
-let store: VisualEditorState | null;
+const storeCache: {
+  [storeID: string]: VisualEditorState
+} = {};
 
-export const getStore = () => {
-  return store;
-};
-
-export const disposeStore = () => {
-  store = null;
+export const getStore = (storeID: string) => {
+  return storeCache[storeID];
 };
 
 const logger = createLogger({
   // ...options
 });
 
+/**
+ * 用于存储多个 store
+ * @param storeID store ID
+ * @param preloadedState
+ */
 export default function createChatStore(
-  preloadedState?: VisualEditorState
+  /** 用于存储多个 store */
+  storeID: string,
+  preloadedState?: VisualEditorState,
 ) {
-  if (!store) {
-    store = createStore(
+  let _store = storeCache[storeID];
+  if (!_store) {
+    _store = createStore(
       AppReducers,
       preloadedState,
       applyMiddleware(
         // logger
       )
     );
+    // window[`$${storeID}`] = _store;
+    storeCache[storeID] = _store;
   }
 
-  return store;
+  return _store;
 }
