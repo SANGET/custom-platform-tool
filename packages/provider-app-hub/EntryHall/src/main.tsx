@@ -8,7 +8,7 @@ import { Provider, connect } from "unistore/react";
 
 import AuthSelector from "@infra/auth-selector/selector";
 import { authStore, authActions, AuthStore } from "./auth/actions";
-import { GlobalStyle } from './style/global-style';
+import Style from './style/style';
 import App from "./app";
 
 const defaultLang = navigator.language || navigator.userLanguage;
@@ -24,16 +24,18 @@ function selector(state) {
 
 const loginFormOptions = [
   {
-    ref: "AdminName",
+    ref: "loginName",
     type: "input",
     title: "账号",
     iconName: "account",
+    defaultValue: '1',
     required: true
   },
   {
-    ref: "Password",
+    ref: "password",
     type: "password",
     title: "密码",
+    defaultValue: '1',
     iconName: "lock",
     required: true
   },
@@ -52,7 +54,7 @@ type LoginFilterProps = AuthStore
 
 class LoginFilter extends React.Component<LoginFilterProps> {
   componentDidMount = () => {
-    // this.props.autoLogin();
+    this.props.autoLogin();
     // Call(window.OnLuanched);
     removeLoadingBG();
   }
@@ -69,9 +71,11 @@ class LoginFilter extends React.Component<LoginFilterProps> {
         isLogin={isLogin}
         formOptions={loginFormOptions}
       >
-        {isLogin ? (
-          <App {...this.props} />
-        ) : null}
+        {
+          isLogin ? (
+            <App {...this.props} />
+          ) : null
+        }
       </AuthSelector>
     );
   }
@@ -86,7 +90,7 @@ const C = () => (
     <Provider store={authStore}>
       <LoginFilterWithStore />
     </Provider>
-    <GlobalStyle/>
+    <Style/>
   </>
 );
 

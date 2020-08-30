@@ -12,7 +12,7 @@ export const Nav = ({
 
   };
   return (
-    <div>
+    <div className="app-nav">
       {/* <span>LOGO</span> */}
       <Menu onClick={handleClick} mode="horizontal">
         <SubMenu key="sub1" icon={<MailOutlined />} title="页面设计">

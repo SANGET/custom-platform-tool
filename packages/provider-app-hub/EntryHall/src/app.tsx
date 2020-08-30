@@ -3,19 +3,19 @@ import React from "react";
 import {
   RouterMultiple, Link,
   defaultState as defaultRouteState,
-  RouterState, RouterHelperProps
+  RouterState, RouterHelperProps, onNavigate
 } from 'multiple-page-routing';
 
 import { GetMenu } from './services/menu';
 import { PageContainer, Nav } from './components';
 import router from './config/router';
 
-import "antd/dist/antd.css";
 import { TabNav } from "./components/TabNav";
+import { Logo } from "./components/Logo";
 
 interface AppContainerState extends RouterState {
   ready?: boolean;
-  navStore?: [];
+  navStore?: any[];
   preparingPage?: boolean;
 }
 
@@ -49,48 +49,78 @@ export default class App extends RouterMultiple<AppContainerProps, AppContainerS
     });
   }
 
+  componentDidCatch(e) {
+    console.log(e);
+  }
+
+  appContext = {
+    location: this.history.location,
+    onNavigate: this.onNavigate
+  }
+
   render() {
     const {
       routers, routerInfo, activeRouteIdx, activeRoute,
       navStore, ready
     } = this.state;
-    console.log(routerInfo);
 
     return (
-      <div id="app-container">
+      <div id="provider_app_container">
         {
           ready ? (
             <>
-              <Nav navConfig={navStore} />
-              <TabNav routers={routers} routerInfo={routerInfo} activeRoute={activeRoute} />
-              <div className="pages-container">
-                {
-                  Object.keys(routerInfo).map((pageID, idx) => {
-                    const pageItemInfo = routerInfo[pageID];
-                    const pageAuthInfo = pageAuthCache[pageID];
-                    const isShow = pageID === activeRoute;
-                    const pageKey = pageID;
+              <header className="header layout a-c-c">
+                <Logo />
+                <Nav navConfig={navStore} />
+              </header>
+              <div id="provider_app_content">
+                <TabNav
+                  onClose={(idx) => {
+                    this.closeTab(idx);
+                  }}
+                  routers={routers}
+                  routerInfo={routerInfo}
+                  activeRoute={activeRoute}
+                />
+                <div className="pages-container">
+                  {
+                    Object.keys(routerInfo).map((pageID, idx) => {
+                      const pageItemInfo = routerInfo[pageID];
+                      const pageAuthInfo = pageAuthCache[pageID];
+                      const isShow = pageID === activeRoute;
+                      const pageKey = pageID;
 
-                    // TODO: 优化加载页面
-                    const C = router[activeRoute] || 'div';
+                      // TODO: 优化加载页面
+                      const C = router[pageID] || 'div';
 
-                    return (
-                      <div
-                        key={pageKey}
-                        style={{
-                          display: isShow ? 'block' : 'none'
-                        }}
-                      >
+                      return (
                         <PageContainer
                           pageID={pageID}
                           pageAuthInfo={pageAuthInfo}
+                          appContext={this.appContext}
+                          className="page"
+                          key={pageKey}
+                          id={pageID}
+                          style={{
+                            display: isShow ? 'block' : 'none'
+                          }}
+                          ChildComp={C}
                         >
-                          <C />
+                          {/* {
+                          (pageContext) => {
+                            console.log('asd');
+                            return (
+                              <C
+                                {...pageContext}
+                              />
+                            );
+                          }
+                        } */}
                         </PageContainer>
-                      </div>
-                    );
-                  })
-                }
+                      );
+                    })
+                  }
+                </div>
               </div>
             </>
           ) : (

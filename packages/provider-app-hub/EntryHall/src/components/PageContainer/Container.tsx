@@ -3,20 +3,44 @@
  */
 
 import React from 'react';
+import { ProviderAppContext } from '../../types';
 
-interface PageContainerProps {
+export interface ProviderPageContext extends ProviderAppContext {
+  pageID
+  pageAuthInfo
+}
+
+interface PageContainerProps extends React.DetailedHTMLProps<React.HTMLAttributes<HTMLDivElement>, HTMLDivElement> {
   pageID?: string;
-  pageAuthInfo?: {};
+  pageAuthInfo?: any;
+  appContext: ProviderAppContext
+  children: (pageContext: ProviderPageContext) => JSX.Element
+  ChildComp: React.ElementType
 }
 
 export const PageContainer = (props: PageContainerProps) => {
   const {
-    pageID, pageAuthInfo, children
+    pageID, pageAuthInfo, appContext,
+    children, className, ChildComp,
+    ...otherProps
   } = props;
-  // TODO: 数据的可用性统一管理
+  React.useEffect(() => {
+    return () => {
+      console.log('unmountPageContainer');
+    };
+  }, []);
+
   return (
-    <div className="page-container">
-      {children}
+    <div
+      {...otherProps}
+    >
+      <ChildComp
+        pageID={pageID}
+        pageAuthInfo={pageAuthInfo}
+        {
+          ...appContext
+        }
+      />
     </div>
   );
 };

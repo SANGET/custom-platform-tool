@@ -1,3 +1,4 @@
+/* eslint-disable no-param-reassign */
 /**
  * 这里是根据具体业务的处理filter
  */
@@ -6,7 +7,18 @@ import { RequestClass } from "@mini-code/request";
 
 import { authStore } from "../auth/actions";
 
-const $R = new RequestClass();
+/**
+ * 后端返回的数据结构
+ */
+interface ResStruct {
+  code: number
+  message: string
+  data?: any
+}
+
+const $R = new RequestClass<ResStruct>({
+  baseUrl: 'http://10.7.1.59:8080/paas/hy'
+});
 
 function getUserName() {
   return authStore.getState().username;
@@ -21,7 +33,7 @@ function getSessID() {
 function getCommonHeader() {
   const reqHeader = {
     SessId: getSessID(),
-    AdminName: getUserName(),
+    username: getUserName(),
   };
   return reqHeader;
 }
@@ -35,15 +47,15 @@ const beforeReq = (options) => {
     isCompress, method, data, ...params
   } = options;
   return {
-    header: Object.assign(
-      {},
-      getCommonHeader(data),
-      {
-        Compress: isCompress ? 1 : 0,
-        Method: method
-      },
-      { ...params }
-    ),
+    // header: Object.assign(
+    //   {},
+    //   getCommonHeader(data),
+    //   {
+    //     // Compress: isCompress ? 1 : 0,
+    //     Method: method
+    //   },
+    //   { ...params }
+    // ),
     // path: method,
     data
   };
@@ -67,7 +79,7 @@ const afterRes = (resData) => {
 };
 
 /** 使用 $R 的中间件 */
-$R.use([beforeReq, afterRes]);
+// $R.use([beforeReq, afterRes]);
 
 /**
  * 设置 $R 对象的 res
@@ -92,3 +104,18 @@ $R.on("onRes", handleRes);
 const $request = $R;
 
 export { $request, $R };
+
+export type $Request = typeof $R
+
+declare global {
+  const $R_P: typeof $R;
+}
+
+declare global {
+  interface Window {
+    /** Request helper for Provider app，简写 R_P，$ 是全局变量前缀, 生产工具的 HTTP 请求助手 */
+    $R_P: $Request;
+  }
+}
+
+window.$R_P = $R;

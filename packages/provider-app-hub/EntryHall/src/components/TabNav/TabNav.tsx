@@ -1,36 +1,46 @@
-import React from 'react';
-import { Tabs } from 'antd';
+import React, { useCallback } from 'react';
 import {
-  Link, onNavigate
+  Link
 } from 'multiple-page-routing';
 
-const { TabPane } = Tabs;
-
-export const TabNav = ({ routers, routerInfo, activeRoute }) => {
-  const onChange = (activeKey) => {
-    onNavigate({
-      type: 'PUSH',
-      route: activeKey,
-      params: routerInfo[activeKey].params
-    });
-  };
+export const TabNav = ({
+  routers, routerInfo, activeRoute, onClose
+}) => {
   return (
-    <Tabs
-      hideAdd
-      type="editable-card"
-      onChange={onChange}
-      activeKey={activeRoute}
+    <div
+      className="tabs-for-multiple-router"
     >
       {
-        routers.map((route) => {
+        routers.map((route, idx) => {
           const { params: routeInfoParams } = routerInfo[route];
           const { title, key, closable } = routeInfoParams;
           const _title = title || `${route}_未设置 title`;
           return (
-            <TabPane tab={_title} key={route} closable={closable} />
+            <div
+              key={route}
+              className="tab-item"
+            >
+
+              <Link
+                to={route}
+                className="tab-item-btn"
+                params={routeInfoParams}
+              >
+                {_title}
+              </Link>
+              <div
+                className="close-btn" onClick={(e) => {
+                  e.stopPropagation();
+                  e.preventDefault();
+                  onClose(idx);
+                }}
+              >
+                x
+              </div>
+            </div>
           );
         })
       }
-    </Tabs>
+    </div>
   );
 };

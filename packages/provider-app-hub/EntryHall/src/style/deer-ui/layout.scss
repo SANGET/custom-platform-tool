@@ -1,0 +1,35 @@
+$provider-header-height: 60px;
+$provider-nav-tabbar-height: 40px;
+
+#provider_app_container {
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+  bottom: 0;
+  .header {
+    position: absolute;
+    top: 0;
+    right: 0;
+    left: 0;
+    height: $provider-header-height;
+    background-color: $themeColor;
+    color: #FFF;
+  }
+  .pages-container {
+    position: absolute;
+    top: $provider-nav-tabbar-height;
+    right: 0;
+    left: 0;
+    bottom: 0;
+    overflow-y: auto;
+  }
+}
+
+#provider_app_content {
+  position: absolute;
+  top: $provider-header-height;
+  right: 0;
+  left: 0;
+  bottom: 0;
+}
