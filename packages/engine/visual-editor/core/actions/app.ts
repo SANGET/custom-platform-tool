@@ -36,3 +36,17 @@ export const InitApp = ({
     pageData,
   };
 };
+
+export const UNMOUNT_APP = 'app/unmount';
+export interface UnmountAppAction {
+  type: typeof UNMOUNT_APP
+}
+
+/**
+ * 初始化应用数据
+ */
+export const UnmountApp = (): InitAppAction => {
+  return {
+    type: UNMOUNT_APP,
+  };
+};

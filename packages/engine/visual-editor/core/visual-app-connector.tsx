@@ -1,6 +1,8 @@
 import React from 'react';
 import produce from 'immer';
 import { Provider as ReduxProvider, connect, ConnectedProps } from 'react-redux';
+import { DndProvider } from 'react-dnd';
+import { HTML5Backend } from 'react-dnd-html5-backend';
 
 import createStore from './store';
 import { AllDispatcherActions } from './actions';
@@ -52,14 +54,23 @@ const connector = connect(mapStateToProps, mapDispatchToProps);
 
 type PropsFromRedux = ConnectedProps<typeof connector>
 
+/**
+ * 重要，被链接的应用的缓存
+ */
+let ConnectedApp;
+
 const Connector = (
   ConnectApp
 ): React.FC<PropsFromRedux> => () => {
-  const ConnectedApp = connector(ConnectApp);
+  if (!ConnectedApp) {
+    ConnectedApp = connector(ConnectApp);
+  }
   return (
-    <ReduxProvider store={appStore}>
-      <ConnectedApp />
-    </ReduxProvider>
+    <DndProvider backend={HTML5Backend}>
+      <ReduxProvider store={appStore}>
+        <ConnectedApp />
+      </ReduxProvider>
+    </DndProvider>
   );
 };
 

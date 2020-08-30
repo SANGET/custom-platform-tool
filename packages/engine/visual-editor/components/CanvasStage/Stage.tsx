@@ -172,10 +172,13 @@ class CanvasStage extends React.Component<CanvasStageProps> {
     const {
       layoutNodeInfo,
       pageEntityState,
+      selectedInfo,
       onStageClick,
       DelEntity,
       dragableItemWrapper = dragableItemWrapperFac,
     } = this.props;
+    // console.log(layoutNodeInfo);
+    const hasNode = layoutNodeInfo.length > 0;
 
     const pageStyle = pageEntityState?.style;
 
@@ -215,7 +218,9 @@ class CanvasStage extends React.Component<CanvasStageProps> {
               onStageClick={onStageClick}
               style={pageStyle}
             >
-              {child}
+              {hasNode ? child : (
+                <div>请从左边拖入组件</div>
+              )}
             </DropStageContainer>
           )}
         />

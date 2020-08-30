@@ -1,8 +1,6 @@
 import React, { useEffect } from "react";
 
 import { Grid, Button } from '@infra/ui';
-import { DndProvider } from 'react-dnd';
-import { HTML5Backend } from 'react-dnd-html5-backend';
 
 import ToolBar from '@engine/visual-editor/components/Toolbar';
 import ComponentPanel from '@engine/visual-editor/components/ComponentPanel';
@@ -12,7 +10,6 @@ import PropertiesEditor from '@engine/visual-editor/components/PropertiesEditor'
 import { Dispatcher } from "@engine/visual-editor/core/actions";
 // import { VisualEditorStore } from "@engine/visual-editor/core/store";
 
-import { GlobalStyle } from '@engine/visual-editor/style/global-style';
 import { VisualEditorState } from "@engine/visual-editor/core/reducers/reducer";
 import { EditButton } from "../components/PageMetadataEditor";
 import { wrapPageData } from "../core/utils/wrap-page-data";
@@ -22,6 +19,7 @@ import {
   getPagePropsData,
   getPropertyItems,
 } from "../mock-data";
+import Style from './style';
 import { ApiGetPageData, ApiSavePage } from "../mock-api/edit-page";
 import { MOCK_PAGE_ID } from "../mock-data/page";
 
@@ -123,29 +121,27 @@ const VisualEditorApp: React.FC<VisualEditorAppProps> = (props) => {
         </div>
       </header>
       <div className="app-content">
-        <DndProvider backend={HTML5Backend}>
-          <div
-            className="comp-panel"
-          >
-            <ComponentPanel
-              componentPanelConfig={appContext.compPanelData}
-              compClassData={appContext.compClassData}
-            />
-          </div>
-          <div
-            className="canvas-container"
-          >
-            <CanvasStage
-              selectedInfo={selectedInfo}
-              layoutNodeInfo={layoutInfo}
-              pageMetadata={pageMetadata}
-              onStageClick={() => {
-                // SelectEntity(PageEntity);
-              }}
-              {...dispatcher}
-            />
-          </div>
-        </DndProvider>
+        <div
+          className="comp-panel"
+        >
+          <ComponentPanel
+            componentPanelConfig={appContext.compPanelData}
+            compClassData={appContext.compClassData}
+          />
+        </div>
+        <div
+          className="canvas-container"
+        >
+          <CanvasStage
+            selectedInfo={selectedInfo}
+            layoutNodeInfo={layoutInfo}
+            pageMetadata={pageMetadata}
+            onStageClick={() => {
+              // SelectEntity(PageEntity);
+            }}
+            {...dispatcher}
+          />
+        </div>
         <div
           className="prop-panel"
         >
@@ -164,7 +160,7 @@ const VisualEditorApp: React.FC<VisualEditorAppProps> = (props) => {
           }
         </div>
       </div>
-      <GlobalStyle />
+      <Style />
     </div>
   ) : (
     // TODO: 优化样式

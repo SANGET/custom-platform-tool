@@ -1,9 +1,10 @@
 import React from 'react';
 import { EditorComponentEntity, EditorEntityState } from '@engine/visual-editor/types';
+import classnames from 'classnames';
 import ContainerWrapperCom from './ContainerWrapperCom';
 import { getComp } from '../registerComp';
 
-export interface ComponentTypeRendererProps {
+export interface ComponentTypeRendererProps extends React.DetailedHTMLProps<React.HTMLAttributes<HTMLDivElement>, HTMLDivElement> {
   entity: EditorComponentEntity
   entityState: EditorEntityState
   node
@@ -22,7 +23,10 @@ const FormLabel = ({ children, className = '', ...props }) => (children ? (
 export const ComponentRenderer: React.FC<ComponentTypeRendererProps> = (props) => {
   const {
     entity,
-    entityState = {}
+    entityState = {},
+    node,
+    className,
+    ...otherProps
   } = props;
   const { component } = entity;
   const { label, style } = entityState;
@@ -63,9 +67,14 @@ export const ComponentRenderer: React.FC<ComponentTypeRendererProps> = (props) =
     default:
       break;
   }
+  const classes = classnames(
+    "comp-renderer",
+    className
+  );
   return (
     <div
-      className="comp-renderer"
+      {...otherProps}
+      className={classes}
       style={style}
     >
       {Com}

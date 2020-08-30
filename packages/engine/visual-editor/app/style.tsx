@@ -3,7 +3,7 @@ import React from 'react';
 import '@deer-ui/core/default.css';
 import { createGlobalStyle, ThemeContext } from 'styled-components';
 
-import './index.scss';
+import '../style/index.scss';
 
 const LocalGlobalStyle = createGlobalStyle`
   pre {
@@ -34,7 +34,7 @@ const LocalGlobalStyle = createGlobalStyle`
   }
 `;
 
-export function GlobalStyle(props) {
+export default function GlobalStyle(props) {
   return (
     <>
       <LocalGlobalStyle />
