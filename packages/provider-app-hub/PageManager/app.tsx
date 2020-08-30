@@ -3,18 +3,14 @@ import { Link } from "multiple-page-routing";
 
 // import PageDesigner from '@provider-app/page-designer';
 
-const App = () => {
+const App: HY.SubApp = (props) => {
   return (
     <div>
       <h2>页面管理器</h2>
       <Link
         to="/page-designer"
         params={{
-          id: '123',
-          object: {
-            id: '123124',
-            fad: 123124
-          }
+          title: '新建页面'
         }}
       >
         创建页面
