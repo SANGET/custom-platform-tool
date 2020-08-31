@@ -28,14 +28,14 @@ const loginFormOptions = [
     type: "input",
     title: "账号",
     iconName: "account",
-    defaultValue: '1',
+    defaultValue: 'hy',
     required: true
   },
   {
     ref: "password",
     type: "password",
     title: "密码",
-    defaultValue: '1',
+    defaultValue: '123456',
     iconName: "lock",
     required: true
   },
@@ -60,7 +60,7 @@ class LoginFilter extends React.Component<LoginFilterProps> {
   }
 
   render() {
-    const { isLogin, userInfo } = this.props;
+    const { isLogin } = this.props;
     // isLogin = process.env.NODE_ENV === "development" ? true : isLogin;
     return (
       <AuthSelector
