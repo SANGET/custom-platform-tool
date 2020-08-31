@@ -60,7 +60,7 @@ class LoginFilter extends React.Component<LoginFilterProps> {
   }
 
   render() {
-    const { isLogin, userInfo } = this.props;
+    const { isLogin } = this.props;
     // isLogin = process.env.NODE_ENV === "development" ? true : isLogin;
     return (
       <AuthSelector

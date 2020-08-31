@@ -5,22 +5,23 @@ import * as AUTH_APIS from "./apis";
 
 export interface AuthStore {
   /** 用户信息 */
-  userInfo: any;
-  // menuStore: {};
+  userInfo: any
+  prevLoginRes: any
+  // menuStore: {}
   /** 用户名 */
-  username: string;
+  username: string
   /** 登录后的返回信息 */
-  loginResDesc: string;
+  loginResDesc: string
   /** 是否自动登录中 */
-  autoLoging: boolean;
+  autoLoging: boolean
   /** 是否登录中 */
-  logging: boolean;
+  logging: boolean
   /** 是否登出中 */
-  logouting: boolean;
+  logouting: boolean
   /** 是否已登录 */
-  isLogin: boolean;
+  isLogin: boolean
   /** token */
-  token: string;
+  token: string
 }
 
 export function getPrevLoginToken() {
@@ -40,6 +41,7 @@ const defaultAuthStore: AuthStore = {
   logging: false,
   logouting: false,
   isLogin: !!getPrevLoginToken(),
+  prevLoginRes: {},
   // isLogin: process.env.NODE_ENV === 'development',
   token: "",
   // menuStore: NAV_MENU_CONFIG
@@ -58,10 +60,13 @@ export type AuthActions = (store: typeof authStore) => ({
 /**
  * 处理登录成功的回调
  */
-function onLoginSuccess(resData) {
-  const userInfo = resData;
-  const { username } = resData;
-  userInfo.username = username;
+function onLoginSuccess({ resData, originForm = {} }) {
+  const prevLoginRes = resData;
+
+  /** TODO: 提取页面需要的信息 */
+  const userInfo = {};
+  const { userName } = resData;
+  userInfo.username = userName;
   // let menuStore = (userInfo.Menus || {}).Child;
   const { token } = resData.loginSuccessInfo || {};
   // delete userInfo['Menus'];
@@ -70,10 +75,16 @@ function onLoginSuccess(resData) {
     autoLoging: false,
     isLogin: true,
     token,
-    username,
+    username: userName,
+    prevLoginRes,
     userInfo
     // menuStore
   };
+  $R_P.setConfig({
+    commonHeaders: {
+      Authorization: token
+    }
+  });
 
   EventEmitter.emit("LOGIN_SUCCESS", { userInfo, loginRes: resData });
   localStorage.setItem(PREV_LOGIN_DATA, JSON.stringify(resultStore));
@@ -112,18 +123,16 @@ const authActions: AuthActions = (store) => ({
   async autoLogin() {
     // const token = getPrevLoginToken();
     /** TODO: 是否有做 token 是否有效的接口验证 */
-    const prevLoginRes = getPrevLoginData();
-    if (!prevLoginRes) return;
+    const prevLoginState = getPrevLoginData();
+    if (!prevLoginState) return;
     // const loginRes = await AUTH_APIS.login({
     //   token
     // });
     /** 判断是否登录成功的逻辑 */
     // const isLogin = handleLoginSuccess(loginRes);
     // if (isLogin) {
-    // const nextStore = onLoginSuccess(
-    //   Object.assign({}, getPrevLoginData(), loginRes.data)
-    // );
-    store.setState(prevLoginRes);
+    onLoginSuccess({ resData: prevLoginState.prevLoginRes });
+    store.setState(prevLoginState);
     // }
   },
   /** 主动登录 */
@@ -136,7 +145,7 @@ const authActions: AuthActions = (store) => ({
     const isLogin = handleLoginSuccess(loginRes);
     if (isLogin) {
       Call(onSuccess, form);
-      const nextStore = onLoginSuccess(Object.assign({}, loginRes.result, form));
+      const nextStore = onLoginSuccess({ resData: loginRes.result, originForm: form });
       store.setState(nextStore);
     } else {
       store.setState({
