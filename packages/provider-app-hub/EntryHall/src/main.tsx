@@ -28,14 +28,14 @@ const loginFormOptions = [
     type: "input",
     title: "账号",
     iconName: "account",
-    defaultValue: '1',
+    defaultValue: 'hy',
     required: true
   },
   {
     ref: "password",
     type: "password",
     title: "密码",
-    defaultValue: '1',
+    defaultValue: '123456',
     iconName: "lock",
     required: true
   },

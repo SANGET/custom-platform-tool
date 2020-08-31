@@ -12,6 +12,7 @@ import router from './config/router';
 
 import { TabNav } from "./components/TabNav";
 import { Logo } from "./components/Logo";
+import { UserStatusbar } from "./components/UserStatusbar";
 
 interface AppContainerState extends RouterState {
   ready?: boolean;
@@ -59,9 +60,10 @@ export default class App extends RouterMultiple<AppContainerProps, AppContainerS
   }
 
   render() {
+    const { logout } = this.props;
     const {
       routers, routerInfo, activeRouteIdx, activeRoute,
-      navStore, ready
+      navStore, ready,
     } = this.state;
 
     return (
@@ -69,9 +71,11 @@ export default class App extends RouterMultiple<AppContainerProps, AppContainerS
         {
           ready ? (
             <>
-              <header className="header layout a-c-c">
+              <header className="header layout a-i-c a-c-c">
                 <Logo />
                 <Nav navConfig={navStore} />
+                <span className="flex"></span>
+                <UserStatusbar logout={logout} />
               </header>
               <div id="provider_app_content">
                 <TabNav
