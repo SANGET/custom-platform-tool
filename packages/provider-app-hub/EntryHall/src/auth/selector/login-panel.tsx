@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 
 import { FormGenerator, Alert } from "@deer-ui/core";
 
-const isDev = process.env.NODE_ENV == "development";
+const isDev = process.env.NODE_ENV === "development";
 const StoreLoginInfo = "STORE_LOGIN_INFO";
 
 export default class LoginPanel extends Component {
@@ -30,17 +30,17 @@ export default class LoginPanel extends Component {
 
     this.formOptions = [
       {
-        ref: "AdminName",
+        ref: "username",
         type: "input",
-        defaultValue: defaultUserInfo.AdminName,
+        defaultValue: 'asd',
         title: "账号",
         iconName: "account",
         required: true
       },
       {
-        ref: "Password",
+        ref: "password",
         type: "password",
-        defaultValue: defaultUserInfo.Password,
+        defaultValue: '123',
         title: "密码",
         iconName: "lock",
         required: true

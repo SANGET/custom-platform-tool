@@ -14,7 +14,7 @@ registerComponents();
 /**
  * step2，将可视化编辑器引擎的状态管理连接到 UI 应用
  */
-const App = Connector(VisualEditorApp);
+const App = Connector(VisualEditorApp, 'visual-editor');
 
 ReactDOM.render(
   <App />,

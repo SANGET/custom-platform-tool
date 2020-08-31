@@ -1,25 +1,32 @@
 import { $R } from '../../services';
 
-interface ResStruct {
-  code: number
-  message: string
-  data?: any
-}
-
 /**
  * 登录 api
  * @param data 登录数据
  */
-export function login(data) {
-  return new Promise<ResStruct>((resolve) => {
-    setTimeout(() => {
-      resolve({
-        code: 0,
-        message: 'success'
+export function login(data = {
+  loginName: "hy",
+  password: "123456"
+}) {
+  return new Promise((resolve) => {
+    $R.post("/manage/v1/users/login", data)
+      .then((res) => {
+        res.token = '1295915065878388737';
+        /** TODO: 完善 token 管理 */
+        $R.setConfig({
+          commonHeaders: {
+            Authorization: '1295915065878388737'
+          }
+        });
+        resolve(res);
       });
-    }, 1000);
+    // setTimeout(() => {
+    //   resolve({
+    //     code: 0,
+    //     message: 'success'
+    //   });
+    // }, 1000);
   });
-  // return $R.post("/login", data);
 }
 
 /**

@@ -23,7 +23,8 @@ const LoginSelector: SFC<LoginSelectorProps> = (props) => {
     default:
       container = (
         <LoginPanel
-          {...props}/>
+          {...props}
+        />
       );
   }
   return (
@@ -31,7 +32,8 @@ const LoginSelector: SFC<LoginSelectorProps> = (props) => {
       <CSSTransition
         key={isLogin ? 'LOGIN_SUCCESS' : 'NO_LOGIN_YET'}
         classNames="fade"
-        timeout={200}>
+        timeout={200}
+      >
         {container}
       </CSSTransition>
     </TransitionGroup>

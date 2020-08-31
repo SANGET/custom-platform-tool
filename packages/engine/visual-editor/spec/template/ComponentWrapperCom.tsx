@@ -20,16 +20,12 @@ const ComponentWrapperCom: React.FC<ComponentWrapperComProps> = (props) => {
   } = props;
   // console.log(currEntity._state);
   return (
-    <div
+    <ComponentRenderer
+      entityState={entityState}
+      entity={currEntity}
+      node={node}
       onClick={onClick}
-      className="relative"
-    >
-      <ComponentRenderer
-        entityState={entityState}
-        entity={currEntity}
-        node={node}
-      />
-    </div>
+    />
   );
 };
 

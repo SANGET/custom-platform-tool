@@ -23,6 +23,7 @@ export {
  */
 export interface AppDispatcher {
   InitApp: typeof AppActions['InitApp']
+  UnmountApp: typeof AppActions['UnmountApp']
 }
 
 /**
