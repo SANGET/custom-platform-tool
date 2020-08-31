@@ -5,10 +5,9 @@
   "description": "自定义 3.0 前端工程",
   "workspaces": [
     "packages/provider-app-hub/*",
-    "packages/iub-dsl/*",
-    "packages/engine/*",
+    "packages/engine/**/*",
     "packages/infrastructure/*",
-    "packages/consumer-app/*",
+    "packages/consumer-app/**/*",
     "packages/spec/*"
   ],
   "scripts": {
