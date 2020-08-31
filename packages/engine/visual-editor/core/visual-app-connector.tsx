@@ -1,18 +1,19 @@
 import React from 'react';
 import produce from 'immer';
 import { Provider as ReduxProvider, connect, ConnectedProps } from 'react-redux';
+import { DndProvider } from 'react-dnd';
+import { HTML5Backend } from 'react-dnd-html5-backend';
 
 import createStore from './store';
 import { AllDispatcherActions } from './actions';
 import { VisualEditorState } from './reducers/reducer';
-import { getItemFromNestingItemsByBody } from './utils';
 
 /** TODO: 完善 state */
-const mapStateToProps = (state: VisualEditorState) => {
+export const mapVisualStateToProps = (state: VisualEditorState) => {
   return produce(state, (draft) => {
     /** 设置 activeEntity */
-    const { layoutInfo, selectedInfo, flatLayoutItems } = draft;
-    const { nestingIdx, id } = selectedInfo;
+    const { selectedInfo, flatLayoutItems } = draft;
+    const { id } = selectedInfo;
     // if (!nestingIdx) return draft;
     // eslint-disable-next-line no-param-reassign
     draft.selectedInfo.entity = flatLayoutItems[id];
@@ -23,13 +24,14 @@ const mapStateToProps = (state: VisualEditorState) => {
 /**
  * 过滤所有 string 类型的 action，并且做 memoried
  */
-let dispatcherCache;
-const mapDispatchToProps = (dispatch) => {
-  if (!dispatcherCache) {
+const dispatcherCache = {};
+export const mapVisualDispatchToProps = (appKey) => (dispatch) => {
+  const AllDispatcherActionsCopy = { ...AllDispatcherActions };
+  if (!dispatcherCache[appKey]) {
     const tempActions = (function () {
       const obj = {};
-      for (const item in AllDispatcherActions) {
-        const _dispatch = AllDispatcherActions[item];
+      for (const item in AllDispatcherActionsCopy) {
+        const _dispatch = AllDispatcherActionsCopy[item];
         if (typeof _dispatch === 'function') {
           obj[item] = (...args) => {
             dispatch(_dispatch(...args));
@@ -39,28 +41,49 @@ const mapDispatchToProps = (dispatch) => {
       return obj;
     }());
 
-    dispatcherCache = {
+    dispatcherCache[appKey] = {
       dispatcher: tempActions
     };
   }
-  return dispatcherCache;
+  return dispatcherCache[appKey];
 };
 
-const appStore = createStore();
+// type PropsFromRedux = ConnectedProps<typeof connector>
 
-const connector = connect(mapStateToProps, mapDispatchToProps);
-
-type PropsFromRedux = ConnectedProps<typeof connector>
+/**
+ * @important
+ * @author zxj
+ * @description 重要的连接器，通过 HOC 的方式支持返回多个 redux connector 实例
+ */
+const ConnectedAppStore: {
+  [key: string]: React.ElementType
+} = {};
 
 const Connector = (
-  ConnectApp
-): React.FC<PropsFromRedux> => () => {
-  const ConnectedApp = connector(ConnectApp);
-  return (
-    <ReduxProvider store={appStore}>
-      <ConnectedApp />
-    </ReduxProvider>
-  );
+  ConnectApp,
+  appKey: string
+) => {
+  if (!appKey) {
+    throw Error('appKey 是必须且唯一的，请检查调用');
+  }
+  let C = ConnectedAppStore[appKey];
+  if (!C) {
+    const appStore = createStore(appKey);
+    // console.log(object);
+    const connector = connect(mapVisualStateToProps, mapVisualDispatchToProps(appKey));
+    const Comp = connector(ConnectApp);
+    C = (props) => {
+      return (
+        <DndProvider backend={HTML5Backend}>
+          <ReduxProvider store={appStore}>
+            <Comp {...props} appKey={appKey} />
+          </ReduxProvider>
+        </DndProvider>
+      );
+    };
+    ConnectedAppStore[appKey] = C;
+  }
+  return C;
 };
 
 export default Connector;

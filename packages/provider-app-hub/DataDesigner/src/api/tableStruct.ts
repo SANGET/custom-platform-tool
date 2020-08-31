@@ -19,14 +19,15 @@ import { listToTree } from '@provider-app/data-designer/src/tools/tree';
  * 请求菜单树,表结构的表类型列依赖菜单树数据
  */
 export const GetMenuTree = async () => {
-  const menuTreeRes = await Http.get('/page/v1/menus/list', {});
+  // const menuTreeRes = await Http.get('/page/v1/menus/list');
+  const menuTreeRes = await $R_P.get('/smart_building/page/v1/menus/list');
   // const menuTreeRes = await Http.get('http://localhost:60001/mock/menu.json');
-  return listToTree(menuTreeRes.data.result);
+  return listToTree(menuTreeRes.result);
 };
 
 /**
  * 请求菜单树,表结构的表类型列依赖菜单树数据
  */
 export const ReqCopyTableStructRecord = async (data) => {
-  return await Http.post('/data/v1/tables/copy', data);
+  return await $R_P.post('/smart_building/data/v1/tables/copy', data);
 };

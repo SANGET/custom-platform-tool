@@ -104,6 +104,7 @@ export const dragableItemWrapperFac: DragableItemWrapperFac = (
         onMove={onMove}
         dragItemClass={currEntity}
         type={ItemTypes.DragItemEntity}
+        className="relative drag-item"
         accept={[ItemTypes.DragItemEntity, ItemTypes.DragItemClass]}
       >
         <ComponentWrapperCom
@@ -113,7 +114,7 @@ export const dragableItemWrapperFac: DragableItemWrapperFac = (
             onClick(e, { entity: currEntity, idx });
           }}
           currEntity={currEntity}
-          entityState={entityState}
+          entityState={entityState || {}}
         >
           {children}
         </ComponentWrapperCom>
@@ -127,8 +128,6 @@ export const dragableItemWrapperFac: DragableItemWrapperFac = (
           删除
         </div>
       </DragItem>
-      <div className="hoving state-mark fill"></div>
-      <div className="selected state-mark fill"></div>
     </div>
   );
 };

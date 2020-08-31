@@ -1,0 +1,14 @@
+@import './deer-ui/index.scss';
+
+.app-nav {
+  // background-color: $themeColor;
+  .ant-menu {
+    border-bottom: none;
+  }
+}
+
+.ant-menu-item {
+  .link-btn {
+    color: inherit;
+  }
+}

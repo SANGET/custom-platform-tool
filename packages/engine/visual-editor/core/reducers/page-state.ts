@@ -60,10 +60,12 @@ export function appContextReducer(
     case INIT_APP:
       const {
         compClassData, compPanelData,
+        options,
         pagePropsData, propItemsData
       } = action;
       return {
         ready: true,
+        options,
         compClassData,
         compPanelData,
         pagePropsData,

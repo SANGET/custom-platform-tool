@@ -5,22 +5,23 @@ import * as AUTH_APIS from "./apis";
 
 export interface AuthStore {
   /** 用户信息 */
-  userInfo: any;
-  // menuStore: {};
+  userInfo: any
+  prevLoginRes: any
+  // menuStore: {}
   /** 用户名 */
-  username: string;
+  username: string
   /** 登录后的返回信息 */
-  loginResDesc: string;
+  loginResDesc: string
   /** 是否自动登录中 */
-  autoLoging: boolean;
+  autoLoging: boolean
   /** 是否登录中 */
-  logging: boolean;
+  logging: boolean
   /** 是否登出中 */
-  logouting: boolean;
+  logouting: boolean
   /** 是否已登录 */
-  isLogin: boolean;
+  isLogin: boolean
   /** token */
-  token: string;
+  token: string
 }
 
 export function getPrevLoginToken() {
@@ -28,7 +29,9 @@ export function getPrevLoginToken() {
   return res ? res.token : null;
 }
 
-const handleLoginSuccess = (loginRes) => loginRes.code === 0;
+const PREV_LOGIN_DATA = 'prev/login/data';
+
+const handleLoginSuccess = (loginRes) => loginRes.code === '00000';
 
 const defaultAuthStore: AuthStore = {
   userInfo: {},
@@ -37,7 +40,9 @@ const defaultAuthStore: AuthStore = {
   autoLoging: !!getPrevLoginToken(),
   logging: false,
   logouting: false,
-  isLogin: process.env.NODE_ENV === 'development',
+  isLogin: !!getPrevLoginToken(),
+  prevLoginRes: {},
+  // isLogin: process.env.NODE_ENV === 'development',
   token: "",
   // menuStore: NAV_MENU_CONFIG
 };
@@ -55,40 +60,50 @@ export type AuthActions = (store: typeof authStore) => ({
 /**
  * 处理登录成功的回调
  */
-function onLoginSuccess(store, resData) {
-  const userInfo = resData;
-  const { username } = resData;
-  userInfo.username = username;
-  // let menuStore = (userInfo.Menus || {}).Child;
-  const { token } = resData;
-  // delete userInfo['Menus'];
+function onLoginSuccess({ resData, originForm = {} }) {
+  const prevLoginRes = resData;
 
-  store.setState({
+  /** TODO: 提取页面需要的信息 */
+  const userInfo = {};
+  const { userName } = resData;
+  userInfo.username = userName;
+  // let menuStore = (userInfo.Menus || {}).Child;
+  const { token } = resData.loginSuccessInfo || {};
+  // delete userInfo['Menus'];
+  const resultStore = {
     logging: false,
     autoLoging: false,
     isLogin: true,
     token,
-    username,
+    username: userName,
+    prevLoginRes,
     userInfo
     // menuStore
+  };
+  $R_P.setConfig({
+    commonHeaders: {
+      Authorization: token
+    }
   });
 
   EventEmitter.emit("LOGIN_SUCCESS", { userInfo, loginRes: resData });
-  localStorage.setItem("PREV_LOGIN_DATA", JSON.stringify(resData));
+  localStorage.setItem(PREV_LOGIN_DATA, JSON.stringify(resultStore));
+
+  return resultStore;
 }
 
 /**
  * 清除所有登录信息
  */
 function clearPrevLoginData() {
-  localStorage.clear();
+  localStorage.removeItem(PREV_LOGIN_DATA);
 }
 
 /**
  * 获取上次登录的信息
  */
 function getPrevLoginData(): AuthStore | undefined {
-  const res = localStorage.getItem("PREV_LOGIN_DATA");
+  const res = localStorage.getItem(PREV_LOGIN_DATA);
   let result;
   if (res) {
     try {
@@ -106,21 +121,18 @@ function getPrevLoginData(): AuthStore | undefined {
 const authActions: AuthActions = (store) => ({
   /** 自动登录 */
   async autoLogin() {
-    const token = getPrevLoginToken();
-    if (!token) return;
-    const loginRes = await AUTH_APIS.login({
-      token
-    });
+    // const token = getPrevLoginToken();
+    /** TODO: 是否有做 token 是否有效的接口验证 */
+    const prevLoginState = getPrevLoginData();
+    if (!prevLoginState) return;
+    // const loginRes = await AUTH_APIS.login({
+    //   token
+    // });
     /** 判断是否登录成功的逻辑 */
-    const isLogin = handleLoginSuccess(loginRes);
-    if (isLogin) {
-      onLoginSuccess(
-        store,
-        Object.assign({}, getPrevLoginData(), loginRes.data)
-      );
-    }
-    // if (prevLoginData) {
-    //   onLoginSuccess(store, prevLoginData);
+    // const isLogin = handleLoginSuccess(loginRes);
+    // if (isLogin) {
+    onLoginSuccess({ resData: prevLoginState.prevLoginRes });
+    store.setState(prevLoginState);
     // }
   },
   /** 主动登录 */
@@ -133,7 +145,8 @@ const authActions: AuthActions = (store) => ({
     const isLogin = handleLoginSuccess(loginRes);
     if (isLogin) {
       Call(onSuccess, form);
-      onLoginSuccess(store, Object.assign({}, loginRes.data, form));
+      const nextStore = onLoginSuccess({ resData: loginRes.result, originForm: form });
+      store.setState(nextStore);
     } else {
       store.setState({
         logging: false,
@@ -147,7 +160,10 @@ const authActions: AuthActions = (store) => ({
       logouting: true
     });
     await AUTH_APIS.logout();
-    store.setState(defaultAuthStore);
+    store.setState({
+      ...defaultAuthStore,
+      isLogin: false
+    });
     clearPrevLoginData();
   }
 });

@@ -6,7 +6,7 @@
 
 import React from 'react';
 
-import { ComponentTypeRenderer } from './ComponentTypeRenderer';
+import { ComponentRenderer } from './ComponentRenderer';
 import { FacToComponentProps } from '../dragable-item-wrapper-fac';
 
 type ComponentWrapperComProps = FacToComponentProps
@@ -20,16 +20,12 @@ const ComponentWrapperCom: React.FC<ComponentWrapperComProps> = (props) => {
   } = props;
   // console.log(currEntity._state);
   return (
-    <div
+    <ComponentRenderer
+      entityState={entityState}
+      entity={currEntity}
+      node={node}
       onClick={onClick}
-      className="relative"
-    >
-      <ComponentTypeRenderer
-        entityState={entityState}
-        entity={currEntity}
-        node={node}
-      />
-    </div>
+    />
   );
 };
 

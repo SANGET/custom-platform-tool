@@ -7,6 +7,10 @@
   padding: 3px 10px;
 }
 
+.canvas-stage {
+  padding: 10px;
+}
+
 .component-class-panel {
   padding: 10px;
   .drag-item-group {
@@ -29,6 +33,7 @@
 
 .comp-renderer {
   padding: 10px;
+  background-color: #FFF;
   .form-title {
     margin-bottom: 10px;
     font-size: 16px;
@@ -37,23 +42,23 @@
 
 .dragable-item {
   position: relative;
+  transition: box-shadow 0.2s ease;
+  .drag-item {
+    z-index: 1;
+  }
+  >.state-mark {
+    z-index: 0;
+  }
   &:hover {
-    >.state-mark {
-      border-color: #a6bcf8;
-    }
+    box-shadow: 0 0 3px rgba(#a6bcf8, 1);
+    z-index: 2;
     .rm-btn {
       display: block;
     }
   }
-  &.hovering {
-    >.state-mark {
-      border-color: #a6bcf8;
-    }
-  }
   &.selected {
-    >.state-mark {
-      border-color: #376BFB;
-    }
+    box-shadow: 0 0 3px rgba(#376BFB, 1);
+    z-index: 3;
   }
   .rm-btn {
     display: none;

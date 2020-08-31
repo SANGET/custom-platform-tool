@@ -7,6 +7,7 @@
     "react-dom": "^16.13.1"
   },
   "dependencies": {
+    "@types/history": "^4.7.7",
     "@mini-code/base-func": "^1.1.0",
     "@mini-code/request": "^1.0.0-rc1.1",
     "history": "^4.9.0"

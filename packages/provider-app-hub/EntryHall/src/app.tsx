@@ -3,19 +3,20 @@ import React from "react";
 import {
   RouterMultiple, Link,
   defaultState as defaultRouteState,
-  RouterState, RouterHelperProps
+  RouterState, RouterHelperProps, onNavigate
 } from 'multiple-page-routing';
 
 import { GetMenu } from './services/menu';
 import { PageContainer, Nav } from './components';
 import router from './config/router';
 
-import "antd/dist/antd.css";
 import { TabNav } from "./components/TabNav";
+import { Logo } from "./components/Logo";
+import { UserStatusbar } from "./components/UserStatusbar";
 
 interface AppContainerState extends RouterState {
   ready?: boolean;
-  navStore?: [];
+  navStore?: any[];
   preparingPage?: boolean;
 }
 
@@ -49,48 +50,83 @@ export default class App extends RouterMultiple<AppContainerProps, AppContainerS
     });
   }
 
+  componentDidCatch(e) {
+    console.log(e);
+  }
+
+  appContext = {
+    history: this.history,
+    onNavigate: this.onNavigate
+  }
+
   render() {
+    const { logout } = this.props;
     const {
       routers, routerInfo, activeRouteIdx, activeRoute,
-      navStore, ready
+      navStore, ready,
     } = this.state;
-    console.log(routerInfo);
 
     return (
-      <div id="app-container">
+      <div id="provider_app_container">
         {
           ready ? (
             <>
-              <Nav navConfig={navStore} />
-              <TabNav routers={routers} routerInfo={routerInfo} activeRoute={activeRoute} />
-              <div className="pages-container">
-                {
-                  Object.keys(routerInfo).map((pageID, idx) => {
-                    const pageItemInfo = routerInfo[pageID];
-                    const pageAuthInfo = pageAuthCache[pageID];
-                    const isShow = pageID === activeRoute;
-                    const pageKey = pageID;
+              <header className="header layout a-i-c a-c-c">
+                <Logo />
+                <Nav navConfig={navStore} />
+                <span className="flex"></span>
+                <UserStatusbar logout={logout} />
+              </header>
+              <div id="provider_app_content">
+                <TabNav
+                  onClose={(idx) => {
+                    this.closeTab(idx);
+                  }}
+                  routers={routers}
+                  routerInfo={routerInfo}
+                  activeRoute={activeRoute}
+                />
+                <div className="pages-container">
+                  {
+                    Object.keys(routerInfo).map((pagePath, idx) => {
+                      const pageItemInfo = routerInfo[pagePath];
+                      const pageAuthInfo = pageAuthCache[pagePath];
+                      const isShow = pagePath === activeRoute;
+                      const pageKey = pagePath;
 
-                    // TODO: 优化加载页面
-                    const C = router[activeRoute] || 'div';
+                      /**
+                       * 从路由配置中找到 pagePath 对应的页面
+                       */
+                      const C = router[pagePath.split('?')[0]] || 'div';
 
-                    return (
-                      <div
-                        key={pageKey}
-                        style={{
-                          display: isShow ? 'block' : 'none'
-                        }}
-                      >
+                      return (
                         <PageContainer
-                          pageID={pageID}
+                          pagePath={pagePath}
                           pageAuthInfo={pageAuthInfo}
+                          appContext={this.appContext}
+                          location={this.location}
+                          className="page"
+                          key={pageKey}
+                          style={{
+                            display: isShow ? 'block' : 'none'
+                          }}
+                          ChildComp={C}
                         >
-                          <C />
+                          {/* {
+                          (pageContext) => {
+                            console.log('asd');
+                            return (
+                              <C
+                                {...pageContext}
+                              />
+                            );
+                          }
+                        } */}
                         </PageContainer>
-                      </div>
-                    );
-                  })
-                }
+                      );
+                    })
+                  }
+                </div>
               </div>
             </>
           ) : (

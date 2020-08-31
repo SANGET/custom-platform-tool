@@ -5,10 +5,15 @@ import { LayoutNodeInfo, ElemNestingInfo } from '../types';
  * LayoutWrapper 上下文
  */
 export interface LayoutWrapperContext {
+  /** 组件 ID */
   id: string
+  /** 组件 index */
   idx: number
+  /** 组件嵌套信息 */
   nestingInfo: ElemNestingInfo
+  /** 组件节点信息 */
   node: LayoutNodeInfo
+  /** 组件的 children */
   children?: React.ElementType[]
 }
 

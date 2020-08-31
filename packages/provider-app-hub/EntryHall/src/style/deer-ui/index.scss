@@ -1,0 +1,12 @@
+/**
+ * 设置 deer-ui 的样式
+ */
+
+@import "@deer-ui/core/style/var.scss";
+@import "./var.scss";
+@import "@deer-ui/core/style/index.scss";
+
+@import './ui.scss';
+@import './layout.scss';
+@import './tabs-for-router.scss';
+@import "./login.scss";

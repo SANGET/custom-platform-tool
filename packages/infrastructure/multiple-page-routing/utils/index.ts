@@ -1,30 +1,53 @@
 import { createBrowserHistory, Location } from "history";
+import produce from "immer";
 import { urlParamsToQuery, getUrlParams, UrlParamsRes } from "@mini-code/request/url-resolve";
 
-interface NavigateConfig {
+export interface NavParams {
+  [key: string]: any;
+}
+
+export interface NavigateConfig {
+  /** 从哪里来，由程序写入 */
   from?: Location;
-  params?: {};
-  type: 'PUSH' | 'GO_BACK' | 'LINK';
+  /** 路由参数 */
+  params?: NavParams;
+  /** 路由类型 */
+  type: 'PUSH' | 'GO_BACK' | 'LINK' | 'POP';
+  /** 需要跳转的路由 */
   route: string;
 }
 
-const history = createBrowserHistory();
+export const history = createBrowserHistory();
 
+/** 默认存放路由 key 的 url query 字段 */
 let ROUTE_KEY = "_R";
-const changeRouteKey = (routeKey: string) => {
+export const changeRouteKey = (routeKey: string) => {
   ROUTE_KEY = routeKey;
 };
-const getRouteKey = () => ROUTE_KEY;
 
-const pushToHistory = (url: string, params?) => {
+/**
+ * 获取 ROUTE_KEY
+ */
+export const getRouteKey = () => ROUTE_KEY;
+
+/**
+ * push to history
+ */
+export const pushToHistory = (url: string, params?) => {
   history.push(url.replace(/\/\//g, "/"), params);
 };
 
-const replaceHistory = (url: string, params?) => {
+/**
+ * replace history
+ */
+export const replaceHistory = (url: string, params?) => {
   history.replace(url.replace(/\/\//g, "/"), params);
 };
 
-const wrapPushUrl = (pushConfig: NavigateConfig) => {
+/**
+ * 包装通过 push 方式的 url 格式
+ */
+export const wrapPushUrl = (pushConfig: NavigateConfig) => {
   const { href, hash } = window.location;
   const targetHash = hash.replace("#/", "").split("?")[0];
   const { route, params } = pushConfig;
@@ -39,36 +62,32 @@ const wrapPushUrl = (pushConfig: NavigateConfig) => {
   return result;
 };
 
+export type OnNavigate = (config: NavigateConfig) => void
+
 /**
- * 导航者
- * @param {object} config { type: 'PUSH | GO_BACK | LINK', component: route, params: {} }
+ * 导航器
  */
-const onNavigate = (config: NavigateConfig) => {
-  if (!config) return console.log("Not config");
+export const onNavigate: OnNavigate = (config) => {
+  if (!config) {
+    throw Error('需要传入 config，请检查调用');
+  }
   const { location } = history;
-  const nextConfig = {
-    ...config,
-    from: location,
-  };
-  switch (nextConfig.type) {
+  const nextConfig = produce(config, (draft) => {
+    // eslint-disable-next-line no-param-reassign
+    draft.from = location;
+  });
+  const { type } = nextConfig;
+  switch (type) {
     case "PUSH":
       pushToHistory(`#/${wrapPushUrl(nextConfig)}`, nextConfig);
       break;
     case "LINK":
       break;
+    case "POP":
     case "GO_BACK":
       history.goBack();
       break;
+    default:
+      throw Error(`没找到类型 ${type}`);
   }
-};
-
-export {
-  history,
-  wrapPushUrl,
-  pushToHistory,
-  changeRouteKey,
-  replaceHistory,
-  getRouteKey,
-  onNavigate,
-  getUrlParams,
 };

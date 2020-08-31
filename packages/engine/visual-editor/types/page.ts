@@ -13,9 +13,9 @@ export interface PageMetadata {
 }
 
 /**
- * 最终产出的基础页面数据
+ * 基础页面数据
  */
-export interface BasePageData<T = any> {
+export interface BasePageData {
   id: string
   pageID: string
   name: string

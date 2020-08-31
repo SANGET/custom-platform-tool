@@ -3,20 +3,53 @@
  */
 
 import React from 'react';
+import { ProviderAppContext } from '../../types';
 
-interface PageContainerProps {
-  pageID?: string;
-  pageAuthInfo?: {};
+export interface ProviderPageContext extends ProviderAppContext {
+  pagePath
+  pageAuthInfo
 }
+
+interface PageContainerProps extends React.DetailedHTMLProps<React.HTMLAttributes<HTMLDivElement>, HTMLDivElement> {
+  pagePath?: string;
+  pageAuthInfo?: any;
+  location
+  appContext: ProviderAppContext
+  children: (pageContext: ProviderPageContext) => JSX.Element
+  ChildComp: React.ElementType
+}
+
+const loadChild = (Child, props) => {
+  let C;
+  if (typeof Child === 'function') {
+    C = Child(props);
+    if (React.isValidElement(C)) {
+      return C;
+    }
+  }
+  return <C {...props} />;
+};
 
 export const PageContainer = (props: PageContainerProps) => {
   const {
-    pageID, pageAuthInfo, children
+    pagePath, pageAuthInfo, appContext, id,
+    children, className, ChildComp, location,
+    ...otherProps
   } = props;
-  // TODO: 数据的可用性统一管理
+  const pageContext = {
+    pagePath,
+    pageAuthInfo,
+    location,
+    ...appContext
+  };
+
   return (
-    <div className="page-container">
-      {children}
+    <div
+      {...otherProps}
+    >
+      {
+        loadChild(ChildComp, pageContext)
+      }
     </div>
   );
 };
