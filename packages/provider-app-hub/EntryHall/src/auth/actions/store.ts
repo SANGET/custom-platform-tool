@@ -48,14 +48,20 @@ const defaultAuthStore: AuthStore = {
 };
 const authStore = createStore(defaultAuthStore);
 
+export interface AuthActionsTypes {
+  autoLogin: () => void;
+  login: (state, form, onSuccess: () => void) => void;
+  logout: () => void;
+}
+
+export interface AuthStoreState extends AuthStore, AuthActionsTypes {
+
+}
+
 /**
  * AuthActions 的类型
  */
-export type AuthActions = (store: typeof authStore) => ({
-  autoLogin: (state) => void;
-  login: (state, form, onSuccess) => void;
-  logout: (state) => void;
-})
+export type AuthActions = (store: typeof authStore) => AuthActionsTypes
 
 /**
  * 处理登录成功的回调
@@ -80,11 +86,14 @@ function onLoginSuccess({ resData, originForm = {} }) {
     userInfo
     // menuStore
   };
+
+  /** 设置 Authorization */
   $R_P.setConfig({
     commonHeaders: {
       Authorization: token
-    }
+    },
   });
+  $R_P.urlManager.setRent(resData.lesseeAccessName);
 
   EventEmitter.emit("LOGIN_SUCCESS", { userInfo, loginRes: resData });
   localStorage.setItem(PREV_LOGIN_DATA, JSON.stringify(resultStore));
@@ -162,7 +171,9 @@ const authActions: AuthActions = (store) => ({
     await AUTH_APIS.logout();
     store.setState({
       ...defaultAuthStore,
-      isLogin: false
+      isLogin: false,
+      logging: false,
+      logouting: false,
     });
     clearPrevLoginData();
   }

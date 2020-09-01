@@ -19,13 +19,26 @@ const App: HY.SubApp = (props) => {
       </Link>
       <ul>
         <li>
-
           <Link
             to="/page-designer?page1"
             params={{
               title: '页面1',
               /** 必须要的页面 id */
               pageID: 'pageID1'
+            }}
+          >
+            页面1，点击管理
+          </Link>
+        </li>
+        <li>
+          <Link
+            to="/page-designer?page1"
+            params={{
+              title: '页面1',
+              /** 必须要的页面 id */
+              condition: {
+                sa: '123'
+              }
             }}
           >
             页面1，点击管理

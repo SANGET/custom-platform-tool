@@ -7,7 +7,9 @@ import React from "react";
 import { Provider, connect } from "unistore/react";
 
 import AuthSelector from "@infra/auth-selector/selector";
-import { authStore, authActions, AuthStore } from "./auth/actions";
+import {
+  authStore, authActions, AuthStore, AuthActionsTypes, AuthStoreState
+} from "./auth/actions";
 import Style from './style/style';
 import App from "./app";
 
@@ -50,7 +52,7 @@ const removeLoadingBG = () => {
   // }, 100);
 };
 
-type LoginFilterProps = AuthStore
+type LoginFilterProps = AuthStoreState
 
 class LoginFilter extends React.Component<LoginFilterProps> {
   componentDidMount = () => {
@@ -80,7 +82,7 @@ class LoginFilter extends React.Component<LoginFilterProps> {
     );
   }
 }
-const LoginFilterWithStore = connect<AuthStore, any, any, any>(
+const LoginFilterWithStore = connect<AuthStore, any, AuthActionsTypes, any>(
   selector,
   authActions
 )((userStore) => <LoginFilter {...userStore} />);
