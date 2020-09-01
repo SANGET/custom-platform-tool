@@ -74,6 +74,8 @@ class MultipleRouterManager<
 
   onNavigate = onNavigate;
 
+  getUrlParams = getUrlParams;
+
   unlisten;
 
   defaultPath: string | null = null;
