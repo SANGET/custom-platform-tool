@@ -49,16 +49,16 @@ export const replaceHistory = (url: string, params?) => {
  */
 export const wrapPushUrl = (pushConfig: NavigateConfig) => {
   const { href, hash } = window.location;
-  const targetHash = hash.replace("#/", "").split("?")[0];
+  const targetHash = hash.replace("#/", "").split("?")[0]; //-----取“”，不知道什么作用
   const { route, params } = pushConfig;
-  let result = urlParamsToQuery({
+  let result = urlParamsToQuery({    //'https://a.com?ID=123'
     params: {
       ...params,
       [ROUTE_KEY]: route,
     },
     toBase64: true,
   });
-  result = `${targetHash}${result.replace(/&&$/g, "")}`;
+  result = `${targetHash}${result.replace(/&&$/g, "")}`     //-----为什么要用&&
   return result;
 };
 
@@ -68,6 +68,7 @@ export type OnNavigate = (config: NavigateConfig) => void
  * 导航器
  */
 export const onNavigate: OnNavigate = (config) => {
+  debugger
   if (!config) {
     throw Error('需要传入 config，请检查调用');
   }

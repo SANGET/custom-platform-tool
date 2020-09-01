@@ -36,7 +36,7 @@ import { formatGMT } from '@provider-app/data-designer/src/tools/format';
 import MenuTree from '@provider-app/data-designer/src/bizComps/MenuTree';
 
 /** 表单业务组件 */
-import { GetMenuTree } from '@provider-app/data-designer/src/api';
+import { GetMenuTree, GetTableData, SubmitTableData } from '@provider-app/data-designer/src/api';
 import StructForm from './StructForm';
 
 /** 表头菜单组件 */
@@ -155,8 +155,8 @@ const TableStruct: FC = () => {
     }, args);
     /** 请求表结构列表数据 */
     // const tableRes = await Http.get('http://localhost:60001/mock/structList.json', { params });
-    const tableRes = await Http.get('/data/v1/tables/list', { params });
-
+    //const tableRes = await Http.get('/data/v1/tables/list', { params });  // -----
+    const tableRes = await GetTableData(params)
     // console.log({ tableRes });
 
     /** 表格数据格式转换-注意setStructTableData之后不能立刻获取最新值 */
@@ -267,7 +267,8 @@ const TableStruct: FC = () => {
 
           console.log(values);
           /** 新建表数据提交 */
-          Http.post('/data/v1/tables/', values).then(() => {
+          // Http.post('/data/v1/tables/', values)
+          SubmitTableData(values).then(() => {    //------
             Msg.success('操作成功');
             queryList();
             /** 关闭弹窗 */
@@ -300,7 +301,7 @@ const TableStruct: FC = () => {
     /**
     * 点击了左侧菜单树的叶子节点,就进行查询
     */
-    onSelect: (selectedKeys, e:{selected, selectedNodes, node, event}) => {
+    onSelect: (selectedKeys, e: { selected, selectedNodes, node, event }) => {
       /**
       * selectedKeys是个数组,第一项就是选中项
       * 用菜单id搜索,页面从第一页开始
@@ -329,7 +330,7 @@ const TableStruct: FC = () => {
         }
       },
       name: {
-      /** 表单项属性 */
+        /** 表单项属性 */
         itemAttr: {
           label: "表名称",
           rules: [
@@ -385,7 +386,7 @@ const TableStruct: FC = () => {
         {/* 搜索条件框 */}
         <BasicForm {...searchProps} />
         {/* 表头菜单--新建表 标签管理 更多按钮 */}
-        <StructHeadMenu openModal={() => setVisiable(true)}/>
+        <StructHeadMenu openModal={() => setVisiable(true)} />
         {/* 表结构列表 */}
         <List {...tableProps} />
       </main>

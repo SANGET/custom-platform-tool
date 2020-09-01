@@ -31,3 +31,60 @@ export const GetMenuTree = async () => {
 export const ReqCopyTableStructRecord = async (data) => {
   return await $R_P.post('/smart_building/data/v1/tables/copy', data);
 };
+
+
+/** 请求表结构列表数据 */
+export async function GetTableData(params){
+  return await $R_P.get('/smart_building/data/v1/tables/list', params);
+}
+
+/** 新建表数据提交 */
+
+export async function SubmitTableData(values){
+  return await $R_P.post('/smart_building/data/v1/tables', values)
+}
+
+/*新增或者修改字典*/
+export async function AddOrUpdateDict(reqMethod,params){
+ reqMethod === 'post'?await $R_P.post('/smart_building/data/v1/dictionary',params):await $R_P.put('/smart_building/data/v1/dictionary',params)
+}
+
+/*查询字典列表*/
+export async function GetDictList(params){
+  return await $R_P.get('/smart_building/data/v1/dictionary/list',  params )
+}
+
+/**
+  * 查询字典详情
+  */
+ export async function GetDictDeatil(id){
+  return $R_P.get(`/smart_building/data/v1/dictionary/${id}`)
+ }
+
+ /**
+  * 删除字典
+  */
+ export async function DelDict(id){
+  return await $R_P.get(`/smart_building/data/v1/tables/${id}`)
+ }
+
+  /**
+  * 新增/修改子字典接口
+  */
+ export async function AddUpdateSubDict(data){
+   return await $R_P.put("/smart_building/data/v1/dictionary_value/",  data)
+ }
+ /**
+  * 查询子字典详情
+  */
+ export async function GetSubDictDetail({dictionaryId,pid}){
+   return await $R_P.get(`/smart_building/data/v1/dictionary_value/${dictionaryId}/${pid}`)
+ }
+ /**
+  *
+  * 删除子字典
+  */
+ export async function deleSubDict({dictionaryId,pid}){
+   return await $R_P.del(`/smart_building/data/v1/dictionary_value/${dictionaryId}/${pid}`)
+ }
+ 

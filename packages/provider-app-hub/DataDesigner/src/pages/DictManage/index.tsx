@@ -162,7 +162,7 @@ const DictManage = () => {
     Http[reqMethod](' http://{ip}:{port}/paas/ {lesseeCode}/{applicationCode}/data/v1/dictionary/', { data: params }).then((res) => {
       console.log(res);
     });
-  };
+  };    //------新增或者修改字典
   /**
   * 查询字典列表
   */
@@ -259,8 +259,8 @@ const DictManage = () => {
           setVisiable(true);
         }
       },
-      { text: '导入', onClick: () => {} },
-      { text: '导出', onClick: () => {} },
+      { text: '导入', onClick: () => { } },
+      { text: '导出', onClick: () => { } },
     ]
   };
   /**
@@ -361,7 +361,7 @@ const DictManage = () => {
       }}
     />
     <Modal {...modalProps}>
-      <DictForm form={form}/>
+      <DictForm form={form} />
     </Modal>
 
   </>);
