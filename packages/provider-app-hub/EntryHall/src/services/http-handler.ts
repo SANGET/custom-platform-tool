@@ -3,40 +3,77 @@
  * 这里是根据具体业务的处理filter
  */
 
-import { RequestClass } from "@mini-code/request";
+import { RequestClass, resolveUrl } from "@mini-code/request";
+import produce from "immer";
 
 import { authStore } from "../auth/actions";
 
 /**
  * 后端返回的数据结构
  */
-interface ResStruct {
-  code: number
+export interface ResStruct {
+  code: string
   message: string
-  data?: any
+  results?: any
+}
+
+const baseReqUrl = 'http://10.7.1.59:8080/paas';
+
+/**
+ * 根据业务扩展的 http 请求工具的类型
+ */
+export interface RExtend extends RequestClass {
+  urlManager: typeof urlManager
 }
 
 const $R = new RequestClass<ResStruct>({
-  baseUrl: 'http://10.7.1.59:8080/paas/hy'
-});
-
-function getUserName() {
-  return authStore.getState().username;
-}
-function getSessID() {
-  return authStore.getState().sessID;
-}
+  baseUrl: `${baseReqUrl}/hy`
+}) as RExtend;
 
 /**
- * 获取全局的请求的 header
+ * URL 管理器，根据实际业务需求设置 URL
  */
-function getCommonHeader() {
-  const reqHeader = {
-    SessId: getSessID(),
-    username: getUserName(),
-  };
-  return reqHeader;
+class UrlManager {
+  currRent = ''
+
+  currApp = ''
+
+  /** 登录后需要设置 */
+  setRent = (rent: string) => {
+    this.currRent = rent;
+    this.setRequestBaseUrl();
+  }
+
+  /** 选择应用后需要设置 */
+  setApp = (app: string) => {
+    this.currApp = app;
+    this.setRequestBaseUrl();
+  }
+
+  /** 登出的时候需要设置 */
+  reset = () => {
+    this.currApp = '';
+    this.currRent = '';
+    $R.setConfig({
+      baseUrl: baseReqUrl
+    });
+  }
+
+  getUrl = () => {
+    console.log(baseReqUrl, this.currRent, this.currApp);
+    return resolveUrl(baseReqUrl, this.currRent, this.currApp);
+  }
+
+  setRequestBaseUrl = () => {
+    $R.setConfig({
+      baseUrl: this.getUrl()
+    });
+  }
 }
+
+const urlManager = new UrlManager();
+
+$R.urlManager = urlManager;
 
 /**
  * 前端应该与服务端的接口分离
@@ -85,15 +122,12 @@ const afterRes = (resData) => {
  * 设置 $R 对象的 res
  */
 function handleRes({ resData, callback }) {
-  // let errcode = resData.errCode;
-  // switch (errcode) {
-  //   case '1':
-  //   case '2':
-  //   case '3':
-  //     // TODO 处理登录错误的业务
-  //     // onLoginFail(errcode.Desc);
-  //     break;
-  // }
+  const { code } = resData;
+  switch (code) {
+    case '00000':
+      console.log('成功');
+      break;
+  }
 }
 
 /**

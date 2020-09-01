@@ -13,6 +13,8 @@ import router from './config/router';
 import { TabNav } from "./components/TabNav";
 import { Logo } from "./components/Logo";
 import { UserStatusbar } from "./components/UserStatusbar";
+import { AuthStoreState } from "./auth/actions";
+import Hall from './Hall';
 
 interface AppContainerState extends RouterState {
   ready?: boolean;
@@ -20,12 +22,19 @@ interface AppContainerState extends RouterState {
   preparingPage?: boolean;
 }
 
-interface AppContainerProps extends RouterHelperProps {
+interface AppContainerProps extends RouterHelperProps, AuthStoreState {
   onLoad?: () => void;
 }
 
 const pageCache = {};
 const pageAuthCache = {};
+
+const setReqUrlByApp = (app) => {
+  // console.log(this.location);
+  if (app) {
+    $R_P.urlManager.setApp(app);
+  }
+};
 
 export default class App extends RouterMultiple<AppContainerProps, AppContainerState> {
   state: AppContainerState = defaultRouteState
@@ -39,6 +48,20 @@ export default class App extends RouterMultiple<AppContainerProps, AppContainerS
     };
   }
 
+  /**
+   * 初始化路由配置
+   */
+  initRouteForApp = () => {
+    const initRouteInfo = this.getUrlParams(undefined, undefined, true);
+    const appParams = initRouteInfo.app;
+    if (!appParams) {
+      this.history.replace('/');
+    } else {
+      setReqUrlByApp(appParams);
+      this.initRoute();
+    }
+  };
+
   componentDidMount() {
     GetMenu().then((menuData) => {
       this.setState({
@@ -46,12 +69,17 @@ export default class App extends RouterMultiple<AppContainerProps, AppContainerS
         ready: true
       });
 
-      this.initRoute();
+      this.initRouteForApp();
     });
   }
 
+  handleHistoryChange = () => {
+    setReqUrlByApp(this.location.app);
+  }
+
   componentDidCatch(e) {
-    console.log(e);
+    // console.log(e);
+    const { logging } = this.props;
   }
 
   appContext = {
@@ -59,10 +87,84 @@ export default class App extends RouterMultiple<AppContainerProps, AppContainerS
     onNavigate: this.onNavigate
   }
 
+  renderPages = () => {
+    const {
+      routers, routerInfo, activeRoute,
+      navStore, ready,
+    } = this.state;
+
+    const hasPage = routers.length > 0;
+
+    return hasPage ? (
+      <div className="pages-container">
+        {
+          Object.keys(routerInfo).map((pagePath, idx) => {
+            const pageItemInfo = routerInfo[pagePath];
+            const pageAuthInfo = pageAuthCache[pagePath];
+            const isShow = pagePath === activeRoute;
+            const pageKey = pagePath;
+
+            /**
+             * 从路由配置中找到 pagePath 对应的页面
+             */
+            const C = router[pagePath.split('?')[0]] || 'div';
+
+            return (
+              <PageContainer
+                pagePath={pagePath}
+                pageAuthInfo={pageAuthInfo}
+                appContext={this.appContext}
+                location={this.location}
+                className="page"
+                key={pageKey}
+                style={{
+                  display: isShow ? 'block' : 'none'
+                }}
+                ChildComp={C}
+              >
+                {/* {
+                  (pageContext) => {
+                    console.log('asd');
+                    return (
+                      <C
+                        {...pageContext}
+                      />
+                    );
+                  }
+                } */}
+              </PageContainer>
+            );
+          })
+        }
+      </div>
+    ) : (
+      <Hall
+        appContext={this.appContext}
+        location={this.location}
+      />
+    );
+  }
+
+  /**
+   * 渲染导航栏
+   * 策略：
+   * 1. 需要进入了应用才显示导航栏
+   */
+  renderNav = () => {
+    const {
+      routers, routerInfo, activeRoute,
+      navStore, ready,
+    } = this.state;
+    const hasPage = routers.length > 0;
+    return hasPage ? (
+      <Nav navConfig={navStore} />
+    ) : null;
+  }
+
   render() {
     const { logout } = this.props;
     const {
-      routers, routerInfo, activeRouteIdx, activeRoute,
+      routers, routerInfo, activeRoute,
       navStore, ready,
     } = this.state;
 
@@ -72,8 +174,12 @@ export default class App extends RouterMultiple<AppContainerProps, AppContainerS
           ready ? (
             <>
               <header className="header layout a-i-c a-c-c">
-                <Logo />
-                <Nav navConfig={navStore} />
+                <Logo
+                  onClick={(e) => {
+                    this.closeAll();
+                  }}
+                />
+                {this.renderNav()}
                 <span className="flex"></span>
                 <UserStatusbar logout={logout} />
               </header>
@@ -86,47 +192,7 @@ export default class App extends RouterMultiple<AppContainerProps, AppContainerS
                   routerInfo={routerInfo}
                   activeRoute={activeRoute}
                 />
-                <div className="pages-container">
-                  {
-                    Object.keys(routerInfo).map((pagePath, idx) => {
-                      const pageItemInfo = routerInfo[pagePath];
-                      const pageAuthInfo = pageAuthCache[pagePath];
-                      const isShow = pagePath === activeRoute;
-                      const pageKey = pagePath;
-
-                      /**
-                       * 从路由配置中找到 pagePath 对应的页面
-                       */
-                      const C = router[pagePath.split('?')[0]] || 'div';
-
-                      return (
-                        <PageContainer
-                          pagePath={pagePath}
-                          pageAuthInfo={pageAuthInfo}
-                          appContext={this.appContext}
-                          location={this.location}
-                          className="page"
-                          key={pageKey}
-                          style={{
-                            display: isShow ? 'block' : 'none'
-                          }}
-                          ChildComp={C}
-                        >
-                          {/* {
-                          (pageContext) => {
-                            console.log('asd');
-                            return (
-                              <C
-                                {...pageContext}
-                              />
-                            );
-                          }
-                        } */}
-                        </PageContainer>
-                      );
-                    })
-                  }
-                </div>
+                {this.renderPages()}
               </div>
             </>
           ) : (
