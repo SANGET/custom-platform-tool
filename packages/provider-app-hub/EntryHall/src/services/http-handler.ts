@@ -60,7 +60,6 @@ class UrlManager {
   }
 
   getUrl = () => {
-    console.log(baseReqUrl, this.currRent, this.currApp);
     return resolveUrl(baseReqUrl, this.currRent, this.currApp);
   }
 

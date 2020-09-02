@@ -28,6 +28,10 @@ export const wrapPageData = ({
     id,
     name,
     pageID,
-    meta: pageMetadata
+    meta: {
+      ...pageMetadata,
+      schema: {},
+      linkpage: {}
+    }
   };
 };

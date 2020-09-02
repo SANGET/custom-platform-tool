@@ -100,6 +100,7 @@ const PageDesignerApp: React.FC<VisualEditorAppProps> = (props) => {
                 pageMetadata,
                 layoutInfo,
               });
+              console.log(pageData);
               ApiSavePage(pageData);
             }}
           >
