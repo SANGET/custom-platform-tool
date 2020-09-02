@@ -20,6 +20,13 @@ interface PageContainerProps extends React.DetailedHTMLProps<React.HTMLAttribute
 }
 
 const loadChild = (Child, props) => {
+  /** 处理找不到页面 */
+  if (!Child) {
+    console.error(`没找到对应的页面 ${props.pagePath}`);
+    return (
+      <div>404</div>
+    );
+  }
   let C;
   if (typeof Child === 'function') {
     C = Child(props);

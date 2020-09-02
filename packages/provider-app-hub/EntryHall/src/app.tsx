@@ -18,7 +18,7 @@ import Hall from './Hall';
 
 interface AppContainerState extends RouterState {
   ready?: boolean;
-  navStore?: any[];
+  navMenu?: any[];
   preparingPage?: boolean;
 }
 
@@ -44,7 +44,7 @@ export default class App extends RouterMultiple<AppContainerProps, AppContainerS
     this.state = {
       ...this.state,
       ready: false,
-      navStore: [],
+      navMenu: [],
     };
   }
 
@@ -65,7 +65,7 @@ export default class App extends RouterMultiple<AppContainerProps, AppContainerS
   componentDidMount() {
     GetMenu().then((menuData) => {
       this.setState({
-        navStore: menuData,
+        navMenu: menuData,
         ready: true
       });
 
@@ -90,7 +90,6 @@ export default class App extends RouterMultiple<AppContainerProps, AppContainerS
   renderPages = () => {
     const {
       routers, routerInfo, activeRoute,
-      navStore, ready,
     } = this.state;
 
     const hasPage = routers.length > 0;
@@ -107,7 +106,8 @@ export default class App extends RouterMultiple<AppContainerProps, AppContainerS
             /**
              * 从路由配置中找到 pagePath 对应的页面
              */
-            const C = router[pagePath.split('?')[0]] || 'div';
+            const C = router[pagePath.split('?')[0]];
+            // const C = routeConfig.component;
 
             return (
               <PageContainer
@@ -153,11 +153,11 @@ export default class App extends RouterMultiple<AppContainerProps, AppContainerS
   renderNav = () => {
     const {
       routers, routerInfo, activeRoute,
-      navStore, ready,
+      navMenu, ready,
     } = this.state;
     const hasPage = routers.length > 0;
     return hasPage ? (
-      <Nav navConfig={navStore} />
+      <Nav navConfig={navMenu} />
     ) : null;
   }
 
@@ -165,7 +165,7 @@ export default class App extends RouterMultiple<AppContainerProps, AppContainerS
     const { logout } = this.props;
     const {
       routers, routerInfo, activeRoute,
-      navStore, ready,
+      navMenu, ready,
     } = this.state;
 
     return (

@@ -1,27 +1,57 @@
-export const mockMenuData = [
+interface MenuDataType {
+  title: string
+  icon: string
+  id: string
+  path?: string
+  children?: MenuDataType[]
+}
+
+export const mockMenuData: MenuDataType[] = [
   {
-    path: '/',
-    text: '工作台',
-    id: 'root',
+    title: '页面设计',
+    icon: '',
+    id: '1',
+    // path: '/menu-manager',
+    children: [
+      {
+        title: '页面管理',
+        id: '12',
+        icon: '',
+        path: '/page-manager'
+      }
+    ]
   },
   {
-    path: '/menu-manager',
-    text: '菜单管理',
-    id: 1,
-  },
-  {
-    path: '/page-manager',
-    text: '页面管理',
-    id: 2,
-  },
-  {
-    path: '/data-manager',
-    text: '数据管理',
-    id: 3,
-  },
-  {
-    path: '/page-designer',
-    text: '页面设计器',
-    id: 4,
+    // path: '/menu-manager',
+    icon: '',
+    title: '数据设计',
+    id: '2',
+    children: [
+      {
+        title: '表结构管理',
+        id: '21',
+        icon: '',
+        path: '/TableStruct'
+      },
+      {
+        title: '字典管理',
+        id: '22',
+        icon: '',
+        path: '/page-manager'
+      },
+      {
+        title: '其他数据源',
+        id: '23',
+        icon: '',
+        children: [
+          {
+            title: '其他数据源',
+            id: '23',
+            icon: '',
+            path: '/page-manager',
+          }
+        ]
+      },
+    ]
   },
 ];
