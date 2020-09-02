@@ -8,12 +8,16 @@ export async function login(data = {
   loginName: "hy",
   password: "123456"
 }) {
-  return await $R.post("/manage/v1/users/login", data);
+  $R_P.urlManager.setRent(data.loginName);
+  const res = await $R.post("/manage/v1/users/login", data);
+  return res;
 }
 
 /**
  * 主动登出
  */
-export function logout() {
-  return $R.post("/logout", {});
+export async function logout() {
+  const res = await $R.post("/logout", {});
+  $R_P.urlManager.reset();
+  return res;
 }
