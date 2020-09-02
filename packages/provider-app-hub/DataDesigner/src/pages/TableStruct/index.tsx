@@ -160,7 +160,7 @@ const TableStruct: FC = () => {
     // console.log({ tableRes });
 
     /** 表格数据格式转换-注意setStructTableData之后不能立刻获取最新值 */
-    const tableData = tableRes.data.result.data.map((col) => {
+    const tableData = tableRes.result.data.map((col) => {
       /** 根据T点的key查找节点完整信息 */
       /** 返回节点的名称 */
       col.moduleId = treeQuery(treeData, col.moduleId).title;
