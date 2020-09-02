@@ -172,6 +172,7 @@ const authActions: AuthActions = (store) => ({
     store.setState({
       ...defaultAuthStore,
       isLogin: false,
+      autoLoging: false,
       logging: false,
       logouting: false,
     });
