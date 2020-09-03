@@ -29,13 +29,13 @@ export const ReqCopyTableStructRecord = async (data) => {
 
 /** 请求表结构列表数据 */
 export async function GetTableData(params){
-  return await $R_P.get('/data/v1/tables/list', params);
+  return await $R_P.get( {params,url:'/data/v1/tables/list'});
 }
 
 /** 新建表数据提交 */
 
 export async function SubmitTableData(values){
-  return await $R_P.post('/data/v1/tables', values)
+  return await $R_P.post('/data/v1/tables/', values)
 }
 
 /*新增或者修改字典*/

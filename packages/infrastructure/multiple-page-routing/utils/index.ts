@@ -58,7 +58,7 @@ export const wrapPushUrl = (pushConfig: NavigateConfig) => {
     },
     toBase64: true,
   });
-  result = `${targetHash}${result.replace(/&&$/g, "")}`     //-----为什么要用&&
+  result = `${targetHash}${result.replace(/&$/g, "")}`     //-----为什么要用&&
   return result;
 };
 
@@ -68,7 +68,7 @@ export type OnNavigate = (config: NavigateConfig) => void
  * 导航器
  */
 export const onNavigate: OnNavigate = (config) => {
-  debugger
+  
   if (!config) {
     throw Error('需要传入 config，请检查调用');
   }

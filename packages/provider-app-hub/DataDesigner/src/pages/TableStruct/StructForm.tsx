@@ -37,7 +37,7 @@ const StructForm = ({
   /**
   * 表类型联动对象
   */
-  const refShowInit = { normalTable: 'show', tree: 'hide', auxTable: 'hide' };
+  const refShowInit = { TABLE: 'show', TREE: 'hide', AUX_TABLE: 'hide' };
   /**
   * 表类型联动状态设置
   */
@@ -52,7 +52,7 @@ const StructForm = ({
       return prev;
     }, {});
     // console.log({ showObj });
-    setRefShow(showObj as { normalTable: string; tree: string; auxTable: string; });
+    setRefShow(showObj as { TABLE: string; TREE: string; AUX_TABLE: string; });
   };
 
   /**
@@ -103,15 +103,15 @@ const StructForm = ({
     maxLevel: {
       itemAttr: {
         label: "最大层级数",
-        className: refShow.tree,
+        className: refShow.TREE,
         /** 表类型为树表时关联必填 */
         rules: [
           /** required设置条件必须未生效,要展示必填项前面的红色*,需要把这一项设置为true */
-          { required: refShow.tree === 'show' },
+          { required: refShow.TREE === 'show' },
           ({ getFieldValue }) => ({
             validator(rule, value) {
               /** 当表类型不是附属表时,不对提交内容做校验 */
-              if (refShow.tree === 'hide') {
+              if (refShow.TREE === 'hide') {
                 return Promise.resolve();
               }
               /** 这里如果不写成new Error,会触发eslint告警 */
@@ -137,9 +137,9 @@ const StructForm = ({
     mainTableCode: {
       itemAttr: {
         label: "主表",
-        className: refShow.auxTable,
+        className: refShow.AUX_TABLE,
         /** 表类型为附属表时关联必填 */
-        rules: [{ required: refShow.auxTable === 'show', message: '请输入主表!' }],
+        rules: [{ required: refShow.AUX_TABLE === 'show', message: '请输入主表!' }],
       },
       compAttr: {
         type: 'Input',
@@ -149,7 +149,7 @@ const StructForm = ({
     moduleId: {
       itemAttr: {
         label: "归属模块",
-        className: refShow.normalTable,
+        className: refShow.TABLE,
         rules: [{ required: true, message: '请选择归属模块' }],
       },
       compAttr: {

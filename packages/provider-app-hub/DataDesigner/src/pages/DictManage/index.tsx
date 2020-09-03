@@ -20,6 +20,7 @@ import { getModalConfig } from '../../tools/mix';
 import DictForm from './DictForm';
 
 const DictManage = () => {
+
   const [pager, setPager] = useState({ page: 1, pageSize: 10 });
 
   /**
@@ -41,96 +42,58 @@ const DictManage = () => {
     },
     { text: '删除', title: '你确定删除这条字典?', onClick: (row) => { } },
   ];
-  const columns = [
-    // renderIndexCol(pager),
-    {
-      title: '字典名称',
-      dataIndex: 'name',
-      width: 140,
-    },
-    {
-      title: '字典描述',
-      dataIndex: 'remark',
-      width: '30%',
-    },
-    {
-      title: '最后修改人',
-      dataIndex: 'remark',
-      width: 140,
-    },
-    {
-      title: '最后修改时间',
-      dataIndex: 'remark',
-      width: 160,
-    },
-    renderOperCol(operButs),
+  // const columns = [
+  //   // renderIndexCol(pager),
+  //   {
+  //     title: '序号',
+  //     dataIndex: 'number',
+  //     width: 40,
+  //     key: 'number'
+  //   },
+  //   {
+  //     title: '字典名称',
+  //     dataIndex: 'name',
+  //     width: 140,
+  //     key: 'name'
+  //   },
+  //   {
+  //     title: '字典描述',
+  //     dataIndex: 'description',
+  //     width: '30%',
+  //     key: 'description'
+  //   },
+  //   {
+  //     title: '最后修改人',
+  //     dataIndex: 'modifiedBy',
+  //     width: 140,
+  //     key: 'modifiedBy'
+  //   },
+  //   {
+  //     title: '最后修改时间',
+  //     dataIndex: 'gmtModified',
+  //     width: 160,
+  //     key: 'gmtModified'
+  //   },
+  //   renderOperCol(operButs),
 
-  ];
+  // ];
 
-  const data = [
-    {
-      key: 1,
-      name: 'John Brown sr.',
-      age: 60,
-      address: 'New York No. 1 Lake Park',
-      children: [
-        {
-          key: 11,
-          name: 'John Brown',
-          age: 42,
-          address: 'New York No. 2 Lake Park',
-        },
-        {
-          key: 12,
-          name: 'John Brown jr.',
-          age: 30,
-          address: 'New York No. 3 Lake Park',
-          children: [
-            {
-              key: 121,
-              name: 'Jimmy Brown',
-              age: 16,
-              address: 'New York No. 3 Lake Park',
-            },
-          ],
-        },
-        {
-          key: 13,
-          name: 'Jim Green sr.',
-          age: 72,
-          address: 'London No. 1 Lake Park',
-          children: [
-            {
-              key: 131,
-              name: 'Jim Green',
-              age: 42,
-              address: 'London No. 2 Lake Park',
-              children: [
-                {
-                  key: 1311,
-                  name: 'Jim Green jr.',
-                  age: 25,
-                  address: 'London No. 3 Lake Park',
-                },
-                {
-                  key: 1312,
-                  name: 'Jimmy Green sr.',
-                  age: 18,
-                  address: 'London No. 4 Lake Park',
-                },
-              ],
-            },
-          ],
-        },
-      ],
-    },
-    {
-      key: 2,
-      name: 'Joe Black',
-      age: 32,
-      address: 'Sidney No. 1 Lake Park',
-    },
-  ];
+  // const data = [
+  //   {
+  //     key: '1',
+  //     number: '1',
+  //     name: 'John Brown sr.',
+
+  //     description: 'New York No. 1 Lake Park',
+  //   },
+  //   {
+  //     key: '2',
+  //     number: '2',
+  //     name: 'Joe Black',
+
+  //     description: 'Sidney No. 1 Lake Park',
+  //   },
+  // ];
   /**
   * 提交数据
   * type-
@@ -346,19 +309,20 @@ const DictManage = () => {
     <TableHeadMenu {...tableHeadMenus} />
     <Table
       bordered
-      columns={columns.map((item) => {
-        item.key = item.dataIndex;
-        return item;
-      })}
+      columns={columns}
+      // columns={columns.map((item) => {
+      //   //item.key = item.dataIndex;     -----------
+      //   return item;
+      // })}
       dataSource={data}
-      pagination={{
-        showTotal: ((total) => {
-          return `共 ${total} 条`;
-        }),
-        onChange: (page, pageSize) => {
-          setPager({ page, pageSize });
-        }
-      }}
+    // pagination={{
+    //   showTotal: ((total) => {
+    //     return `共 ${total} 条`;
+    //   }),
+    //   onChange: (page, pageSize) => {
+    //     setPager({ page, pageSize });
+    //   }
+    // }}
     />
     <Modal {...modalProps}>
       <DictForm form={form} />

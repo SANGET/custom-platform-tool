@@ -34,9 +34,9 @@ const EditTableStyled = styled.div`
 `;
 
 interface Item {
-  key: string|number;
+  key: string | number;
   name: string;
-  age: number|string;
+  age: number | string;
   address: string;
 }
 
@@ -87,8 +87,8 @@ const EditableCell: React.FC<EditableCellProps> = ({
           {inputNode}
         </Form.Item>
       ) : (
-        children
-      )}
+          children
+        )}
     </td>
   );
 };
@@ -207,16 +207,16 @@ const EditableTable = () => {
             </Popconfirm>
           </span>
         ) : (
-          <span>
+            <span>
 
-            <a disabled={editingKey !== ''} style={{ marginRight: 8 }} onClick={() => edit(record)}>
-            编辑
+              <a disabled={editingKey !== ''} style={{ marginRight: 8 }} onClick={() => edit(record)}>
+                编辑
             </a>
-            <Popconfirm title="Sure to delete?" onConfirm={() => handleDelete(record.key)}>
-              <a>删除</a>
-            </Popconfirm>
-          </span>
-        );
+              <Popconfirm title="Sure to delete?" onConfirm={() => handleDelete(record.key)}>
+                <a>删除</a>
+              </Popconfirm>
+            </span>
+          );
       },
     },
   ];

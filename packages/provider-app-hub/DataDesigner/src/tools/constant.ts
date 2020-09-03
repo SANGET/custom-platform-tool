@@ -80,7 +80,7 @@ export const SpeciesTypeEnum :Array<ISpeciesType> = [
  * 表类型枚举
 */
 interface ITableType{
-  value:"normalTable" | "tree" | "auxTable";
+  value:"TABLE" | "TREE" | "AUX_TABLE";
   text:"普通表"|"树形表"|"附属表";
 }
 
@@ -88,9 +88,9 @@ interface ITableType{
  * 表类型枚举
  */
 export const TableTypeEnum :Array<ITableType> = [
-  { value: "normalTable", text: "普通表" },
-  { value: "tree", text: "树形表" },
-  { value: "auxTable", text: "附属表" }
+  { value: "TABLE", text: "普通表" },
+  { value: "TREE", text: "树形表" },
+  { value: "AUX_TABLE", text: "附属表" }
 ];
 
 /**

@@ -156,6 +156,7 @@ const TableStruct: FC = () => {
     /** 请求表结构列表数据 */
     // const tableRes = await Http.get('http://localhost:60001/mock/structList.json', { params });
     //const tableRes = await Http.get('/data/v1/tables/list', { params });  // -----
+
     const tableRes = await GetTableData(params)
     // console.log({ tableRes });
 
@@ -249,14 +250,15 @@ const TableStruct: FC = () => {
           /**
            * 与后端协商,只提交页面上有的字段,没有的不传
            */
+          debugger
           const { mainTableCode, maxLevel, type } = values;
           /** 附属表,才有auxTable */
-          if (type === "auxTable") {
+          if (type === "AUX_TABLE") {
             values.auxTable = {
               mainTableCode
             };
             delete values.mainTableCode;
-          } else if (type === 'tree') {
+          } else if (type === 'TREE') {
             values.treeTable = {
               maxLevel
             };
@@ -268,6 +270,7 @@ const TableStruct: FC = () => {
           console.log(values);
           /** 新建表数据提交 */
           // Http.post('/data/v1/tables/', values)
+
           SubmitTableData(values).then(() => {    //------
             Msg.success('操作成功');
             queryList();
@@ -359,6 +362,7 @@ const TableStruct: FC = () => {
                   /**
                    * 列表查询,页码从0开始
                    */
+
                   queryList({ type, name, offset: 0 });
                 });
             }
@@ -368,6 +372,7 @@ const TableStruct: FC = () => {
             text: '清空',
             onClick: () => {
               searchForm.resetFields();
+              queryList();
             }
           }
         ]
