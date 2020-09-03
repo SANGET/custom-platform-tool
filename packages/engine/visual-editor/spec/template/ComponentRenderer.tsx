@@ -30,6 +30,10 @@ export const ComponentRenderer: React.FC<ComponentTypeRendererProps> = (props) =
   } = props;
   const { component } = entity;
   const { label, style } = entityState;
+
+  const compContext = {
+    entityState
+  };
   // console.log(entityState);
 
   let Com = <div></div>;
@@ -43,6 +47,7 @@ export const ComponentRenderer: React.FC<ComponentTypeRendererProps> = (props) =
         <div className="__Input">
           <FormLabel>{label}</FormLabel>
           <Input
+            compContext={compContext}
             {...compProps}
           />
         </div>
@@ -54,6 +59,7 @@ export const ComponentRenderer: React.FC<ComponentTypeRendererProps> = (props) =
         <div className="__Table">
           <FormLabel>{label}</FormLabel>
           <EditableTable
+            compContext={compContext}
             {...compProps}
           />
         </div>

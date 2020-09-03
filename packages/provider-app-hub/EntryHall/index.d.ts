@@ -10,7 +10,12 @@ export interface SubAppSpec extends ProviderAppContext {
 /**
  * 子应用的配型
  */
-declare type HYSubAppType = React.ElementType<SubAppSpec>
+type HYSubAppTypeRE = React.ElementType<SubAppSpec>
+
+/**
+ * HOC 子应用
+ */
+type HYSubAppTypeFE<T> = (props: SubAppSpec) => React.ElementType<T>
 
 /**
  * 向 provider app 注入一些全局校验
@@ -18,6 +23,9 @@ declare type HYSubAppType = React.ElementType<SubAppSpec>
 declare global {
   /** HY */
   namespace HY {
-    type SubApp = HYSubAppType
+    /** 通用子应用 */
+    type SubApp = HYSubAppTypeRE
+    /** HOC 子应用 */
+    type SubAppHOC<T = any> = HYSubAppTypeFE<T>
   }
 }

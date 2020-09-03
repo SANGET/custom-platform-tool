@@ -2,7 +2,7 @@ import React from 'react';
 import { Input, Table, ShowModal } from '@infra/ui';
 import TableEditor from './TableEditor';
 
-export default () => {
+const CustomTable: VE.CompClass = (props) => {
   return (
     <div>
       <span
@@ -29,3 +29,5 @@ export default () => {
     </div>
   );
 };
+
+export default CustomTable;

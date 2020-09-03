@@ -6,9 +6,9 @@
 
 ## 2. 子应用开发规范
 
-### 2.1. 子应用类型
+### 2.1. 一般子应用
 
-每个子应用必须是 `HY.SubApp`，类型，例如最简单的应用：
+一般子应用可以是 `HY.SubApp`，类型，例如最简单的应用：
 
 ```tsx
 import React from "react";
@@ -26,11 +26,30 @@ export default SubApp;
 
 `HY.SubApp` 提供最基本的子应用类型检查，并且提供`页面上下文接口`，便于开发子应用。
 
-### 2.2. 业务应用模块
+### 2.2. HOC 子应用
+
+如果我们需要通过 HOC 方式放回一个组件，需要实现 `HY.SubAppHOC` 方法：
+
+```tsx
+import React from "react";
+
+const SubApp: HY.SubAppHOC = (props) => {
+  return () => {
+    const {
+      location, pagePath
+    } = props;
+    return VisualEditorStoreConnector(PageDesigner, pagePath);
+  }
+}
+
+export default App;
+```
+
+### 2.3. 业务应用模块
 
 TODO
 
-### 2.3. 管理应用模块
+### 2.4. 管理应用模块
 
 TODO
 

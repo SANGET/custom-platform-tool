@@ -5,6 +5,7 @@
     "start": "cross-env PORT=7766 minictl start",
     "build": "minictl build"
   },
+  "types": "index.d.ts",
   "devDependencies": {
     "@infra/react-dev-env-scripts": "^0.0.1"
   },
