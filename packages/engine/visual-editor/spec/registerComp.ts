@@ -5,11 +5,13 @@
  * TODO: 放到前端动态资源管理服务中进行统一管理
  */
 
-import { BasicComponent } from "@infra/ui/basic";
+import { EditorEntityState } from "../types";
 
-export interface RegisterCompElementProps extends BasicComponent {
+export interface RegisterCompElementProps {
   /** 占位符，防止被 eslint 删除 */
-  temp?
+  compContext: {
+    entityState: EditorEntityState
+  }
 }
 
 type ComponentEntity = React.ElementType<RegisterCompElementProps>

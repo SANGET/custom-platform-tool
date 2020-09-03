@@ -6,6 +6,7 @@ import * as AUTH_APIS from "./apis";
 export interface AuthStore {
   /** 用户信息 */
   userInfo: any
+  /** 上次登录的信息，用于自动登录 */
   prevLoginRes: any
   // menuStore: {}
   /** 用户名 */
