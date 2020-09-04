@@ -103,9 +103,9 @@ const TableField = (props) => {
     }),
     []
   );
-    /**
-   * 共享状态值--表结构分页和树形源数据
-   * */
+  /**
+ * 共享状态值--表结构分页和树形源数据
+ * */
   const { treeData } = useMappedState(mapState);
 
   /** 创建+字典字段弹窗表单实例 */
@@ -116,7 +116,7 @@ const TableField = (props) => {
   /**
   * 每一行都有一个唯一的key,记录编辑行是哪一行
   */
-  const [editingKey, setEditingKey] = useState<number|string>('');
+  const [editingKey, setEditingKey] = useState<number | string>('');
   /**
   * 编辑行号与记录行号相符时，设置成编辑状态
   */
@@ -174,15 +174,15 @@ const TableField = (props) => {
       console.log('Validate Failed:', errInfo);
     }
   };
-    /**
-  * 取消编辑
-  */
+  /**
+* 取消编辑
+*/
   const cancel = () => {
     setEditingKey('');
   };
-    /**
-  * 添加一行记录
-  */
+  /**
+* 添加一行记录
+*/
   const handleAdd = () => {
     const newData = {
       key: `${new Date().getTime()}`,
@@ -217,9 +217,9 @@ const TableField = (props) => {
   * 删除一行记录
   */
   const handleDelete = (key) => {
-  /** 用key,过滤掉这一行数据 */
-  /** 要用store缓存起来,刷新页面时，可以恢复数据 */
-  /** 页面销毁时,要清楚所有的localStorage中的内容 */
+    /** 用key,过滤掉这一行数据 */
+    /** 要用store缓存起来,刷新页面时，可以恢复数据 */
+    /** 页面销毁时,要清楚所有的localStorage中的内容 */
     setFieldTableData(fieldTableData.filter((item) => item.key !== key));
   };
 
@@ -296,7 +296,7 @@ const TableField = (props) => {
       formConfig: {
         attrs: { type: 'InputNumber', placeholder: '正整数,2-64' },
         rules: [
-        /** 自定义校验器 */
+          /** 自定义校验器 */
           ({ getFieldValue }) => ({
             validator(rule, value) {
               if (value === '' || value === undefined) {
@@ -416,16 +416,16 @@ const TableField = (props) => {
             <Button type='link' onClick={cancel}>取消</Button>
           </span>
         ) : (
-          <span>
-            {/* 正在编辑的话,禁用其它行的编辑按钮 */}
-            <Button type='link' disabled={editingKey !== ''} style={{ marginRight: 8 }} onClick={() => edit(record)}>
-            编辑
+            <span>
+              {/* 正在编辑的话,禁用其它行的编辑按钮 */}
+              <Button type='link' disabled={editingKey !== ''} style={{ marginRight: 8 }} onClick={() => edit(record)}>
+                编辑
             </Button>
-            <Popconfirm title="你确定要删除吗?" okText="确定" cancelText="取消" onConfirm={() => handleDelete(record.key)}>
-              <Button type='link'>删除</Button>
-            </Popconfirm>
-          </span>
-        );
+              <Popconfirm title="你确定要删除吗?" okText="确定" cancelText="取消" onConfirm={() => handleDelete(record.key)}>
+                <Button type='link'>删除</Button>
+              </Popconfirm>
+            </span>
+          );
       },
     },
   ];

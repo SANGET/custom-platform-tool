@@ -1,7 +1,8 @@
 import React, { FC, useState, useEffect } from 'react';
 /** react路由暴露出来的页面跳转方法 */
 // import { useHistory, Location } from 'react-router-dom';
-import { onNavigate, getUrlParams } from 'multiple-page-routing';
+import { onNavigate } from 'multiple-page-routing';
+import { getUrlParams } from "@mini-code/request/url-resolve";
 import {
   Tabs, Form, Tag, Row, Col, Button
 } from 'antd';
@@ -16,7 +17,7 @@ import BasicStory from '@provider-app/data-designer/src/components/BasicStory';
 /** 表结构类型 */
 import { TableTypeEnum } from '@provider-app/data-designer/src/tools/constant';
 
-import { GetMenuTree } from '@provider-app/data-designer/src/api';
+import { GetMenuTree, ReqTableDetail } from '@provider-app/data-designer/src/api';
 
 import './EditStruct.less';
 
@@ -48,9 +49,10 @@ const EditStruct = () => {
 
   useEffect(() => {
     // http:// {ip}:{port}/paas/ {lesseeCode}/{applicationCode}/data/v1/tables/00dd1b16e3a84a6fbeed12a661484eba
-    const res = getUrlParams(undefined, undefined, true).id;
-    console.log(res);
-    Http.get(`/data/v1/tables/${History.location.state.id}`, {}).then((res) => {
+    //const res = getUrlParams(undefined, undefined, true).id;
+    // console.log(res);
+    const id = window.atob(window.location.hash.split("id=")[1].split("&_R")[0])
+    ReqTableDetail(id).then((res) => {
       // console.log(res);
 
       setDetailData(res.data.result);
@@ -69,7 +71,7 @@ const EditStruct = () => {
 
   /** 表单项label和content的宽度 */
   const formItemLayout = {
-  /** 满栅格是24, 设置label标签宽度 */
+    /** 满栅格是24, 设置label标签宽度 */
     labelCol: {
       span: 7
     },
@@ -81,7 +83,7 @@ const EditStruct = () => {
 
   const formItemsConfigInit = {
     name: {
-    /** 表单项属性 */
+      /** 表单项属性 */
       itemAttr: {
         label: "数据表名称",
         name: "name",
@@ -159,7 +161,7 @@ const EditStruct = () => {
       onClick: () => {
         Http.put('http://{ip}:{port}/paas/ {lesseeCode}/{applicationCode}/data/v1/tables/').then((res) => {
           const submitData = {
-          /** 是 表主键 */
+            /** 是 表主键 */
             id: '',
             /** 是 数据表名称  */
             name: '',
@@ -327,10 +329,10 @@ const EditStruct = () => {
             </Col>
           ))
         }
-        {/* 设置按钮的宽度占行宽的24之四 */}
-        <Col span={4} className="form-buts">
-          {formButs.map((item) => (<Button key={item.text} type='primary' className="button" onClick={item.onClick}>{item.text}</Button>))}
-        </Col>
+          {/* 设置按钮的宽度占行宽的24之四 */}
+          <Col span={4} className="form-buts">
+            {formButs.map((item) => (<Button key={item.text} type='primary' className="button" onClick={item.onClick}>{item.text}</Button>))}
+          </Col>
         </Row>
       </Form>
 

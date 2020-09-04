@@ -38,6 +38,9 @@ const DictForm = (props) => {
   * 生效颜色设置
   */
   const [color, setColor] = useState({ fontColor: '#d9d9d9', bgColor: '#fff' });
+
+  // 
+  const [id, setId] = useState(0)
   /**
   * 颜色选择器显示隐藏控制
   */
@@ -53,12 +56,18 @@ const DictForm = (props) => {
       text: <PlusOutlined />,
       onClick: (row) => {
         console.log('row', row)
-
+        setId(id + 1)
         handleAdd()
       }
     },
     /** 多于一行记录,才显示-号 */
-    { text: <MinusOutlined />, onClick: (row) => { }, isShow: (index) => index },
+    {
+      text: <MinusOutlined />, onClick: (row) => {
+        console.log('row----', row)
+        const { key } = row
+        handleDelete(key)
+      }, isShow: (index) => index
+    },
   ];
 
   const openColorPicker = () => {
@@ -70,6 +79,7 @@ const DictForm = (props) => {
   */
   const columns = [
     {
+
       title: '编码',
       dataIndex: 'code',
       editable: true,
@@ -87,8 +97,9 @@ const DictForm = (props) => {
       width: 200,
     },
     {
+
       title: '名称',
-      dataIndex: 'name',
+      dataIndex: 'dictName',
       formConfig: {
         attrs: {
           type: 'Input', placeholder: '请输入名称', style: { color: color.fontColor, backgroundColor: color.bgColor }, onChange: (e) => {
@@ -104,6 +115,7 @@ const DictForm = (props) => {
       width: 200,
     },
     {
+
       title: '颜色',
       dataIndex: 'renderColor',
       formConfig: {
@@ -166,7 +178,7 @@ const DictForm = (props) => {
     //   code: '',
     //   renderColor: '#fff'
     // });
-
+    setId(id + 1)
     handleAdd();
 
   }, []);
@@ -207,12 +219,13 @@ const DictForm = (props) => {
   /**
   * 添加一行记录
   */
+
   const handleAdd = () => {
 
     const newData = {
-      key: fieldTableData.length,
+      key: id,
       /** 字典项名称 */
-      name: '',
+      dictName: '',
       /** 字典项编码 */
       code: '',
       /** 背景颜色 */
@@ -220,11 +233,13 @@ const DictForm = (props) => {
       /** 字体颜色 */
       renderFontColor: '',
     }
-    //fieldTableData.push(newData)
+    fieldTableData.push(newData)
     /**
   * 为什么直接赋值setData(fieldTableData)不更新,非要写成setData([...fieldTableData])才触发更新
   */
-    setFieldTableData([...fieldTableData, newData])
+    console.log('newData', newData);
+
+    setFieldTableData([...fieldTableData])
     edit(newData)
     console.log('fieldTableData', fieldTableData)
   }
@@ -232,7 +247,7 @@ const DictForm = (props) => {
 * 删除一行记录
 */
   const handleDelete = (key) => {
-    setFieldTableData(fieldTableData.filter((item) => item.key === key));  //------
+    setFieldTableData(fieldTableData.filter((item) => item.key !== key));  //------
   };
   // console.log(mergedColumns);
   /**

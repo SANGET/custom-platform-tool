@@ -37,7 +37,17 @@ export async function GetTableData(params){
 export async function SubmitTableData(values){
   return await $R_P.post('/data/v1/tables/', values)
 }
+// 查询表详情
+export async function ReqTableDetail(params){
+  return await $R_P.put({url:'/data/v1/tables/',params})
+}
 
+ /**
+  * 删除表
+  */
+ export async function DelTable(id){
+  return await $R_P.del(`/data/v1/tables/${id}`)
+ }
 /*新增字典*/
 export async function AddDict(params){
 return await $R_P.post('/data/v1/dictionary/',params)
@@ -58,12 +68,7 @@ export async function GetDictList(params){
   return $R_P.get(`/data/v1/dictionary/${id}`)
  }
 
- /**
-  * 删除字典
-  */
- export async function DelDict(id){
-  return await $R_P.get(`/data/v1/tables/${id}`)
- }
+
 
   /**
   * 新增/修改子字典接口

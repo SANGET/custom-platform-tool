@@ -4,6 +4,7 @@ import MenuManager from "@provider-app/menu-manager/app";
 import PageDesignerApp from "@provider-app/page-designer/app/main";
 //<<<<<<< HEAD
 import DictManage from '@provider-app/data-designer/src/pages/DictManage';
+import EditStruct from '@provider-app/data-designer/src/pages/EditStruct'
 //=======
 
 // interface RouterConfigType {
@@ -23,7 +24,8 @@ const Router: RouterType = {
   '/page-manager': PageManager,
   '/TableStruct': TableStruct,
   '/page-designer': PageDesignerApp,
-  '/DictManage':DictManage
+  '/DictManage':DictManage,
+  '/EditStruct/':EditStruct
 };
 
 // const RouterConfig: RouterConfigType = {

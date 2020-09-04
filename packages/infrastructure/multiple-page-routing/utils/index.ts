@@ -49,16 +49,16 @@ export const replaceHistory = (url: string, params?) => {
  */
 export const wrapPushUrl = (pushConfig: NavigateConfig) => {
   const { href, hash } = window.location;
-  const targetHash = hash.replace("#/", "").split("?")[0]; //-----取“”，不知道什么作用
+  const targetHash = hash.replace("#/", "").split("?")[0]; 
   const { route, params } = pushConfig;
-  let result = urlParamsToQuery({    //'https://a.com?ID=123'
+  let result = urlParamsToQuery({    
     params: {
       ...params,
       [ROUTE_KEY]: route,
     },
     toBase64: true,
   });
-  result = `${targetHash}${result.replace(/&$/g, "")}`     //-----为什么要用&&
+  result = `${targetHash}${result.replace(/&$/g, "")}`    
   return result;
 };
 

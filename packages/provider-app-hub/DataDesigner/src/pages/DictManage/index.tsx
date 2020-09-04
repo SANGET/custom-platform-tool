@@ -44,7 +44,12 @@ const DictManage = () => {
         setVisiable(true);
       }
     },
-    { text: '删除', title: '你确定删除这条字典?', onClick: (row) => { } },
+    {
+      text: '删除', title: '你确定删除这条字典?', onClick: (row) => {
+        console.log(structTableData, 'structTableData', 'row', row);
+
+      }
+    },
   ];
   const columns = [
     // renderIndexCol(pager),

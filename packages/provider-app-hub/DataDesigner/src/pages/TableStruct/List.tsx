@@ -9,7 +9,6 @@ import React, { useEffect, useState } from 'react';
 import {
   Table, Button, Space, Tooltip, Popconfirm, Modal, Form
 } from 'antd';
-
 /** react路由暴露出来的页面跳转方法 */
 // import { useHistory } from 'react-router-dom';
 import { onNavigate } from 'multiple-page-routing';
@@ -19,7 +18,7 @@ import { useMappedState, useDispatch } from 'redux-react-hook';
 import Http, { Msg } from '@infra/utils/http';
 
 /** 导出接口 */
-import { ReqCopyTableStructRecord } from '@provider-app/data-designer/src/api';
+import { ReqCopyTableStructRecord, DelTable } from '@provider-app/data-designer/src/api';
 
 /** 基本表单 */
 import BasicForm from '@provider-app/data-designer/src/components/BasicForm';
@@ -72,7 +71,7 @@ const List = (props) => {
       {
         text: '编辑',
         onClick: (row) => {
-          console.log(row);
+          console.log(row, 'row1234143432434343');
           onNavigate({
             type: "PUSH",
             route: '/EditStruct/',
@@ -83,8 +82,8 @@ const List = (props) => {
       },
       {
         text: '删除',
-        onClick: (row) => {
-          Http.delete(`/data/v1/tables/${row.id}`).then((res) => {
+        onClick: async (row) => {
+          await DelTable(row.id).then((res) => {
             Msg.success('操作成功');
             queryList();
           });
@@ -253,7 +252,7 @@ const List = (props) => {
   */
   const items = {
     name: {
-    /** 表单项属性 */
+      /** 表单项属性 */
       itemAttr: {
         label: "数据表名称",
         rules: [

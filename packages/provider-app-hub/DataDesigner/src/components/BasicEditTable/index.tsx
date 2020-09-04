@@ -164,13 +164,14 @@ const renderOperCol = (operButs) => {
       return operButs.map((item, i) => {
         let isShow = true;
         if (item.isShow) {
+          console.log(index, 'index-------')
           isShow = item.isShow(index);
+          console.log(isShow, 'isShow--------')
         }
         // console.log(item);
 
 
         return isShow ? (
-
           <Space size="middle" key={i}>
             {
               /** 删除需要弹出二次确认框 */
