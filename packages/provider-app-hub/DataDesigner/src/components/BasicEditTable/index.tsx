@@ -107,6 +107,8 @@ const BasicEditTable = (props) => {
   const onFinish = values => {
     console.log('TableValue', values)
   }
+  //console.log(dataSource);
+
   return (
     <EditTableStyled>
       <Form form={form} component={false}
@@ -159,15 +161,17 @@ const renderOperCol = (operButs) => {
     /** 每个文本的宽度应设置为80,是通过调整样式得出的合理值 */
     width: operButs.length * 80,
     render: (text, row, index) => {
-      return operButs.map((item) => {
+      return operButs.map((item, i) => {
         let isShow = true;
         if (item.isShow) {
           isShow = item.isShow(index);
         }
+        // console.log(item);
+
 
         return isShow ? (
 
-          <Space size="middle" key={item.text}>
+          <Space size="middle" key={i}>
             {
               /** 删除需要弹出二次确认框 */
               item.text === '删除'

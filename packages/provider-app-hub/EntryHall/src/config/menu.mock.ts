@@ -37,7 +37,7 @@ export const mockMenuData: MenuDataType[] = [
         title: '字典管理',
         id: '22',
         icon: '',
-        path: '/page-manager'
+        path: '/DictManage'
       },
       {
         title: '其他数据源',

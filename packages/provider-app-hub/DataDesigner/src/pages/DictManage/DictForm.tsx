@@ -29,7 +29,7 @@ const DictForm = (props) => {
   * 只会初始化一次,发现dataSource有值之后,不会再被执行
   */
   /** 每行记录必须有一个key字段 */
-  const [fieldTableData, setFieldTableData] = useState([]);
+  const [fieldTableData, setFieldTableData] = useState<any>([]);
   /**
   * 颜色面板颜色设置
   */
@@ -209,7 +209,7 @@ const DictForm = (props) => {
   */
   const handleAdd = () => {
 
-    const newData: object = {
+    const newData = {
       key: fieldTableData.length,
       /** 字典项名称 */
       name: '',
@@ -220,14 +220,14 @@ const DictForm = (props) => {
       /** 字体颜色 */
       renderFontColor: '',
     }
-    fieldTableData.push(newData);
+    //fieldTableData.push(newData)
     /**
   * 为什么直接赋值setData(fieldTableData)不更新,非要写成setData([...fieldTableData])才触发更新
   */
-    setFieldTableData([...fieldTableData]);
-    edit(newData);
+    setFieldTableData([...fieldTableData, newData])
+    edit(newData)
     console.log('fieldTableData', fieldTableData)
-  };
+  }
   /**
 * 删除一行记录
 */
