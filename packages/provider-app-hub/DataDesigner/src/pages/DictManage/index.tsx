@@ -18,11 +18,15 @@ import TableHeadMenu from '@provider-app/data-designer/src/bizComps/TableHeadMen
 
 import { getModalConfig } from '../../tools/mix';
 import DictForm from './DictForm';
+import { GetDictList, AddDict, UpdateDict } from '@provider-app/data-designer/src/api'
+/** GMT时间格式化 */
+import { formatGMT } from '@provider-app/data-designer/src/tools/format';
 
 const DictManage = () => {
 
   const [pager, setPager] = useState({ page: 1, pageSize: 10 });
 
+  const [structTableData, setStructTableData] = useState([]);
   /**
   * 弹窗表单标题
   */
@@ -42,169 +46,108 @@ const DictManage = () => {
     },
     { text: '删除', title: '你确定删除这条字典?', onClick: (row) => { } },
   ];
-  // const columns = [
-  //   // renderIndexCol(pager),
-  //   {
-  //     title: '序号',
-  //     dataIndex: 'number',
-  //     width: 40,
-  //     key: 'number'
-  //   },
-  //   {
-  //     title: '字典名称',
-  //     dataIndex: 'name',
-  //     width: 140,
-  //     key: 'name'
-  //   },
-  //   {
-  //     title: '字典描述',
-  //     dataIndex: 'description',
-  //     width: '30%',
-  //     key: 'description'
-  //   },
-  //   {
-  //     title: '最后修改人',
-  //     dataIndex: 'modifiedBy',
-  //     width: 140,
-  //     key: 'modifiedBy'
-  //   },
-  //   {
-  //     title: '最后修改时间',
-  //     dataIndex: 'gmtModified',
-  //     width: 160,
-  //     key: 'gmtModified'
-  //   },
-  //   renderOperCol(operButs),
+  const columns = [
+    // renderIndexCol(pager),
+    {
+      title: '序号',
+      dataIndex: 'rowIndex',
+      width: 40,
+      key: 'rowIndex',
+      render: (text, record, index) => {
+        // console.log({ text, record, index });
+        /** 与后端协商,行号由前端计算 */
+        const { page, pageSize } = pager
+        return <span>{(page - 1) * pageSize + index + 1}</span>;
+      },
+    },
+    {
+      title: '字典名称',
+      dataIndex: 'name',
+      width: 140,
+      key: 'name'
+    },
+    {
+      title: '字典描述',
+      dataIndex: 'description',
+      width: '30%',
+      key: 'description'
+    },
+    {
+      title: '最后修改人',
+      dataIndex: 'modifiedBy',
+      width: 140,
+      key: 'modifiedBy'
+    },
+    {
+      title: '最后修改时间',
+      dataIndex: 'gmtModified',
+      width: 160,
+      key: 'gmtModified'
+    },
+    renderOperCol(operButs),
 
-  // ];
+  ];
+  const queryList = async (args = {}) => {
+    /**
+     * 与产品约定,左侧树查询不考虑右侧列表查询条件,右侧列表查询要带上左侧查询条件,点击了搜索按钮之后才查询
+     */
+    const params = Object.assign({}, {
+      /**  String 否 数据表名称 */
+      name: '',
+      // 字典描述
+      description: '',
+      /**  int 是 分页查询起始位置,从0开始 */
+      offset: 0,
+      /**  int 是 每页查询记录数 */
+      size: 10
+    }, args);
+    /** 请求表结构列表数据 */
+    // const tableRes = await Http.get('http://localhost:60001/mock/structList.json', { params });
+    //const tableRes = await Http.get('/data/v1/tables/list', { params });  // -----
 
+    const tableRes = await GetDictList(params)
+    // console.log({ tableRes });
+
+    /** 表格数据格式转换-注意setStructTableData之后不能立刻获取最新值 */
+    const tableData = tableRes.result.data.map((col) => {
+      /** 根据T点的key查找节点完整信息 */
+      /** 返回节点的名称 */
+      // col.moduleId = treeQuery(treeData, col.moduleId).title;
+      // console.log(col.moduleId);
+      /** 将表类型代码转换为文字 */
+      // const showText = TableTypeEnum.find((item) => item.value === col.type);
+      // col.type = showText ? showText.text : '';
+      /** gmt时间格式转yyyy-MM-dd hh:mm:ss */
+      col.gmtCreate = formatGMT(col.gmtCreate);
+      col.gmtModified = formatGMT(col.gmtModified);
+      /** antd table每行记录必需有key字段 */
+      col.key = col.id;
+      return col;
+    });
+    // console.log({ structTableData });
+    // setTableData(structTableData);
+    setStructTableData(tableData);
+  };
+  useEffect(() => {
+    queryList()
+  }, [])
   // const data = [
   //   {
   //     key: '1',
-  //     number: '1',
+
   //     name: 'John Brown sr.',
 
   //     description: 'New York No. 1 Lake Park',
   //   },
   //   {
   //     key: '2',
-  //     number: '2',
+
   //     name: 'Joe Black',
 
   //     description: 'Sidney No. 1 Lake Park',
   //   },
   // ];
-  /**
-  * 提交数据
-  * type-
-  */
-  const submitData = ({ type, args }) => {
-    const reqMethod = {
-      add: 'post',
-      update: 'put'
-    }[type];
-    /**
-  * 新增字段参数
-  */
-    const params = {
-      name: "性别",
-      description: "性别,男1女0",
-      items: [
-        {
-          code: "0",
-          name: "女",
-          renderColor: "#fff"
-        },
-        {
-          code: "1",
-          name: "男",
-          renderColor: "#fff"
-        }
-      ]
-    };
-    Http[reqMethod](' http://{ip}:{port}/paas/ {lesseeCode}/{applicationCode}/data/v1/dictionary/', { data: params }).then((res) => {
-      console.log(res);
-    });
-  };    //------新增或者修改字典
-  /**
-  * 查询字典列表
-  */
-  const getList = (params) => {
-    Http.get('http://{ip}:{port}/paas/ {lesseeCode}/{applicationCode}/data/v1/dictionary/list', { params }).then((res) => {
-      console.log(res);
-    });
-  };
-  /**
-  * 查询字典详情
-  */
-  const getDetail = (id) => {
-    Http.get("http://{ip}:{port}/paas/ {lesseeCode}/{applicationCode}/data/v1/dictionary/{id}", { params: { id } }).then((res) => {
-      console.log(res);
-    });
-  };
-  /**
-  * 删除字典
-  */
-  const delDict = () => {
-    Http.delete("http://{ip}:{port}/paas/ {lesseeCode}/{applicationCode}/data/v1/tables/{id}", { params: { id } }).then((res) => {
-      console.log(res);
-    });
-  };
-  /**
-  * 新增/修改子字典接口
-  */
-  const modifySubDict = (data) => {
-    /**
-    * {
-    "dictionaryId":1292652624910360576, // 列表第一行的id
-    "pid":1291934535084285952,
-    "items":[
-        {
-            "code":"3",
-            "name":"女孩",
-            "renderColor":"#fff"
-        },
-        {
-            "code":"4",
-            "name":"女人",
-            "renderColor":"#fff"
-        }
-    ]
-}
-    */
-    Http.put("http://{ip}:{port}/paas/ {lesseeCode}/{applicationCode}/data/v1/dictionary_value/", { data }).then((res) => {
-      console.log(res);
-    });
-  };
-  /**
-  * 查询字典项项
-  */
-  const getSubDictDetail = (params) => {
-    // {
-    //   dictionaryId
-    //   pid
-    // }
-    Http.get('http://{ip}:{port}/paas/ {lesseeCode}/{applicationCode}/data/v1/dictionary_value/{dictionaryId}/{pid}', { params }).then((res) => {
-      console.log(res);
-    });
-  };
-  /**
-  *
-  * 删除子字典项
-  */
-  const delSubDetail = (params) => {
-    /**
-    * 是删除子字典下面的子项,不是删除子字典自身
-    */
-    // dictionaryId
-    // pid
-    /**
-    * "level"=5时 第5级隐藏配置子项,删除子项按钮
-    */
-    Http.delete('http://{ip}:{port}/paas/ {lesseeCode}/{applicationCode}/data/v1/dictionary_value/{dictionaryId}/{pid}', { params }).then((res) => {
-      console.log(res);
-    });
-  };
+  //-----接口
 
   const [form] = Form.useForm();
 
@@ -237,14 +180,30 @@ const DictManage = () => {
      * @param e  点击按钮事件源
      * @param { fieldForm-新建表可控表单实例 }
      */
-    onOk: (e) => {
+    onOk: async (e) => {
+      // console.log(formTitle)
+      if (formTitle === "新增字典") {
+        //新增字典的参数
+        const params = {} //请求的参数-----name,description,items(name,code,renderBgColor,renderFontColor)
+        //请求的api
+        await AddDict(params)
+        //把新增的字典加到原来的字典集合中 --- 重新获取
+
+      } else {
+        //修改字典的参数
+        const params = {}
+        //请求的api
+        await UpdateDict(params)
+        //把修改的字典内容合并到原来的字典上，并更新字典集合-----重新获取
+
+      }
       setVisiable(false);
     },
     /** 弹框取消按钮回调 */
     onCancel: (e) => {
       setVisiable(false);
     },
-  });
+  })
 
   /**
   * 搜索表单实例
@@ -288,7 +247,8 @@ const DictManage = () => {
                   /**
                      * 列表查询,页码从0开始
                      */
-                  // queryList({ description, name, offset: 0 });
+                  queryList({ description, name, offset: 0 });
+
                 });
             }
           },
@@ -297,6 +257,7 @@ const DictManage = () => {
             text: '清空',
             onClick: () => {
               searchForm.resetFields();
+              queryList();
             }
           }
         ]
@@ -314,15 +275,16 @@ const DictManage = () => {
       //   //item.key = item.dataIndex;     -----------
       //   return item;
       // })}
-      dataSource={data}
-    // pagination={{
-    //   showTotal: ((total) => {
-    //     return `共 ${total} 条`;
-    //   }),
-    //   onChange: (page, pageSize) => {
-    //     setPager({ page, pageSize });
-    //   }
-    // }}
+      dataSource={structTableData}
+      pagination={{
+        showTotal: ((total) => {
+          return `共 ${total} 条`;
+        }),
+        onChange: (page, pageSize: any) => {
+          setPager({ page, pageSize });
+          queryList({ offset: page, size: pageSize });
+        }
+      }}
     />
     <Modal {...modalProps}>
       <DictForm form={form} />

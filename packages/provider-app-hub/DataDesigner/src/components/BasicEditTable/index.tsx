@@ -50,12 +50,12 @@ interface EditableCellProps extends React.HTMLAttributes<HTMLElement> {
   editing: boolean;
   dataIndex: string;
   title: string;
-  formConfig:{
-    attrs:{
-      type:'InputNumber' | 'Input' | 'BasicSelect';
-      enum?:Array<{value, text}>;
+  formConfig: {
+    attrs: {
+      type: 'InputNumber' | 'Input' | 'BasicSelect';
+      enum?: Array<{ value, text }>;
     }
-    rules:Rule[];
+    rules: Rule[];
   }
   record: unknown;
   index: number;
@@ -85,10 +85,10 @@ const EditableCell: React.FC<EditableCellProps> = ({
           <BasicStory {...formConfig.attrs} />
         </Form.Item>
       ) : (
-        <Form.Item>
-          {children }
-        </Form.Item>
-      )}
+          <Form.Item>
+            {children}
+          </Form.Item>
+        )}
     </td>
   );
 };
@@ -104,10 +104,13 @@ const BasicEditTable = (props) => {
   const {
     form, dataSource, columns, pagination
   } = props;
+  const onFinish = values => {
+    console.log('TableValue', values)
+  }
   return (
     <EditTableStyled>
-      <Form form={form} component={false}>
-
+      <Form form={form} component={false}
+        onFinish={onFinish}>
         <Table
           components={{
             body: {

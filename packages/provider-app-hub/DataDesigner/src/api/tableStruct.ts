@@ -38,14 +38,17 @@ export async function SubmitTableData(values){
   return await $R_P.post('/data/v1/tables/', values)
 }
 
-/*新增或者修改字典*/
-export async function AddOrUpdateDict(reqMethod,params){
- reqMethod === 'post'?await $R_P.post('/data/v1/dictionary',params):await $R_P.put('/smart_building/data/v1/dictionary',params)
+/*新增字典*/
+export async function AddDict(params){
+return await $R_P.post('/data/v1/dictionary/',params)
 }
-
+// 修改字典
+export async function UpdateDict(params){
+  await $R_P.put('/smart_building/data/v1/dictionary/',params)
+}
 /*查询字典列表*/
 export async function GetDictList(params){
-  return await $R_P.get('/data/v1/dictionary/list',  params )
+  return await $R_P.get({url:'/data/v1/dictionary/list',params})
 }
 
 /**

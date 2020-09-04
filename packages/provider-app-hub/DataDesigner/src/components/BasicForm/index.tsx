@@ -52,11 +52,11 @@ const BasicForm = (props) => {
     },
     style = { padding: '16px 20px' },
     layout = 'inline',
-    colSpan = 6,
+    colSpan = 6,  //-----
     btnSpan = 6,
     gutter = 24,
-    items,
-    form,
+    items,     //----
+    form,    //-----
   } = props;
 
   /**
@@ -69,7 +69,7 @@ const BasicForm = (props) => {
       * 1.按钮名称书写在标签之间,不能作为一个属性配置,
       * 2.没有itemAttr配置
       */
-      return key === 'btns' ? (
+      return key === 'btns' ? (    // --------判断是否是按钮好像没什么用
         <Col span={btnSpan} key={key}>
           <Form.Item>
             {
@@ -80,21 +80,24 @@ const BasicForm = (props) => {
           </Form.Item>
         </Col>
       ) : (
-        <Col span={colSpan} key={key}>
-          <Form.Item name={key} {...items[key].itemAttr}>
-            <BasicStory {...items[key].compAttr} />
-          </Form.Item>
-        </Col>
-      );
+          <Col span={colSpan} key={key}>
+            <Form.Item name={key} {...items[key].itemAttr}>
+              <BasicStory {...items[key].compAttr} />
+            </Form.Item>
+          </Col>
+        );
     });
   };
-
+  const onFinish = values => {
+    console.log(values)
+  }
   return (
     <Form
       {...formItemLayout}
       layout={layout}
       form={form}
       style={style}
+      onFinish={onFinish}
     >
       <Row gutter={24}>{getFields(items)}</Row>
     </Form>);
@@ -155,7 +158,7 @@ const AdvancedSearchForm = () => {
                 form.resetFields();
               }}
             >
-            清空
+              清空
             </Button>
             <Button
               type='link'
