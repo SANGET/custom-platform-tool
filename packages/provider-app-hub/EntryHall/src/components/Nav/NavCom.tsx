@@ -15,19 +15,21 @@ interface DataItem {
 
 interface TreeProps {
   level: number
-  treeData: DataItem[]
+  treeData?: DataItem[]
   mode?
+  onItemClick: () => void
 }
 
 const Tree: React.FC<TreeProps> = (props) => {
   const {
-    level, treeData, mode = 'horizontal'
+    level, treeData, mode = 'horizontal',
+    onItemClick
   } = props;
 
   return (
     <Menu mode={mode}>
       {
-        treeData.map((item) => {
+        treeData && treeData.map((item) => {
           const {
             title, icon, id, children, path
           } = item;
@@ -41,7 +43,7 @@ const Tree: React.FC<TreeProps> = (props) => {
             >
               <Tree
                 treeData={children}
-                parentNode={item}
+                onItemClick={onItemClick}
                 mode='vertical'
                 level={level + 1}
               />
@@ -50,11 +52,7 @@ const Tree: React.FC<TreeProps> = (props) => {
             <Menu.Item
               key={id}
               onClick={(e) => {
-                onNavigate({
-                  type: 'PUSH',
-                  route: path,
-                  params: { title }
-                });
+                onItemClick(item);
               }}
             >
               {title}
@@ -66,13 +64,27 @@ const Tree: React.FC<TreeProps> = (props) => {
   );
 };
 
-export const Nav = ({
-  navConfig
-}) => {
+export const Nav = (props) => {
+  const {
+    navConfig
+  } = props;
   return (
     <div className="app-nav">
       <Tree
         treeData={navConfig}
+        onItemClick={(item) => {
+          const { title, path } = item;
+          const {
+            location
+          } = props;
+          onNavigate({
+            type: 'PUSH',
+            route: path,
+            params: {
+              title,
+            }
+          });
+        }}
         level={0}
       />
     </div>

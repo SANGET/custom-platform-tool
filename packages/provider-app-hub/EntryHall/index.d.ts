@@ -4,7 +4,12 @@ import { ProviderAppContext } from './src/types';
  * 子应用接入规范
  */
 export interface SubAppSpec extends ProviderAppContext {
-  pageContext
+  /** 页面的验证信息 */
+  pageAuthInfo
+  /** 当前页面的 path */
+  pagePath: string
+  /** 当前的 location */
+  location
 }
 
 /**
@@ -23,6 +28,7 @@ type HYSubAppTypeFE<T> = (props: SubAppSpec) => React.ElementType<T>
 declare global {
   /** HY */
   namespace HY {
+    type SubAppSpec = SubAppSpec
     /** 通用子应用 */
     type SubApp = HYSubAppTypeRE
     /** HOC 子应用 */

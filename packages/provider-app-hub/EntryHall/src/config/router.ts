@@ -11,7 +11,7 @@ import PageDesignerApp from "@provider-app/page-designer/app/main";
 // }
 
 interface RouterType {
-  [routeName: string]: HY.SubApp
+  [routeName: string]: HY.SubApp | HY.SubAppHOC
 }
 
 const Router: RouterType = {
