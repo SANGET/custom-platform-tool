@@ -122,16 +122,6 @@ export default class App extends RouterMultiple<AppContainerProps, AppContainerS
                 }}
                 ChildComp={C}
               >
-                {/* {
-                  (pageContext) => {
-                    console.log('asd');
-                    return (
-                      <C
-                        {...pageContext}
-                      />
-                    );
-                  }
-                } */}
               </PageContainer>
             );
           })
@@ -139,8 +129,8 @@ export default class App extends RouterMultiple<AppContainerProps, AppContainerS
       </div>
     ) : (
       <Hall
-        appContext={this.appContext}
         location={this.location}
+        onNavigate={this.onNavigate}
       />
     );
   }
@@ -157,7 +147,9 @@ export default class App extends RouterMultiple<AppContainerProps, AppContainerS
     } = this.state;
     const hasPage = routers.length > 0;
     return hasPage ? (
-      <Nav navConfig={navMenu} />
+      <Nav
+        navConfig={navMenu}
+      />
     ) : null;
   }
 

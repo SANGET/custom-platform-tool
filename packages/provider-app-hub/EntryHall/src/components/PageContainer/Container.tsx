@@ -8,18 +8,22 @@ import { ProviderAppContext } from '../../types';
 export interface ProviderPageContext extends ProviderAppContext {
   pagePath
   pageAuthInfo
+  location
 }
 
-interface PageContainerProps extends React.DetailedHTMLProps<React.HTMLAttributes<HTMLDivElement>, HTMLDivElement> {
-  pagePath?: string;
-  pageAuthInfo?: any;
+interface PageContainerProps
+  extends React.DetailedHTMLProps<React.HTMLAttributes<HTMLDivElement>, HTMLDivElement> {
+  pagePath?: string
+  pageAuthInfo?: any
   location
   appContext: ProviderAppContext
-  children: (pageContext: ProviderPageContext) => JSX.Element
-  ChildComp: React.ElementType
+  ChildComp: HY.SubApp | HY.SubAppHOC
 }
 
-const loadChild = (Child, props) => {
+const loadChild = (
+  Child: HY.SubApp | HY.SubAppHOC,
+  props: HY.SubAppSpec
+) => {
   /** 处理找不到页面 */
   if (!Child) {
     console.error(`没找到对应的页面 ${props.pagePath}`);
@@ -37,15 +41,18 @@ const loadChild = (Child, props) => {
   return <C {...props} />;
 };
 
+/**
+ * 页面运行容器
+ */
 export const PageContainer = (props: PageContainerProps) => {
   const {
     pagePath, pageAuthInfo, appContext, id,
-    children, className, ChildComp, location,
+    className, ChildComp, location,
     ...otherProps
   } = props;
-  const pageContext = {
-    pagePath,
+  const pageChildProps = {
     pageAuthInfo,
+    pagePath,
     location,
     ...appContext
   };
@@ -55,7 +62,7 @@ export const PageContainer = (props: PageContainerProps) => {
       {...otherProps}
     >
       {
-        loadChild(ChildComp, pageContext)
+        loadChild(ChildComp, pageChildProps)
       }
     </div>
   );

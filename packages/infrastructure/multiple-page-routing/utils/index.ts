@@ -8,13 +8,15 @@ export interface NavParams {
 
 export interface NavigateConfig {
   /** 从哪里来，由程序写入 */
-  from?: Location;
+  from?: Location
   /** 路由参数 */
-  params?: NavParams;
+  params?: NavParams
   /** 路由类型 */
-  type: 'PUSH' | 'GO_BACK' | 'LINK' | 'POP';
+  type: 'PUSH' | 'GO_BACK' | 'LINK' | 'POP'
   /** 需要跳转的路由 */
-  route: string;
+  route: string
+  /** 是否使用默认的 params，会在 url 中加入 */
+  useDefaultParams?: boolean
 }
 
 export const history = createBrowserHistory();
@@ -44,18 +46,35 @@ export const replaceHistory = (url: string, params?) => {
   history.replace(url.replace(/\/\//g, "/"), params);
 };
 
+let _defaultParams = {};
+
+/**
+ * 为每次路由调整添加默认的 params url
+ */
+export const setDefaultParams = (
+  defaultParams: NavParams
+) => {
+  _defaultParams = produce(defaultParams, (draft) => {
+    return {
+      ...draft,
+      ...defaultParams
+    };
+  });
+};
+
 /**
  * 包装通过 push 方式的 url 格式
  */
 export const wrapPushUrl = (pushConfig: NavigateConfig) => {
   const { href, hash } = window.location;
   const targetHash = hash.replace("#/", "").split("?")[0];
-  const { route, params } = pushConfig;
+  const { route, params, useDefaultParams = true } = pushConfig;
   let result = urlParamsToQuery({
-    params: {
-      ...params,
-      [ROUTE_KEY]: route,
-    },
+    params: Object.assign({}, params,
+      useDefaultParams && _defaultParams,
+      {
+        [ROUTE_KEY]: route
+      }),
     toBase64: true,
   });
   result = `${targetHash}${result.replace(/&&$/g, "")}`;
@@ -63,6 +82,13 @@ export const wrapPushUrl = (pushConfig: NavigateConfig) => {
 };
 
 export type OnNavigate = (config: NavigateConfig) => void
+
+/**
+ * 设置导航器
+ */
+export const clearDefaultParams = () => {
+  _defaultParams = {};
+};
 
 /**
  * 导航器

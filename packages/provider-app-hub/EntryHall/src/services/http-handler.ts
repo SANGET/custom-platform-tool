@@ -6,6 +6,7 @@
 import { RequestClass, resolveUrl } from "@mini-code/request";
 import produce from "immer";
 
+import { setDefaultParams, clearDefaultParams } from "multiple-page-routing";
 import { authStore } from "../auth/actions";
 
 /**
@@ -40,12 +41,19 @@ class UrlManager {
 
   /** 登录后需要设置 */
   setRent = (rent: string) => {
+    setDefaultParams({
+      rent
+    });
     this.currRent = rent;
     this.setRequestBaseUrl();
   }
 
   /** 选择应用后需要设置 */
   setApp = (app: string) => {
+    /** 设置默认的 url，让 url 带上 app 表饰 */
+    setDefaultParams({
+      app
+    });
     this.currApp = app;
     this.setRequestBaseUrl();
   }
@@ -54,6 +62,8 @@ class UrlManager {
   reset = () => {
     this.currApp = '';
     this.currRent = '';
+    /** 清除默认 params */
+    clearDefaultParams();
     $R.setConfig({
       baseUrl: baseReqUrl
     });
