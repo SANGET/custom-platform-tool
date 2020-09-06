@@ -3,7 +3,7 @@ import { Link } from "multiple-page-routing";
 
 const defaultToRoute = '/page-manager';
 
-const Hall: HY.SubApp = (props) => {
+export const Hall: HY.SubApp = (props) => {
   return (
     <div>
       <h3>工作台</h3>
@@ -33,5 +33,3 @@ const Hall: HY.SubApp = (props) => {
     </div>
   );
 };
-
-export default Hall;

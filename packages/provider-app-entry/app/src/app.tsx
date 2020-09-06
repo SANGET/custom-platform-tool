@@ -6,15 +6,17 @@ import {
   RouterState, RouterHelperProps, onNavigate
 } from 'multiple-page-routing';
 
-import { GetMenu } from './services/menu';
-import { PageContainer, Nav } from './components';
-import router from './config/router';
+/** 获取路由配置 */
+import router, { getRouteName } from '@provider-app/config/router';
 
-import { TabNav } from "./components/TabNav";
-import { Logo } from "./components/Logo";
-import { UserStatusbar } from "./components/UserStatusbar";
+import {
+  Hall,
+  PageContainer, Nav, TabNav, Logo, UserStatusbar
+} from './components';
+
 import { AuthStoreState } from "./auth/actions";
-import Hall from './Hall';
+
+import { GetMenu } from "./apis";
 
 interface AppContainerState extends RouterState {
   ready?: boolean;
@@ -106,8 +108,8 @@ export default class App extends RouterMultiple<AppContainerProps, AppContainerS
             /**
              * 从路由配置中找到 pagePath 对应的页面
              */
-            const C = router[pagePath.split('?')[0]];
-            // const C = routeConfig.component;
+            const routeConfig = router[pagePath.split('?')[0]];
+            const C = routeConfig.component;
 
             return (
               <PageContainer
@@ -183,6 +185,7 @@ export default class App extends RouterMultiple<AppContainerProps, AppContainerS
                   routers={routers}
                   routerInfo={routerInfo}
                   activeRoute={activeRoute}
+                  getRouteName={getRouteName}
                 />
                 {this.renderPages()}
               </div>

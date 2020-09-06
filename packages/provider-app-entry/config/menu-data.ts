@@ -1,12 +1,17 @@
-interface MenuDataType {
+export interface MenuDataType {
+  /** 菜单名 */
   title: string
+  /** icon */
   icon: string
+  /** 菜单 id，用于 react 的 key */
   id: string
+  /** 导航将要到达的 path */
   path?: string
+  /** children，如果有，则认为点击没有跳转功能 */
   children?: MenuDataType[]
 }
 
-export const mockMenuData: MenuDataType[] = [
+export const ProviderAppMenuData: MenuDataType[] = [
   {
     title: '页面设计',
     icon: '',
