@@ -2,19 +2,6 @@
   "name": "@provider-app/entry-hall",
   "version": "0.0.1",
   "private": true,
-  "proxy": {
-    "dataDesigner": {
-      "/api": {
-        "target": "http://10.7.1.59:8080/paas/hy/smart_building",
-        "pathRewrite": {
-          "^/api": ""
-        },
-        "logLevel": "debug",
-        "changeOrigin": true,
-        "secure": false
-      }
-    }
-  },
   "types": "index.d.ts",
   "scripts": {
     "start": "cross-env PORT=6679 minictl start",

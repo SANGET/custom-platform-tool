@@ -1,7 +1,7 @@
 /*
  * @Author: wph
  * @Date: 2020-08-07 17:31:53
- * @LastEditTime: 2020-08-13 22:10:03
+ * @LastEditTime: 2020-08-25 02:01:03
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: \custom-platform-v3-frontend\packages\provider-app-hub\DataDesigner\src\tools\format.ts
@@ -14,7 +14,7 @@ export const codeToText = (obj) => {
   const { arr, val } = obj;
   /** 将表类型代码转换为文字 */
   const showText = arr.find((item) => item.value === val);
-  return showText ? showText.text : '';
+  return showText ? showText.text : val;
 };
 /**
  * gmt时间格式化

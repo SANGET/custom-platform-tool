@@ -1,11 +1,23 @@
 /*
  * @Author: wph
  * @Date: 2020-08-15 16:01:41
- * @LastEditTime: 2020-08-20 11:04:47
+ * @LastEditTime: 2020-08-23 11:04:22
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: \custom-platform-v3-frontend\packages\provider-app-hub\DataDesigner\src\tools\mix.ts
  */
+
+/** 中文转拼音工具 */
+import PinYin from 'js-pinyin';
+
+/** 中文转换为拼音工具设置选项 */
+PinYin.setOptions({
+  /** 关闭音调转换功能 */
+  checkPolyphone: false,
+  /** 将汉字首字母转换为大写拼音 */
+  charCase: 0,
+});
+
 /**
  * 生成模态框基本配置
  * @param config 传入的配置
@@ -62,13 +74,12 @@ export const getModalConfig = (config) => {
 export function randomNum(minNum:number, maxNum:number) {
   switch (arguments.length) {
     case 1:
-      return parseInt(Math.random() * minNum + 1, 10);
+      return parseInt(`${Math.random() * minNum + 1}`, 10);
     case 2:
-      return parseInt(Math.random() * (maxNum - minNum + 1) + minNum, 10);
+      return parseInt(`${Math.random() * (maxNum - minNum + 1) + minNum}`, 10);
     default:
       return 0;
-      break;
   }
 }
 
-// export { getModalConfig };
+export { PinYin };

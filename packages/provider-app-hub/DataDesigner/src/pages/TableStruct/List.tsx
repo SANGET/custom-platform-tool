@@ -9,7 +9,6 @@ import React, { useEffect, useState } from 'react';
 import {
   Table, Button, Space, Tooltip, Popconfirm, Modal, Form
 } from 'antd';
-
 /** react路由暴露出来的页面跳转方法 */
 // import { useHistory } from 'react-router-dom';
 import { onNavigate } from 'multiple-page-routing';
@@ -19,7 +18,7 @@ import { useMappedState, useDispatch } from 'redux-react-hook';
 import Http, { Msg } from '@infra/utils/http';
 
 /** 导出接口 */
-import { ReqCopyTableStructRecord } from '@provider-app/data-designer/src/api';
+import { ReqCopyTableStructRecord, DelTable } from '@provider-app/data-designer/src/api';
 
 /** 基本表单 */
 import BasicForm from '@provider-app/data-designer/src/components/BasicForm';
@@ -47,7 +46,7 @@ const mapState = (state) => ({
 });
 const List = (props) => {
   const {
-    tableData, scroll, style, title, pagination, queryList, setData
+    tableData, scroll, style, title, pagination, queryList, setData, loading
   } = props;
 
   /** react路由跳转方法,必须定义在react 组件中,跳转到编辑表页面时要用 */
@@ -72,19 +71,19 @@ const List = (props) => {
       {
         text: '编辑',
         onClick: (row) => {
-          console.log(row);
+          console.log(row, 'row1234143432434343');
           onNavigate({
             type: "PUSH",
-            route: '/EditStruct/',
-            params: { id: row.id }
+            route: '/data_designer/edit_struct',
+            params: { id: row.id, title: '编辑表' }
           });
           // History.push({ pathname: `/EditStruct/${row.id}`, state: { id: row.id } });
         }
       },
       {
         text: '删除',
-        onClick: (row) => {
-          Http.delete(`/data/v1/tables/${row.id}`).then((res) => {
+        onClick: async (row) => {
+          await DelTable(row.id).then((res) => {
             Msg.success('操作成功');
             queryList();
           });
@@ -95,6 +94,9 @@ const List = (props) => {
         onClick: (row) => {
           setVisible(true);
           const { id } = row;
+          /**
+          * 复制记录时，数据表名称后面要加五位随机数
+          */
           const copyName = `${row.name}_副本_${randomNum(10000, 99999)}`;
           form.setFieldsValue({ id, code: PinYin.getCamelChars(copyName), name: copyName });
         }
@@ -156,7 +158,7 @@ const List = (props) => {
       },
       {
         title: '最后修改人员',
-        dataIndex: 'modifiedBy',
+        dataIndex: 'modifiedUserName',
         width: 140,
       },
       {
@@ -223,7 +225,7 @@ const List = (props) => {
       form
         .validateFields() /** 表单校验 */
         .then((values) => {
-          console.log(values, form.getFieldsValue());
+          // console.log(values, form.getFieldsValue());
           // value;
           /** 新建表数据提交 */
           ReqCopyTableStructRecord(values).then(() => {
@@ -253,7 +255,7 @@ const List = (props) => {
   */
   const items = {
     name: {
-    /** 表单项属性 */
+      /** 表单项属性 */
       itemAttr: {
         label: "数据表名称",
         rules: [
@@ -319,6 +321,7 @@ const List = (props) => {
       <Table
         bordered
         title={title}
+        loading={loading}
         dataSource={tableData}
         columns={columns}
         scroll={scroll}
@@ -329,7 +332,7 @@ const List = (props) => {
             return `共 ${total} 条`;
           }),
           onChange: (page, pageSize) => {
-            dispatch({ type: 'triggerStructPager', structPager: { page, pageSize } });
+            dispatch({ type: 'setStructPager', structPager: { page, pageSize } });
             pagination && pagination(page, pageSize);
           }
         }}

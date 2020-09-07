@@ -16,11 +16,10 @@
     "tree_table": {
       "max_level": "5"
     },
-    "columns": [
-      {
+    "columns": [{
         "code": "id",
         "name": "主键",
-        "field_type": "VARCHAR",
+        "field_type": "STRING",
         "field_size": 32,
         "species": "BIS",
         "data_type": "NORMAL",
@@ -29,7 +28,7 @@
       {
         "code": "dict",
         "name": "字典",
-        "field_type": "VARCHAR",
+        "field_type": "STRING",
         "field_size": 32,
         "species": "BIS",
         "data_type": "DICT",
@@ -48,7 +47,7 @@
       {
         "code": "jigou",
         "name": "机构名称",
-        "field_type": "VARCHAR",
+        "field_type": "STRING",
         "field_size": 32,
         "species": "BIS",
         "data_type": "QUOTE",
@@ -57,31 +56,27 @@
       {
         "code": "waijian",
         "name": "外键",
-        "field_type": "VARCHAR",
+        "field_type": "STRING",
         "field_size": 32,
         "species": "BIS",
         "data_type": "FK",
         "decimal_size": 2
       }
     ],
-    "references": [
-      {
-        "field_code": "jigou",
-        "ref_table_code": "org_dept",
-        "ref_field_code": "id",
-        "ref_display_field_code": "name",
-        "sequence": 1
-      }
-    ],
-    "foreign_keys": [
-      {
-        "field_code": "waijian",
-        "ref_table_code": "org_dept",
-        "ref_field_code": "code",
-        "ref_display_field_code": "name",
-        "delete_strategy": "CASCADE",
-        "update_strategy": "CASCADE"
-      }
-    ]
+    "references": [{
+      "field_code": "jigou",
+      "ref_table_code": "org_dept",
+      "ref_field_code": "id",
+      "ref_display_field_code": "name",
+      "sequence": 1
+    }],
+    "foreign_keys": [{
+      "field_code": "waijian",
+      "ref_table_code": "org_dept",
+      "ref_field_code": "code",
+      "ref_display_field_code": "name",
+      "delete_strategy": "CASCADE",
+      "update_strategy": "CASCADE"
+    }]
   }
 }

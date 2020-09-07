@@ -13,9 +13,13 @@ import { Modal, Form } from 'antd';
 /** 网络请求工具 */
 import Http, { Msg } from '@infra/utils/http';
 
+import { Connector } from '@provider-app/data-designer/src/connector';
+
 /** 状态管理方法 */
 import { useMappedState, useDispatch } from 'redux-react-hook';
 
+/** 提交数据后重置表结构行记录详情要用 */
+import { defaultState } from '@provider-app/data-designer/src/store/initState';
 /** 基本表单 */
 import BasicForm from '@provider-app/data-designer/src/components/BasicForm';
 
@@ -36,7 +40,7 @@ import { formatGMT } from '@provider-app/data-designer/src/tools/format';
 import MenuTree from '@provider-app/data-designer/src/bizComps/MenuTree';
 
 /** 表单业务组件 */
-import { GetMenuTree } from '@provider-app/data-designer/src/api';
+import { GetMenuTree, GetTableData, SubmitTableData } from '@provider-app/data-designer/src/api';
 import StructForm from './StructForm';
 
 /** 表头菜单组件 */
@@ -47,7 +51,6 @@ import List from './List';
 
 /** 当前功能页样式 */
 import './TableStruct.less';
-import { Connector } from '@provider-app/data-designer/src/connector';
 
 /** 给你一些使用react hook的理由  */
 /** 理由一： hook使你无需更改页面结构,也能在不同的组件间复用状态,为了在组件间复用状态,providers,consumers,render Props、高阶组件这类方案需要更改页面结构
@@ -105,7 +108,28 @@ import { Connector } from '@provider-app/data-designer/src/connector';
 高维护性，维护表单，只需要维护配置数据。
  */
 
-const TableStruct: FC = () => {
+const TableStruct = () => {
+  /** 在网络请求工具中,要用dispatch更改共享状态 */
+  const dispatch = useDispatch();
+  // dispatch({
+  //   type: 'setStructRowData',
+  //   structRowData: defaultState.structRowData
+  // });
+  // dispatch({
+  //   type: 'setSysFieldCtrl',
+  //   sysFieldCtrl: defaultState.sysFieldCtrl
+  // });
+
+  // http:// 10.7.1.59:8080/paas/hy/manage/v1/users/login
+  // /smart_building
+
+  Http.defaults.headers.common.Authorization = '1295915065878388737';
+  // const res = await Http.post('/manage/v1/users/login', {
+  //   loginName: "hy",
+  //   password: "123456"
+  // });
+  // Http.defaults.headers.common.Authorization = res.data.result.loginSuccessInfo.token;
+
   // 定义一个 mapState函数
   const mapState = useCallback(
     (state) => ({
@@ -114,8 +138,6 @@ const TableStruct: FC = () => {
     []
   );
 
-  /** 在网络请求工具中,要用dispatch更改共享状态 */
-  const dispatch = useDispatch();
   /** structPager显示列表序号的时候要用 treeData 左侧菜单树要用 */
   /**
    * 共享状态值--表结构分页和树形源数据
@@ -131,53 +153,110 @@ const TableStruct: FC = () => {
   */
 
   /**
+   *
+   * @param args
+   */
+  const getList = ({ params, cb }) => {
+    /**
+     * 与产品约定,左侧树查询不考虑右侧列表查询条件,右侧列表查询要带上左侧查询条件,点击了搜索按钮之后才查询
+     */
+    const reqParams = Object.assign({}, {
+      /**  String 否 数据表名称 */
+      name: '',
+      /**  long 否 模块主键 */
+      moduleId: '',
+      /**  String 否 表类型normalTable(普通表)tree(树形表)AUX_TABLE(附属表) */
+      // type: ['normalTable', 'tree', 'AUX_TABLE'],
+      /**  int 是 分页查询起始位置,从0开始 */
+      offset: 0,
+      /**  int 是 每页查询记录数 */
+      size: 10
+    }, params);
+    setTableLoading(true);
+    /** 请求表结构列表数据 */
+    // const tableRes = await Http.get('http://localhost:60001/mock/structList.json', { params });
+    Http.get('/smart_building/data/v1/tables/list', { params: reqParams }).then((res) => {
+      cb && cb(res.data.result);
+    }).finally(() => {
+      setTableLoading(false);
+    });
+  };
+
+  /**
+   * 刷新表结构枚举
+   */
+  const refreshStructTableEnum = (args = {}) => {
+    getList({
+      params: Object.assign({
+        type: ['TABLE', 'TREE', 'AUX_TABLE'],
+      }, args),
+      cb: (res) => {
+        res.data && dispatch({
+          type: 'setStructTableEnum',
+          structTableEnum: res.data.map((item) => ({
+            text: item.name, value: item.id, code: item.code, name: item.name
+          }))
+        });
+      }
+    });
+  };
+
+  /**
    * 表结构列表查询
    * @param treeData-菜单树,用于菜单id转文字
    * @param TableTypeEnum-表类型枚举,用于表类型转文字
    * @param formatGMT-gmt时间格式转yyyy-MM-dd hh:mm:ss
    *
    */
-  const queryList = async (args = {}) => {
-    /**
-     * 与产品约定,左侧树查询不考虑右侧列表查询条件,右侧列表查询要带上左侧查询条件,点击了搜索按钮之后才查询
-     */
-    const params = Object.assign({}, {
-      /**  String 否 数据表名称 */
-      name: '',
-      /**  long 否 模块主键 */
-      moduleId: '',
-      /**  String 否 表类型normalTable(普通表)tree(树形表)auxTable(附属表) */
-      type: '',
-      /**  int 是 分页查询起始位置,从0开始 */
-      offset: 0,
-      /**  int 是 每页查询记录数 */
-      size: 10
-    }, args);
-    /** 请求表结构列表数据 */
-    // const tableRes = await Http.get('http://localhost:60001/mock/structList.json', { params });
-    const tableRes = await Http.get('/data/v1/tables/list', { params });
+  const queryList = (params = {}) => {
+    //const tableRes = await Http.get('/data/v1/tables/list', { params });  // -----
 
+    const tableRes = await GetTableData(params)
     // console.log({ tableRes });
-
-    /** 表格数据格式转换-注意setStructTableData之后不能立刻获取最新值 */
-    const tableData = tableRes.data.result.data.map((col) => {
-      /** 根据T点的key查找节点完整信息 */
-      /** 返回节点的名称 */
-      col.moduleId = treeQuery(treeData, col.moduleId).title;
-      // console.log(col.moduleId);
-      /** 将表类型代码转换为文字 */
-      const showText = TableTypeEnum.find((item) => item.value === col.type);
-      col.type = showText ? showText.text : '';
-      /** gmt时间格式转yyyy-MM-dd hh:mm:ss */
-      col.gmtCreate = formatGMT(col.gmtCreate);
-      col.gmtModified = formatGMT(col.gmtModified);
-      /** antd table每行记录必需有key字段 */
-      col.key = col.id;
-      return col;
+    getList({
+      params,
+      cb: (res) => {
+        /** 表格数据格式转换-注意setStructTableData之后不能立刻获取最新值 */
+        const tableData = res.data.map((row) => {
+          const col = { ...row };
+          /** 根据T点的key查找节点完整信息 */
+          /** 返回节点的名称 */
+          col.moduleId = treeQuery(treeData, col.moduleId).title;
+          // console.log(col.moduleId);
+          /** 将表类型代码转换为文字 */
+          const showText = TableTypeEnum.find((item) => item.value === col.type);
+          col.type = showText ? showText.text : '';
+          /** gmt时间格式转yyyy-MM-dd hh:mm:ss */
+          col.gmtCreate = formatGMT(col.gmtCreate);
+          col.gmtModified = formatGMT(col.gmtModified);
+          /** antd table每行记录必需有key字段 */
+          col.key = col.id;
+          return col;
+        });
+        // console.log({ structTableData });
+        // setTableData(structTableData);
+        setStructTableData(tableData);
+      }
     });
-    // console.log({ structTableData });
-    // setTableData(structTableData);
-    setStructTableData(tableData);
+  };
+
+  const [tableEnum, setTableEnum] = useState([]);
+  /**
+   * 获取主表列表枚举
+   */
+  const getTableEnum = () => {
+    getList({
+      params: { type: ['TABLE', 'TREE', 'AUX_TABLE'] },
+      cb: (res) => {
+        const tableOpts = res.data.map((row) => {
+          return {
+            text: row.name,
+            value: row.code
+          };
+        });
+        setTableEnum(tableOpts);
+      }
+    });
   };
 
   const getPageData = async () => {
@@ -185,8 +264,10 @@ const TableStruct: FC = () => {
     // const menuTreeRes = await Http.get('http://localhost:60001/mock/menu.json');
     // const menuTreeRes = await Http.get('/page/v1/menus/list');
     // const tData = listToTree(menuTreeRes.data.result);
-
-    const tData = await GetMenuTree();
+    setTableLoading(true);
+    const tData = await GetMenuTree(() => {
+      setTableLoading(false);
+    });
 
     dispatch({ type: 'setTreeData', treeData: tData });
     // console.log({ treeData });
@@ -203,12 +284,15 @@ const TableStruct: FC = () => {
     * 获取左侧菜单树和列表数据
     */
     getPageData();
+    refreshStructTableEnum();
   }, []);
 
+  const [tableLoading, setTableLoading] = useState(false);
   /** 表格属性 */
   const tableProps = {
     treeData,
     queryList,
+    loading: tableLoading,
     setData: (data) => {
       setStructTableData(data);
     },
@@ -249,25 +333,31 @@ const TableStruct: FC = () => {
           /**
            * 与后端协商,只提交页面上有的字段,没有的不传
            */
-          const { mainTableCode, maxLevel, type } = values;
-          /** 附属表,才有auxTable */
-          if (type === "auxTable") {
-            values.auxTable = {
+          const formData = { ...values };
+          const { mainTableCode, maxLevel, type } = formData;
+          /** 附属表,才有AUX_TABLE属性 */
+          if (type === "AUX_TABLE") {
+            formData.AUX_TABLE = {
               mainTableCode
             };
-            delete values.mainTableCode;
-          } else if (type === 'tree') {
-            values.treeTable = {
+            delete formData.mainTableCode;
+          } else if (type === 'TREE') {
+            /** 树形表,才有maxLevel属性 */
+            formData.treeTable = {
               maxLevel
             };
-            delete values.maxLevel;
+            delete formData.maxLevel;
           }
           /** 用户新增数据类型都是业务类型 */
-          values.species = "BIS";
+          formData.species = "BIS";
 
-          console.log(values);
+          console.log(formData);
           /** 新建表数据提交 */
-          Http.post('/data/v1/tables/', values).then(() => {
+          Http.post('/smart_building/data/v1/tables/', formData).then(() => {
+          // Http.post('/data/v1/tables/', values)
+
+          // TODO: 改进xxx
+          SubmitTableData(values).then(() => {    //------
             Msg.success('操作成功');
             queryList();
             /** 关闭弹窗 */
@@ -287,9 +377,11 @@ const TableStruct: FC = () => {
       form.resetFields();
     },
   });
+
   /** 新建表表单属性 */
   const formProps = {
     form,
+    PrimayTableEnum: tableEnum,
     treeData,
   };
 
@@ -300,7 +392,7 @@ const TableStruct: FC = () => {
     /**
     * 点击了左侧菜单树的叶子节点,就进行查询
     */
-    onSelect: (selectedKeys, e:{selected, selectedNodes, node, event}) => {
+    onSelect: (selectedKeys, e: { selected, selectedNodes, node, event }) => {
       /**
       * selectedKeys是个数组,第一项就是选中项
       * 用菜单id搜索,页面从第一页开始
@@ -329,7 +421,7 @@ const TableStruct: FC = () => {
         }
       },
       name: {
-      /** 表单项属性 */
+        /** 表单项属性 */
         itemAttr: {
           label: "表名称",
           rules: [
@@ -358,7 +450,7 @@ const TableStruct: FC = () => {
                   /**
                    * 列表查询,页码从0开始
                    */
-                  queryList({ type, name, offset: 0 });
+                  queryList({ type: [type], name, offset: 0 });
                 });
             }
           },
@@ -367,6 +459,7 @@ const TableStruct: FC = () => {
             text: '清空',
             onClick: () => {
               searchForm.resetFields();
+              queryList();
             }
           }
         ]
@@ -385,7 +478,7 @@ const TableStruct: FC = () => {
         {/* 搜索条件框 */}
         <BasicForm {...searchProps} />
         {/* 表头菜单--新建表 标签管理 更多按钮 */}
-        <StructHeadMenu openModal={() => setVisiable(true)}/>
+        <StructHeadMenu openModal={() => setVisiable(true)} form={form} getList={refreshStructTableEnum} />
         {/* 表结构列表 */}
         <List {...tableProps} />
       </main>

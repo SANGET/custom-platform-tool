@@ -8,24 +8,28 @@ import { TableTypeEnum } from '@provider-app/data-designer/src/tools/constant';
 import BasicForm from '@provider-app/data-designer/src/components/BasicForm';
 
 /**
+ * 通过useMappedState在store 和组件之间，建立起连接
+ */
+import { useMappedState } from 'redux-react-hook';
+
+/**
 * 正则表达式
 */
 import REG from '@provider-app/data-designer/src/tools/reg';
 /** 中文转拼音工具 */
-import PinYin from 'js-pinyin';
-
-/** 中文转换为拼音工具设置选项 */
-PinYin.setOptions({
-  /** 关闭音调转换功能 */
-  checkPolyphone: false,
-  /** 将汉字首字母转换为大写拼音 */
-  charCase: 0,
-});
+import { PinYin } from '@provider-app/data-designer/src/tools/mix';
 
 const StructForm = ({
-  form, treeData, ...rest
+  form, treeData, PrimayTableEnum, ...rest
 }) => {
-  // console.log({ treeData});
+  /**
+   * 全局加载动画设置
+   */
+  const { structTableEnum } = useMappedState((state) => ({
+    structTableEnum: state.structTableEnum
+  }));
+
+  // console.log({ treeData, structTableEnum });
   /** 树形属性配置 */
   const tProps = {
     treeData,
@@ -36,8 +40,9 @@ const StructForm = ({
 
   /**
   * 表类型联动对象
+  * TODO: 洪耿程：排查字段问题
   */
-  const refShowInit = { normalTable: 'show', tree: 'hide', auxTable: 'hide' };
+  const refShowInit = { TABLE: 'show', TREE: 'hide', AUX_TABLE: 'hide' };
   /**
   * 表类型联动状态设置
   */
@@ -52,7 +57,7 @@ const StructForm = ({
       return prev;
     }, {});
     // console.log({ showObj });
-    setRefShow(showObj as { normalTable: string; tree: string; auxTable: string; });
+    setRefShow(showObj as { TABLE: string; TREE: string; AUX_TABLE: string; });
   };
 
   /**
@@ -103,15 +108,15 @@ const StructForm = ({
     maxLevel: {
       itemAttr: {
         label: "最大层级数",
-        className: refShow.tree,
+        className: refShow.TREE,
         /** 表类型为树表时关联必填 */
         rules: [
           /** required设置条件必须未生效,要展示必填项前面的红色*,需要把这一项设置为true */
-          { required: refShow.tree === 'show' },
+          { required: refShow.TREE === 'show' },
           ({ getFieldValue }) => ({
             validator(rule, value) {
               /** 当表类型不是附属表时,不对提交内容做校验 */
-              if (refShow.tree === 'hide') {
+              if (refShow.TREE === 'hide') {
                 return Promise.resolve();
               }
               /** 这里如果不写成new Error,会触发eslint告警 */
@@ -137,19 +142,24 @@ const StructForm = ({
     mainTableCode: {
       itemAttr: {
         label: "主表",
-        className: refShow.auxTable,
+        className: refShow.AUX_TABLE,
         /** 表类型为附属表时关联必填 */
-        rules: [{ required: refShow.auxTable === 'show', message: '请输入主表!' }],
+        rules: [{ required: refShow.AUX_TABLE === 'show', message: '请输入主表!' }],
       },
       compAttr: {
-        type: 'Input',
-        placeholder: '请输入主表'
+        type: 'BasicSelect',
+        enum: structTableEnum || [],
+        placeholder: '请选择主表',
+
       }
     },
     moduleId: {
       itemAttr: {
         label: "归属模块",
-        className: refShow.normalTable,
+<<<<<<< HEAD
+=======
+        className: refShow.TABLE,
+>>>>>>> hy/feat/20200831/data-designer
         rules: [{ required: true, message: '请选择归属模块' }],
       },
       compAttr: {
