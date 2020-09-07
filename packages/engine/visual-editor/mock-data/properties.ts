@@ -63,4 +63,4 @@ export const propertiesItemCollection: EditorPropertyItemsCollection = {
   },
 };
 
-export const getPropertyItems = ApiMock(propertiesItemCollection);
+export const getPropItemDeclareData = ApiMock(propertiesItemCollection);

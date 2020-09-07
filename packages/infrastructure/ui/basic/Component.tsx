@@ -10,7 +10,7 @@ type CompPropsType = BasicComponent
  * @param Comp 需要被包装的组件
  */
 export function basicComponentFac<C>(Comp: CompType<C>) {
-  return <P extends (CompPropsType & C)>(props: P): JSX.Element => {
+  return <P extends (CompPropsType & C)>(props: P) => {
     const {
       onMount, onUnmount, wrapper,
       className, classnames,

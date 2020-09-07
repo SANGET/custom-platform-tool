@@ -78,4 +78,4 @@ export const componentClassCollection: ComponentClassCollection = {
   },
 };
 
-export const getCompClassData = ApiMock(componentClassCollection);
+export const getCompClassDeclareData = ApiMock(componentClassCollection);

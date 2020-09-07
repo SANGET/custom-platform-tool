@@ -7,7 +7,7 @@ import {
 } from 'multiple-page-routing';
 
 /** 获取路由配置 */
-import router, { getRouteName } from '@provider-app/config/router';
+import router, { getRouteName, resolvePath } from '@provider-app/config/router';
 
 import {
   Hall,
@@ -108,7 +108,7 @@ export default class App extends RouterMultiple<AppContainerProps, AppContainerS
             /**
              * 从路由配置中找到 pagePath 对应的页面
              */
-            const routeConfig = router[pagePath.split('?')[0]];
+            const routeConfig = router[resolvePath(pagePath)];
             const C = routeConfig.component;
 
             return (

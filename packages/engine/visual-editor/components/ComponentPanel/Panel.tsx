@@ -1,3 +1,9 @@
+/**
+ * @author zxj
+ *
+ * 组件类面板不做组件实例渲染
+ */
+
 import React from 'react';
 import { Tabs, Tab } from '@infra/ui';
 
@@ -8,7 +14,7 @@ import { ItemTypes } from '../../spec/types';
 export interface ComponentPanelProps {
   /** 组件 panel 的配置 */
   componentPanelConfig: ComponentPanelConfig
-  compClassData: any
+  compClassDeclares: any
   /** 可拖拽 item 的包装器 interface */
   itemWrapper?: (item: EditorComponentClass) => React.ReactChild
   /** 控制 DragItem 的 drag 配置的 interface，详情参考 react-dnd */
@@ -17,7 +23,7 @@ export interface ComponentPanelProps {
 
 const ComponentPanel: React.FC<ComponentPanelProps> = ({
   componentPanelConfig,
-  compClassData,
+  compClassDeclares,
   itemWrapper,
   getDragItemConfig
 }) => {
@@ -57,7 +63,7 @@ const ComponentPanel: React.FC<ComponentPanelProps> = ({
                         <div className="drag-items">
                           {
                             items.map((componentClassID, __idx) => {
-                              const componentClass = compClassData[componentClassID];
+                              const componentClass = compClassDeclares[componentClassID];
                               const {
                                 id, label
                               } = componentClass;

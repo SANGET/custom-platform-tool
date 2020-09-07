@@ -42,9 +42,21 @@ const RouterConfig: RouterConfigType = {
   },
 };
 
-export const getRouteName = (route) => {
-  const routeName = RouterConfig[route].title;
-  if (!routeName) console.error(`请注意，没找到注册的路由信息 ${route}`);
+/**
+ * 提取 route 的真实 path
+ * @param path
+ */
+export const resolvePath = (path) => {
+  return path.split('?')[0];
+};
+
+/**
+ * 获取路由的名字
+ * @param route
+ */
+export const getRouteName = (path) => {
+  const routeName = RouterConfig[resolvePath(path)]?.title;
+  if (!routeName) console.error(`请注意，没找到注册的路由信息 ${path}`);
   return routeName;
 };
 
