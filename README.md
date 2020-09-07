@@ -168,6 +168,12 @@ moduleName();
 
 ---
 
+## 7. 共用 UI
+
+如何编写共用的 UI？[点击查看](./packages/infrastructure/ui/README.md)
+
+---
+
 ## 8. 测试
 
 通过 jest 测试，可以在需要测试的模块的目录下新建 `__test__` 目录并且写测试用例。然后在项目根目录执行 `yarn test` 即可进行测试。
