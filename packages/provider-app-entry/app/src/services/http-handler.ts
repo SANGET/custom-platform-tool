@@ -5,8 +5,10 @@
 
 import { RequestClass, resolveUrl } from "@mini-code/request";
 import produce from "immer";
+import { message as AntdMessage } from 'antd';
 
-import { setDefaultParams, clearDefaultParams } from "multiple-page-routing";
+import { setDefaultParams, clearDefaultParams, onNavigate } from "multiple-page-routing";
+import { ShowModal } from "@infra/ui";
 import { authStore } from "../auth/actions";
 
 /**
@@ -16,9 +18,10 @@ export interface ResStruct {
   code: string
   message: string
   results?: any
+  result?: any
 }
 
-const baseReqUrl = 'http://10.7.1.59:8080/paas';
+const baseReqUrl = 'http://192.168.14.140:6090/paas';
 
 /**
  * 根据业务扩展的 http 请求工具的类型
@@ -28,7 +31,7 @@ export interface RExtend extends RequestClass {
 }
 
 const $R = new RequestClass<ResStruct>({
-  baseUrl: `${baseReqUrl}/hy`
+  baseUrl: `${baseReqUrl}`
 }) as RExtend;
 
 /**
@@ -130,11 +133,21 @@ const afterRes = (resData) => {
 /**
  * 设置 $R 对象的 res
  */
-function handleRes({ resData, callback }) {
-  const { code } = resData;
+function handleRes(resData) {
+  const { code, msg } = resData;
   switch (code) {
     case '00000':
       console.log('成功');
+      break;
+    case 'A0300':
+      // console.log(resData);
+      // 处理没找到应用的业务逻辑
+      AntdMessage.error(msg);
+      onNavigate({
+        type: 'PUSH',
+        route: '',
+        useDefaultParams: false
+      });
       break;
   }
 }
