@@ -1,5 +1,4 @@
 import React from "react";
-import PropTypes from "prop-types";
 
 import {
   Form, Input, Table, Select, AutoComplete, Space, Row
@@ -8,12 +7,6 @@ import {
 import { PlusOutlined, MinusOutlined } from '@ant-design/icons';
 
 class SetMapping extends React.Component {
-  static propTypes = {
-    form: PropTypes.shape({}).isRequired,
-    appnameList: PropTypes.arrayOf(String),
-    tagList: PropTypes.arrayOf(String)
-  };
-
   state = {
     mappingState: [],
     appnameList: [],
