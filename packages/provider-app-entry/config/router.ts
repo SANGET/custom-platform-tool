@@ -1,7 +1,11 @@
-import TableStruct from "@provider-app/data-designer/src/pages/TableStruct";
 import PageManager from "@provider-app/page-manager/app";
 import MenuManager from "@provider-app/menu-manager/app";
 import PageDesignerApp from "@provider-app/page-designer/app/main";
+/// //////// 数据设计
+import {
+  TableStruct, DictManage, EditStruct
+} from "@provider-app/data-designer/src/pages";
+/// //////// 数据设计结束
 
 // interface RouterType {
 //   [routeName: string]: HY.SubApp | HY.SubAppHOC
@@ -39,6 +43,14 @@ const RouterConfig: RouterConfigType = {
   '/page-designer': {
     component: PageDesignerApp,
     title: '页面设计'
+  },
+  '/DictManage': {
+    title: '字典管理',
+    component: DictManage
+  },
+  '/EditStruct': {
+    title: '编辑表',
+    component: EditStruct
   },
 };
 

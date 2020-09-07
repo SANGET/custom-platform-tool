@@ -17,6 +17,7 @@ import { Connector } from '@provider-app/data-designer/src/connector';
 import { getModalConfig } from '@provider-app/data-designer/src/tools/mix';
 import { formatGMT } from '@provider-app/data-designer/src/tools/format';
 import DictForm from '@provider-app/data-designer/src/pages/DictManage/DictForm';
+import { GetDictList } from '../../api';
 
 const DictManage = ({ isModal = false }) => {
   const [pager, setPager] = useState({ page: 1, pageSize: 10 });
