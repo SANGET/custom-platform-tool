@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Modal, Form, Table, } from 'antd';
 
 /** 网络请求工具 */
-import Http, { Msg } from '@infra/utils/http';
+import  { Msg } from '@infra/utils/http';
 
 /** 基本表单 */
 import BasicForm from '@provider-app/data-designer/src/components/BasicForm';
@@ -17,7 +17,7 @@ import { Connector } from '@provider-app/data-designer/src/connector';
 import { getModalConfig } from '@provider-app/data-designer/src/tools/mix';
 import { formatGMT } from '@provider-app/data-designer/src/tools/format';
 import DictForm from '@provider-app/data-designer/src/pages/DictManage/DictForm';
-import { GetDictList } from '../../api';
+import { GetDictList,AddDict,UpdateDict,GetDictDeatil,DelTable,GetSubDictDetail,deleSubDict,AddUpdateSubDict } from '../../api';
 
 const DictManage = ({ isModal = false }) => {
   const [pager, setPager] = useState({ page: 1, pageSize: 10 });
@@ -28,15 +28,45 @@ const DictManage = ({ isModal = false }) => {
   */
   const [modalConfig, setModalConfig] = useState({
     visible: false, title: '', isSub: false, isAddEditRow: false
-  });
+  })
+
+  const [tableLoading, setTableLoading] = useState(false);
+  const [tableData, setTableData] = useState([]);
+  const columns = [
+    // renderIndexCol(pager),
+    {
+      title: '序号',
+      dataIndex: 'rowIndex',
+      width: 80,
+      key: 'rowIndex',
+      render: (text, record, index) => {
+        // console.log({ text, record, index });
+        /** 与后端协商,行号由前端计算 */
+        const { page, pageSize } = pager;
+        return <span>{(page - 1) * pageSize + index + 1}</span>;
+      },
+    },
+    {
+      title: '字典名称',
+      dataIndex: 'name',
+      width: 140,
+      key: 'name'
+    },
+    {
+      title: '字典描述',
+      dataIndex: 'description',
+      width: '30%',
+      key: 'description'
+    },
+  ]
   /**
   * 删除字典
   */
   const DelDict = (id) => {
-    Http.delete(`/smart_building/data/v1/tables/${id}`).then((res) => {
+    DelTable(id).then((res) => {
+      getList();
       Msg.success('操作成功');
       // console.log(res);
-      getList();
     });
   };
   /** 操作按钮 */
@@ -67,44 +97,10 @@ const DictManage = ({ isModal = false }) => {
         DelDict(row.id);
       }
     },
-    {
-      text: '删除',
-      title: '你确定删除这条字典?',
-      onClick: (row) => {
-        console.log(structTableData, 'structTableData', 'row', row);
-      }
-    },
+   
   ];
 
-  const [tableLoading, setTableLoading] = useState(false);
-  const [tableData, setTableData] = useState([]);
-  const columns = [
-    // renderIndexCol(pager),
-    {
-      title: '序号',
-      dataIndex: 'rowIndex',
-      width: 40,
-      key: 'rowIndex',
-      render: (text, record, index) => {
-        // console.log({ text, record, index });
-        /** 与后端协商,行号由前端计算 */
-        const { page, pageSize } = pager;
-        return <span>{(page - 1) * pageSize + index + 1}</span>;
-      },
-    },
-    {
-      title: '字典名称',
-      dataIndex: 'name',
-      width: 140,
-      key: 'name'
-    },
-    {
-      title: '字典描述',
-      dataIndex: 'description',
-      width: '30%',
-      key: 'description'
-    },
-  ];
+ 
   const getDictCols = () => {
     if (isModal) {
       return columns.concat(renderOperCol(operButs));
@@ -119,8 +115,11 @@ const DictManage = ({ isModal = false }) => {
       title: '最后修改时间',
       dataIndex: 'gmtModified',
       width: 160,
-    }], renderOperCol(operButs));
-  };
+      key:'gmtModified',
+    }
+  ], 
+  renderOperCol(operButs));
+  }
   const cols = getDictCols().map((item) => getColConfig(item));
 
   const [dictId, setDictId] = useState('');
@@ -205,18 +204,32 @@ const DictManage = ({ isModal = false }) => {
   * type-
   */
   const submitData = ({ type, data, cb }) => {
-    const reqMethod = {
-      add: 'post',
-      update: 'put'
-    }[type];
-
-    Http[reqMethod]('/smart_building/data/v1/dictionary/', data).then((res) => {
-      Msg.success('操作成功');
-      getList();
-      cb && cb();
-      // console.log(res);
-    });
-  };
+    // const reqMethod = {
+    //   add: 'post',
+    //   update: 'put'
+    // }[type];
+    if(type === 'add'){
+      //新增字典  AddDict(data) 
+      AddDict(data)
+      .then((res) => {
+        Msg.success('操作成功');
+        getList();
+        cb && cb();
+        // console.log(res);
+      })
+    }else{
+      // 修改字典  UpdateDict(data)
+      UpdateDict(data)
+      .then((res) => {
+        Msg.success('操作成功');
+        getList();
+        cb && cb();
+        // console.log(res);
+      })
+    }
+  
+  
+  }
 
   /**
   * 查询字典列表
@@ -226,9 +239,9 @@ const DictManage = ({ isModal = false }) => {
       name: '', description: "", offset: 0, size: 10,
     }, args);
     setTableLoading(true);
-    Http.get('/smart_building/data/v1/dictionary/list', { params }).then((res) => {
+    GetDictList(params).then((res) => {
       // console.log(res.data.result);
-      const data = res.data.result.data.map((row) => ({
+      const data = res.result.data.map((row) => ({
         ...row,
         gmtModified: formatGMT(row.gmtModified)
 
@@ -239,9 +252,6 @@ const DictManage = ({ isModal = false }) => {
     });
   };
 
-  useEffect(() => {
-    getList();
-  }, []);
 
   /**
   * 查询字典详情
@@ -249,8 +259,8 @@ const DictManage = ({ isModal = false }) => {
   const getDetail = ({ id, cb }) => {
     // return await Http.get(`/smart_building/data/v1/dictionary/${id}`);
     setTableLoading(true);
-    Http.get(`/smart_building/data/v1/dictionary/${id}`, {}).then((res) => {
-      cb && cb(res.data.result);
+    GetDictDeatil(id).then((res) => {
+      cb && cb(res.result);
     }).finally(() => {
       setTableLoading(false);
     });
@@ -260,22 +270,22 @@ const DictManage = ({ isModal = false }) => {
   * 新增/修改子字典接口
   */
   const configSubDict = ({ data, cb, querySub }) => {
-    Http.put("/smart_building/data/v1/dictionary_value/", data).then((res) => {
+    AddUpdateSubDict(data).then((res) => {
       // console.log(res);
-      cb && cb(res.data.result);
+      cb && cb(res.result);
       getSubDictDetail(querySub);
       Msg.success('操作成功');
     });
   };
   /**
-  * 查询字典项项
+  * 查询子字典项
   */
   const getSubDictDetail = ({ dictionaryId, pid, cb }) => {
     // const { dictionaryId = dictId, pid = dictPid, cb } = args;
 
-    Http.get(`/smart_building/data/v1/dictionary_value/${dictionaryId}/${pid}`).then((res) => {
+    GetSubDictDetail({ dictionaryId, pid }).then((res) => {
       // console.log(res);
-      cb && cb(res.data.result);
+      cb && cb(res.result);
     });
   };
   /**
@@ -291,54 +301,54 @@ const DictManage = ({ isModal = false }) => {
     * dictionaryId-字典项id  pid--本级id
     * "level"=5时 第5级隐藏配置子项,删除子项按钮
     */
-    Http.delete(`/smart_building/data/v1/dictionary_value/${dictionaryId}/${pid}`).then((res) => {
+    deleSubDict({ dictionaryId, pid }).then((res) => {
       cb && cb(res);
     });
   };
   // console.log(res);
-  const queryList = async (args = {}) => {
-    /**
-     * 与产品约定,左侧树查询不考虑右侧列表查询条件,右侧列表查询要带上左侧查询条件,点击了搜索按钮之后才查询
-     */
-    const params = Object.assign({}, {
-      /**  String 否 数据表名称 */
-      name: '',
-      // 字典描述
-      description: '',
-      /**  int 是 分页查询起始位置,从0开始 */
-      offset: 0,
-      /**  int 是 每页查询记录数 */
-      size: 10
-    }, args);
-    /** 请求表结构列表数据 */
-    // const tableRes = await Http.get('http://localhost:60001/mock/structList.json', { params });
-    // const tableRes = await Http.get('/data/v1/tables/list', { params });  // -----
+  // const queryList = async (args = {}) => {
+  //   /**
+  //    * 与产品约定,左侧树查询不考虑右侧列表查询条件,右侧列表查询要带上左侧查询条件,点击了搜索按钮之后才查询
+  //    */
+  //   const params = Object.assign({}, {
+  //     /**  String 否 数据表名称 */
+  //     name: '',
+  //     // 字典描述
+  //     description: '',
+  //     /**  int 是 分页查询起始位置,从0开始 */
+  //     offset: 0,
+  //     /**  int 是 每页查询记录数 */
+  //     size: 10
+  //   }, args);
+  //   /** 请求表结构列表数据 */
+  //   // const tableRes = await Http.get('http://localhost:60001/mock/structList.json', { params });
+  //   // const tableRes = await Http.get('/data/v1/tables/list', { params });  // -----
 
-    const tableRes = await GetDictList(params);
-    // console.log({ tableRes });
+  //   const tableRes = await GetDictList(params);
+  //   // console.log({ tableRes });
 
-    /** 表格数据格式转换-注意setStructTableData之后不能立刻获取最新值 */
-    const tableData = tableRes.result.data.map((col) => {
-      /** 根据T点的key查找节点完整信息 */
-      /** 返回节点的名称 */
-      // col.moduleId = treeQuery(treeData, col.moduleId).title;
-      // console.log(col.moduleId);
-      /** 将表类型代码转换为文字 */
-      // const showText = TableTypeEnum.find((item) => item.value === col.type);
-      // col.type = showText ? showText.text : '';
-      /** gmt时间格式转yyyy-MM-dd hh:mm:ss */
-      col.gmtCreate = formatGMT(col.gmtCreate);
-      col.gmtModified = formatGMT(col.gmtModified);
-      /** antd table每行记录必需有key字段 */
-      col.key = col.id;
-      return col;
-    });
-    // console.log({ structTableData });
-    // setTableData(structTableData);
-    setStructTableData(tableData);
-  };
+  //   /** 表格数据格式转换-注意setStructTableData之后不能立刻获取最新值 */
+  //   const tableData = tableRes.result.data.map((col) => {
+  //     /** 根据T点的key查找节点完整信息 */
+  //     /** 返回节点的名称 */
+  //     // col.moduleId = treeQuery(treeData, col.moduleId).title;
+  //     // console.log(col.moduleId);
+  //     /** 将表类型代码转换为文字 */
+  //     // const showText = TableTypeEnum.find((item) => item.value === col.type);
+  //     // col.type = showText ? showText.text : '';
+  //     /** gmt时间格式转yyyy-MM-dd hh:mm:ss */
+  //     col.gmtCreate = formatGMT(col.gmtCreate);
+  //     col.gmtModified = formatGMT(col.gmtModified);
+  //     /** antd table每行记录必需有key字段 */
+  //     col.key = col.id;
+  //     return col;
+  //   });
+  //   // console.log({ structTableData });
+  //   // setTableData(structTableData);
+  //   setStructTableData(tableData);
+  // };
   useEffect(() => {
-    queryList();
+    getList();
   }, []);
   // const data = [
   //   {
@@ -492,7 +502,7 @@ const DictManage = ({ isModal = false }) => {
                    */
                   // TODO: 洪耿程，确认功能
                   getList({ description, name, offset: 0 });
-                  queryList({ description, name, offset: 0 });
+                  //queryList({ description, name, offset: 0 });
                 });
             }
           },
@@ -501,7 +511,7 @@ const DictManage = ({ isModal = false }) => {
             text: '清空',
             onClick: () => {
               searchForm.resetFields();
-              queryList();
+              getList()
             }
           }
         ]
@@ -510,11 +520,11 @@ const DictManage = ({ isModal = false }) => {
 
   };
 
-  const [subTableData, setSubTableData] = useState([]);
+  const [subTableData, setSubTableData] = useState<any>([]);
 
   const deepLevelItem = [];
 
-  const [expandedRowKeys, setExpandedRowKeys] = useState([]);
+  const [expandedRowKeys, setExpandedRowKeys] = useState<any[]>([]);
   return (
     <div className="data-designer">
       <BasicForm {...searchProps} />
@@ -525,7 +535,7 @@ const DictManage = ({ isModal = false }) => {
         columns={cols}
         indentSize={10}
         dataSource={tableData}
-        rowKey={(record) => record.id}
+        rowKey={(record:any) => record.id}
         pagination={{
           showTotal: ((total) => {
             return `共 ${total} 条`;
@@ -554,8 +564,8 @@ const DictManage = ({ isModal = false }) => {
                 // columns={Acolumns}
                 // dataSource={Adata}
                 /** 指定树形结构的列名 */
-                childrenColumnName={['items']}
-                rowKey={(row) => row.id}
+                childrenColumnName='items'  //可能需要修改
+                rowKey={(row:any) => row.id}
                 pagination={false}
                 onRow={(record) => {
                   return {
@@ -563,7 +573,7 @@ const DictManage = ({ isModal = false }) => {
                       // console.log(record);
                       let index;
                       // if (record.level === 1) {
-                      index = subTableData.findIndex((item) => item.id === record.id);
+                      index = subTableData.findIndex((item:any) => item.id === record.id);
                       // } else {
                       //   index = deepLevelItem.findIndex((item) => item.id === record.id);
                       // }
@@ -593,7 +603,7 @@ const DictManage = ({ isModal = false }) => {
             );
           },
           /** 点击展开图标时展开 */
-          onExpand: (expanded, record) => {
+          onExpand: (expanded, record:any) => {
             // console.log(record);
             setDictId(record.id);
             getDetail({

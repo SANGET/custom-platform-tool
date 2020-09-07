@@ -109,7 +109,7 @@ const BasicForm = (props) => {
       * 1.按钮名称书写在标签之间,不能作为一个属性配置,
       * 2.没有itemAttr配置
       */
-      return key === 'btns' ? ( // --------判断是否是按钮好像没什么用
+      return key === 'btns' ? (
         <Col span={btnSpan} key={key}>
           <Form.Item>
             {
@@ -148,7 +148,7 @@ const BasicForm = (props) => {
     return 'transparent';
   };
 
-  const getList = (listItems, addRow) => {
+  const getList = (listItems, addRow?) => {
     return (
       <Form.List name={listName} >
         {(fields, { add, remove }) => {
@@ -225,7 +225,7 @@ const BasicForm = (props) => {
 
       </Form>
     </FormStyled>);
-};
+}
 
 /**
  * 含有折叠功能的高级表单
