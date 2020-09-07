@@ -73,95 +73,95 @@ const DictForm = (props) => {
     },
   ];
 
-  const openColorPicker = () => {
-    setVisiable(true);
+  const openColorPicker = (params) => {
+    setColorPicker(params);
   };
 
   /**
   * 表字段列属性配置
   */
-  const columns = [
-    {
+  // const columns = [
+  //   {
 
-      title: '编码',
-      dataIndex: 'code',
-      editable: true,
-      formConfig: {
-        attrs: {
-          type: 'Input',
-          placeholder: '请输入编码',
-          onChange: (e) => {
-            console.log('请输入编码', e.target.value); //-------------------
-          }
-        },
-        rules: [{
-          required: true,
-          message: '请输入编码'
-        }]
-      },
-      width: 200,
-    },
-    {
+  //     title: '编码',
+  //     dataIndex: 'code',
+  //     editable: true,
+  //     formConfig: {
+  //       attrs: {
+  //         type: 'Input',
+  //         placeholder: '请输入编码',
+  //         onChange: (e) => {
+  //           console.log('请输入编码', e.target.value); //-------------------
+  //         }
+  //       },
+  //       rules: [{
+  //         required: true,
+  //         message: '请输入编码'
+  //       }]
+  //     },
+  //     width: 200,
+  //   },
+  //   {
 
-      title: '名称',
-      dataIndex: 'dictName',
-      formConfig: {
-        attrs: {
-          type: 'Input',
-          placeholder: '请输入名称',
-          style: { color: color.fontColor, backgroundColor: color.bgColor },
-          onChange: (e) => {
-            console.log('请输入名称', e.target.value);
-          }
-        },
-        rules: [{
-          required: true,
-          message: '请输入名称'
-        }]
-      },
-      editable: true,
-      width: 200,
-    },
-    {
+  //     title: '名称',
+  //     dataIndex: 'dictName',
+  //     formConfig: {
+  //       attrs: {
+  //         type: 'Input',
+  //         placeholder: '请输入名称',
+  //         style: { color: color.fontColor, backgroundColor: color.bgColor },
+  //         onChange: (e) => {
+  //           console.log('请输入名称', e.target.value);
+  //         }
+  //       },
+  //       rules: [{
+  //         required: true,
+  //         message: '请输入名称'
+  //       }]
+  //     },
+  //     editable: true,
+  //     width: 200,
+  //   },
+  //   {
 
-      title: '颜色',
-      dataIndex: 'renderColor',
-      formConfig: {
-        attrs: {
-          type: 'BasicColor',
-          color: 'green',
-          onClick: () => {
-            openColorPicker();
-          }
-        },
-        rules: []
-      },
-      editable: true,
-      width: 160,
-    },
-    renderOperCol(operButs),
-  ];
+  //     title: '颜色',
+  //     dataIndex: 'renderColor',
+  //     formConfig: {
+  //       attrs: {
+  //         type: 'BasicColor',
+  //         color: 'green',
+  //         onClick: () => {
+  //           openColorPicker();
+  //         }
+  //       },
+  //       rules: []
+  //     },
+  //     editable: true,
+  //     width: 160,
+  //   },
+  //   renderOperCol(operButs),
+  // ];
   /**
 * 给表字段的编辑列添加编辑属性设置
 */
-  const mergedColumns = columns.map((col: { [propName: string]: unknown }) => {
-    if (!col.editable) {
-      return col;
-    }
-    return {
-      ...col,
-      /**
-    * 传入单元格里面的参数
-    */
-      onCell: (record) => ({
-        record,
-        formConfig: col.formConfig,
-        dataIndex: col.dataIndex,
-        title: col.title,
-        editing: isEditing(record),
-      }),
-    };
-  });
+  // const mergedColumns = columns.map((col: { [propName: string]: unknown }) => {
+  //   if (!col.editable) {
+  //     return col;
+  //   }
+  //   return {
+  //     ...col,
+  //     /**
+  //   * 传入单元格里面的参数
+  //   */
+  //     onCell: (record) => ({
+  //       record,
+  //       formConfig: col.formConfig,
+  //       dataIndex: col.dataIndex,
+  //       title: col.title,
+  //       editing: isEditing(record),
+  //     }),
+  //   };
+  // });
   /**
 * 编辑行号与记录行号相符时，设置成编辑状态
 */
@@ -189,29 +189,29 @@ const DictForm = (props) => {
   /**
  * 保存编辑行的值
  */
-  const save = async (key: React.Key) => {
-    try {
-      const row = (await form.validateFields()) as Item;
+  // const save = async (key: React.Key) => {
+  //   try {
+  //     const row = (await form.validateFields()) as Item;
 
-      const newData = [...fieldTableData];
-      const index = newData.findIndex((item) => key === item.key);
-      if (index > -1) {
-        const item = newData[index];
-        newData.splice(index, 1, {
-          ...item,
-          ...row,
-        });
-        setFieldTableData(newData);
-        setEditingKey('');
-      } else {
-        newData.push(row);
-        setFieldTableData(newData);
-        setEditingKey('');
-      }
-    } catch (errInfo) {
-      console.log('Validate Failed:', errInfo);
-    }
-  };
+  //     const newData = [...fieldTableData];
+  //     const index = newData.findIndex((item) => key === item.key);
+  //     if (index > -1) {
+  //       const item = newData[index];
+  //       newData.splice(index, 1, {
+  //         ...item,
+  //         ...row,
+  //       });
+  //       setFieldTableData(newData);
+  //       setEditingKey('');
+  //     } else {
+  //       newData.push(row);
+  //       setFieldTableData(newData);
+  //       setEditingKey('');
+  //     }
+  //   } catch (errInfo) {
+  //     console.log('Validate Failed:', errInfo);
+  //   }
+  // };
 
   /**
   * 添加一行记录
@@ -221,7 +221,7 @@ const DictForm = (props) => {
     const newData = {
       key: id,
       /** 字典项名称 */
-      dictName: '',
+      name: '',
       /** 字典项编码 */
       code: '',
       /** 背景颜色 */
@@ -236,7 +236,7 @@ const DictForm = (props) => {
     console.log('newData', newData);
 
     setFieldTableData([...fieldTableData]);
-    edit(newData);
+    //edit(newData);
     console.log('fieldTableData', fieldTableData);
   };
   /**
@@ -250,14 +250,14 @@ const DictForm = (props) => {
   * 编辑表格属性配置
   */
 
-  const editTableProps = {
-    form,
-    dataSource: fieldTableData,
-    columns: mergedColumns,
-    pagination: {
-      onChange: cancel,
-    }
-  };
+  // const editTableProps = {
+  //   form,
+  //   dataSource: fieldTableData,
+  //   columns: mergedColumns,
+  //   pagination: {
+  //     onChange: cancel,
+  //   }
+  // };
 
   /**
   * 颜色选择器弹窗设置
