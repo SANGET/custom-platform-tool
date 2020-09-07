@@ -1,6 +1,6 @@
 import React from 'react';
-import { Input, Selector, Button } from '@infra/ui';
 import { EditorPropertyItem } from '../../types';
+import { getPropItem } from '../../spec/registerComp';
 
 interface PropItemRendererProps {
   propItemConfig
@@ -29,6 +29,7 @@ export const PropItemRenderer: React.FC<PropItemRendererProps> = ({
   let Com;
   switch (componentType) {
     case 'Input':
+      const Input = getPropItem(componentType);
       Com = (
         <Input
           {...propsForComponent}
@@ -41,6 +42,7 @@ export const PropItemRenderer: React.FC<PropItemRendererProps> = ({
       );
       break;
     case 'Selector':
+      const Selector = getPropItem(componentType);
       Com = (
         <Selector
           {...propsForComponent}

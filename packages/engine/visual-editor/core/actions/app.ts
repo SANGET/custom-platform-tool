@@ -10,8 +10,8 @@ export const INIT_APP = 'app/init';
 export interface InitAppAction {
   type: typeof INIT_APP
   compPanelData
-  compClassData
-  propItemsData
+  compClassDeclares
+  propItemDeclares
   pagePropsData
   pageData: BasePageData
   options?: any
@@ -23,8 +23,8 @@ export interface InitAppAction {
 export const InitApp = ({
   /** 组件类面板数据 */
   compPanelData,
-  compClassData,
-  propItemsData,
+  compClassDeclares,
+  propItemDeclares,
   pagePropsData,
   pageData,
   options = {}
@@ -32,8 +32,8 @@ export const InitApp = ({
   return {
     type: INIT_APP,
     compPanelData,
-    compClassData,
-    propItemsData,
+    compClassDeclares,
+    propItemDeclares,
     pagePropsData,
     pageData,
     options,

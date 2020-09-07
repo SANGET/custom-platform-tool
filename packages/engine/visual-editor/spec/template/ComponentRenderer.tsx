@@ -2,9 +2,10 @@ import React from 'react';
 import { EditorComponentEntity, EditorEntityState } from '@engine/visual-editor/types';
 import classnames from 'classnames';
 import ContainerWrapperCom from './ContainerWrapperCom';
-import { getComp } from '../registerComp';
+import { getCompEntity } from '../registerComp';
 
-export interface ComponentTypeRendererProps extends React.DetailedHTMLProps<React.HTMLAttributes<HTMLDivElement>, HTMLDivElement> {
+export interface ComponentTypeRendererProps
+  extends React.DetailedHTMLProps<React.HTMLAttributes<HTMLDivElement>, HTMLDivElement> {
   entity: EditorComponentEntity
   entityState: EditorEntityState
   node
@@ -42,7 +43,7 @@ export const ComponentRenderer: React.FC<ComponentTypeRendererProps> = (props) =
   const { type, ...compProps } = component;
   switch (type) {
     case 'Input':
-      const Input = getComp(type);
+      const Input = getCompEntity(type);
       Com = (
         <div className="__Input">
           <FormLabel>{label}</FormLabel>
@@ -54,7 +55,7 @@ export const ComponentRenderer: React.FC<ComponentTypeRendererProps> = (props) =
       );
       break;
     case 'Table':
-      const EditableTable = getComp(type);
+      const EditableTable = getCompEntity(type);
       Com = (
         <div className="__Table">
           <FormLabel>{label}</FormLabel>

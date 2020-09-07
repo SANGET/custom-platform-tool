@@ -1,6 +1,7 @@
 {
   "packages": [
     "packages/provider-app-hub/*",
+    "packages/provider-app-entry/*",
     "packages/iub-dsl/*",
     "packages/engine/*",
     "packages/infrastructure/*",

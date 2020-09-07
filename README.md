@@ -2,15 +2,15 @@
 
 采用 `monorepo` 前端工程结构，方便团队独立开发、调试，以及支持分布部署。
 
------
+---
 
-## 特性（Feature）
+## 1. 特性（Feature）
 
 - 通过 yarn workspace 的方式管理所有模块
 - 通过 lerna 管理工作区的包关系
 - 有多个独立应用模块，可以独立开发
 
-## 技术选型
+## 2. 技术选型
 
 - 页面渲染
   - react
@@ -30,11 +30,11 @@
 - 服务
   - node
 
------
+---
 
-## 工程结构（Architecture）
+## 3. 工程结构（Architecture）
 
-### 目录结构
+### 3.1. 目录结构
 
 项目总体方向如下：
 
@@ -45,6 +45,7 @@
 - `dist/` - 打包构建后的文件存放目录
 - `docs/` - 文档
 - `packages/` - 工作区
+  - `provider-app-entry/` - 生产工具入口
   - `provider-app-hub/` - 生产工具 app 集合
     - `[App]` 根据实际需要开发的 app
   - `consumer-app/` - "消费" 生成工具的产出的 app
@@ -76,34 +77,34 @@
 - `README.md` - 工程总说明文档
 - `tsconfig.json` - typescript 的配置
 
------
+---
 
-## 开始（Getting started）
+## 4. 开始（Getting started）
 
-### 准备
+### 4.1. 准备
 
 ```shell
 git clone https://github.com/SANGET/custom-platform-tool.git
 yarn
 ```
 
-### 启动「生产工具」
+### 4.2. 启动「生产工具」
 
 ```shell
 yarn start:provider-app
 ```
 
-### 启动「消费工具」
+### 4.3. 启动「消费工具」
 
 ```shell
 yarn start:consumer-app
 ```
 
------
+---
 
-## 进阶（Advance）
+## 5. 进阶（Advance）
 
-### 搭建独立应用
+### 5.1. 搭建独立应用
 
 在 `packages/` 中对应的目录（根据需要开发的子应用决定，以下以 CustomSubApp 为例）。
 
@@ -118,9 +119,9 @@ yarn start:consumer-app
 7. 在最外层的 `package.json` 中添加启动 script: `"start:custom-sub-app": "cd ./package/CustomSubApp && npm start"`
 8. 打开命令后输入 `yarn && yarn start:custom-sub-app`，等待片刻即可
 
-### 搭建自定义模块
+### 5.2. 搭建自定义模块
 
-#### 定义
+#### 5.2.1. 定义
 
 更多时候需要搭建一些共用的模块，用于提高团队合作效率，以下是搭建过程：
 
@@ -145,7 +146,7 @@ package.json 的必要字段：
 
 完成上述步骤后，需要在项目根目录通过 `yarn` 将模块连接起来（link），link 工作由 yarn 和 lerna 完成。
 
-#### 使用
+#### 5.2.2. 使用
 
 通过上述操作后，其他模块可以引用 `@scope-name/module-name` 中的模块：
 
@@ -155,32 +156,42 @@ import { moduleName } from '@scope-name/module-name';
 moduleName();
 ```
 
------
+---
 
-## 测试
+## 6. 配置端接入
+
+[配置端接入参考文档](./packages/provider-app-hub/README.md)
+
+---
+
+## 7. 应用端接入
+
+---
+
+## 8. 测试
 
 通过 jest 测试，可以在需要测试的模块的目录下新建 `__test__` 目录并且写测试用例。然后在项目根目录执行 `yarn test` 即可进行测试。
 
 每一个子应用都可以在自身目录的根目录下创建 `__test__` 文件夹，并且添加单元测试用例。
 
------
+---
 
-## 部署
+## 9. 部署
 
-### CI
+### 9.1. CI
 
 持续集成 - 测试，每个提交都可以通过 CI 工具做持续集成。
 
 TODO
 
-### CD
+### 9.2. CD
 
 持续部署，通过分支管理，根据制定的功能分支做持续部署。
 
 TODO
 
------
+---
 
-## 最后
+## 10. 最后
 
 Thanks

@@ -19,7 +19,7 @@ export type InitEntityStateOfEditor = (entityState: EditorEntityState) => void
 export interface PropertiesEditorProps {
   /** 选中的 entity */
   selectedEntity: EditorEntity
-  propItemsData: any
+  propItemDeclares: any
   /** 属性项组合配置 */
   propertiesConfig: ComponentBindPropsConfig
   /** 属性编辑器的配置，通过该配置生成有层级结构的属性编辑面板 */
@@ -156,7 +156,7 @@ PropertiesEditorProps, PropertiesEditorState
   renderPropItem = () => {
     const {
       selectedEntity,
-      propItemsData,
+      propItemDeclares,
     } = this.props;
     const { entityState } = this.state;
     // const { bindProps } = selectedEntity;
@@ -175,7 +175,7 @@ PropertiesEditorProps, PropertiesEditorState
          *
          * 此配置为函数，需要在此做过滤
          */
-        propOriginConfigItem = propItemsData[propID];
+        propOriginConfigItem = propItemDeclares[propID];
         propItemConfig = extractPropConfig(propOriginConfigItem, selectedEntity);
 
         /**

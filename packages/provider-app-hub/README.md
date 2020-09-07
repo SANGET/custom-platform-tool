@@ -1,10 +1,12 @@
-# 配置平台 - 前端接入规范
+# 配置平台 - 前端接入
 
 ## 1. 基础 UI 规则
 
 在这里是最上层的业务应用层，可以直接调用相应的 UI 库
 
-## 2. 子应用开发规范
+---
+
+## 2. 子应用接入
 
 ### 2.1. 一般子应用
 
@@ -53,6 +55,47 @@ TODO
 
 TODO
 
+### 接入应用大厅 (EntryHall)
+
+1. 在 `packages/provider-app-hub` 中添加一个子应用，模版参考 `.template/CustomSubApp`
+2. 在 `packages/provider-app-entry/config/router` 应用入口配置中添加对应的路由：
+
+```ts
+import { 子应用 } from './path'
+
+const RouterConfig: RouterConfigType = {
+  ...,
+  '/路由信息': {
+    component: 子应用,
+    title: '路由名字'
+  },
+};
+```
+
+3. 在 `packages/provider-app-entry/config/menu-data` 中添加菜单信息：
+
+```ts
+/**
+ * 支持无限嵌套
+ */
+export interface MenuDataType {
+  /** 菜单名 */
+  title: string
+  /** icon */
+  icon: string
+  /** 菜单 id，用于 react 的 key */
+  id: string
+  /** 导航将要到达的 path */
+  path?: string
+  /** children，如果有，则认为点击没有跳转功能 */
+  children?: MenuDataType[]
+}
+```
+
+4. 子应用接入完成
+
+---
+
 ## 3. HTTP 工具规范
 
 1. 通过引用全局的变量 `$R_P` HTTP 工具，该工具的定义在 `EntryHall/src/services/http-handler.ts` 中
@@ -65,6 +108,8 @@ TODO
 
 - [request tool 文档参考](https://github.com/minimal-studio/request)
 - [$R_P 定义](EntryHall/src/services/http-handler.ts)
+
+---
 
 ## 4. 路由
 

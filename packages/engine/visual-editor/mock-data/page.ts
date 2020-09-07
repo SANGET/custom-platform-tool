@@ -21,4 +21,4 @@ export const pageProperties: PropertyItemConfigFunc[] = [
   },
 ];
 
-export const getPagePropsData = ApiMock(pageProperties);
+export const getPagePropsDeclareData = ApiMock(pageProperties);

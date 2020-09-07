@@ -39,9 +39,9 @@ export interface AppContext {
   /** App 是否做好准备 */
   ready: boolean
   /** 组件类数据 */
-  compClassData?: any
+  compClassDeclares?: any
   /** 属性项数据 */
-  propItemsData?: any
+  propItemDeclares?: any
   /** 组件类面板数据 */
   compPanelData?: ComponentPanelConfig
   /** 页面可编辑属性数据 */
@@ -59,17 +59,17 @@ export function appContextReducer(
   switch (action.type) {
     case INIT_APP:
       const {
-        compClassData, compPanelData,
+        compClassDeclares, compPanelData,
         options,
-        pagePropsData, propItemsData
+        pagePropsData, propItemDeclares
       } = action;
       return {
         ready: true,
         options,
-        compClassData,
+        compClassDeclares,
         compPanelData,
         pagePropsData,
-        propItemsData
+        propItemDeclares
       };
     default:
       return state;
