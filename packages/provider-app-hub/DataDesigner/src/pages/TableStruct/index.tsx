@@ -123,7 +123,7 @@ const TableStruct = () => {
   // http:// 10.7.1.59:8080/paas/hy/manage/v1/users/login
   // /smart_building
 
-  Http.defaults.headers.common.Authorization = '1295915065878388737';
+  // Http.defaults.headers.common.Authorization = '1295915065878388737';
   // const res = await Http.post('/manage/v1/users/login', {
   //   loginName: "hy",
   //   password: "123456"
@@ -175,11 +175,11 @@ const TableStruct = () => {
     setTableLoading(true);
     /** 请求表结构列表数据 */
     // const tableRes = await Http.get('http://localhost:60001/mock/structList.json', { params });
-    Http.get('/smart_building/data/v1/tables/list', { params: reqParams }).then((res) => {
-      cb && cb(res.data.result);
-    }).finally(() => {
-      setTableLoading(false);
-    });
+    // Http.get('/smart_building/data/v1/tables/list', { params: reqParams }).then((res) => {
+    //   cb && cb(res.data.result);
+    // }).finally(() => {
+    //   setTableLoading(false);
+    // });
   };
 
   /**
@@ -208,10 +208,10 @@ const TableStruct = () => {
    * @param formatGMT-gmt时间格式转yyyy-MM-dd hh:mm:ss
    *
    */
-  const queryList = (params = {}) => {
-    //const tableRes = await Http.get('/data/v1/tables/list', { params });  // -----
+  const queryList = async (params = {}) => {
+    // const tableRes = await Http.get('/data/v1/tables/list', { params });  // -----
 
-    const tableRes = await GetTableData(params)
+    const tableRes = await GetTableData(params);
     // console.log({ tableRes });
     getList({
       params,
@@ -353,11 +353,11 @@ const TableStruct = () => {
 
           console.log(formData);
           /** 新建表数据提交 */
-          Http.post('/smart_building/data/v1/tables/', formData).then(() => {
+          // Http.post('/smart_building/data/v1/tables/', formData).then(() => {
           // Http.post('/data/v1/tables/', values)
 
           // TODO: 改进xxx
-          SubmitTableData(values).then(() => {    //------
+          SubmitTableData(values).then(() => { //------
             Msg.success('操作成功');
             queryList();
             /** 关闭弹窗 */

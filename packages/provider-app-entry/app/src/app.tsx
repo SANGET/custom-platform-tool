@@ -109,7 +109,7 @@ export default class App extends RouterMultiple<AppContainerProps, AppContainerS
              * 从路由配置中找到 pagePath 对应的页面
              */
             const routeConfig = router[resolvePath(pagePath)];
-            const C = routeConfig.component;
+            const C = routeConfig?.component;
 
             return (
               <PageContainer
