@@ -77,7 +77,7 @@ export const wrapPushUrl = (pushConfig: NavigateConfig) => {
       }),
     toBase64: true,
   });
-  result = `${targetHash}${result.replace(/&&$/g, "")}`;
+  result = `${targetHash}${result.replace(/&$/g, "")}`;
   return result;
 };
 

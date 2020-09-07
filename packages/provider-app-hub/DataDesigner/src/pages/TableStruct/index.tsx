@@ -40,7 +40,7 @@ import { formatGMT } from '@provider-app/data-designer/src/tools/format';
 import MenuTree from '@provider-app/data-designer/src/bizComps/MenuTree';
 
 /** 表单业务组件 */
-import { GetMenuTree } from '@provider-app/data-designer/src/api';
+import { GetMenuTree, GetTableData, SubmitTableData } from '@provider-app/data-designer/src/api';
 import StructForm from './StructForm';
 
 /** 表头菜单组件 */
@@ -209,6 +209,9 @@ const TableStruct = () => {
    *
    */
   const queryList = (params = {}) => {
+    //const tableRes = await Http.get('/data/v1/tables/list', { params });  // -----
+
+    const tableRes = await GetTableData(params)
     // console.log({ tableRes });
     getList({
       params,
@@ -351,6 +354,10 @@ const TableStruct = () => {
           console.log(formData);
           /** 新建表数据提交 */
           Http.post('/smart_building/data/v1/tables/', formData).then(() => {
+          // Http.post('/data/v1/tables/', values)
+
+          // TODO: 改进xxx
+          SubmitTableData(values).then(() => {    //------
             Msg.success('操作成功');
             queryList();
             /** 关闭弹窗 */
@@ -385,7 +392,7 @@ const TableStruct = () => {
     /**
     * 点击了左侧菜单树的叶子节点,就进行查询
     */
-    onSelect: (selectedKeys, e:{selected, selectedNodes, node, event}) => {
+    onSelect: (selectedKeys, e: { selected, selectedNodes, node, event }) => {
       /**
       * selectedKeys是个数组,第一项就是选中项
       * 用菜单id搜索,页面从第一页开始
@@ -414,7 +421,7 @@ const TableStruct = () => {
         }
       },
       name: {
-      /** 表单项属性 */
+        /** 表单项属性 */
         itemAttr: {
           label: "表名称",
           rules: [
@@ -452,6 +459,7 @@ const TableStruct = () => {
             text: '清空',
             onClick: () => {
               searchForm.resetFields();
+              queryList();
             }
           }
         ]

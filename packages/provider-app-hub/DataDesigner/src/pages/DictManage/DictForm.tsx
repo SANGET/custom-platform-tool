@@ -30,7 +30,7 @@ const DictForm = (props) => {
   * 只会初始化一次,发现dataSource有值之后,不会再被执行
   */
   /** 每行记录必须有一个key字段 */
-  const [fieldTableData, setFieldTableData] = useState([]);
+  const [fieldTableData, setFieldTableData] = useState<any>([]);
   /**
   * 颜色面板颜色设置
   */
@@ -38,18 +38,134 @@ const DictForm = (props) => {
   /**
   * 生效颜色设置
   */
-  const [color, setColor] = useState({ fontColor: '#000000a6', bgColor: 'transparent' });
+  const [color, setColor] = useState({ fontColor: '#d9d9d9', bgColor: '#fff' });
+
+  //
+  const [id, setId] = useState(0);
   /**
   * 颜色选择器显示隐藏控制
   */
   const [colorPicker, setColorPicker] = useState({ visiable: false, title: '', selectRowIndex: 0 });
 
   /**
-   * 打开调色板
-   */
-  const openColorPicker = (args) => {
-    setColorPicker({ ...colorPicker, ...args });
+  * 行编辑态设置
+  */
+  const [editingKey, setEditingKey] = useState<number | string>('');
+  /** 操作按钮 */
+  const operButs = [
+    {
+      text: <PlusOutlined />,
+      onClick: (row) => {
+        console.log('row', row);
+        setId(id + 1);
+        handleAdd();
+      }
+    },
+    /** 多于一行记录,才显示-号 */
+    {
+      text: <MinusOutlined />,
+      onClick: (row) => {
+        console.log('row----', row);
+        const { key } = row;
+        handleDelete(key);
+      },
+      isShow: (index) => index
+    },
+  ];
+
+  const openColorPicker = () => {
+    setVisiable(true);
   };
+
+  /**
+  * 表字段列属性配置
+  */
+  const columns = [
+    {
+
+      title: '编码',
+      dataIndex: 'code',
+      editable: true,
+      formConfig: {
+        attrs: {
+          type: 'Input',
+          placeholder: '请输入编码',
+          onChange: (e) => {
+            console.log('请输入编码', e.target.value); //-------------------
+          }
+        },
+        rules: [{
+          required: true,
+          message: '请输入编码'
+        }]
+      },
+      width: 200,
+    },
+    {
+
+      title: '名称',
+      dataIndex: 'dictName',
+      formConfig: {
+        attrs: {
+          type: 'Input',
+          placeholder: '请输入名称',
+          style: { color: color.fontColor, backgroundColor: color.bgColor },
+          onChange: (e) => {
+            console.log('请输入名称', e.target.value);
+          }
+        },
+        rules: [{
+          required: true,
+          message: '请输入名称'
+        }]
+      },
+      editable: true,
+      width: 200,
+    },
+    {
+
+      title: '颜色',
+      dataIndex: 'renderColor',
+      formConfig: {
+        attrs: {
+          type: 'BasicColor',
+          color: 'green',
+          onClick: () => {
+            openColorPicker();
+          }
+        },
+        rules: []
+      },
+      editable: true,
+      width: 160,
+    },
+    renderOperCol(operButs),
+  ];
+  /**
+* 给表字段的编辑列添加编辑属性设置
+*/
+  const mergedColumns = columns.map((col: { [propName: string]: unknown }) => {
+    if (!col.editable) {
+      return col;
+    }
+    return {
+      ...col,
+      /**
+    * 传入单元格里面的参数
+    */
+      onCell: (record) => ({
+        record,
+        formConfig: col.formConfig,
+        dataIndex: col.dataIndex,
+        title: col.title,
+        editing: isEditing(record),
+      }),
+    };
+  });
+  /**
+* 编辑行号与记录行号相符时，设置成编辑状态
+*/
+  const isEditing = (record) => record.key === editingKey;
 
   // console.log(dataSource);
 
@@ -60,8 +176,88 @@ const DictForm = (props) => {
     //   code: '',
     //   renderColor: '#fff'
     // });
-    // handleAdd();
+    setId(id + 1);
+    handleAdd();
   }, []);
+
+  /**
+ * 取消编辑
+ */
+  const cancel = () => {
+    setEditingKey('');
+  };
+  /**
+ * 保存编辑行的值
+ */
+  const save = async (key: React.Key) => {
+    try {
+      const row = (await form.validateFields()) as Item;
+
+      const newData = [...fieldTableData];
+      const index = newData.findIndex((item) => key === item.key);
+      if (index > -1) {
+        const item = newData[index];
+        newData.splice(index, 1, {
+          ...item,
+          ...row,
+        });
+        setFieldTableData(newData);
+        setEditingKey('');
+      } else {
+        newData.push(row);
+        setFieldTableData(newData);
+        setEditingKey('');
+      }
+    } catch (errInfo) {
+      console.log('Validate Failed:', errInfo);
+    }
+  };
+
+  /**
+  * 添加一行记录
+  */
+
+  const handleAdd = () => {
+    const newData = {
+      key: id,
+      /** 字典项名称 */
+      dictName: '',
+      /** 字典项编码 */
+      code: '',
+      /** 背景颜色 */
+      renderBgColor: '',
+      /** 字体颜色 */
+      renderFontColor: '',
+    };
+    fieldTableData.push(newData);
+    /**
+  * 为什么直接赋值setData(fieldTableData)不更新,非要写成setData([...fieldTableData])才触发更新
+  */
+    console.log('newData', newData);
+
+    setFieldTableData([...fieldTableData]);
+    edit(newData);
+    console.log('fieldTableData', fieldTableData);
+  };
+  /**
+* 删除一行记录
+*/
+  const handleDelete = (key) => {
+    setFieldTableData(fieldTableData.filter((item) => item.key !== key)); //------
+  };
+  // console.log(mergedColumns);
+  /**
+  * 编辑表格属性配置
+  */
+
+  const editTableProps = {
+    form,
+    dataSource: fieldTableData,
+    columns: mergedColumns,
+    pagination: {
+      onChange: cancel,
+    }
+  };
 
   /**
   * 颜色选择器弹窗设置
@@ -143,7 +339,7 @@ const DictForm = (props) => {
           type: 'Input',
           placeholder: '请输入字典名称',
           onChange: (e) => {
-
+            console.log('请输入字典名称', e.target.value);
           }
         }
       },
@@ -196,6 +392,7 @@ const DictForm = (props) => {
           type: 'Input',
           placeholder: '请输入字典项编码',
           onChange: (e) => {
+            console.log('请输入字典描述', e.target.value);
           }
         }
       },
@@ -243,10 +440,12 @@ const DictForm = (props) => {
   const formConfig = getFormConfig(isSub, formProps);
   // console.log(formConfig);
 
-  return (<div className="data-designer">
-    <BasicForm {...formConfig} isAddEditRow={isAddEditRow}/>
-    <BasicColorPicker {...colorProps} />
-  </div>);
+  return (
+    <div className="data-designer">
+      <BasicForm {...formConfig} isAddEditRow={isAddEditRow}/>
+      <BasicColorPicker {...colorProps} />
+    </div>
+  );
 };
 
 export default DictForm;

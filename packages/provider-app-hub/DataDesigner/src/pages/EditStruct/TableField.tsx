@@ -76,6 +76,14 @@ const TableField = ({ updateListData }) => {
 
   /** 创建+表字段 行记录编辑表单实例 */
   const [fieldForm] = Form.useForm();
+  /**
+  * 每一行都有一个唯一的key,记录编辑行是哪一行
+  */
+  const [editingKey, setEditingKey] = useState<number | string>('');
+  /**
+  * 编辑行号与记录行号相符时，设置成编辑状态
+  */
+  const isEditing = (record) => record.key === editingKey;
 
   /**
   * 添加一行记录

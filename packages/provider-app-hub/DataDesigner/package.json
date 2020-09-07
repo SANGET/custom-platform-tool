@@ -24,12 +24,14 @@
   },
   "devDependencies": {},
   "dependencies": {
-    "redux-react-hook": "^4.0.1",
+    "@types/react-router-dom": "^5.1.5",
     "emotion": "^10.0.27",
     "js-pinyin": "^0.1.9",
     "react-color": "^2.18.1",
+    "react-router-dom": "^5.2.0",
     "react-window": "^1.8.5",
-    "redux-persist": "^6.0.0"
+    "redux-persist": "^6.0.0",
+    "redux-react-hook": "^4.0.1"
   },
   "browserslist": {
     "production": [

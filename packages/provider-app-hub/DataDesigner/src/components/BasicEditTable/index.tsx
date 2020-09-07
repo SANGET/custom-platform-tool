@@ -111,7 +111,7 @@ const EditableCell: React.FC<EditableCellProps> = ({
         </Form.Item>
       ) : (
         <Form.Item>
-          {children }
+          {children}
         </Form.Item>
       )}
     </td>
@@ -408,15 +408,17 @@ const renderOperCol = (operButs) => {
     /** 每个文本的宽度应设置为80,是通过调整样式得出的合理值 */
     width: operButs.length * 80,
     render: (text, row, index) => {
-      return operButs.map((item) => {
+      return operButs.map((item, i) => {
         let isShow = true;
         if (item.isShow) {
+          console.log(index, 'index-------');
           isShow = item.isShow(index);
+          console.log(isShow, 'isShow--------');
         }
+        // console.log(item);
 
         return isShow ? (
-
-          <Space size="middle" key={item.text}>
+          <Space size="middle" key={i}>
             {
               /** 删除需要弹出二次确认框 */
               item.text === '删除'

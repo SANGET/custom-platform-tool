@@ -109,8 +109,8 @@ const BasicForm = (props) => {
       * 1.按钮名称书写在标签之间,不能作为一个属性配置,
       * 2.没有itemAttr配置
       */
-      return key === 'btns' ? (
-        <Col span={btnSpan} key={key} >
+      return key === 'btns' ? ( // --------判断是否是按钮好像没什么用
+        <Col span={btnSpan} key={key}>
           <Form.Item>
             {
               items[key].compAttr.map((props) => {
@@ -282,7 +282,7 @@ const AdvancedSearchForm = () => {
                 form.resetFields();
               }}
             >
-            清空
+              清空
             </Button>
             <Button
               type='link'

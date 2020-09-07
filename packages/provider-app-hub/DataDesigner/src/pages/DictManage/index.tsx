@@ -21,6 +21,7 @@ import DictForm from '@provider-app/data-designer/src/pages/DictManage/DictForm'
 const DictManage = ({ isModal = false }) => {
   const [pager, setPager] = useState({ page: 1, pageSize: 10 });
 
+  const [structTableData, setStructTableData] = useState([]);
   /**
   * 字典新增弹窗显隐,表单标题控制
   */
@@ -65,6 +66,13 @@ const DictManage = ({ isModal = false }) => {
         DelDict(row.id);
       }
     },
+    {
+      text: '删除',
+      title: '你确定删除这条字典?',
+      onClick: (row) => {
+        console.log(structTableData, 'structTableData', 'row', row);
+      }
+    },
   ];
 
   const [tableLoading, setTableLoading] = useState(false);
@@ -72,14 +80,28 @@ const DictManage = ({ isModal = false }) => {
   const columns = [
     // renderIndexCol(pager),
     {
+      title: '序号',
+      dataIndex: 'rowIndex',
+      width: 40,
+      key: 'rowIndex',
+      render: (text, record, index) => {
+        // console.log({ text, record, index });
+        /** 与后端协商,行号由前端计算 */
+        const { page, pageSize } = pager;
+        return <span>{(page - 1) * pageSize + index + 1}</span>;
+      },
+    },
+    {
       title: '字典名称',
       dataIndex: 'name',
       width: 140,
+      key: 'name'
     },
     {
       title: '字典描述',
       dataIndex: 'description',
       width: '30%',
+      key: 'description'
     },
   ];
   const getDictCols = () => {
@@ -88,8 +110,9 @@ const DictManage = ({ isModal = false }) => {
     }
     return columns.concat([{
       title: '最后修改人',
-      dataIndex: 'modifiedUserName',
+      dataIndex: 'modifiedBy',
       width: 140,
+      key: 'modifiedBy'
     },
     {
       title: '最后修改时间',
@@ -122,7 +145,8 @@ const DictManage = ({ isModal = false }) => {
             form.setFieldsValue({ items: res });
           }
         });
-      }
+      },
+      key: 'gmtModified'
     },
     {
       text: '删除子项',
@@ -150,6 +174,8 @@ const DictManage = ({ isModal = false }) => {
   ];
   /**
   * 子字典项
+  *
+  * TODO: 洪耿程：查看合并结果
   */
   const subColumns = [
     // renderIndexCol(pager),
@@ -266,9 +292,70 @@ const DictManage = ({ isModal = false }) => {
     */
     Http.delete(`/smart_building/data/v1/dictionary_value/${dictionaryId}/${pid}`).then((res) => {
       cb && cb(res);
-      // console.log(res);
     });
   };
+  // console.log(res);
+  const queryList = async (args = {}) => {
+    /**
+     * 与产品约定,左侧树查询不考虑右侧列表查询条件,右侧列表查询要带上左侧查询条件,点击了搜索按钮之后才查询
+     */
+    const params = Object.assign({}, {
+      /**  String 否 数据表名称 */
+      name: '',
+      // 字典描述
+      description: '',
+      /**  int 是 分页查询起始位置,从0开始 */
+      offset: 0,
+      /**  int 是 每页查询记录数 */
+      size: 10
+    }, args);
+    /** 请求表结构列表数据 */
+    // const tableRes = await Http.get('http://localhost:60001/mock/structList.json', { params });
+    // const tableRes = await Http.get('/data/v1/tables/list', { params });  // -----
+
+    const tableRes = await GetDictList(params);
+    // console.log({ tableRes });
+
+    /** 表格数据格式转换-注意setStructTableData之后不能立刻获取最新值 */
+    const tableData = tableRes.result.data.map((col) => {
+      /** 根据T点的key查找节点完整信息 */
+      /** 返回节点的名称 */
+      // col.moduleId = treeQuery(treeData, col.moduleId).title;
+      // console.log(col.moduleId);
+      /** 将表类型代码转换为文字 */
+      // const showText = TableTypeEnum.find((item) => item.value === col.type);
+      // col.type = showText ? showText.text : '';
+      /** gmt时间格式转yyyy-MM-dd hh:mm:ss */
+      col.gmtCreate = formatGMT(col.gmtCreate);
+      col.gmtModified = formatGMT(col.gmtModified);
+      /** antd table每行记录必需有key字段 */
+      col.key = col.id;
+      return col;
+    });
+    // console.log({ structTableData });
+    // setTableData(structTableData);
+    setStructTableData(tableData);
+  };
+  useEffect(() => {
+    queryList();
+  }, []);
+  // const data = [
+  //   {
+  //     key: '1',
+
+  //     name: 'John Brown sr.',
+
+  //     description: 'New York No. 1 Lake Park',
+  //   },
+  //   {
+  //     key: '2',
+
+  //     name: 'Joe Black',
+
+  //     description: 'Sidney No. 1 Lake Park',
+  //   },
+  // ];
+  // -----接口
 
   const [form] = Form.useForm();
 
@@ -316,6 +403,7 @@ const DictManage = ({ isModal = false }) => {
      * @param e  点击按钮事件源
      * @param { fieldForm-新建表可控表单实例 }
      */
+    // TODO: 洪耿程 检查是否已修复问题
     onOk: (e) => {
       form.validateFields().then((values) => {
         console.log(values);
@@ -399,9 +487,11 @@ const DictManage = ({ isModal = false }) => {
                 .then((values) => {
                   const { description, name } = values;
                   /**
-                     * 列表查询,页码从0开始
-                     */
+                   * 列表查询,页码从0开始
+                   */
+                  // TODO: 洪耿程，确认功能
                   getList({ description, name, offset: 0 });
+                  queryList({ description, name, offset: 0 });
                 });
             }
           },
@@ -410,6 +500,7 @@ const DictManage = ({ isModal = false }) => {
             text: '清空',
             onClick: () => {
               searchForm.resetFields();
+              queryList();
             }
           }
         ]
@@ -423,104 +514,110 @@ const DictManage = ({ isModal = false }) => {
   const deepLevelItem = [];
 
   const [expandedRowKeys, setExpandedRowKeys] = useState([]);
-  return (<div className="data-designer">
-    <BasicForm {...searchProps} />
-    <TableHeadMenu {...tableHeadMenus} />
-    <Table
-      loading={tableLoading}
-      bordered
-      columns={cols}
-      indentSize={10}
-      dataSource={tableData}
-      rowKey={(record) => record.id}
-      pagination={{
-        showTotal: ((total) => {
-          return `共 ${total} 条`;
-        }),
-        onChange: (page, pageSize) => {
-          getList({ offset: page - 1, size: pageSize });
-          setPager({ page, pageSize });
-        }
-      }}
-      expandable={{
-        /** 点击行不展开 */
-        expandRowByClick: false,
-        /** 展开行的键值集合 */
-        expandedRowKeys,
-        /** 额外的展开行 */
-        expandedRowRender: (record) => {
-          return (
-            <Table
-              bordered
-              columns={subCols}
-              dataSource={subTableData}
-              // columns={Acolumns}
-              // dataSource={Adata}
-              /** 指定树形结构的列名 */
-              childrenColumnName={['items']}
-              rowKey={(row) => row.id}
-              pagination={false}
-              onRow={(record) => {
-                return {
-                  onClick: (event) => {
-                    // console.log(record);
-                    let index;
-                    // if (record.level === 1) {
-                    index = subTableData.findIndex((item) => item.id === record.id);
-                    // } else {
-                    //   index = deepLevelItem.findIndex((item) => item.id === record.id);
-                    // }
+  return (
+    <div className="data-designer">
+      <BasicForm {...searchProps} />
+      <TableHeadMenu {...tableHeadMenus} />
+      <Table
+        loading={tableLoading}
+        bordered
+        columns={cols}
+        indentSize={10}
+        dataSource={tableData}
+        rowKey={(record) => record.id}
+        pagination={{
+          showTotal: ((total) => {
+            return `共 ${total} 条`;
+          }),
+          onChange: (page, pageSize) => {
+            getList({ offset: page - 1, size: pageSize });
+          }
+          // TODO: 洪耿程，确认功能
+          // onChange: (page, pageSize: any) => {
+          //   setPager({ page, pageSize });
+          //   queryList({ offset: page, size: pageSize });
+          // }
+        }}
+        expandable={{
+          /** 点击行不展开 */
+          expandRowByClick: false,
+          /** 展开行的键值集合 */
+          expandedRowKeys,
+          /** 额外的展开行 */
+          expandedRowRender: (record) => {
+            return (
+              <Table
+                bordered
+                columns={subCols}
+                dataSource={subTableData}
+                // columns={Acolumns}
+                // dataSource={Adata}
+                /** 指定树形结构的列名 */
+                childrenColumnName={['items']}
+                rowKey={(row) => row.id}
+                pagination={false}
+                onRow={(record) => {
+                  return {
+                    onClick: (event) => {
+                      // console.log(record);
+                      let index;
+                      // if (record.level === 1) {
+                      index = subTableData.findIndex((item) => item.id === record.id);
+                      // } else {
+                      //   index = deepLevelItem.findIndex((item) => item.id === record.id);
+                      // }
 
-                    getSubDictDetail({
-                      dictionaryId: dictId,
-                      pid: record.id,
-                      cb: (data) => {
-                        /**
-                         * 设置展开的行
-                         */
-                        subTableData[index].items = data;
-                        // deepLevelItem=
-                        /** 不要原封不动使用useState导出的值 */
-                        setSubTableData([...subTableData]);
-                        // console.log(JSON.stringify(subTableData, null, 4));
-                      }
-                    });
-                  }, // 点击行
-                  onDoubleClick: (event) => {},
-                  onContextMenu: (event) => {},
-                  onMouseEnter: (event) => {}, // 鼠标移入行
-                  onMouseLeave: (event) => {},
-                };
-              }}
-            />
-          );
-        },
-        /** 点击展开图标时展开 */
-        onExpand: (expanded, record) => {
-          // console.log(record);
-          setDictId(record.id);
-          getDetail({
-            id: record.id,
-            cb: (data) => {
-              /**
-               * 设置展开的行
-               */
-              setExpandedRowKeys([record.id]);
-              setSubTableData(data.items);
-            }
-          });
-        },
-        /**
-        * 允许展开
-        */
-        rowExpandable: (record) => true,
-      }}
-    />
-    <Modal {...modalProps} key={new Date().getTime()} >
-      <DictForm form={form} isSub={modalProps.isSub} isAddEditRow={modalProps.isAddEditRow} />
-    </Modal>
+                      getSubDictDetail({
+                        dictionaryId: dictId,
+                        pid: record.id,
+                        cb: (data) => {
+                          /**
+                           * 设置展开的行
+                           */
+                          subTableData[index].items = data;
+                          // deepLevelItem=
+                          /** 不要原封不动使用useState导出的值 */
+                          setSubTableData([...subTableData]);
+                          // console.log(JSON.stringify(subTableData, null, 4));
+                        }
+                      });
+                    }, // 点击行
+                    onDoubleClick: (event) => {},
+                    onContextMenu: (event) => {},
+                    onMouseEnter: (event) => {}, // 鼠标移入行
+                    onMouseLeave: (event) => {},
+                  };
+                }}
+              />
+            );
+          },
+          /** 点击展开图标时展开 */
+          onExpand: (expanded, record) => {
+            // console.log(record);
+            setDictId(record.id);
+            getDetail({
+              id: record.id,
+              cb: (data) => {
+                /**
+                 * 设置展开的行
+                 */
+                setExpandedRowKeys([record.id]);
+                setSubTableData(data.items);
+              }
+            });
+          },
+          /**
+          * 允许展开
+          */
+          rowExpandable: (record) => true,
+        }}
+      />
+      <Modal {...modalProps} key={new Date().getTime()} >
+        <DictForm form={form} isSub={modalProps.isSub} isAddEditRow={modalProps.isAddEditRow} />
+      </Modal>
 
-  </div>);
+    </div>
+  );
 };
 
 // const DictManageContainer = Connector(DictManage);

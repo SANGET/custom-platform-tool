@@ -40,8 +40,9 @@ const StructForm = ({
 
   /**
   * 表类型联动对象
+  * TODO: 洪耿程：排查字段问题
   */
-  const refShowInit = { normalTable: 'show', tree: 'hide', AUX_TABLE: 'hide' };
+  const refShowInit = { TABLE: 'show', TREE: 'hide', AUX_TABLE: 'hide' };
   /**
   * 表类型联动状态设置
   */
@@ -56,7 +57,7 @@ const StructForm = ({
       return prev;
     }, {});
     // console.log({ showObj });
-    setRefShow(showObj as { normalTable: string; tree: string; AUX_TABLE: string; });
+    setRefShow(showObj as { TABLE: string; TREE: string; AUX_TABLE: string; });
   };
 
   /**
@@ -107,15 +108,15 @@ const StructForm = ({
     maxLevel: {
       itemAttr: {
         label: "最大层级数",
-        className: refShow.tree,
+        className: refShow.TREE,
         /** 表类型为树表时关联必填 */
         rules: [
           /** required设置条件必须未生效,要展示必填项前面的红色*,需要把这一项设置为true */
-          { required: refShow.tree === 'show' },
+          { required: refShow.TREE === 'show' },
           ({ getFieldValue }) => ({
             validator(rule, value) {
               /** 当表类型不是附属表时,不对提交内容做校验 */
-              if (refShow.tree === 'hide') {
+              if (refShow.TREE === 'hide') {
                 return Promise.resolve();
               }
               /** 这里如果不写成new Error,会触发eslint告警 */
@@ -155,6 +156,10 @@ const StructForm = ({
     moduleId: {
       itemAttr: {
         label: "归属模块",
+<<<<<<< HEAD
+=======
+        className: refShow.TABLE,
+>>>>>>> hy/feat/20200831/data-designer
         rules: [{ required: true, message: '请选择归属模块' }],
       },
       compAttr: {
