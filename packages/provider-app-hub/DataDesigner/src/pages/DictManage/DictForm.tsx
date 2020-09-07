@@ -236,7 +236,7 @@ const DictForm = (props) => {
     console.log('newData', newData);
 
     setFieldTableData([...fieldTableData]);
-    edit(newData);
+    // edit(newData);
     console.log('fieldTableData', fieldTableData);
   };
   /**
@@ -442,7 +442,7 @@ const DictForm = (props) => {
 
   return (
     <div className="data-designer">
-      <BasicForm {...formConfig} isAddEditRow={isAddEditRow}/>
+      <BasicForm {...formConfig} isAddEditRow={isAddEditRow} />
       <BasicColorPicker {...colorProps} />
     </div>
   );

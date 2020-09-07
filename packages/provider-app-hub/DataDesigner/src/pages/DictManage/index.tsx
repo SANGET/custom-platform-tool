@@ -318,7 +318,7 @@ const DictManage = ({ isModal = false }) => {
     // console.log({ tableRes });
 
     /** 表格数据格式转换-注意setStructTableData之后不能立刻获取最新值 */
-    const tableData = tableRes.result.data.map((col) => {
+    const tableData = tableRes.result?.data.map((col) => {
       /** 根据T点的key查找节点完整信息 */
       /** 返回节点的名称 */
       // col.moduleId = treeQuery(treeData, col.moduleId).title;
@@ -376,8 +376,8 @@ const DictManage = ({ isModal = false }) => {
     style: { marginTop: "20px" },
     menus: isModal ? [addMenu] : [
       addMenu,
-      { text: '导入', onClick: () => {} },
-      { text: '导出', onClick: () => {} },
+      { text: '导入', onClick: () => { } },
+      { text: '导出', onClick: () => { } },
     ]
   };
 
@@ -435,7 +435,7 @@ const DictManage = ({ isModal = false }) => {
         }
       })
         .catch((errorInfo) => {
-        /** 校验未通过 */
+          /** 校验未通过 */
           console.log(errorInfo);
         });
     },
@@ -583,10 +583,10 @@ const DictManage = ({ isModal = false }) => {
                         }
                       });
                     }, // 点击行
-                    onDoubleClick: (event) => {},
-                    onContextMenu: (event) => {},
-                    onMouseEnter: (event) => {}, // 鼠标移入行
-                    onMouseLeave: (event) => {},
+                    onDoubleClick: (event) => { },
+                    onContextMenu: (event) => { },
+                    onMouseEnter: (event) => { }, // 鼠标移入行
+                    onMouseLeave: (event) => { },
                   };
                 }}
               />

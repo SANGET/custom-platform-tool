@@ -1,8 +1,8 @@
 /*
  * @Author: wangph
  * @Date: 2020-07-10 12:00:29
- * @Last Modified by:   wangph
- * @Last Modified time: 2020-07-10 12:00:29
+ * @Last Modified by: aoping
+ * @Last Modified time: 2020-09-07 17:17:42
  */
 
 import React, {
@@ -156,7 +156,7 @@ const TableStruct = () => {
    *
    * @param args
    */
-  const getList = ({ params, cb }) => {
+  const getList = async ({ params, cb }) => {
     /**
      * 与产品约定,左侧树查询不考虑右侧列表查询条件,右侧列表查询要带上左侧查询条件,点击了搜索按钮之后才查询
      */
@@ -173,6 +173,9 @@ const TableStruct = () => {
       size: 10
     }, params);
     setTableLoading(true);
+    const tableRes = await GetTableData(params);
+    tableRes.result && cb && cb(tableRes.result);
+    setTableLoading(false);
     /** 请求表结构列表数据 */
     // const tableRes = await Http.get('http://localhost:60001/mock/structList.json', { params });
     // Http.get('/smart_building/data/v1/tables/list', { params: reqParams }).then((res) => {
@@ -211,7 +214,7 @@ const TableStruct = () => {
   const queryList = async (params = {}) => {
     // const tableRes = await Http.get('/data/v1/tables/list', { params });  // -----
 
-    const tableRes = await GetTableData(params);
+
     // console.log({ tableRes });
     getList({
       params,
@@ -265,12 +268,9 @@ const TableStruct = () => {
     // const menuTreeRes = await Http.get('/page/v1/menus/list');
     // const tData = listToTree(menuTreeRes.data.result);
     setTableLoading(true);
-    const tData = await GetMenuTree(() => {
-      setTableLoading(false);
-    });
-
+    const tData = await GetMenuTree();
+    setTableLoading(false);
     dispatch({ type: 'setTreeData', treeData: tData });
-    // console.log({ treeData });
     queryList();
 
     // console.log(tData);
@@ -467,7 +467,7 @@ const TableStruct = () => {
     }
 
   };
-
+  console.dir("render Table Struct")
   return (
     <div className="auth-item flex b1px " style={{ height: '100%' }}>
       <aside className="tree-box">

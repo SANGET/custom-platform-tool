@@ -48,7 +48,7 @@ const RouterConfig: RouterConfigType = {
     title: '字典管理',
     component: DictManage
   },
-  '/EditStruct': {
+  '/data_designer/edit_struct': {
     title: '编辑表',
     component: EditStruct
   },

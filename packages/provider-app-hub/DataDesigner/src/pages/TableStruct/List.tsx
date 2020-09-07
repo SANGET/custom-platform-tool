@@ -1,8 +1,8 @@
 /*
  * @Author: wangph
  * @Date: 2020-07-10 12:00:29
- * @Last Modified by:   wangph
- * @Last Modified time: 2020-07-10 12:00:29
+ * @Last Modified by: aoping
+ * @Last Modified time: 2020-09-07 17:03:01
  */
 
 import React, { useEffect, useState } from 'react';
@@ -48,7 +48,6 @@ const List = (props) => {
   const {
     tableData, scroll, style, title, pagination, queryList, setData, loading
   } = props;
-
   /** react路由跳转方法,必须定义在react 组件中,跳转到编辑表页面时要用 */
   // const History = useHistory();
   /** 在网络请求工具中,要用dispatch更改共享状态 */
