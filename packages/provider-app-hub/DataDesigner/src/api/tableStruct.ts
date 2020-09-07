@@ -52,7 +52,7 @@ export async function AddDict(params) {
 }
 // 修改字典
 export async function UpdateDict(params) {
-  await $R_P.put('/smart_building/data/v1/dictionary/', params);
+  await $R_P.put('/data/v1/dictionary/', params);
 }
 /* 查询字典列表 */
 export async function GetDictList(params) {
@@ -63,7 +63,7 @@ export async function GetDictList(params) {
   * 查询字典详情
   */
 export async function GetDictDeatil(id) {
-  return $R_P.get(`/data/v1/dictionary/${id}`);
+  return await $R_P.get(`/data/v1/dictionary/${id}`);
 }
 
 /**

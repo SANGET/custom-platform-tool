@@ -34,11 +34,11 @@ const DictForm = (props) => {
   /**
   * 颜色面板颜色设置
   */
-  const [panelColor, setPanelColor] = useState({ fontColor: '#000000a6', bgColor: 'transparent' });
+  const [panelColor, setPanelColor] = useState({ fontColor: '#000', bgColor: 'transparent' });
   /**
   * 生效颜色设置
   */
-  const [color, setColor] = useState({ fontColor: '#d9d9d9', bgColor: '#fff' });
+  const [color, setColor] = useState({ fontColor: '#000', bgColor: 'transparent' });
 
   //
   const [id, setId] = useState(0);
@@ -65,7 +65,7 @@ const DictForm = (props) => {
     {
       text: <MinusOutlined />,
       onClick: (row) => {
-        console.log('row----', row);
+        //console.log('row----', row);
         const { key } = row;
         handleDelete(key);
       },
@@ -74,6 +74,7 @@ const DictForm = (props) => {
   ];
 
   const openColorPicker = (params) => {
+
     setColorPicker(params);
   };
 
@@ -309,7 +310,7 @@ const DictForm = (props) => {
   };
 
   /**
-  * 第一层弹窗表单配置
+  * 弹窗表单配置
   */
   const formProps = {
     form,
@@ -339,9 +340,6 @@ const DictForm = (props) => {
         compAttr: {
           type: 'Input',
           placeholder: '请输入字典名称',
-          onChange: (e) => {
-            console.log('请输入字典名称', e.target.value);
-          }
         }
       },
       description: {
@@ -354,8 +352,7 @@ const DictForm = (props) => {
         compAttr: {
           type: 'Input',
           placeholder: '请输入字典描述',
-          onChange: (e) => {
-          }
+         
         }
       }
     },
@@ -392,9 +389,6 @@ const DictForm = (props) => {
         compAttr: {
           type: 'Input',
           placeholder: '请输入字典项编码',
-          onChange: (e) => {
-            console.log('请输入字典描述', e.target.value);
-          }
         }
       },
       renderFontColor: {
