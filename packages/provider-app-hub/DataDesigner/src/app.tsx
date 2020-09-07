@@ -49,7 +49,7 @@ const App: FC = () => {
 
   return (
 
-    < BrowserRouter >
+    <BrowserRouter>
       {/* 全局加载动画 */}
       <div className={isShowLoading ? 'loading' : 'hide'}>
         <Spin tip="加载中..." size="large" />

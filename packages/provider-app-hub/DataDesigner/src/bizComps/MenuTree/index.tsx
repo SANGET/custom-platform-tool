@@ -61,16 +61,16 @@ const MenuTree = ({ dataSource, ...props }) => {
    * @param expandedKeys 展开节点的key集合
    */
     onExpand: (expandedKeys) => {
-    /** 收起其它父节点 */
+      /** 收起其它父节点 */
       setAutoExpandParent(false);
       /** 只展开匹配的子节点 */
       setExpandedKeys(expandedKeys);
     },
-    onSelect: (selectedKeys, e:{selected, selectedNodes, node, event}) => {
+    onSelect: (selectedKeys, e: { selected, selectedNodes, node, event }) => {
       // console.log(selectedKeys, e);
       const node = treeList.find((item) => item.key === selectedKeys[0]);
       // console.log(treeList, treeList.find((item) => item.key === selectedKeys[0]));
-      setSearchValue(node.title);
+      setSearchValue(node?.title);
       onSelect && onSelect(selectedKeys, e);
       getClickNodeValue && getClickNodeValue(node);
     }
