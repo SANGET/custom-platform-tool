@@ -137,7 +137,7 @@ function handleRes(resData) {
   const { code, msg } = resData;
   switch (code) {
     case '00000':
-      console.log('成功');
+      // console.log('成功');
       break;
     case 'A0300':
       // console.log(resData);

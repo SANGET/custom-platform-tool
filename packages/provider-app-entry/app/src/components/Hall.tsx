@@ -17,7 +17,6 @@ export const Hall: HY.SubApp = (props) => {
       <ul>
         {
           appData.map(((data) => {
-            console.log(data);
             const { appShortNameEn, id, appCode } = data;
             return (
               <li
