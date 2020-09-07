@@ -8,7 +8,6 @@ export async function login(data = {
   loginName: "hy",
   password: "123456"
 }) {
-  $R_P.urlManager.setRent(data.loginName);
   const res = await $R.post("/manage/v1/users/login", data);
   return res;
 }

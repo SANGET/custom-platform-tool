@@ -41,8 +41,8 @@ const defaultAuthStore: AuthStore = {
   autoLoging: !!getPrevLoginToken(),
   logging: false,
   logouting: false,
-  // isLogin: !!getPrevLoginToken(),
-  isLogin: process.env.NODE_ENV === 'development',
+  isLogin: !!getPrevLoginToken(),
+  // isLogin: process.env.NODE_ENV === 'development',
   prevLoginRes: {},
   token: "",
   // menuStore: NAV_MENU_CONFIG
@@ -135,6 +135,7 @@ const authActions: AuthActions = (store) => ({
     /** TODO: 是否有做 token 是否有效的接口验证 */
     const prevLoginState = getPrevLoginData();
     if (!prevLoginState) return;
+    $R_P.urlManager.setRent(prevLoginState.prevLoginRes.lesseeAccessName);
     // const loginRes = await AUTH_APIS.login({
     //   token
     // });
@@ -147,6 +148,7 @@ const authActions: AuthActions = (store) => ({
   },
   /** 主动登录 */
   async login(state, form, onSuccess) {
+    $R_P.urlManager.setRent(form.loginName);
     store.setState({
       logging: true
     });
