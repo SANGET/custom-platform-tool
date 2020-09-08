@@ -8,7 +8,7 @@
     "packages/provider-app-entry/*",
     "packages/engine/**/*",
     "packages/infrastructure/*",
-    "packages/consumer-app/**/*",
+    "packages/consumer-app/*",
     "packages/spec/*"
   ],
   "scripts": {
