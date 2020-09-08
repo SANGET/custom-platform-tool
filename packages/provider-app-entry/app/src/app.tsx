@@ -53,7 +53,7 @@ export default class App extends RouterMultiple<AppContainerProps, AppContainerS
   /**
    * 初始化路由配置
    */
-  initRouteForApp = () => {
+  initRouteForApp = (nextState) => {
     const initRouteInfo = this.getUrlParams(undefined, undefined, true);
     const appParams = initRouteInfo.app;
     if (!appParams) {
@@ -62,26 +62,28 @@ export default class App extends RouterMultiple<AppContainerProps, AppContainerS
       setReqUrlByApp(appParams);
       this.initRoute();
     }
+
+    nextState && this.setState(nextState);
   };
 
   componentDidMount() {
     GetMenu().then((menuData) => {
-      this.setState({
+      // this.setState();
+
+      this.initRouteForApp({
         navMenu: menuData,
         ready: true
       });
-
-      this.initRouteForApp();
     });
-  }
-
-  handleHistoryChange = () => {
-    setReqUrlByApp(this.location.app);
   }
 
   componentDidCatch(e) {
     // console.log(e);
     const { logging } = this.props;
+  }
+
+  handleHistoryChange = () => {
+    setReqUrlByApp(this.location.app);
   }
 
   appContext = {
