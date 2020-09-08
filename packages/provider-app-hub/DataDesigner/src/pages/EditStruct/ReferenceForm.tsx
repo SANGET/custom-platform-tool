@@ -88,8 +88,8 @@ const ReferenceForm = ({
       const { code, id } = refTableItem;
       form.setFieldsValue({ refTableCode: code });
       setSelectRefTableVisible(false);
-      Http.get(`/smart_building/data/v1/tables/${id}`).then((res) => {
-        setRefFieldEnum(res.data.result.columns.map((item) => ({ value: item.code, text: item.name })));
+      $R_P.get(`/data/v1/tables/${id}`).then((res) => {
+        setRefFieldEnum(res.result.columns.map((item) => ({ value: item.code, text: item.name })));
       });
     },
     /** 弹框取消按钮回调 */

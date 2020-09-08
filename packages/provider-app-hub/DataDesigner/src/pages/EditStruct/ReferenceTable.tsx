@@ -144,8 +144,8 @@ const ReferenceTable = ({ tab, updateListData }) => {
           enum: structTableEnum,
           onChange: (id) => {
             /** 关联表不同-联动查询引用字段 */
-            Http.get(`/smart_building/data/v1/tables/${id}`).then((res) => {
-              setRefFieldEnum(res.data.result.columns.map((item) => ({ value: item.code, text: item.name })));
+            $R_P.get(`/data/v1/tables/${id}`).then((res) => {
+              setRefFieldEnum(res.result.columns.map((item) => ({ value: item.code, text: item.name })));
             });
           }
         },
