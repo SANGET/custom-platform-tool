@@ -156,12 +156,12 @@ const TableField = ({ updateListData }) => {
       }
     } else {
       /** 已提交数据,由后端判断是否已经被使用 */
-      Http.get(`/smart_building/data/v1/tables/column/allowedDeleted/${row.id}`).then((res) => {
+      $R_P.get(`/data/v1/tables/column/allowedDeleted/${row.id}`).then((res) => {
         /**
         * true 存在与页面控件相互绑定,false没有与页面控件相互绑定
         */
         // console.log(res);
-        if (res.data.result === 'false') {
+        if (res.result === 'false') {
           delRow(row);
         } else {
           Msg.error('该字段与页面控件相绑定，不能删除');

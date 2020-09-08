@@ -149,11 +149,11 @@ const EditStruct: HY.SubApp = (props) => {
     /** 如果id丢失,就从localStorage中取缓存的id */
     const rowId = id || structRowData.id;
     /** 查询表结构详情 */
-    Http.get(`/smart_building/data/v1/tables/${rowId}`, {}).then((res) => {
+    $R_P.get(`/data/v1/tables/${rowId}`, {}).then((res) => {
       /** 编辑表表单公共信息 */
       const {
         name, code, type, moduleId, columns,
-      } = res.data.result;
+      } = res.result;
 
       /** 设置表结构编辑表单公共信息 */
       form.setFieldsValue({
@@ -161,7 +161,7 @@ const EditStruct: HY.SubApp = (props) => {
       });
 
       /** 表结构-字典字段 提交到页面显示数据格式转换 */
-      res.data.result.columns = columns.map((item) => {
+      res.result.columns = columns.map((item) => {
         if (item.dictionaryForeign) {
           /** 后端返回的字典数据是一个对象 */
           item.dictionaryForeignSubmit = item.dictionaryForeign;
@@ -174,7 +174,7 @@ const EditStruct: HY.SubApp = (props) => {
       /** 设置表结构详情 */
       dispatch({
         type: 'setStructRowData',
-        structRowData: res.data.result
+        structRowData: res.result
       });
     });
   }, []);
@@ -220,7 +220,7 @@ const EditStruct: HY.SubApp = (props) => {
 
           // console.log({ structRowData });
 
-          Http.put('/smart_building/data/v1/tables/', structRowData).then((res) => {
+          $R_P.put('/data/v1/tables/', structRowData).then((res) => {
             resetStore();
             Msg.success('操作成功');
             onNavigate({
