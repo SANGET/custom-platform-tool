@@ -1,14 +1,11 @@
 import React from 'react';
-import { EditorComponentEntity, EditorEntityState } from '@engine/visual-editor/types';
 import classnames from 'classnames';
-import ContainerWrapperCom from './ContainerWrapperCom';
-import { getCompEntity } from '../registerComp';
+import { getCompEntity, FacToComponentProps, RegisterComponentConfig } from '@engine/visual-editor/spec';
+// import ContainerWrapperCom from './ContainerWrapperCom';
 
-export interface ComponentTypeRendererProps
-  extends React.DetailedHTMLProps<React.HTMLAttributes<HTMLDivElement>, HTMLDivElement> {
-  entity: EditorComponentEntity
-  entityState: EditorEntityState
-  node
+export interface ComponentTypeRendererProps extends FacToComponentProps {
+  className?
+  registeredEntity: RegisterComponentConfig
 }
 
 const FormLabel = ({ children, className = '', ...props }) => (children ? (
@@ -27,10 +24,14 @@ export const ComponentRenderer: React.FC<ComponentTypeRendererProps> = (props) =
     entityState = {},
     node,
     className,
+    onClick,
+    nestingInfo,
+    registeredEntity,
     ...otherProps
   } = props;
   const { component } = entity;
   const { label, style } = entityState;
+  const { comp } = registeredEntity;
 
   const compContext = {
     entityState
@@ -43,7 +44,7 @@ export const ComponentRenderer: React.FC<ComponentTypeRendererProps> = (props) =
   const { type, ...compProps } = component;
   switch (type) {
     case 'Input':
-      const Input = getCompEntity(type);
+      const Input = comp;
       Com = (
         <div className="__Input">
           <FormLabel>{label}</FormLabel>
@@ -55,11 +56,11 @@ export const ComponentRenderer: React.FC<ComponentTypeRendererProps> = (props) =
       );
       break;
     case 'Table':
-      const EditableTable = getCompEntity(type);
+      const Table = comp;
       Com = (
         <div className="__Table">
           <FormLabel>{label}</FormLabel>
-          <EditableTable
+          <Table
             compContext={compContext}
             {...compProps}
           />
@@ -68,7 +69,10 @@ export const ComponentRenderer: React.FC<ComponentTypeRendererProps> = (props) =
       break;
     case 'container':
       Com = (
-        <ContainerWrapperCom {...props} />
+        // <ContainerWrapperCom {...props} />
+        <div>
+          Container
+        </div>
       );
       break;
     default:
@@ -81,6 +85,7 @@ export const ComponentRenderer: React.FC<ComponentTypeRendererProps> = (props) =
   return (
     <div
       {...otherProps}
+      onClick={onClick}
       className={classes}
       style={style}
     >

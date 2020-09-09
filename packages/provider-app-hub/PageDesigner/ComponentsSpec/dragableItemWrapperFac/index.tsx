@@ -10,12 +10,16 @@ import {
 } from '@engine/layout-renderer';
 import classnames from 'classnames';
 import { EditorEntityState, EditorComponentEntity, TEMP_ENTITY_ID } from '@engine/visual-editor/types';
-import ComponentWrapperCom from '@engine/visual-editor/spec/template/ComponentWrapperCom';
-import DragItem, {
-  DragItemActions
-} from './DragItem';
-import { TempEntityTip } from './template/TempEntityTip';
-import { ItemTypes } from './types';
+import {
+  DragItemComp,
+  ItemTypes,
+  DragItemActions,
+  getCompEntity
+} from '@engine/visual-editor/spec';
+
+import { TempEntityTip } from './TempEntityTip';
+import { ComponentRenderer } from './ComponentRenderer';
+import { EditBtn } from './EditBtn';
 // import { Debounce } from '@mini-code/base-func';
 
 export interface GetStateContext {
@@ -55,7 +59,7 @@ export interface WrapperFacOptions extends WrapperFacContext, WrapperFacActions 
  */
 export interface FacToComponentProps extends LayoutWrapperContext {
   onClick
-  currEntity: EditorComponentEntity
+  entity: EditorComponentEntity
   entityState: EditorEntityState
 }
 
@@ -91,13 +95,17 @@ export const dragableItemWrapperFac: DragableItemWrapperFac = (
     isSelected && 'selected',
   ]);
   const isTempEntity = currEntity._state === TEMP_ENTITY_ID;
+  const { component } = currEntity;
+  const registeredEntity = getCompEntity(component.type);
+  const { propEditor } = registeredEntity;
+  console.log(registeredEntity);
 
   return isTempEntity ? <TempEntityTip key={id} /> : (
     <div
       className={classes}
       key={id}
     >
-      <DragItem
+      <DragItemComp
         id={id}
         index={idx}
         onDrop={onDrop}
@@ -107,27 +115,33 @@ export const dragableItemWrapperFac: DragableItemWrapperFac = (
         className="relative drag-item"
         accept={[ItemTypes.DragItemEntity, ItemTypes.DragItemClass]}
       >
-        <ComponentWrapperCom
+        <ComponentRenderer
           {...propsForChild}
           onClick={(e) => {
             e.stopPropagation();
             onClick(e, { entity: currEntity, idx });
           }}
-          currEntity={currEntity}
+          entity={currEntity}
+          registeredEntity={registeredEntity}
           entityState={entityState || {}}
         >
           {children}
-        </ComponentWrapperCom>
-        <div
-          className="t_red rm-btn"
-          onClick={(e) => {
-            e.stopPropagation();
-            onDelete(e, { idx, entity: currEntity });
-          }}
-        >
-          删除
+        </ComponentRenderer>
+        <div className="action-area">
+          {
+            propEditor && <EditBtn />
+          }
+          <span
+            className="default btn red"
+            onClick={(e) => {
+              e.stopPropagation();
+              onDelete(e, { idx, entity: currEntity });
+            }}
+          >
+            删除
+          </span>
         </div>
-      </DragItem>
+      </DragItemComp>
     </div>
   );
 };

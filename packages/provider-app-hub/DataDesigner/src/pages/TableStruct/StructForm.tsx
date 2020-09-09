@@ -156,10 +156,7 @@ const StructForm = ({
     moduleId: {
       itemAttr: {
         label: "归属模块",
-<<<<<<< HEAD
-=======
         className: refShow.TABLE,
->>>>>>> hy/feat/20200831/data-designer
         rules: [{ required: true, message: '请选择归属模块' }],
       },
       compAttr: {
