@@ -1,8 +1,9 @@
 import React from 'react';
 import Editor, { PropertiesEditorProps } from '@engine/visual-editor/components/PropertiesEditor';
+import { PropItemRenderer } from '../../ComponentsSpec/Renderer/PropItemRenderer';
 
 interface PropsEditorProps extends PropertiesEditorProps {
-  customConfig?: {}
+  customConfig?: any
 }
 
 const PropertiesEditor = ({
@@ -10,7 +11,12 @@ const PropertiesEditor = ({
 }: PropsEditorProps) => {
   return (
     <div>
-      <Editor {...otherProps} />
+      <Editor
+        {...otherProps}
+        propItemRenderer={(props) => {
+          return <PropItemRenderer {...props} />;
+        }}
+      />
     </div>
   );
 };

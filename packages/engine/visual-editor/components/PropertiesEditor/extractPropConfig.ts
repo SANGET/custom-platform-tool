@@ -1,5 +1,8 @@
 import { produce } from "immer";
-import { PropertyItemConfigFunc, EditorComponentEntity, EditorPropertyItem } from "../../types";
+import {
+  PropertyItemConfigFunc, EditorComponentEntity,
+  EditorPropertyItem, EditorPageEntity
+} from "../../types";
 
 /**
  * 提取 prop config

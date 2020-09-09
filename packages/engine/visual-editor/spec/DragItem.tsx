@@ -180,4 +180,8 @@ const DragItemComp: React.FC<DragItemProps> = ({
   );
 };
 
+export {
+  DragItemComp
+};
+
 export default DragItemComp;

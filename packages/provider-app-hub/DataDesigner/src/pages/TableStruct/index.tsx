@@ -214,7 +214,6 @@ const TableStruct = () => {
   const queryList = async (params = {}) => {
     // const tableRes = await Http.get('/data/v1/tables/list', { params });  // -----
 
-
     // console.log({ tableRes });
     getList({
       params,
@@ -467,7 +466,7 @@ const TableStruct = () => {
     }
 
   };
-  console.dir("render Table Struct")
+  console.dir("render Table Struct");
   return (
     <div className="auth-item flex b1px " style={{ height: '100%' }}>
       <aside className="tree-box">

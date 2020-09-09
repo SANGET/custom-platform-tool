@@ -1,7 +1,6 @@
 import React from 'react';
-import { EditorPropertyItem } from '../../types';
-import { getPropItem } from '../../spec/registerComp';
-import { PropItemRendererProps } from './types';
+import { getPropItem } from '@engine/visual-editor/spec/registerComp';
+import { PropItemRendererProps } from '@engine/visual-editor/components/PropertiesEditor/types';
 
 /**
  * 属性项渲染器

@@ -1,16 +1,18 @@
-import { registerComp, getRegisteredComp, RegistrableComponent } from "./common";
+import {
+  registerComp, getRegisteredComp,
+  RegisterComponentConfig
+} from "./common";
 
 export * from './common';
 
+/** 组件类 */
 const CompClassType = '_comp_c_';
+
+/** 属性项 */
 const PropItemType = '_prop_i_';
 
-export interface RegisterComponentConfig {
-  /** 组件的名字 */
-  name: string
-  /** 注册的具体组件 */
-  comp: RegistrableComponent
-}
+/** 特定编辑器 */
+const EditorCompType = '_editor_c_';
 
 /**
  * 包装组件名
@@ -23,9 +25,9 @@ const wrapCompName = (prefix: string, name: string) => `${prefix}${name}`;
 const batchRegister = (prefix: string) => {
   return (compConfig: RegisterComponentConfig[]) => {
     for (const config of compConfig) {
-      const { name, comp } = config;
+      const { name } = config;
       const _compName = wrapCompName(prefix, name);
-      registerComp(_compName, comp);
+      registerComp(_compName, config);
     }
   };
 };
@@ -50,6 +52,11 @@ export const getCompEntity = getCompHOC(CompClassType);
 export const getPropItem = getCompHOC(PropItemType);
 
 /**
+ * 获取组件类
+ */
+export const getPropEditor = getCompHOC(EditorCompType);
+
+/**
  * 注册组件类
  */
 export const registerCompClass = batchRegister(CompClassType);
@@ -58,3 +65,8 @@ export const registerCompClass = batchRegister(CompClassType);
  * 注册属性项
  */
 export const registerPropItem = batchRegister(PropItemType);
+
+/**
+ * 注册属性项
+ */
+export const registerEditor = batchRegister(EditorCompType);

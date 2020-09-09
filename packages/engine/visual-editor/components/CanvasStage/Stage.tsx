@@ -13,7 +13,7 @@ import { ItemTypes } from '@engine/visual-editor/spec/types';
 import { Debounce } from '@mini-code/base-func';
 import {
   dragableItemWrapperFac, WrapperFacOptions, DragableItemWrapperFac, GetStateContext
-} from '@engine/visual-editor/spec/dragable-item-wrapper-fac';
+} from '@engine/visual-editor/spec';
 import { constructCompClass, constructTempEntity } from '@engine/visual-editor/core/utils/component-constructor';
 import { Dispatcher } from '../../core/actions';
 import DropStageContainer from './DropStageContainer';
