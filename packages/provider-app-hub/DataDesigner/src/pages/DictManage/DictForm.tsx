@@ -52,6 +52,7 @@ const DictForm = (props) => {
   */
   const [editingKey, setEditingKey] = useState<number | string>('');
   /** 操作按钮 */
+<<<<<<< HEAD
   // const operButs = [
   //   {
   //     text: <PlusOutlined />,
@@ -75,6 +76,31 @@ const DictForm = (props) => {
 
   const openColorPicker = (params) => {
 
+=======
+  const operButs = [
+    {
+      text: <PlusOutlined />,
+      onClick: (row) => {
+        console.log('row', row);
+        setId(id + 1);
+        handleAdd();
+      }
+    },
+    /** 多于一行记录,才显示-号 */
+    {
+      text: <MinusOutlined />,
+      onClick: (row) => {
+        //console.log('row----', row);
+        const { key } = row;
+        handleDelete(key);
+      },
+      isShow: (index) => index
+    },
+  ];
+
+  const openColorPicker = (params) => {
+
+>>>>>>> 4eea739b99f979f7102780248f722457bb2b9be0
     setColorPicker(params);
   };
 
@@ -237,7 +263,10 @@ const DictForm = (props) => {
     console.log('newData', newData);
 
     setFieldTableData([...fieldTableData]);
+<<<<<<< HEAD
     // edit(newData);
+=======
+>>>>>>> 4eea739b99f979f7102780248f722457bb2b9be0
     //edit(newData);
     console.log('fieldTableData', fieldTableData);
   };
