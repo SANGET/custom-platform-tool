@@ -47,9 +47,9 @@ const DictModal = ({ onChange, ...rest }) => {
       name: '', description: "", offset: 0, size: 10,
     }, args);
     setTableLoading(true);
-    Http.get('/smart_building/data/v1/dictionary/list', { params }).then((res) => {
+    $R_P.get('/data/v1/dictionary/list', { params }).then((res) => {
     // console.log(res.data.result);
-      setTableData(res.data.result.data);
+      setTableData(res.result.data);
     }).finally(() => {
       setTableLoading(false);
     });
@@ -140,7 +140,7 @@ const DictModal = ({ onChange, ...rest }) => {
       update: 'put'
     }[type];
 
-    Http[reqMethod]('/smart_building/data/v1/dictionary/', data).then((res) => {
+    $R_P[reqMethod]('/data/v1/dictionary/', data).then((res) => {
       Msg.success('操作成功');
       getList();
       cb && cb();

@@ -63,8 +63,12 @@ const DictManage = ({ isModal = false }) => {
   * 删除字典
   */
   const DelDict = (id) => {
+<<<<<<< HEAD
     DelTable(id).then((res) => {
       getList();
+=======
+    $R_P.del(`/data/v1/tables/${id}`).then((res) => {
+>>>>>>> b845e3f0bfbb364797bebe081b0e147986dd100b
       Msg.success('操作成功');
       // console.log(res);
     });
@@ -205,6 +209,7 @@ const DictManage = ({ isModal = false }) => {
   * type-
   */
   const submitData = ({ type, data, cb }) => {
+<<<<<<< HEAD
     // const reqMethod = {
     //   add: 'post',
     //   update: 'put'
@@ -231,6 +236,20 @@ const DictManage = ({ isModal = false }) => {
   
   
   }
+=======
+    const reqMethod = {
+      add: 'post',
+      update: 'put'
+    }[type];
+
+    $R_P[reqMethod]('/data/v1/dictionary/', data).then((res) => {
+      Msg.success('操作成功');
+      getList();
+      cb && cb();
+      // console.log(res);
+    });
+  };
+>>>>>>> b845e3f0bfbb364797bebe081b0e147986dd100b
 
   /**
   * 查询字典列表
@@ -240,7 +259,11 @@ const DictManage = ({ isModal = false }) => {
       name: '', description: "", offset: 0, size: 10,
     }, args);
     setTableLoading(true);
+<<<<<<< HEAD
     GetDictList(params).then((res) => {
+=======
+    $R_P.get('/data/v1/dictionary/list', { params }).then((res) => {
+>>>>>>> b845e3f0bfbb364797bebe081b0e147986dd100b
       // console.log(res.data.result);
       const data = res.result.data.map((row) => ({
         ...row,
@@ -258,9 +281,13 @@ const DictManage = ({ isModal = false }) => {
   * 查询字典详情
   */
   const getDetail = ({ id, cb }) => {
-    // return await Http.get(`/smart_building/data/v1/dictionary/${id}`);
+    // return await Http.get(`/data/v1/dictionary/${id}`);
     setTableLoading(true);
+<<<<<<< HEAD
     GetDictDeatil(id).then((res) => {
+=======
+    $R_P.get(`/data/v1/dictionary/${id}`, {}).then((res) => {
+>>>>>>> b845e3f0bfbb364797bebe081b0e147986dd100b
       cb && cb(res.result);
     }).finally(() => {
       setTableLoading(false);
@@ -271,7 +298,11 @@ const DictManage = ({ isModal = false }) => {
   * 新增/修改子字典接口
   */
   const configSubDict = ({ data, cb, querySub }) => {
+<<<<<<< HEAD
     AddUpdateSubDict(data).then((res) => {
+=======
+    $R_P.put("/data/v1/dictionary_value/", data).then((res) => {
+>>>>>>> b845e3f0bfbb364797bebe081b0e147986dd100b
       // console.log(res);
       cb && cb(res.result);
       getSubDictDetail(querySub);
@@ -284,7 +315,11 @@ const DictManage = ({ isModal = false }) => {
   const getSubDictDetail = ({ dictionaryId, pid, cb }) => {
     // const { dictionaryId = dictId, pid = dictPid, cb } = args;
 
+<<<<<<< HEAD
     GetSubDictDetail({ dictionaryId, pid }).then((res) => {
+=======
+    $R_P.get(`/data/v1/dictionary_value/${dictionaryId}/${pid}`).then((res) => {
+>>>>>>> b845e3f0bfbb364797bebe081b0e147986dd100b
       // console.log(res);
       cb && cb(res.result);
     });
@@ -303,7 +338,11 @@ const DictManage = ({ isModal = false }) => {
     * dictionaryId-字典项id  pid--本级id
     * "level"=5时 第5级隐藏配置子项,删除子项按钮
     */
+<<<<<<< HEAD
     deleSubDict({ dictionaryId, pid }).then((res) => {
+=======
+    $R_P.del(`/data/v1/dictionary_value/${dictionaryId}/${pid}`).then((res) => {
+>>>>>>> b845e3f0bfbb364797bebe081b0e147986dd100b
       cb && cb(res);
     });
   };

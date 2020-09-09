@@ -32,6 +32,10 @@ const loadChild = (
     );
   }
   let C;
+  const isClassComp = !!Child.prototype.render;
+  if (isClassComp) {
+    return <Child {...props} />;
+  }
   if (typeof Child === 'function') {
     C = Child(props);
     if (React.isValidElement(C)) {
