@@ -63,21 +63,15 @@ const DictManage = ({ isModal = false }) => {
   * 删除字典
   */
   const DelDict = (id) => {
-<<<<<<< HEAD
-<<<<<<< HEAD
+
+
     DelTable(id).then((res) => {
       getList();
-=======
-    $R_P.del(`/data/v1/tables/${id}`).then((res) => {
->>>>>>> b845e3f0bfbb364797bebe081b0e147986dd100b
-=======
-    DelTable(id).then((res) => {
-      getList();
->>>>>>> 4eea739b99f979f7102780248f722457bb2b9be0
+
       Msg.success('操作成功');
       // console.log(res);
-    });
-  };
+    })
+  }
   /** 操作按钮 */
   const operButs = [
     {
@@ -214,10 +208,7 @@ const DictManage = ({ isModal = false }) => {
   * type-
   */
   const submitData = ({ type, data, cb }) => {
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> 4eea739b99f979f7102780248f722457bb2b9be0
+
     // const reqMethod = {
     //   add: 'post',
     //   update: 'put'
@@ -244,23 +235,7 @@ const DictManage = ({ isModal = false }) => {
   
   
   }
-<<<<<<< HEAD
-=======
-    const reqMethod = {
-      add: 'post',
-      update: 'put'
-    }[type];
 
-    $R_P[reqMethod]('/data/v1/dictionary/', data).then((res) => {
-      Msg.success('操作成功');
-      getList();
-      cb && cb();
-      // console.log(res);
-    });
-  };
->>>>>>> b845e3f0bfbb364797bebe081b0e147986dd100b
-=======
->>>>>>> 4eea739b99f979f7102780248f722457bb2b9be0
 
   /**
   * 查询字典列表
@@ -270,15 +245,10 @@ const DictManage = ({ isModal = false }) => {
       name: '', description: "", offset: 0, size: 10,
     }, args);
     setTableLoading(true);
-<<<<<<< HEAD
-<<<<<<< HEAD
+
+
     GetDictList(params).then((res) => {
-=======
-    $R_P.get('/data/v1/dictionary/list', { params }).then((res) => {
->>>>>>> b845e3f0bfbb364797bebe081b0e147986dd100b
-=======
-    GetDictList(params).then((res) => {
->>>>>>> 4eea739b99f979f7102780248f722457bb2b9be0
+
       // console.log(res.data.result);
       const data = res.result.data.map((row) => ({
         ...row,
@@ -298,15 +268,8 @@ const DictManage = ({ isModal = false }) => {
   const getDetail = ({ id, cb }) => {
     // return await Http.get(`/data/v1/dictionary/${id}`);
     setTableLoading(true);
-<<<<<<< HEAD
-<<<<<<< HEAD
+
     GetDictDeatil(id).then((res) => {
-=======
-    $R_P.get(`/data/v1/dictionary/${id}`, {}).then((res) => {
->>>>>>> b845e3f0bfbb364797bebe081b0e147986dd100b
-=======
-    GetDictDeatil(id).then((res) => {
->>>>>>> 4eea739b99f979f7102780248f722457bb2b9be0
       cb && cb(res.result);
     }).finally(() => {
       setTableLoading(false);
@@ -317,15 +280,9 @@ const DictManage = ({ isModal = false }) => {
   * 新增/修改子字典接口
   */
   const configSubDict = ({ data, cb, querySub }) => {
-<<<<<<< HEAD
-<<<<<<< HEAD
+
+
     AddUpdateSubDict(data).then((res) => {
-=======
-    $R_P.put("/data/v1/dictionary_value/", data).then((res) => {
->>>>>>> b845e3f0bfbb364797bebe081b0e147986dd100b
-=======
-    AddUpdateSubDict(data).then((res) => {
->>>>>>> 4eea739b99f979f7102780248f722457bb2b9be0
       // console.log(res);
       cb && cb(res.result);
       getSubDictDetail(querySub);
@@ -338,15 +295,7 @@ const DictManage = ({ isModal = false }) => {
   const getSubDictDetail = ({ dictionaryId, pid, cb }) => {
     // const { dictionaryId = dictId, pid = dictPid, cb } = args;
 
-<<<<<<< HEAD
-<<<<<<< HEAD
     GetSubDictDetail({ dictionaryId, pid }).then((res) => {
-=======
-    $R_P.get(`/data/v1/dictionary_value/${dictionaryId}/${pid}`).then((res) => {
->>>>>>> b845e3f0bfbb364797bebe081b0e147986dd100b
-=======
-    GetSubDictDetail({ dictionaryId, pid }).then((res) => {
->>>>>>> 4eea739b99f979f7102780248f722457bb2b9be0
       // console.log(res);
       cb && cb(res.result);
     });
@@ -365,15 +314,9 @@ const DictManage = ({ isModal = false }) => {
     * dictionaryId-字典项id  pid--本级id
     * "level"=5时 第5级隐藏配置子项,删除子项按钮
     */
-<<<<<<< HEAD
-<<<<<<< HEAD
+
+
     deleSubDict({ dictionaryId, pid }).then((res) => {
-=======
-    $R_P.del(`/data/v1/dictionary_value/${dictionaryId}/${pid}`).then((res) => {
->>>>>>> b845e3f0bfbb364797bebe081b0e147986dd100b
-=======
-    deleSubDict({ dictionaryId, pid }).then((res) => {
->>>>>>> 4eea739b99f979f7102780248f722457bb2b9be0
       cb && cb(res);
     });
   };
@@ -592,11 +535,7 @@ const DictManage = ({ isModal = false }) => {
 
   };
 
-<<<<<<< HEAD
   const [subTableData, setSubTableData] = useState<any[]>([]);
-=======
-  const [subTableData, setSubTableData] = useState<any>([]);
->>>>>>> 4eea739b99f979f7102780248f722457bb2b9be0
 
   const deepLevelItem = [];
 
