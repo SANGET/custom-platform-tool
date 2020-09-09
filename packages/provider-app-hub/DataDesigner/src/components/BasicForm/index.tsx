@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import {
-  Row, Col, Form, Button, Input, Space
+  Row, Col, Form, Button, Input, Space,Table
 } from 'antd';
 import styled from 'styled-components';
 
@@ -12,6 +12,7 @@ import {
  * 组件仓库,用于动态生成组件
  */
 import BasicStory from '@provider-app/data-designer/src/components/BasicStory';
+import { renderOperCol } from '@provider-app/data-designer/src/components/BasicEditTable';
 
 const FormStyled = styled.div`
 #basic-form{
@@ -90,6 +91,8 @@ const BasicForm = (props) => {
   } = props;
 
   const listRef = useRef(null);
+ 
+
   useEffect(() => {
     // console.log({ isAddEditRow });
     /**
@@ -143,7 +146,7 @@ const BasicForm = (props) => {
       return form.getFieldValue('items')[index][name];
     }
     if (name === 'renderFontColor') {
-      return '#000000a6';
+      return '#000';
     }
     return 'transparent';
   };
@@ -151,7 +154,9 @@ const BasicForm = (props) => {
   const getList = (listItems, addRow?) => {
     return (
       <Form.List name={listName} >
-        {(fields, { add, remove }) => {
+        {
+        (fields, { add, remove }) => {
+        
           listRef.current = add;
           return (
 

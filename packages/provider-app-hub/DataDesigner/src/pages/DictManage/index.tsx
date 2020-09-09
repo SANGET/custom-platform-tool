@@ -157,13 +157,14 @@ const DictManage = ({ isModal = false }) => {
           /** pid就是本行id */
           pid: row.id,
           cb: () => {
-            Msg.success('操作成功');
+            
             getDetail({
               id: dictId,
               cb: (data) => {
                 setSubTableData(data.items);
               }
             });
+            Msg.success('操作成功');
           }
         });
 
@@ -294,6 +295,7 @@ const DictManage = ({ isModal = false }) => {
   */
   const delSubDetail = (params) => {
     const { dictionaryId, pid, cb } = params;
+    console.log(dictionaryId,pid,cb,'dictionaryId,pid,cb')
     /**
     * 是删除子字典下面的子项,不是删除子字典自身
     */
@@ -306,47 +308,47 @@ const DictManage = ({ isModal = false }) => {
     });
   };
   // console.log(res);
-  const queryList = async (args = {}) => {
-    /**
-     * 与产品约定,左侧树查询不考虑右侧列表查询条件,右侧列表查询要带上左侧查询条件,点击了搜索按钮之后才查询
-     */
-    const params = Object.assign({}, {
-      /**  String 否 数据表名称 */
-      name: '',
-      // 字典描述
-      description: '',
-      /**  int 是 分页查询起始位置,从0开始 */
-      offset: 0,
-      /**  int 是 每页查询记录数 */
-      size: 10
-    }, args);
-    /** 请求表结构列表数据 */
-    // const tableRes = await Http.get('http://localhost:60001/mock/structList.json', { params });
-    // const tableRes = await Http.get('/data/v1/tables/list', { params });  // -----
+  // const queryList = async (args = {}) => {
+  //   /**
+  //    * 与产品约定,左侧树查询不考虑右侧列表查询条件,右侧列表查询要带上左侧查询条件,点击了搜索按钮之后才查询
+  //    */
+  //   const params = Object.assign({}, {
+  //     /**  String 否 数据表名称 */
+  //     name: '',
+  //     // 字典描述
+  //     description: '',
+  //     /**  int 是 分页查询起始位置,从0开始 */
+  //     offset: 0,
+  //     /**  int 是 每页查询记录数 */
+  //     size: 10
+  //   }, args);
+  //   /** 请求表结构列表数据 */
+  //   // const tableRes = await Http.get('http://localhost:60001/mock/structList.json', { params });
+  //   // const tableRes = await Http.get('/data/v1/tables/list', { params });  // -----
 
-    const tableRes = await GetDictList(params);
-    // console.log({ tableRes });
+  //   const tableRes = await GetDictList(params);
+  //   // console.log({ tableRes });
 
-    /** 表格数据格式转换-注意setStructTableData之后不能立刻获取最新值 */
-    const tableData = tableRes.result?.data.map((col) => {
-      /** 根据T点的key查找节点完整信息 */
-      /** 返回节点的名称 */
-      // col.moduleId = treeQuery(treeData, col.moduleId).title;
-      // console.log(col.moduleId);
-      /** 将表类型代码转换为文字 */
-      // const showText = TableTypeEnum.find((item) => item.value === col.type);
-      // col.type = showText ? showText.text : '';
-      /** gmt时间格式转yyyy-MM-dd hh:mm:ss */
-      col.gmtCreate = formatGMT(col.gmtCreate);
-      col.gmtModified = formatGMT(col.gmtModified);
-      /** antd table每行记录必需有key字段 */
-      col.key = col.id;
-      return col;
-    });
-    // console.log({ structTableData });
-    // setTableData(structTableData);
-    setStructTableData(tableData);
-  };
+  //   /** 表格数据格式转换-注意setStructTableData之后不能立刻获取最新值 */
+  //   const tableData = tableRes.result.data.map((col) => {
+  //     /** 根据T点的key查找节点完整信息 */
+  //     /** 返回节点的名称 */
+  //     // col.moduleId = treeQuery(treeData, col.moduleId).title;
+  //     // console.log(col.moduleId);
+  //     /** 将表类型代码转换为文字 */
+  //     // const showText = TableTypeEnum.find((item) => item.value === col.type);
+  //     // col.type = showText ? showText.text : '';
+  //     /** gmt时间格式转yyyy-MM-dd hh:mm:ss */
+  //     col.gmtCreate = formatGMT(col.gmtCreate);
+  //     col.gmtModified = formatGMT(col.gmtModified);
+  //     /** antd table每行记录必需有key字段 */
+  //     col.key = col.id;
+  //     return col;
+  //   });
+  //   // console.log({ structTableData });
+  //   // setTableData(structTableData);
+  //   setStructTableData(tableData);
+  // };
   useEffect(() => {
     getList();
   }, []);
@@ -386,8 +388,8 @@ const DictManage = ({ isModal = false }) => {
     style: { marginTop: "20px" },
     menus: isModal ? [addMenu] : [
       addMenu,
-      { text: '导入', onClick: () => { } },
-      { text: '导出', onClick: () => { } },
+      { text: '导入', onClick: () => {} },
+      { text: '导出', onClick: () => {} },
     ]
   };
 
@@ -445,7 +447,7 @@ const DictManage = ({ isModal = false }) => {
         }
       })
         .catch((errorInfo) => {
-          /** 校验未通过 */
+        /** 校验未通过 */
           console.log(errorInfo);
         });
     },
@@ -520,7 +522,7 @@ const DictManage = ({ isModal = false }) => {
 
   };
 
-  const [subTableData, setSubTableData] = useState<any>([]);
+  const [subTableData, setSubTableData] = useState<any[]>([]);
 
   const deepLevelItem = [];
 
@@ -593,10 +595,10 @@ const DictManage = ({ isModal = false }) => {
                         }
                       });
                     }, // 点击行
-                    onDoubleClick: (event) => { },
-                    onContextMenu: (event) => { },
-                    onMouseEnter: (event) => { }, // 鼠标移入行
-                    onMouseLeave: (event) => { },
+                    onDoubleClick: (event) => {},
+                    onContextMenu: (event) => {},
+                    onMouseEnter: (event) => {}, // 鼠标移入行
+                    onMouseLeave: (event) => {},
                   };
                 }}
               />
@@ -615,7 +617,7 @@ const DictManage = ({ isModal = false }) => {
                 setExpandedRowKeys([record.id]);
                 setSubTableData(data.items);
               }
-            });
+            })
           },
           /**
           * 允许展开

@@ -52,26 +52,26 @@ const DictForm = (props) => {
   */
   const [editingKey, setEditingKey] = useState<number | string>('');
   /** 操作按钮 */
-  const operButs = [
-    {
-      text: <PlusOutlined />,
-      onClick: (row) => {
-        console.log('row', row);
-        setId(id + 1);
-        handleAdd();
-      }
-    },
-    /** 多于一行记录,才显示-号 */
-    {
-      text: <MinusOutlined />,
-      onClick: (row) => {
-        //console.log('row----', row);
-        const { key } = row;
-        handleDelete(key);
-      },
-      isShow: (index) => index
-    },
-  ];
+  // const operButs = [
+  //   {
+  //     text: <PlusOutlined />,
+  //     onClick: (row) => {
+  //       console.log('row', row);
+  //       setId(id + 1);
+  //       handleAdd();
+  //     }
+  //   },
+  //   /** 多于一行记录,才显示-号 */
+  //   {
+  //     text: <MinusOutlined />,
+  //     onClick: (row) => {
+  //       //console.log('row----', row);
+  //       const { key } = row;
+  //       handleDelete(key);
+  //     },
+  //     isShow: (index) => index
+  //   },
+  // ];
 
   const openColorPicker = (params) => {
 
@@ -373,7 +373,7 @@ const DictForm = (props) => {
           onChange: (e, index) => {
             /** 将表格名称转换为汉字首字母拼音 */
             const values = form.getFieldsValue();
-            values.items[index].code = PinYin.getCamelChars(values.items[index].name);
+            values.items[index].name = PinYin.getCamelChars(values.items[index].name);
             form.setFieldsValue({ ...values });
           }
         }

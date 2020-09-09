@@ -38,7 +38,7 @@ const StructHeadMenu = ({ openModal, form, getList }) => {
         // History.push('/DictManage');
         onNavigate({
           type: "PUSH",
-          route: '/data_designer/dict_manage'
+          route: '/DictManage'
         });
       }
     };
