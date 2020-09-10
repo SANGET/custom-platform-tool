@@ -7,8 +7,8 @@ const deepClone = (obj) => {
 const LoadPage = (pageID): Promise<TypeOfIUBDSL> => {
   return new Promise((resolve, reject) => {
     import('@iub-dsl/demo/business-case/location-manager')
-    // import('@iub-dsl/demo/business-case/simple-create-user')
-    // import('@iub-dsl/demo/business-case/create-user')
+      // import('@iub-dsl/demo/business-case/simple-create-user')
+      // import('@iub-dsl/demo/business-case/create-user')
       .then(({ default: IUBDSLData }) => {
         resolve(deepClone(IUBDSLData));
       });
