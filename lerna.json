@@ -1,11 +1,14 @@
 {
   "packages": [
     "packages/provider-app-hub/*",
+    "packages/provider-app-entry/*",
     "packages/iub-dsl/*",
     "packages/engine/*",
     "packages/infrastructure/*",
     "packages/consumer-app/*",
     "packages/spec/*"
   ],
-  "version": "0.0.1"
+  "version": "independent",
+  "npmClient": "yarn",
+  "useWorkspaces": true
 }

@@ -163,7 +163,8 @@ export interface TempEntity {
 /**
  * 编辑器的实例种类
  */
-export type EditorEntity = EditorComponentEntity | EditorPageEntity
+export type EditorEntity = EditorComponentEntity
+//  | EditorPageEntity
 
 /**
  * 组件实例

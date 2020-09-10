@@ -1,14 +1,18 @@
-.rm-btn {
-  position: absolute;
-  right: 0;
-  top: 50%;
-  background-color: #FFF;
-  z-index: 1;
-  padding: 3px 10px;
-}
-
 .canvas-stage {
   padding: 10px;
+}
+
+.canvas-stage-container {
+  .action-area {
+    position: absolute;
+    right: 0;
+    top: 10px;
+    background-color: #FFF;
+    z-index: 1;
+    // padding: 3px 10px;
+    display: none;
+    box-shadow: 0 0 2px rgba(#000, 0.2);
+  }
 }
 
 .component-class-panel {
@@ -34,6 +38,7 @@
 .comp-renderer {
   padding: 10px;
   background-color: #FFF;
+  // pointer-events: none;
   .form-title {
     margin-bottom: 10px;
     font-size: 16px;
@@ -52,15 +57,12 @@
   &:hover {
     box-shadow: 0 0 3px rgba(#a6bcf8, 1);
     z-index: 2;
-    .rm-btn {
+    .action-area {
       display: block;
     }
   }
   &.selected {
     box-shadow: 0 0 3px rgba(#376BFB, 1);
     z-index: 3;
-  }
-  .rm-btn {
-    display: none;
   }
 }

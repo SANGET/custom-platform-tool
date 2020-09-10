@@ -9,9 +9,10 @@ import {
   ComponentBindPropsConfig,
 } from '../../types';
 import useUpdateState from './useUpdateState';
-import { PropItemRenderer } from './PropItemRenderer';
+import { PropItemRenderer as PropItemRendererDefault } from './PropItemRenderer';
 import { extractPropConfig } from './extractPropConfig';
 import { entityStateMergeRule } from './entityStateMergeRule';
+import { PropItemRendererProps } from './types';
 
 export type UpdateEntityStateOfEditor = (entityState: EditorEntityState) => void
 export type InitEntityStateOfEditor = (entityState: EditorEntityState) => void
@@ -19,7 +20,7 @@ export type InitEntityStateOfEditor = (entityState: EditorEntityState) => void
 export interface PropertiesEditorProps {
   /** 选中的 entity */
   selectedEntity: EditorEntity
-  propItemsData: any
+  propItemDeclares: any
   /** 属性项组合配置 */
   propertiesConfig: ComponentBindPropsConfig
   /** 属性编辑器的配置，通过该配置生成有层级结构的属性编辑面板 */
@@ -30,6 +31,8 @@ export interface PropertiesEditorProps {
   updateEntityState: UpdateEntityStateOfEditor
   /** 初始化实例 */
   initEntityState: InitEntityStateOfEditor
+  /** 每个属性项的渲染器 */
+  propItemRenderer?: (props: PropItemRendererProps) => JSX.Element
 }
 
 const StateBtn = ({
@@ -150,13 +153,20 @@ PropertiesEditorProps, PropertiesEditorState
     return bindProps;
   }
 
+  defaultPropItemRenderer = (props) => {
+    return (
+      <PropItemRendererDefault {...props} />
+    );
+  }
+
   /**
    * 渲染每个属性项
    */
   renderPropItem = () => {
     const {
       selectedEntity,
-      propItemsData,
+      propItemDeclares,
+      propItemRenderer = this.defaultPropItemRenderer
     } = this.props;
     const { entityState } = this.state;
     // const { bindProps } = selectedEntity;
@@ -175,7 +185,7 @@ PropertiesEditorProps, PropertiesEditorState
          *
          * 此配置为函数，需要在此做过滤
          */
-        propOriginConfigItem = propItemsData[propID];
+        propOriginConfigItem = propItemDeclares[propID];
         propItemConfig = extractPropConfig(propOriginConfigItem, selectedEntity);
 
         /**
@@ -212,18 +222,34 @@ PropertiesEditorProps, PropertiesEditorState
         <div
           key={propID}
         >
-          <PropItemRenderer
+          {
+            propItemRenderer({
+              componentState: activeState,
+              onChange: (nextValue, propConfigRes) => {
+                /**
+                 * 性能优化部分
+                 */
+                const prevState = activeState;
+                if (nextValue === prevState) return;
+
+                /**
+                 * 更新数据
+                 */
+                this.updateEntityStateForSelf(propConfigRes, nextValue);
+
+                debounce.exec(() => {
+                  this.props.updateEntityState(this.state.entityState);
+                }, 300);
+              },
+              propID,
+              propItemConfig
+            })
+          }
+          {/* <PropItemRenderer
             componentState={activeState}
             onChange={(nextValue, propConfigRes) => {
-              /**
-               * 性能优化部分
-               */
               const prevState = activeState;
               if (nextValue === prevState) return;
-
-              /**
-               * 更新数据
-               */
               this.updateEntityStateForSelf(propConfigRes, nextValue);
 
               debounce.exec(() => {
@@ -232,7 +258,7 @@ PropertiesEditorProps, PropertiesEditorState
             }}
             propID={propID}
             propItemConfig={propItemConfig}
-          />
+          /> */}
         </div>
       );
     });

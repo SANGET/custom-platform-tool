@@ -1,34 +1,31 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { Form } from 'antd';
+
 /** 左树右列表弹窗组件 */
 import TreeListModal from '@provider-app/data-designer/src/bizComps/TreeListModal';
 /**
 *  模态框默认初始化方法
 */
-import { getModalConfig } from '@provider-app/data-designer/src/tools/mix';
-
+/** 中文转拼音工具 */
+import { getModalConfig, PinYin } from '@provider-app/data-designer/src/tools/mix';
+import { ForeignKeyStgyEnum } from '@provider-app/data-designer/src/tools/constant';
+/**
+* 正则表达式
+*/
+import REG from '@provider-app/data-designer/src/tools/reg';
+/** 网络请求工具 */
+import Http from '@infra/utils/http';
+import { useMappedState } from 'redux-react-hook';
 /**
  * +引用字段弹窗组件
  * @param treeData--关联表弹窗左侧树要用的数据
  * @param tableData--关联表弹窗右侧表格要用的数据
  */
 const ReferenceForm = ({
-  treeData, tableData, ...rest
+  treeData, tableData, modalTitle, form, ...rest
 }) => {
-  /**
-   * 引用字段--关联字段，显示字段下拉选项值
-   */
-  const RefFieldEnum = tableData.map((item) => {
-    return {
-      text: item.name,
-      value: item.code,
-    };
-  });
-
-  /**
-   * 创建+引用字段弹窗表单实例
-   */
-  const [refForm] = Form.useForm();
+  const { structTableEnum } = useMappedState((state) => ({
+    structTableEnum: state.structTableEnum
+  }));
 
   /**
    * 选择关联表弹窗--左侧菜单树点击的节点值
@@ -74,6 +71,8 @@ const ReferenceForm = ({
   * 选择关联表弹窗显隐控制
   */
   const [selectRefTableVisible, setSelectRefTableVisible] = useState(false);
+  const [refTableItem, setRefTableItem] = useState({ code: '', id: '' });
+  const [refFieldEnum, setRefFieldEnum] = useState([]);
   /**
   * 选择关联表弹窗属性配置
   */
@@ -86,9 +85,12 @@ const ReferenceForm = ({
      * @param { form-新建表可控表单实例 }
      */
     onOk: (e) => {
-      console.log('ok');
-      refForm.setFieldsValue({ refTableCode: selectTableSearchValue });
+      const { code, id } = refTableItem;
+      form.setFieldsValue({ refTableCode: code });
       setSelectRefTableVisible(false);
+      $R_P.get(`/data/v1/tables/${id}`).then((res) => {
+        setRefFieldEnum(res.result.columns.map((item) => ({ value: item.code, text: item.name })));
+      });
     },
     /** 弹框取消按钮回调 */
     onCancel: (e) => {
@@ -105,13 +107,16 @@ const ReferenceForm = ({
       dataIndex: 'name',
       key: 'name'
     }],
-    dataSource: tableData,
+    rowKey: (record) => record.name,
+    dataSource: structTableEnum,
     scroll: { y: 300, },
     onRow: (record) => {
       return {
         onClick: (event) => {
-          setSelectTableSearchValue('heha');
-          console.log(record);
+          setSelectTableSearchValue(record.name);
+          const { code, value } = record;
+          setRefTableItem({ code, id: value });
+          // console.log(record);
         },
         onDoubleClick: (event) => {},
         onContextMenu: (event) => {},
@@ -124,11 +129,40 @@ const ReferenceForm = ({
 
   /** 表单配置项 */
   const formItemsConfig = {
+    fieldName: {
+      /** 表单项属性 */
+      itemAttr: {
+        label: "字段名称",
+        rules: [
+          { required: true, message: '请输入字段名称!' },
+          { pattern: REG.znEnNum, message: '输入字段可以为中文、英文、数字、下划线、括号' },
+          { max: 64, message: '最多只能输入64个字符' },
+        ],
+      },
+      /** 表单项包裹组件属性 */
+      compAttr: {
+        type: 'Input',
+        placeholder: '最多可输入64个字符，名称唯一。输入字段可以为中文、英文、数字、下划线、括号',
+        onChange: (e) => {
+          /** 将表格名称转换为汉字首字母拼音 */
+          form.setFieldsValue({ fieldCode: PinYin.getCamelChars(form.getFieldValue('fieldName')) });
+        }
+      }
+    },
+    fieldCode: {
+      itemAttr: {
+        label: "字段编码",
+        rules: [{ required: true, message: '请输入字段编码!' }],
+      },
+      compAttr: {
+        type: 'Input',
+        placeholder: '会自动将中文转为首字母大写英文,可手动修改'
+      }
+    },
     refTableCode: {
       /** 表单项属性 */
       itemAttr: {
         label: "关联表",
-        name: "refTableCode",
         rules: [
           { required: true, message: '请选择关联表!' },
           { pattern: /^[\u4e00-\u9fa5_a-zA-Z0-9()]+$/, message: '输入字段可以为中文、英文、数字、下划线、括号' },
@@ -160,12 +194,11 @@ const ReferenceForm = ({
     refFieldCode: {
       itemAttr: {
         label: "关联字段",
-        name: "refFieldCode",
         rules: [{ required: true, message: '请选择关联字段!' }],
       },
       compAttr: {
         type: 'BasicSelect',
-        enum: RefFieldEnum,
+        enum: refFieldEnum,
       }
     },
     /**
@@ -173,26 +206,68 @@ const ReferenceForm = ({
       */
     refDisplayFieldCode: {
       itemAttr: {
-        name: "refDisplayFieldCode",
-        label: "显示字段"
+        label: "显示字段",
+        rules: [{ required: true, message: '请选择显示字段!' }],
       },
       compAttr: {
         type: 'BasicSelect',
-        enum: RefFieldEnum,
-        // onChange: onTypeChange
+        enum: refFieldEnum,
       }
     },
+
   };
 
-  /**
-  * 表单配置
-  */
-  const formProps = {
-    form: refForm,
-    formItemsConfig,
+  const getFormConfig = (title) => {
+    if (title === '关联表信息') {
+      return formItemsConfig;
+    } if (title === '外键关联表信息') {
+      return Object.assign({}, formItemsConfig, {
+        deleteStrategy: {
+          itemAttr: {
+            label: "外键约束(删除时)",
+            rules: [{ required: true, message: '请选择外键约束（删除时）策略' }],
+          },
+          compAttr: {
+            type: 'BasicSelect',
+            enum: ForeignKeyStgyEnum,
+          }
+        },
+        updateStrategy: {
+          itemAttr: {
+            label: "外键约束(更新时)",
+            rules: [{ required: true, message: '请选择外键约束（更新时）策略!' }],
+          },
+          compAttr: {
+            type: 'BasicSelect',
+            enum: ForeignKeyStgyEnum,
+          }
+        }
+      });
+    }
   };
+    /**
+   * 表单配置
+   */
+  const formConfig = {
+    form,
+    colSpan: 24,
+    layout: 'horizontal',
+    items: getFormConfig(modalTitle),
+    /** 表单项label和content的宽度 */
+    formItemLayout: {
+      /** 满栅格是24, 设置label标签宽度 */
+      labelCol: {
+        span: modalTitle === '关联表信息' ? 4 : 5
+      },
+      /** 设置表单项宽度 */
+      wrapperCol: {
+        span: modalTitle === '关联表信息' ? 20 : 19
+      }
+    }
+  };
+
   return (
-    <TreeListModal formProps={formProps} modalProps={ selectTableModalProps} treeProps={treeProps} tableProps={tableProps} searchProps={searchProps} />
+    <TreeListModal formConfig={formConfig} modalProps={ selectTableModalProps} treeProps={treeProps} tableProps={tableProps} searchProps={searchProps} />
   );
 };
 

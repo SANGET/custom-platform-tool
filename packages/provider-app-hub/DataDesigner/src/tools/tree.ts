@@ -184,7 +184,7 @@ const generateSelectedTree = (nodes, targetKeys) => {
  * 返回 tree--嵌套树
  * 核心逻辑： 用键值对映射id和node之间的关系,把相同pid的子节点,push到对应键值的children数组中
  */
-const listToTree = (list) => {
+const listToTree = (list = []) => {
   /** 建立节点id和节点之间的映射 */
   const map = {};
   /** 节点信息 */
