@@ -34,23 +34,24 @@ interface Broadcaster {
 
 interface RelationshipsCollection {
   dataChanged?: {
-    [relationId: string]: {
-      broadcaster: {
-        [componentUuid: string]: {
-          [targetComponentUuid: string]: Trigger;
-        };
-      };
-      targetFlowChain: {
-        type: string;
-        chain: string; // 流程控制链
-      };
-      flowConditionCollection: {
-        [exp: string]: {
-          type: string;
-          handler?: string;
-        };
-      };
-    };
+    [str: string]: any;
+  //   [relationId: string]: {
+  //     broadcaster: {
+  //       [componentUuid: string]: {
+  //         [targetComponentUuid: string]: Trigger;
+  //       };
+  //     };
+  //     targetFlowChain: {
+  //       type: string;
+  //       chain: string; // 流程控制链
+  //     };
+  //     flowConditionCollection: {
+  //       [exp: string]: {
+  //         type: string;
+  //         handler?: string;
+  //       };
+  //     };
+  //   };
   };
   runAction?: {};
 

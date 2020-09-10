@@ -1,3 +1,11 @@
+/**
+ * 搜索规则的数据表 TODO: 留个坑
+ */
+export interface SearchingTableMapping {
+  type: "searching";
+  rule: string;
+}
+
 export interface GeneralTableColumn {
   field: string;
   /** TODO: 这里对应数据表的 column type */
@@ -9,35 +17,10 @@ export interface GeneralTableColumn {
  * 通用的数据表
  */
 export interface GeneralTableMapping {
-  type: 'general';
+  type: "general";
   database?: string;
   tableName: string;
-  columns: GeneralTableColumn[];
-}
-
-/**
- * 搜索规则的数据表
- */
-export interface SearchingTableMapping {
-  type: 'searching';
-  rule: string;
-}
-
-/**
- * 字段映射
- */
-export interface Mapping {
-  type: 'uuid2field';
-  mapping: {
-    [componentBindFieldUUID: string]: string;
+  columns: {
+    [uuid: string]: GeneralTableColumn;
   };
 }
-
-export interface MetadataMapping {
-  mapping: Mapping;
-  dataSource: {
-    [ID: string]: GeneralTableMapping | SearchingTableMapping;
-  };
-}
-
-export default MetadataMapping;

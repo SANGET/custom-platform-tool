@@ -4,9 +4,8 @@ import {
   ComponentElement,
 } from "../component";
 import SRCInterface from "./src-interface";
-import MetadataMapping from "../metadata/metadata-mapping";
 import RelationshipsCollection from "../relationship/relationship-collection";
-import { ActionFlow } from "../actions/action-collection";
+import { ActionFn } from "../actions/action-collection";
 import { Schemas } from "../schemas";
 import { LayoutContent } from "../layout-content";
 import { MetadataMappingCollection } from "..";
@@ -41,7 +40,8 @@ export interface TypeOfIUBDSL extends PageMetadata {
 
   /** 动作集合 */
   actionsCollection: {
-    [actionID: string]: ActionFlow;
+    // [actionID: string]: ActionFlow;
+    [actionID: string]: ActionFn;
   };
 
   /** 布局信息 */
