@@ -6,6 +6,7 @@
   "workspaces": [
     "packages/provider-app-hub/*",
     "packages/provider-app-entry/*",
+    "packages/provider-component/*",
     "packages/engine/**/*",
     "packages/infrastructure/*",
     "packages/consumer-app/*",

@@ -53,7 +53,7 @@ const useFetchData = <T extends RequestData<any>>(
   const [pageInfo, setPageInfo] = useState<PageInfo>({
     page: options?.current || options?.defaultCurrent || 1,
     total: 0,
-    pageSize: options?.pageSize || options?.defaultPageSize || 20,
+    pageSize: options?.pageSize || options?.defaultPageSize || 10,
   });
 
   // Batching update  https://github.com/facebook/react/issues/14259
@@ -89,9 +89,9 @@ const useFetchData = <T extends RequestData<any>>(
         (await getData(
           pagination !== false
             ? {
-                current: page,
-                pageSize,
-              }
+              current: page,
+              pageSize,
+            }
             : undefined,
         )) || {};
       if (success !== false) {
@@ -180,7 +180,7 @@ const useFetchData = <T extends RequestData<any>>(
       setPageInfo({
         page: options?.defaultCurrent || 1,
         total: 0,
-        pageSize: options?.defaultPageSize || 20,
+        pageSize: options?.defaultPageSize || 10,
       });
     },
     cancel: fetchListDebounce.cancel,
