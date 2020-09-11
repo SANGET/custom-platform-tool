@@ -95,53 +95,54 @@ export const dragableItemWrapperFac: DragableItemWrapperFac = (
     isSelected && 'selected',
   ]);
   const isTempEntity = currEntity._state === TEMP_ENTITY_ID;
-  const { component } = currEntity;
-  const registeredEntity = getCompEntity(component.type);
-  const { propEditor } = registeredEntity;
-  console.log(registeredEntity);
 
-  return isTempEntity ? <TempEntityTip key={id} /> : (
-    <div
-      className={classes}
-      key={id}
-    >
-      <DragItemComp
-        id={id}
-        index={idx}
-        onDrop={onDrop}
-        onMove={onMove}
-        dragItemClass={currEntity}
-        type={ItemTypes.DragItemEntity}
-        className="relative drag-item"
-        accept={[ItemTypes.DragItemEntity, ItemTypes.DragItemClass]}
+  return isTempEntity ? <TempEntityTip key={id} /> : (() => {
+    const { component } = currEntity;
+    const registeredEntity = getCompEntity(component.type);
+    const { propEditor } = registeredEntity;
+    return (
+      <div
+        className={classes}
+        key={id}
       >
-        <ComponentRenderer
-          {...propsForChild}
-          onClick={(e) => {
-            e.stopPropagation();
-            onClick(e, { entity: currEntity, idx });
-          }}
-          entity={currEntity}
-          registeredEntity={registeredEntity}
-          entityState={entityState || {}}
+        <DragItemComp
+          id={id}
+          index={idx}
+          onDrop={onDrop}
+          onMove={onMove}
+          dragItemClass={currEntity}
+          type={ItemTypes.DragItemEntity}
+          className="relative drag-item"
+          accept={[ItemTypes.DragItemEntity, ItemTypes.DragItemClass]}
         >
-          {children}
-        </ComponentRenderer>
-        <div className="action-area">
-          {
-            propEditor && <EditBtn />
-          }
-          <span
-            className="default btn red"
+          <ComponentRenderer
+            {...propsForChild}
             onClick={(e) => {
               e.stopPropagation();
-              onDelete(e, { idx, entity: currEntity });
+              onClick(e, { entity: currEntity, idx });
             }}
+            entity={currEntity}
+            registeredEntity={registeredEntity}
+            entityState={entityState || {}}
           >
-            删除
-          </span>
-        </div>
-      </DragItemComp>
-    </div>
-  );
+            {children}
+          </ComponentRenderer>
+          <div className="action-area">
+            {
+              propEditor && <EditBtn />
+            }
+            <span
+              className="default btn red"
+              onClick={(e) => {
+                e.stopPropagation();
+                onDelete(e, { idx, entity: currEntity });
+              }}
+            >
+              删除
+            </span>
+          </div>
+        </DragItemComp>
+      </div>
+    );
+  })();
 };
