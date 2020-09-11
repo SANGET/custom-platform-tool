@@ -5,8 +5,13 @@
     "start": "start"
   },
   "devDependencies": {},
-  "peerDependencies": {},
-  "dependencies": {},
+  "peerDependencies": {
+    "react": "^16.13.1",
+    "react-dom": "^16.13.1"
+  },
+  "dependencies": {
+    "@types/react": "^16.9.38"
+  },
   "author": "SANGET",
   "license": "MIT"
 }

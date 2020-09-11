@@ -1,5 +1,5 @@
 {
-  "name": "@iub-dsl/demo",
+  "name": "@iub-dsl/engine",
   "version": "0.0.1",
   "scripts": {
     "start": "start"
