@@ -1,6 +1,6 @@
 import React from 'react';
 import { ShowModal } from '@infra/ui';
-import TableEditor from '../CompClass/Table/TableEditor';
+import TableEditor from '../../CompClass/Table/TableEditor';
 
 export const EditBtn = (props) => {
   return (
