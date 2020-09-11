@@ -1,5 +1,6 @@
-import { EditorPropertyItemsCollection } from "../types";
-import { ApiMock } from "./api-mock";
+import { EditorPropertyItemsCollection } from "@engine/visual-editor/types";
+import { ApiMock } from "../api-mock";
+import PropValue from './value';
 
 /**
  * TODO: 搞清楚属性如何影响组件实例，或者是说组件实例如何根据属性数据进行调整
@@ -9,25 +10,19 @@ export const propertiesItemCollection: EditorPropertyItemsCollection = {
     return {
       id: 'prop-style-1',
       label: '标题颜色',
-      /**
-       * 用于定位属性类型
-       */
       type: 'style',
       target: 'color',
+      asd: 'AdvancedSearchForm',
       component: {
         type: 'Input'
       }
     };
   },
   'prop-label-1': (entity) => {
-    // console.log(entity);
     const { label = '标题' } = entity;
     return {
       id: 'prop-label-1',
       label: '标题',
-      /**
-       * 用于定位属性类型
-       */
       type: 'general',
       target: 'label',
       defaultValue: label,
@@ -36,6 +31,7 @@ export const propertiesItemCollection: EditorPropertyItemsCollection = {
       }
     };
   },
+  'prop-value': PropValue,
   'prop-flex-config-1': (entity) => {
     return {
       id: 'prop-flex-config-1',

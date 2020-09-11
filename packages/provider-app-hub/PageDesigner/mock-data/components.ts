@@ -1,4 +1,4 @@
-import { EditorComponentClass } from "../types";
+import { EditorComponentClass } from "@engine/visual-editor/types";
 import { CustomComponent } from "./custom-component-demo";
 import { ApiMock } from "./api-mock";
 
@@ -16,7 +16,8 @@ export const componentClassCollection: ComponentClassCollection = {
     bindProps: {
       propRefs: [
         'prop-style-1',
-        'prop-label-1'
+        'prop-label-1',
+        'prop-value',
       ]
     }
   },

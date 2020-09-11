@@ -8,11 +8,17 @@ export interface ComponentTypeRendererProps extends FacToComponentProps {
   registeredEntity: RegisterComponentConfig
 }
 
-const FormLabel = ({ children, className = '', ...props }) => (children ? (
+const FormLabel = ({
+  children,
+  className = '',
+  ...props
+}) => (children ? (
   <div
     className="control-label form-title"
     {...props}
-  >{children}</div>
+  >
+    {children}
+  </div>
 ) : null);
 
 /**
@@ -30,7 +36,7 @@ export const ComponentRenderer: React.FC<ComponentTypeRendererProps> = (props) =
     ...otherProps
   } = props;
   const { component } = entity;
-  const { label, style } = entityState;
+  const { label, style, value } = entityState;
   const { comp } = registeredEntity;
 
   const compContext = {
@@ -47,9 +53,14 @@ export const ComponentRenderer: React.FC<ComponentTypeRendererProps> = (props) =
       const Input = comp;
       Com = (
         <div className="__Input">
-          <FormLabel>{label}</FormLabel>
+          <FormLabel
+            style={{
+              color: style.color
+            }}
+          >{label}</FormLabel>
           <Input
             compContext={compContext}
+            value={value}
             {...compProps}
           />
         </div>
