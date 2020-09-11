@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { getPropItem } from '@engine/visual-editor/spec/registerComp';
 import { PropItemRendererProps } from '@engine/visual-editor/components/PropertiesEditor/types';
+import { FXContainer } from './FXContainer';
 
 /**
  * 属性项渲染器
@@ -13,26 +14,41 @@ export const PropItemRenderer: React.FC<PropItemRendererProps> = ({
   onChange,
 }) => {
   const {
-    label, component, type
+    label, component, type, fx,
+    defaultValue
   } = propItemConfig;
-  const { type: componentType, defaultValue, ...propsForComponent } = component;
+  const { type: componentType, ...propsForComponent } = component;
 
-  /** 将 ID 写入 propItemConfig */
-  // propItemConfig.id = propID;
+  // console.log('propItemConfig', propItemConfig);
+  // console.log('componentState', componentState);
   let Com;
   const { comp } = getPropItem(componentType);
+  // const { comp } = propItemConfig;
   switch (componentType) {
     case 'Input':
       const Input = comp;
       Com = (
-        <Input
-          {...propsForComponent}
-          value={componentState || ''}
-          onChange={(value) => {
+        <div>
+          <Input
+            {...propsForComponent}
+            value={componentState || ''}
+            onChange={(value) => {
             // console.log(e.target.value);
-            onChange(value, propItemConfig);
-          }}
-        />
+              onChange(value, propItemConfig);
+            }}
+          />
+          {
+            // TODO: 确定需求，是否固定值和表达式只能存在一个
+            fx && (
+              <FXContainer
+                onChange={(val) => {
+                // TODO: 完善 fx
+                  console.log('fx change:', val);
+                }}
+              />
+            )
+          }
+        </div>
       );
       break;
     case 'Selector':

@@ -13,5 +13,6 @@ declare global {
     type CompClass = CompClass
     /** 属性项 */
     type PropItemComp = PropItemComp
+    /** 核心定义 */
   }
 }
