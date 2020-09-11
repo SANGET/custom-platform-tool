@@ -76,9 +76,10 @@ export const genCopyable = (dom: React.ReactNode, item: ProColumns<any>, text: s
         copyable={
           item.copyable
             ? {
-                text,
-                tooltips: ['', ''],
-              }
+              text,
+              //@ts-ignore
+              tooltips: ['', ''],
+            }
             : undefined
         }
         title={text}
@@ -136,7 +137,7 @@ export const mergePagination = <T, U>(
 
       const { onChange } = pagination as TablePaginationConfig;
       if (onChange) {
-        onChange(page, newPageSize || 20);
+        onChange(page, newPageSize || 10);
       }
     },
   };

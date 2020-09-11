@@ -2,6 +2,7 @@
   "name": "@hy/pro-table",
   "version": "1.0.0",
   "description": "高级表格, 来源于@ant-design/pro-table",
+  "main": "index.ts",
   "keywords": [
     "ant-design"
   ],

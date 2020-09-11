@@ -118,10 +118,10 @@ const ReferenceForm = ({
           setRefTableItem({ code, id: value });
           // console.log(record);
         },
-        onDoubleClick: (event) => {},
-        onContextMenu: (event) => {},
-        onMouseEnter: (event) => {}, // 鼠标移入行
-        onMouseLeave: (event) => {},
+        onDoubleClick: (event) => { },
+        onContextMenu: (event) => { },
+        onMouseEnter: (event) => { }, // 鼠标移入行
+        onMouseLeave: (event) => { },
       };
     }
 
@@ -245,9 +245,9 @@ const ReferenceForm = ({
       });
     }
   };
-    /**
-   * 表单配置
-   */
+  /**
+ * 表单配置
+ */
   const formConfig = {
     form,
     colSpan: 24,
@@ -267,7 +267,7 @@ const ReferenceForm = ({
   };
 
   return (
-    <TreeListModal formConfig={formConfig} modalProps={ selectTableModalProps} treeProps={treeProps} tableProps={tableProps} searchProps={searchProps} />
+    <TreeListModal formConfig={formConfig} modalProps={selectTableModalProps} treeProps={treeProps} tableProps={tableProps} searchProps={searchProps} />
   );
 };
 
