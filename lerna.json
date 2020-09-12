@@ -1,5 +1,6 @@
 {
   "packages": [
+    "packages/mock-data/*",
     "packages/provider-app-hub/*",
     "packages/provider-app-entry/*",
     "packages/provider-component/*",
