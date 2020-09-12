@@ -1,5 +1,6 @@
 import {
-  EditorEntityState, EditorEntity
+  EditorEntity,
+  EditorEntityState, ElemNestingInfo
 } from "../../types";
 import { SelectEntityState } from "../types";
 
@@ -26,10 +27,14 @@ export const InitEntityState = (
   };
 };
 
+export type UpdateTargetEntity = {
+  nestingIdx: ElemNestingInfo
+  entity: EditorEntity
+}
 export const UPDATE_ENTITY_STATE = 'entityState/update';
 export interface UpdateEntityStateAction {
   type: typeof UPDATE_ENTITY_STATE
-  selectedEntityInfo: SelectEntityState,
+  targetEntity: UpdateTargetEntity,
   formState: EditorEntityState
 }
 
@@ -37,12 +42,12 @@ export interface UpdateEntityStateAction {
  * 更新组件实例的状态
  */
 export const UpdateEntityState = (
-  selectedEntityInfo: SelectEntityState,
+  targetEntity: UpdateTargetEntity,
   formState: EditorEntityState
 ): UpdateEntityStateAction => {
   return {
     type: UPDATE_ENTITY_STATE,
-    selectedEntityInfo,
+    targetEntity,
     formState
   };
 };

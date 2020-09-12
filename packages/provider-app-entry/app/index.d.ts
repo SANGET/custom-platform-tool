@@ -1,3 +1,4 @@
+import { PageDesignerPropItemTypes } from '@provider-app/page-designer/types';
 import { ProviderAppContext } from './src/types';
 
 /**
@@ -33,5 +34,10 @@ declare global {
     type SubApp = HYSubAppTypeRE
     /** HOC 子应用 */
     type SubAppHOC<T = any> = HYSubAppTypeFE<T>
+  }
+  /** 页面设计器的类型定义 */
+  namespace VEExtention {
+    /** 属性项的定义 */
+    type PropItemTypes = PageDesignerPropItemTypes
   }
 }

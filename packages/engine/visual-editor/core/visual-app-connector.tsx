@@ -14,7 +14,6 @@ export const mapVisualStateToProps = (state: VisualEditorState) => {
     /** 设置 activeEntity */
     const { selectedInfo, flatLayoutItems } = draft;
     const { id } = selectedInfo;
-    // if (!nestingIdx) return draft;
     // eslint-disable-next-line no-param-reassign
     draft.selectedInfo.entity = flatLayoutItems[id];
     return draft;

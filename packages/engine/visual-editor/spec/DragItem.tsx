@@ -4,7 +4,7 @@ import {
 } from 'react-dnd';
 import { TargetType } from 'dnd-core';
 import { HasValue } from '@mini-code/base-func';
-import { ItemTypes } from './types';
+import { DragableItemTypes } from '.';
 import { DragItemClass, DropCollectType } from '../types';
 import { isNodeInChild } from '../utils';
 
@@ -58,7 +58,7 @@ export interface DragItemProps<
 const DragItemComp: React.FC<DragItemProps> = ({
   children, dragItemClass, dragConfig, style,
   type, id, index, onMove, onDrop, onDrag,
-  accept = [ItemTypes.DragItemEntity, ItemTypes.DragItemClass],
+  accept = [DragableItemTypes.DragItemEntity, DragableItemTypes.DragItemClass],
   ...other
 }) => {
   const ref = useRef<HTMLDivElement>(null);

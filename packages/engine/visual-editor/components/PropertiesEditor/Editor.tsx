@@ -8,7 +8,6 @@ import {
   EditorEntity, EditorEntityState, EditorPropertyItem,
   ComponentBindPropsConfig,
 } from '../../types';
-import useUpdateState from './useUpdateState';
 import { PropItemRenderer as PropItemRendererDefault } from './PropItemRenderer';
 import { extractPropConfig } from './extractPropConfig';
 import { entityStateMergeRule } from './entityStateMergeRule';
@@ -35,23 +34,6 @@ export interface PropertiesEditorProps {
   propItemRenderer?: (props: PropItemRendererProps) => JSX.Element
 }
 
-const StateBtn = ({
-  onClick
-}) => {
-  const [updateState, clickToUpdate] = useUpdateState();
-  return (
-    <Button
-      color={updateState ? 'green' : 'blue'}
-      onClick={(e) => {
-        clickToUpdate();
-        onClick(e);
-      }}
-    >
-    保存属性{updateState ? '成功' : ''}
-    </Button>
-  );
-};
-
 const debounce = new Debounce();
 
 /**
@@ -68,7 +50,7 @@ class DefaultEntityStateManager {
     propItemConfig
   ) => {
     const { defaultValue } = propItemConfig;
-    this.state = entityStateMergeRule({}, {
+    this.state = entityStateMergeRule(this.state, {
       propItemConfig,
       value: defaultValue
     });
@@ -114,7 +96,6 @@ PropertiesEditorProps, PropertiesEditorState
 
       /** 这段代码会执行在 render 之后 */
       const _defaultEntityState = defaultEntityStateManager.getState();
-      // console.log(_defaultEntityState);
       initEntityState(_defaultEntityState);
 
       this.hasDefaultEntityState = true;
@@ -173,12 +154,16 @@ PropertiesEditorProps, PropertiesEditorState
     const bindProps = this.mergePropConfig();
 
     return Array.isArray(bindProps)
-    && bindProps.map((propConfig) => {
-      let propID: string;
+    && bindProps.map((bindProp) => {
+      // let propID: string;
       let propOriginConfigItem;
-      let propItemConfig;
-      if (typeof propConfig === 'string') {
-        propID = propConfig;
+      let propItemConfig: EditorPropertyItem;
+      if (typeof bindProp === 'function') {
+        propItemConfig = extractPropConfig(bindProp, selectedEntity);
+        // propID = propItemConfig.id;
+      } else {
+        const { propID, override } = bindProp;
+        // propID = _propID;
 
         /**
          * @important
@@ -186,25 +171,23 @@ PropertiesEditorProps, PropertiesEditorState
          * 此配置为函数，需要在此做过滤
          */
         propOriginConfigItem = propItemDeclares[propID];
-        propItemConfig = extractPropConfig(propOriginConfigItem, selectedEntity);
 
         /**
          * 通过传入 entity 来提取 propItemConfig
          */
-      } else {
-        propItemConfig = extractPropConfig(propConfig, selectedEntity);
-        propID = propItemConfig.id;
+        propItemConfig = extractPropConfig(propOriginConfigItem, selectedEntity, override);
       }
 
       /**
        * 将实例状态回填到属性项
        */
       const activeState = entityState
-        ? entityState[propID]
+        ? entityState[propItemConfig.type]
         : undefined;
 
       /** 确保 propItemConfig 的 ID 与集合中的 ID 一致 */
-      propItemConfig.id = propID;
+      // propItemConfig.id = propID;
+      const propItemType = propItemConfig.type;
 
       if (!this.hasDefaultEntityState) {
         /**
@@ -213,18 +196,17 @@ PropertiesEditorProps, PropertiesEditorState
          * 如果没有被初始化，则返回空的组件节点，等待组件属性的值被初始化后再做下一步渲染
          */
         defaultEntityStateManager.setState(propItemConfig);
-        return (
-          <div key={propID}></div>
-        );
+        return null;
+        // return <div key={propID}></div>;
       }
 
       return (
         <div
-          key={propID}
+          key={propItemType}
         >
           {
             propItemRenderer({
-              componentState: activeState,
+              propItemValue: activeState,
               onChange: (nextValue, propConfigRes) => {
                 /**
                  * 性能优化部分
@@ -241,24 +223,9 @@ PropertiesEditorProps, PropertiesEditorState
                   this.props.updateEntityState(this.state.entityState);
                 }, 300);
               },
-              propID,
               propItemConfig
             })
           }
-          {/* <PropItemRenderer
-            componentState={activeState}
-            onChange={(nextValue, propConfigRes) => {
-              const prevState = activeState;
-              if (nextValue === prevState) return;
-              this.updateEntityStateForSelf(propConfigRes, nextValue);
-
-              debounce.exec(() => {
-                this.props.updateEntityState(this.state.entityState);
-              }, 300);
-            }}
-            propID={propID}
-            propItemConfig={propItemConfig}
-          /> */}
         </div>
       );
     });
@@ -275,10 +242,6 @@ PropertiesEditorProps, PropertiesEditorState
   }
 
   render() {
-    // const {
-    //   updateEntityState
-    // } = this.props;
-    // const { entityState } = this.state;
     const hasProps = this.hasPropertiesConfig();
 
     const propFormDOM = hasProps && this.renderPropItem();
@@ -287,12 +250,6 @@ PropertiesEditorProps, PropertiesEditorState
       <div
         className="entity-prop-editor"
       >
-        {/* <div className="action-area mb10">
-          <StateBtn onClick={(e) => {
-            updateEntityState(entityState);
-          }}
-          />
-        </div> */}
         {
           propFormDOM
         }

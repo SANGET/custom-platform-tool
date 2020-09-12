@@ -1,5 +1,1 @@
-export const ItemTypes = {
-  DragItemClass: 'DragItemClass',
-  DragItemEntity: 'DragItemEntity',
-  DragContainer: 'DragContainer',
-};
+export * from './dragable-item-wrapper-def';
