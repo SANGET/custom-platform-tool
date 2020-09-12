@@ -12,17 +12,16 @@ import { renderOperCol, getColConfig } from '@provider-app/data-designer/src/com
 */
 import TableHeadMenu from '@provider-app/data-designer/src/bizComps/TableHeadMenu';
 
-import { Connector } from '@provider-app/data-designer/src/connector';
 
 import { getModalConfig } from '@provider-app/data-designer/src/tools/mix';
 import { formatGMT } from '@provider-app/data-designer/src/tools/format';
 import DictForm from '@provider-app/data-designer/src/pages/DictManage/DictForm';
 import { GetDictList,AddDict,UpdateDict,GetDictDeatil,DelTable,GetSubDictDetail,deleSubDict,AddUpdateSubDict } from '../../api';
-
+import { ArrowUpOutlined, ArrowDownOutlined } from '@ant-design/icons';
 const DictManage = ({ isModal = false }) => {
   const [pager, setPager] = useState({ page: 1, pageSize: 10 });
 
-  const [structTableData, setStructTableData] = useState([]);
+
   /**
   * 字典新增弹窗显隐,表单标题控制
   */
@@ -30,8 +29,13 @@ const DictManage = ({ isModal = false }) => {
     visible: false, title: '', isSub: false, isAddEditRow: false
   })
 
-  const [tableLoading, setTableLoading] = useState(false);
+  const [tableLoading, setTableLoading] = useState({tip:"",spinning:false});
   const [tableData, setTableData] = useState([]);
+  const [subTableData, setSubTableData] = useState<any[]>([]);
+  const [total,setTotal] = useState(0)
+
+
+  const [expandedRowKeys, setExpandedRowKeys] = useState<any[]>([]);
   const columns = [
     // renderIndexCol(pager),
     {
@@ -43,7 +47,7 @@ const DictManage = ({ isModal = false }) => {
         // console.log({ text, record, index });
         /** 与后端协商,行号由前端计算 */
         const { page, pageSize } = pager;
-        return <span>{(page - 1) * pageSize + index + 1}</span>;
+        return <span>{pageSize/10-1 + index + 1}</span>;
       },
     },
     {
@@ -56,7 +60,10 @@ const DictManage = ({ isModal = false }) => {
       title: '字典描述',
       dataIndex: 'description',
       width: '30%',
-      key: 'description'
+      key: 'description',
+      render:(text,record,index)=>{
+          return text?text:"--"
+      }
     },
   ]
   /**
@@ -77,12 +84,14 @@ const DictManage = ({ isModal = false }) => {
     {
       text: '编辑',
       onClick: (row) => {
+        debugger;
         /**
         * 获取详情
         */
         getDetail({
           id: row.id,
           cb: (row) => {
+            debugger;
             // console.log(row);
             setModalConfig({
               title: '编辑字典', visible: true, isSub: false, isAddEditRow: false
@@ -96,8 +105,34 @@ const DictManage = ({ isModal = false }) => {
       text: '删除',
       title: '你确定删除这条字典?',
       onClick: (row) => {
-        // console.log(row);
-        DelDict(row.id);
+        if(row.items[0]){
+          DelTable(row.id)
+          .then(res=>{
+           if(res.code === '00000'){
+             getList()
+             Msg.success(res.msg)
+           }else{
+             Msg.error(res.msg)
+           }
+          })
+        }else{
+        //  console.log('err',row.items[0])
+            Msg.error("该子字典底下存在子字典不允许删除")
+        }
+        
+        // getDetail({
+        //   id:row.id,
+        //   cb:(row)=>{
+        //   console.log('删除这条数据是否是有子项',row,row.items,row.items[0])
+        //   if(!row.items[0].id){
+        //     DelDict(row.id);
+        //    }else {
+        //     Msg.error("该子字典底下存在子字典不允许删除")
+        //    }
+        // }})
+       //  console.log(row,row.items,row.items.id,subTableData);
+        
+        
       }
     },
    
@@ -128,8 +163,119 @@ const DictManage = ({ isModal = false }) => {
   const [dictId, setDictId] = useState('');
   const [dictPid, setDictPid] = useState('');
 
+  const  moveToUp = (a:any,row) => {
+    if(a.indexOf(row)===-1){
+                for(let k=0;k<a.length;k++){
+                  if(a[k].hasChild){
+                    moveToUp(a[k].items,row)
+                  }else{
+                  continue
+                  }
+                }
+  }
+  else{
+                let index = a.indexOf(row)
+                if(index!== 0){
+                  a.splice(index,1)
+                  a.splice(index-1,0,row)
+                  setSubTableData([...subTableData])
+                }
+              }
+
+            }
+  const  moveToDown = (a:any,row) => {
+              if(a.indexOf(row)===-1){
+                          for(let k=0;k<a.length;k++){
+                            if(a[k].hasChild){
+                              moveToUp(a[k].items,row)
+                            }else{
+                            continue
+                            }
+                          }
+            }
+            else{
+                          let index = a.indexOf(row)
+                          if(index!== subTableData.length-1){
+                            subTableData.splice(index,1)
+                            subTableData.splice(index+1,0,row)
+                            setSubTableData([...subTableData])
+                          }
+                        }
+          
+                      }
   /** 操作按钮-打开弹窗 */
   const subOperButs = [
+    {
+      text: <ArrowUpOutlined/>,
+      onClick: (row) => {
+
+        moveToUp(subTableData,row)
+
+        //subTableData
+        // if(row.level === 1){
+        //   const index = subTableData.indexOf(row)
+        //   if(index!== 0){
+        //     subTableData.splice(index,1)
+        //     subTableData.splice(index-1,0,row)
+        //     setSubTableData([...subTableData])
+        //   }
+        // }
+       //----------2 
+      //  console.log(row)
+      //  if(subTableData.indexOf(row)===-1){
+      //    for(let i=0;i<subTableData.length;i++){
+      //      if(subTableData[i].hasChild){
+           
+      //       if(subTableData[i].items.indexOf(row)===-1){
+      //         for(let k=0;k<subTableData[i].items.length;k++){
+      //           if(subTableData[i].items[k].hasChild){
+
+      //           }else{
+      //             continue
+      //           }
+      //         }
+      //       }else{
+      //         let index = subTableData[i].items.indexOf(row)
+      //         if(index!== 0){
+      //           subTableData[i].items.splice(index,1)
+      //           subTableData[i].items.splice(index-1,0,row)
+      //           setSubTableData([...subTableData])
+      //         }
+      //       }
+            
+      //      }else{
+      //        continue
+      //      }
+           
+      //    }
+      //  }else{
+      //   const index = subTableData.indexOf(row)
+      //   if(index!== 0){
+      //     subTableData.splice(index,1)
+      //     subTableData.splice(index-1,0,row)
+      //     setSubTableData([...subTableData])
+      //   }
+      //  }
+        // console.log('row---000001aaa',dictId,row,subTableData,subTableData.indexOf(row));
+        
+      }
+    },
+    {
+      text: <ArrowDownOutlined/>,
+      onClick: (row) => {
+          //subTableData
+          // if(row.level === 1){
+          //   const index = subTableData.indexOf(row)
+          //   if(index!== subTableData.length-1){
+          //     subTableData.splice(index,1)
+          //     subTableData.splice(index+1,0,row)
+          //     setSubTableData([...subTableData])
+          //   }
+          // }
+          // console.log('row---000002bbb',row,subTableData);
+          moveToDown(subTableData,row)
+      }
+    },
     {
       text: '配置子项',
       onClick: (row) => {
@@ -141,11 +287,11 @@ const DictManage = ({ isModal = false }) => {
           dictionaryId: dictId,
           pid: row.id,
           cb: (res) => {
-            console.log(res);
+           // console.log(res);
             setModalConfig({
               title: '配置子项', visible: true, isSub: true, isAddEditRow: res && res.length === 0
-            });
-            form.setFieldsValue({ items: res });
+            })
+            form.setFieldsValue({ items: res })
           }
         });
       },
@@ -155,22 +301,55 @@ const DictManage = ({ isModal = false }) => {
       text: '删除子项',
       title: '你确定删除子项?',
       onClick: (row) => {
-        delSubDetail({
-          dictionaryId: dictId,
-          /** pid就是本行id */
-          pid: row.id,
-          cb: () => {
-            
-            getDetail({
-              id: dictId,
-              cb: (data) => {
-                setSubTableData(data.items);
-              }
-            });
-            Msg.success('操作成功');
-          }
-        });
+       // console.log(row,'subrow-----')
+        // if(row.items&&!row.items.id){
+        //   delSubDetail({
+        //     dictionaryId: dictId,
+        //     /** pid就是本行id */
+        //     pid: row.id,
+        //     // cb: () => {
+              
+        //     //   getDetail({
+        //     //     id: dictId,
+        //     //     cb: (data) => {
+        //     //       setSubTableData(data.items);
+        //     //     }
+        //     //   });
+        //     //   Msg.success('操作成功');
+        //     // }
+        //   })
+         
 
+        // }else{
+        //       Msg.error("该子字典底下存在子字典不允许删除")
+        // }
+        //console.log(dictId,row.id)
+       
+      //  console.log('row',row)
+        if(!row.hasChild){
+          Msg.error("该项没有子项")
+        }else{
+          deleSubDict({ dictionaryId: dictId,  pid: row.id })
+          .then(res=>{
+            if(res.code === '00000'){
+             getDetail({id:dictId
+               ,cb:data=>{
+                 setSubTableData([...data.items])
+                 // console.log('data---1111',data)
+               }})
+              Msg.success(res.msg)
+            }else{
+              Msg.error(res.msg)
+            }
+           })
+        }
+         
+         
+        
+       
+        
+       // console.log('subTableData-------1',subTableData);
+        
         // console.log(row);
         // DelDict(row.id);
       }
@@ -192,6 +371,9 @@ const DictManage = ({ isModal = false }) => {
       title: '名称',
       dataIndex: 'name',
       width: '30%',
+      render:(text,record,index)=>{
+      //  console.log(text,record,index)
+        return <span style={{color:`${record.renderFontColor}`,backgroundColor:`${record.renderBgColor}`,display:'block',width:'100%',height:'100%'}}>{text}</span>
     },
     {
       title: '排序',
@@ -217,19 +399,31 @@ const DictManage = ({ isModal = false }) => {
       //新增字典  AddDict(data) 
       AddDict(data)
       .then((res) => {
-        Msg.success('操作成功');
-        getList();
-        cb && cb();
+        if(res.code === "00000"){
+          Msg.success(res.msg);
+          getList();
+          cb && cb();
+        }else{
+            Msg.error(res.msg)
+        }
+        
         // console.log(res);
       })
     }else{
       // 修改字典  UpdateDict(data)
-      UpdateDict(data)
+     UpdateDict(data)
       .then((res) => {
-        Msg.success('操作成功');
-        getList();
-        cb && cb();
-        // console.log(res);
+        if(res.code === "00000"){
+          getDetail({id:dictId
+            ,cb:data=>{
+             data&& setSubTableData([...data.items])
+              // console.log('data---1111',data)
+            }})
+          Msg.success(res.msg);   
+          cb && cb();
+        }else{
+            Msg.error(res.msg)
+        }
       })
     }
   
@@ -244,7 +438,7 @@ const DictManage = ({ isModal = false }) => {
     const params = Object.assign({}, {
       name: '', description: "", offset: 0, size: 10,
     }, args);
-    setTableLoading(true);
+    setTableLoading({tip:"正在加载数据...",spinning:true});
 
 
     GetDictList(params).then((res) => {
@@ -255,9 +449,11 @@ const DictManage = ({ isModal = false }) => {
         gmtModified: formatGMT(row.gmtModified)
 
       }));
+      setTotal(res.result.total)
       setTableData(data);
+     // console.log('查询的结果',data)
     }).finally(() => {
-      setTableLoading(false);
+      setTableLoading({tip:"",spinning:false});
     });
   };
 
@@ -267,12 +463,12 @@ const DictManage = ({ isModal = false }) => {
   */
   const getDetail = ({ id, cb }) => {
     // return await Http.get(`/data/v1/dictionary/${id}`);
-    setTableLoading(true);
-
+    setTableLoading({tip:"正在加载数据...",spinning:true});
+    debugger;
     GetDictDeatil(id).then((res) => {
       cb && cb(res.result);
     }).finally(() => {
-      setTableLoading(false);
+      setTableLoading({tip:"",spinning:false});
     });
   };
 
@@ -284,19 +480,63 @@ const DictManage = ({ isModal = false }) => {
 
     AddUpdateSubDict(data).then((res) => {
       // console.log(res);
-      cb && cb(res.result);
-      getSubDictDetail(querySub);
-      Msg.success('操作成功');
+      if(res.code==="00000"){
+        cb && cb(res.result);
+        getSubDictDetail(querySub)
+        Msg.success(res.msg);
+      }else{
+        Msg.error(res.msg)
+      }
+      
     });
   };
+
+  function addItems(a,res){
+    for(let i=0;i<a.length;i++){
+    if(a[i].level<=5){
+         if(a[i].hasChild){
+           if(a[i].items&&a[i].items[0]){   
+               addItems(a[i].items,res)
+           }else{
+                  a[i].items = res.result
+                 }
+    }
+  }else{
+    break
+  }
+  }
+  }
+
   /**
   * 查询子字典项
   */
   const getSubDictDetail = ({ dictionaryId, pid, cb }) => {
     // const { dictionaryId = dictId, pid = dictPid, cb } = args;
-
+     // console.log('subTableData--查看',subTableData)
+      
     GetSubDictDetail({ dictionaryId, pid }).then((res) => {
-      // console.log(res);
+      // console.log(res.result,'子字典在这里',subTableData,tableData);
+      //  for(let i=0;i<subTableData.length;i++){
+      //   if(subTableData[i].hasChild){
+      //     if(subTableData[i].items[0]){     
+      //       for(let k=0;k<subTableData[i].items.length;k++){
+      //         if(subTableData[i].items[k].hasChild){
+      //           if(subTableData[i].items[k].items[0]){
+                   
+      //           }else{
+      //             subTableData[i].items[k].items = res.result
+      //           }
+               
+               
+      //         }
+      //       }
+      //     }else{
+      //        subTableData[i].items = res.result
+      //     }
+      //   }
+      // }
+      addItems(subTableData,res)
+    setSubTableData([...subTableData])
       cb && cb(res.result);
     });
   };
@@ -305,8 +545,10 @@ const DictManage = ({ isModal = false }) => {
   * 删除子字典项
   */
   const delSubDetail = (params) => {
-    const { dictionaryId, pid, cb } = params;
-    console.log(dictionaryId,pid,cb,'dictionaryId,pid,cb')
+    // const { dictionaryId, pid, cb } = params;
+    //console.log(dictionaryId,pid,cb,'dictionaryId,pid,cb')
+    const { dictionaryId, pid,  } = params;
+    //console.log(dictionaryId,pid,'dictionaryId,pid,cb')
     /**
     * 是删除子字典下面的子项,不是删除子字典自身
     */
@@ -315,10 +557,10 @@ const DictManage = ({ isModal = false }) => {
     * "level"=5时 第5级隐藏配置子项,删除子项按钮
     */
 
-
-    deleSubDict({ dictionaryId, pid }).then((res) => {
-      cb && cb(res);
-    });
+   deleSubDict({ dictionaryId, pid })
+    // deleSubDict({ dictionaryId, pid }).then((res) => {
+    //   cb && cb(res);
+    // });
   };
   // console.log(res);
   // const queryList = async (args = {}) => {
@@ -391,6 +633,7 @@ const DictManage = ({ isModal = false }) => {
       setModalConfig({
         title: '新增字典', visible: true, isSub: false, isAddEditRow: true
       });
+      form.setFieldsValue{}
     }
   };
   /**
@@ -423,7 +666,7 @@ const DictManage = ({ isModal = false }) => {
     title: modalConfig.title,
     isSub: modalConfig.isSub,
     isAddEditRow: modalConfig.isAddEditRow,
-    width: "1000px",
+    width: "600px",
     /**
      * 弹框确定按钮回调
      * @param e  点击按钮事件源
@@ -432,13 +675,15 @@ const DictManage = ({ isModal = false }) => {
     // TODO: 洪耿程 检查是否已修复问题
     onOk: (e) => {
       form.validateFields().then((values) => {
-        console.log(values);
+      //  console.log(values);
 
-        if (modalConfig.title === '配置子项') {
+        if (modalConfig.title === '配置子项') {  
+        
+           
           configSubDict({
             data: {
-              dictionaryId: dictId,
-              pid: dictPid,
+               dictionaryId: dictId,
+               pid: dictPid,
               items: values.items
             },
             cb: () => {
@@ -448,7 +693,7 @@ const DictManage = ({ isModal = false }) => {
               dictionaryId: dictId,
               pid: dictPid,
             }
-          });
+          })
         } else {
           submitData({
             type: modalConfig.title === '新增字典' ? 'add' : 'update',
@@ -461,7 +706,7 @@ const DictManage = ({ isModal = false }) => {
       })
         .catch((errorInfo) => {
         /** 校验未通过 */
-          console.log(errorInfo);
+         // console.log(errorInfo);
         });
     },
     /** 弹框取消按钮回调 */
@@ -498,7 +743,7 @@ const DictManage = ({ isModal = false }) => {
         /** 表单项包裹组件属性 */
         compAttr: {
           type: 'Input',
-          placeholder: '请输入表名称',
+          placeholder: '请输入字典描述',
         }
       },
       btns: {
@@ -535,11 +780,7 @@ const DictManage = ({ isModal = false }) => {
 
   };
 
-  const [subTableData, setSubTableData] = useState<any[]>([]);
-
-  const deepLevelItem = [];
-
-  const [expandedRowKeys, setExpandedRowKeys] = useState<any[]>([]);
+  
   return (
     <div className="data-designer">
       <BasicForm {...searchProps} />
@@ -552,11 +793,14 @@ const DictManage = ({ isModal = false }) => {
         dataSource={tableData}
         rowKey={(record:any) => record.id}
         pagination={{
+          total,
           showTotal: ((total) => {
             return `共 ${total} 条`;
           }),
           onChange: (page, pageSize) => {
-            getList({ offset: page - 1, size: pageSize });
+         //   console.log(page,pageSize)
+            getList({ offset: (page - 1)*pageSize, size: pageSize });
+            setPager({ page,pageSize:10 });
           }
           // TODO: 洪耿程，确认功能
           // onChange: (page, pageSize: any) => {
@@ -566,11 +810,24 @@ const DictManage = ({ isModal = false }) => {
         }}
         expandable={{
           /** 点击行不展开 */
-          expandRowByClick: false,
+         // expandRowByClick: false,
           /** 展开行的键值集合 */
           expandedRowKeys,
           /** 额外的展开行 */
           expandedRowRender: (record) => {
+            
+          //   if(subTableData){
+           //  console.log('subTableData-----子集的数据',subTableData,record)
+            // for(let i=0;i<subTableData.length;i++){
+          //     if(subTableData[i].hasChild){
+               //  subTableData[i]['items'] = []
+                // setSubTableData([...subTableData])
+              // }
+            //   else{
+          //       continue  
+          //     }
+          //   }
+          // }
             return (
               <Table
                 bordered
@@ -579,20 +836,19 @@ const DictManage = ({ isModal = false }) => {
                 // columns={Acolumns}
                 // dataSource={Adata}
                 /** 指定树形结构的列名 */
-                childrenColumnName='items'  //可能需要修改
+                
                 rowKey={(row:any) => row.id}
                 pagination={false}
-                onRow={(record) => {
-                  return {
-                    onClick: (event) => {
-                      // console.log(record);
+                expandable={{
+                  onExpand: (expanded, record:any) => {
+                    
                       let index;
                       // if (record.level === 1) {
                       index = subTableData.findIndex((item:any) => item.id === record.id);
                       // } else {
                       //   index = deepLevelItem.findIndex((item) => item.id === record.id);
                       // }
-
+                      
                       getSubDictDetail({
                         dictionaryId: dictId,
                         pid: record.id,
@@ -600,35 +856,120 @@ const DictManage = ({ isModal = false }) => {
                           /**
                            * 设置展开的行
                            */
-                          subTableData[index].items = data;
+                         // console.log('data----0000001',data)
+                          if(data){
+                            for(let i =0;i<data.length;i++){
+                              if(data[i].level<=5){
+                                if(data[i].hasChild){
+                                  data[i].items = []
+                                }
+                              }
+                            }
+                          }
+                          
+                          if(subTableData[index] && Array.isArray(data) && data.length > 0){
+                           // console.log('subTableData001',subTableData[index],'index',index,'data',data)
+                            subTableData[index].items = data; 
+                            setSubTableData([...subTableData]);
+                          }
+                        
+                         // console.log(subTableData,'subTableData-------子字典下的子字典')
                           // deepLevelItem=
                           /** 不要原封不动使用useState导出的值 */
-                          setSubTableData([...subTableData]);
+                         // console.log(subTableData,'subTableData001')
+                          
                           // console.log(JSON.stringify(subTableData, null, 4));
+                         // console.log(subTableData,'subTableData002')
                         }
                       });
-                    }, // 点击行
-                    onDoubleClick: (event) => {},
+                  }
+                }}
+                onRow={(record) => {
+              
+                  return {
+                    //   // console.log(record);
+                    //   debugger;
+                    //   let index;
+                    //   // if (record.level === 1) {
+                    //   index = subTableData.findIndex((item:any) => item.id === record.id);
+                    //   // } else {
+                    //   //   index = deepLevelItem.findIndex((item) => item.id === record.id);
+                    //   // }
+                      
+                    //   getSubDictDetail({
+                    //     dictionaryId: dictId,
+                    //     pid: record.id,
+                    //     cb: (data) => {
+                    //       /**
+                    //        * 设置展开的行
+                    //        */
+                    //      // console.log('data----0000001',data)
+                    //       if(data){
+                    //         for(let i =0;i<data.length;i++){
+                    //           if(data[i].level<=5){
+                    //             if(data[i].hasChild){
+                    //               data[i].items = []
+                    //             }
+                    //           }
+                    //         }
+                    //       }
+                          
+                    //       if(subTableData[index] && Array.isArray(data) && data.length > 0){
+                    //        // console.log('subTableData001',subTableData[index],'index',index,'data',data)
+                    //         subTableData[index].items = data; 
+                    //         setSubTableData([...subTableData]);
+                    //       }
+                        
+                    //      // console.log(subTableData,'subTableData-------子字典下的子字典')
+                    //       // deepLevelItem=
+                    //       /** 不要原封不动使用useState导出的值 */
+                    //      // console.log(subTableData,'subTableData001')
+                          
+                    //       // console.log(JSON.stringify(subTableData, null, 4));
+                    //      // console.log(subTableData,'subTableData002')
+                    //     }
+                    //   });
+                    // }, // 点击行
+                   // onDoubleClick: (event) => {},
                     onContextMenu: (event) => {},
-                    onMouseEnter: (event) => {}, // 鼠标移入行
+                    //onMouseEnter: (event) => {}, // 鼠标移入行
                     onMouseLeave: (event) => {},
                   };
                 }}
+                childrenColumnName='items'
               />
             );
           },
           /** 点击展开图标时展开 */
           onExpand: (expanded, record:any) => {
+            
             // console.log(record);
+           // console.log('expanded',expanded)
             setDictId(record.id);
             getDetail({
               id: record.id,
               cb: (data) => {
                 /**
                  * 设置展开的行
-                 */
-                setExpandedRowKeys([record.id]);
-                setSubTableData(data.items);
+                 */  
+              //  console.log(data,'展开的行------')
+                for(let i=0;i<data.items.length;i++){
+                  if(data.items[i].level<=5){
+                    if(data.items[i].hasChild){
+                      
+              
+                        data.items[i].items = []
+                      
+                      
+                    }
+                  }
+                  
+                }        
+                if(!expanded){
+                  setExpandedRowKeys([])
+                }else{ 
+                  setExpandedRowKeys([record.id])}
+                  data.items&&setSubTableData(data.items)                  
               }
             })
           },

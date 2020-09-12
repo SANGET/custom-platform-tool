@@ -276,6 +276,7 @@ const DictForm = (props) => {
       setColor(panelColor);
       // 将生效颜色设置到form.list对应的行中
       const values = form.getFieldsValue();
+      console.log(values,'values00--11')
       const rowIndex = colorPicker.selectRowIndex;
       values.items[rowIndex].renderFontColor = panelColor.fontColor;
       values.items[rowIndex].renderBgColor = panelColor.bgColor;
@@ -284,7 +285,7 @@ const DictForm = (props) => {
     },
     /** 弹框取消按钮回调 */
     onCancel: (e) => {
-      console.log({ color });
+      console.log({ color );
       /** 取消时复原 */
       setPanelColor(color);
       setColorPicker({ visiable: false, title: '', selectRowIndex: 0 });
@@ -356,11 +357,11 @@ const DictForm = (props) => {
       }
     },
     listItems: {
-      name: {
+      code: {
         /** 表单项属性 */
         itemAttr: {
           rules: [
-            { required: true, message: '请输入字典项名称' },
+            { required: true, message: '请输入字典项编码' },
             { pattern: /^[\u4e00-\u9fa5_a-zA-Z0-9()]+$/, message: '输入字段可以为中文、英文、数字、下划线、括号' },
             { max: 64, message: '最多只能输入64个字符' },
           ],
@@ -368,26 +369,26 @@ const DictForm = (props) => {
         /** 表单项包裹组件属性 */
         compAttr: {
           type: 'Input',
-          placeholder: '请输入字典项名称',
+          placeholder: '请输入字典项编码',
           onChange: (e, index) => {
             /** 将表格名称转换为汉字首字母拼音 */
             const values = form.getFieldsValue();
-            values.items[index].name = PinYin.getCamelChars(values.items[index].name);
+            values.items[index].code = PinYin.getCamelChars(values.items[index].code);
             form.setFieldsValue({ ...values });
           }
         }
       },
-      code: {
+      name: {
         /** 表单项属性 */
         itemAttr: {
           rules: [
-            { required: true, message: '请输入字典项编码!' },
+            { required: true, message: '请输入字典项名称!' },
           ]
         },
         /** 表单项包裹组件属性 */
         compAttr: {
           type: 'Input',
-          placeholder: '请输入字典项编码',
+          placeholder: '请输入字典项名称',
         }
       },
       renderFontColor: {
@@ -414,7 +415,7 @@ const DictForm = (props) => {
         compAttr: {
           type: 'BasicColor',
           color: color.bgColor,
-          placeholder: '请选择字体颜色',
+          placeholder: '请选择背景颜色',
           onClick: (e, selectRowIndex) => {
             openColorPicker({ title: '背景颜色', visiable: true, selectRowIndex });
           },
@@ -435,7 +436,7 @@ const DictForm = (props) => {
   // console.log(formConfig);
 
   return (
-    <div className="data-designer">
+    <div className="data-designer" >
       <BasicForm {...formConfig} isAddEditRow={isAddEditRow} />
       <BasicColorPicker {...colorProps} />
     </div>

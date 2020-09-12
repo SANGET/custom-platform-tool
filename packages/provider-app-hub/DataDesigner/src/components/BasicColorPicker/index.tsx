@@ -43,6 +43,7 @@ const BasicColorPicker = ({
  * @param onClick-点击事件回调-打开颜色选择器
  */
 const BasicColor = ({ color, onClick }) => {
+  console.log(color,'color000000')
   return (<PickerStyled onClick={ onClick}>
     <div className="color-block" style={{ backgroundColor: `${color}` }}></div>
   </PickerStyled>);

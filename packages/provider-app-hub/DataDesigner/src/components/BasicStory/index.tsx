@@ -51,6 +51,7 @@ const BasicStory = (props) => {
    * type是组件类型
    */
   const { type, ...rest } = props;
+ // console.log(type,...rest,'00990998')
   const SpecificStory = components[type];
   return <SpecificStory {...rest} />;
 };
