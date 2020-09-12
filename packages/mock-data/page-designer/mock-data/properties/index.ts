@@ -6,38 +6,34 @@ import PropValue from './value';
  * TODO: 搞清楚属性如何影响组件实例，或者是说组件实例如何根据属性数据进行调整
  */
 export const propertiesItemCollection: EditorPropertyItemsCollection = {
-  'prop-style-1': (entity) => {
+  prop_style_title_color: (entity) => {
     return {
-      id: 'prop-style-1',
+      id: 'prop_style_title_color',
       label: '标题颜色',
-      type: 'style',
-      target: 'color',
-      asd: 'AdvancedSearchForm',
+      type: 'labelColor',
       component: {
         type: 'Input'
       }
     };
   },
-  'prop-label-1': (entity) => {
+  prop_title_value: (entity) => {
     const { label = '标题' } = entity;
     return {
-      id: 'prop-label-1',
+      id: 'prop_title_value',
       label: '标题',
-      type: 'general',
-      target: 'label',
+      type: 'title',
       defaultValue: label,
       component: {
         type: 'Input',
       }
     };
   },
-  'prop-value': PropValue,
-  'prop-flex-config-1': (entity) => {
+  prop_real_value: PropValue,
+  prop_flex_config: (entity) => {
     return {
-      id: 'prop-flex-config-1',
+      id: 'prop_flex_config',
       label: '列数量',
-      type: 'style',
-      target: 'color',
+      type: 'columnCount',
       component: {
         type: 'Selector',
         defaultValue: 1,

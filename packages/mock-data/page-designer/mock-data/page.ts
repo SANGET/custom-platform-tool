@@ -7,7 +7,7 @@ import { ApiMock } from "./api-mock";
 export const pageProperties: PropertyItemConfigFunc[] = [
   (entity) => {
     return {
-      id: 'prop-style-1',
+      id: 'prop_style_title_color',
       label: '背景颜色',
       /**
        * 用于定位属性类型

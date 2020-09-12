@@ -1,4 +1,4 @@
-import { EditorComponentClass } from "../types";
+import { EditorComponentClass } from "@engine/visual-editor/types";
 import { CustomComponent } from "./custom-component-demo";
 import { ApiMock } from "./api-mock";
 
@@ -15,8 +15,9 @@ export const componentClassCollection: ComponentClassCollection = {
     },
     bindProps: {
       propRefs: [
-        'prop-style-1',
-        'prop-label-1'
+        { propID: 'prop_style_title_color' },
+        { propID: 'prop_title_value', override: { defaultValue: '文本框' } },
+        { propID: 'prop_real_value' },
       ]
     }
   },
@@ -35,8 +36,8 @@ export const componentClassCollection: ComponentClassCollection = {
     label: 'Flex 布局',
     bindProps: {
       propRefs: [
-        'prop-style-1',
-        'prop-flex-config-1'
+        { propID: 'prop_style_title_color' },
+        { propID: 'prop_flex_config' },
       ]
     }
   },
@@ -48,8 +49,8 @@ export const componentClassCollection: ComponentClassCollection = {
     },
     bindProps: {
       propRefs: [
-        'prop-style-1',
-        'prop-flex-config-1'
+        { propID: 'prop_style_title_color' },
+        // { propID: 'prop_flex_config' },
       ]
     }
   },
@@ -63,8 +64,8 @@ export const componentClassCollection: ComponentClassCollection = {
     },
     bindProps: {
       // propRefs: [
-      //   'prop-style-1',
-      //   'prop-flex-config-1'
+      //   'prop_style_title_color',
+      //   'prop_flex_config'
       // ]
       rawProp: [
         (entity) => {
