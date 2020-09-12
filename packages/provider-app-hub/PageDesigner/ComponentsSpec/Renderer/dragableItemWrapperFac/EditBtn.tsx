@@ -1,8 +1,13 @@
 import React from 'react';
 import { ShowModal } from '@infra/ui';
-import TableEditor from '../../CompClass/Table/TableEditor';
 
-export const EditBtn = (props) => {
+export interface EditBtnProps {
+  editorRenderer: (modalOptions) => JSX.Element
+}
+
+export const EditBtn: React.FC<EditBtnProps> = ({
+  editorRenderer
+}) => {
   return (
     <span
       className="default btn"
@@ -11,15 +16,7 @@ export const EditBtn = (props) => {
         ShowModal({
           title: '编辑表格',
           width: `80vw`,
-          children: () => {
-            return (
-              <TableEditor
-                onChange={(value) => {
-                  console.log(value);
-                }}
-              />
-            );
-          }
+          children: (modalOptions) => editorRenderer(modalOptions)
         });
       }}
     >

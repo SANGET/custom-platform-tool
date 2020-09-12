@@ -9,8 +9,7 @@ import { FXContainer } from './FXContainer';
  */
 export const PropItemRenderer: React.FC<PropItemRendererProps> = ({
   propItemConfig,
-  componentState,
-  propID,
+  propItemValue,
   onChange,
 }) => {
   const {
@@ -20,7 +19,7 @@ export const PropItemRenderer: React.FC<PropItemRendererProps> = ({
   const { type: componentType, ...propsForComponent } = component;
 
   // console.log('propItemConfig', propItemConfig);
-  // console.log('componentState', componentState);
+  // console.log('propItemValue', propItemValue);
   let Com;
   const { comp } = getPropItem(componentType);
   // const { comp } = propItemConfig;
@@ -31,7 +30,7 @@ export const PropItemRenderer: React.FC<PropItemRendererProps> = ({
         <div>
           <Input
             {...propsForComponent}
-            value={componentState || ''}
+            value={propItemValue || ''}
             onChange={(value) => {
             // console.log(e.target.value);
               onChange(value, propItemConfig);
@@ -56,7 +55,7 @@ export const PropItemRenderer: React.FC<PropItemRendererProps> = ({
       Com = (
         <Selector
           {...propsForComponent}
-          value={componentState || ''}
+          value={propItemValue || ''}
           onChange={(value) => {
             // console.log(e.target.value);
             onChange(value, propItemConfig);

@@ -36,7 +36,7 @@ export const ComponentRenderer: React.FC<ComponentTypeRendererProps> = (props) =
     ...otherProps
   } = props;
   const { component } = entity;
-  const { label, style, value } = entityState;
+  const { title, labelColor, value } = entityState;
   const { comp } = registeredEntity;
 
   const compContext = {
@@ -55,12 +55,14 @@ export const ComponentRenderer: React.FC<ComponentTypeRendererProps> = (props) =
         <div className="__Input">
           <FormLabel
             style={{
-              color: style.color
+              color: labelColor
             }}
-          >{label}</FormLabel>
+          >
+            {title}
+          </FormLabel>
           <Input
             compContext={compContext}
-            value={value}
+            value={value || ''}
             {...compProps}
           />
         </div>
@@ -70,7 +72,7 @@ export const ComponentRenderer: React.FC<ComponentTypeRendererProps> = (props) =
       const Table = comp;
       Com = (
         <div className="__Table">
-          <FormLabel>{label}</FormLabel>
+          <FormLabel>{title}</FormLabel>
           <Table
             compContext={compContext}
             {...compProps}
@@ -98,9 +100,9 @@ export const ComponentRenderer: React.FC<ComponentTypeRendererProps> = (props) =
       {...otherProps}
       onClick={onClick}
       className={classes}
-      style={style}
     >
       {Com}
+      <div className="__mark"></div>
     </div>
   );
 };

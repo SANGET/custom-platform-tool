@@ -4,14 +4,16 @@ import { Grid, Button } from '@infra/ui';
 
 import { Dispatcher } from "@engine/visual-editor/core/actions";
 import { VisualEditorState } from "@engine/visual-editor/core/reducers/reducer";
+/// //// mock 数据
+import {
+  getCompClassDeclareData, getCompPanelData, getPagePropsDeclareData, getPropItemDeclareData
+} from "@mock-data/page-designer/mock-data";
+import { ApiGetPageData, ApiSavePage } from "@mock-data/page-designer/mock-api/edit-page";
+/// //// mock 数据
 import ToolBar from './components/Toolbar';
 import ComponentPanel from './components/ComponentPanel';
 import CanvasStage from './components/CanvasStage';
 import PropertiesEditor from './components/PropertiesEditor';
-import {
-  getCompClassDeclareData, getCompPanelData, getPagePropsDeclareData, getPropItemDeclareData
-} from "../mock-data";
-import { ApiGetPageData, ApiSavePage } from "../mock-api/edit-page";
 import { EditButton } from "./PageMetadataEditor/EditButton";
 import { wrapPageData } from "../utils";
 import Style from './style';
@@ -149,7 +151,10 @@ const PageDesignerApp: React.FC<VisualEditorAppProps> = (props) => {
                 selectedEntity={activeEntity}
                 defaultEntityState={activeEntity.propState}
                 initEntityState={(entityState) => InitEntityState(selectedInfo, entityState)}
-                updateEntityState={(entityState) => UpdateEntityState(selectedInfo, entityState)}
+                updateEntityState={(entityState) => UpdateEntityState({
+                  nestingIdx: selectedInfo.nestingIdx,
+                  entity: activeEntity
+                }, entityState)}
               />
             )
           }
