@@ -1,0 +1,12 @@
+{
+  "name": "@iub-dsl/types",
+  "version": "0.0.1",
+  "scripts": {
+    "start": "start"
+  },
+  "devDependencies": {},
+  "peerDependencies": {},
+  "dependencies": {},
+  "author": "SANGET",
+  "license": "MIT"
+}

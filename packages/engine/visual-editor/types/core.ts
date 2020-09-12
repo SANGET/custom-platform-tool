@@ -12,7 +12,7 @@ export interface ComponentBindPropsConfig {
   /** 绑定的属性的 id */
   propRefs?: string[]
   /** 原生属性配置 */
-  rawProp?: PropertyItemConfig[]
+  rawProp?: PropertyItemConfigFunc[]
 }
 
 /**
@@ -62,6 +62,8 @@ export interface EditorPropertyItem {
     /** 用于找到具体组件 */
     type: string
   }
+  /** 是否需要表达式 */
+  fx?: boolean
 }
 
 /**
@@ -70,15 +72,10 @@ export interface EditorPropertyItem {
 export type PropertyItemConfigFunc = (entity: EditorComponentEntity) => EditorPropertyItem
 
 /**
- * 属性项接入方式
- */
-export type PropertyItemConfig = PropertyItemConfigFunc
-
-/**
  * 属性项集合
  */
 export interface EditorPropertyItemsCollection {
-  [colID: string]: PropertyItemConfig
+  [colID: string]: PropertyItemConfigFunc
 }
 
 /// //////////////// 组件实例状态 ///////////////////
@@ -163,7 +160,8 @@ export interface TempEntity {
 /**
  * 编辑器的实例种类
  */
-export type EditorEntity = EditorComponentEntity | EditorPageEntity
+export type EditorEntity = EditorComponentEntity
+//  | EditorPageEntity
 
 /**
  * 组件实例

@@ -18,12 +18,22 @@ export interface RegisterCompElementProps {
  * 可注册的 component
  */
 export type RegistrableComponent = React.ElementType<RegisterCompElementProps>
+export type RegistrablePropEditor = React.ElementType<RegisterCompElementProps>
+
+export interface RegisterComponentConfig {
+  /** 组件的名字 */
+  name: string
+  /** 注册的具体组件 */
+  comp: RegistrableComponent
+  /** 特定的组件属性面板 */
+  propEditor?: RegistrablePropEditor
+}
 
 /**
  * 注册的组件集合
  */
 export interface RegisteredComponents {
-  [type: string]: RegistrableComponent
+  [type: string]: RegisterComponentConfig
 }
 
 const registeredComponents: RegisteredComponents = {};
@@ -37,8 +47,7 @@ export const getRegisteredComp = (compName: string) => {
   if (comp) {
     return comp;
   }
-  console.error(`发现尚未注册的组件类型 ${compName}，请检查是否注册成功`);
-  return 'div';
+  throw Error(`发现尚未注册的组件类型 ${compName}，请检查是否注册成功`);
 };
 
 /**
@@ -48,14 +57,14 @@ export const registerComp = (
   /** 组件名称，对应组件类中的 component.type 属性 */
   compName: string,
   /** 接入的组件 */
-  Comp: RegistrableComponent,
+  config: RegisterComponentConfig,
 ) => {
-  // TODO: 检查是否符合标准，并且注册到
+  // TODO: 检查是否符合标准
   if (registeredComponents[compName]) {
     console.error(`重复注册 ${compName}，请检查`);
     return false;
   }
-  registeredComponents[compName] = Comp;
+  registeredComponents[compName] = config;
   return true;
 };
 

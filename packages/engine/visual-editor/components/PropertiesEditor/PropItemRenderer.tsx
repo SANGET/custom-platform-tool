@@ -1,13 +1,7 @@
 import React from 'react';
 import { EditorPropertyItem } from '../../types';
 import { getPropItem } from '../../spec/registerComp';
-
-interface PropItemRendererProps {
-  propItemConfig
-  componentState
-  propID: string
-  onChange: (value: any, propItem: EditorPropertyItem) => void
-}
+import { PropItemRendererProps } from './types';
 
 /**
  * 属性项渲染器
@@ -27,9 +21,10 @@ export const PropItemRenderer: React.FC<PropItemRendererProps> = ({
   /** 将 ID 写入 propItemConfig */
   // propItemConfig.id = propID;
   let Com;
+  const { comp } = getPropItem(componentType);
   switch (componentType) {
     case 'Input':
-      const Input = getPropItem(componentType);
+      const Input = comp;
       Com = (
         <Input
           {...propsForComponent}
@@ -42,7 +37,7 @@ export const PropItemRenderer: React.FC<PropItemRendererProps> = ({
       );
       break;
     case 'Selector':
-      const Selector = getPropItem(componentType);
+      const Selector = comp;
       Com = (
         <Selector
           {...propsForComponent}

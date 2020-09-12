@@ -1,1 +1,4 @@
-__test__
+env-scripts/
+__test__/
+node_modules/
+.bak/

@@ -1,10 +1,14 @@
 import React from 'react';
 import CanvasStage from '@engine/visual-editor/components/CanvasStage';
+import { dragableItemWrapperFac } from '../../ComponentsSpec/Renderer/dragableItemWrapperFac';
 
 const CanvasStageCustom = (props) => {
   return (
     <div style={{ height: '100%' }}>
-      <CanvasStage {...props} />
+      <CanvasStage
+        dragableItemWrapper={dragableItemWrapperFac}
+        {...props}
+      />
     </div>
   );
 };

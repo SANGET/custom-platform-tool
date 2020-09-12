@@ -13,7 +13,7 @@ const defaultToRoute = '/page-manager';
  */
 export const Hall: HY.SubApp = (props) => {
   const [appData, setAppData] = useState([]);
-  console.log(appData);
+
   useEffect(() => {
     /** 设置 app 为空，因为还未选择 app */
     $R_P.urlManager.setApp('');
@@ -21,7 +21,7 @@ export const Hall: HY.SubApp = (props) => {
       setAppData(appResData.result);
     });
   }, []);
-  console.log('asd');
+
   return (
     <div>
       <h3>工作台</h3>

@@ -25,6 +25,7 @@ export const ReqCopyTableStructRecord = async (data) => {
   return res;
 };
 
+
 /** 请求表结构列表数据 */
 export async function GetTableData(params) {
   return await $R_P.get({ params, url: '/data/v1/tables/list' });
@@ -56,7 +57,10 @@ export async function UpdateDict(params) {
 }
 /* 查询字典列表 */
 export async function GetDictList(params) {
-  return await $R_P.get({ url: '/data/v1/dictionary/list', params });
+  return await $R_P.get({
+    url: '/data/v1/dictionary/list',
+    params
+  });
 }
 
 /**
