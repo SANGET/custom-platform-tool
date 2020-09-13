@@ -22,6 +22,7 @@ const CreateModal: React.FC<IProps> = (props) => {
       onCancel={() => onCancel && onCancel()}
       footer={null}
       okText="确认"
+      maskClosable={false}
       cancelText="取消"
     >
       {props.children}

@@ -13,6 +13,14 @@ export async function createTableService(params) {
     data: params,
   });
 }
+/** 删除表前确认能否删除 */
+export async function allowDeleteTableService(id) {
+  return await $R_P.get({
+    url: `/data/v1/tables/allowedDeleted/${id}`,
+    params: {},
+  });
+}
+
 /** 删除表 */
 export async function deleteTableService(id) {
   return await $R_P.del({

@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
-import { Form, message } from 'antd';
+import { Form, message, notification } from 'antd';
 import { NameCodeItem, FromFooterBtn } from "./FormItem"
-
+import pinyin4js from 'pinyin4js'
 import './index.less'
 import { copyTableService } from '../service';
 
@@ -21,15 +21,25 @@ const CopyTable: React.FC<IProps> = (props: IProps) => {
 
   useEffect(() => {
     const { name, code } = data;
+    const suffixName = `_副本_${randomCode(5)}`
     form && form.setFieldsValue({
-      name: name,
-      code: code
+      name: name + suffixName,
+      code: code + pinyin4js.convertToPinyinString(suffixName, "", pinyin4js.WITHOUT_TONE)
     })
   }, [])
+
+  const randomCode = (number: number) => {
+    const weights = parseInt(`10${Array(number).join('0')}`)
+    console.dir(weights)
+    return Math.floor(Math.random() * weights)
+  }
   const handleFinish = async (values) => {
     const res = await copyTableService({ ...values, id: data.id })
     if (res.code === "00000") {
-      message.success("复制成功")
+      notification.success({
+        message: "复制成功",
+        duration: 2
+      });
       onOk && onOk()
     } else {
       message.error(res.msg)
