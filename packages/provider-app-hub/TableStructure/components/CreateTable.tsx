@@ -1,29 +1,35 @@
 import React, { useState, useRef } from 'react';
-import { Button, Form, Input, Select, InputNumber, message } from 'antd';
+import { Button, Form, Input, Select, InputNumber, message, notification } from 'antd';
 import { TABLE_OPTIONS, TABLE_TYPE, SPECIES } from '../constant';
 const { Option } = Select;
 const { TextArea } = Input;
 import { NameCodeItem, ModuleTreeItem, PrimaryTreeItem, FromFooterBtn } from "./FormItem"
-import './index.less'
 import CreateMenu from './CreateMenu';
 import { createTableService } from '../service';
+import './index.less'
+import CreateModal from './CreateModal';
 interface IProps {
   onOk: () => void;
   onCancel: () => void;
+
+  upDataMenus: () => void;
 }
 const layout = {
   labelCol: { span: 5 },
   wrapperCol: { span: 19 },
 };
 const CreateTable: React.FC<IProps> = (props: IProps) => {
-  const { onCancel, onOk } = props;
+  const { onCancel, onOk, upDataMenus } = props;
   const [form] = Form.useForm();
   const [visibleModal, setVisibleModal] = useState<boolean>(false)
   const handleFinish = async (values) => {
     const params = assemblyParams(values);
     const res = await createTableService(params)
     if (res.code === "00000") {
-      message.success("新增成功")
+      notification.success({
+        message: "新增成功",
+        duration: 2
+      });
       onOk && onOk()
     } else {
       message.error(res.msg)
@@ -55,11 +61,10 @@ const CreateTable: React.FC<IProps> = (props: IProps) => {
   const createModule = () => {
     setVisibleModal(true)
   }
-  const handleCancel = () => {
-    setVisibleModal(false)
-  }
+
   const handleMenuOk = () => {
     setVisibleModal(false)
+    upDataMenus && upDataMenus()
   }
   const handleFormCancel = () => {
     onCancel && onCancel()
@@ -68,10 +73,15 @@ const CreateTable: React.FC<IProps> = (props: IProps) => {
     <>
       <Form {...layout} form={form} name="control-hooks" onFinish={handleFinish}>
         <NameCodeItem form={form} />
-        <Form.Item name="type" label="表类型" rules={[{
-          required: true,
-          message: "请选择表类型"
-        }]}>
+        <Form.Item
+          name="type"
+          label="表类型"
+          rules={[{
+            required: true,
+            message: "请选择表类型"
+          }]}
+          initialValue={TABLE_TYPE.TABLE}
+        >
           <Select
             placeholder="请选择表类型"
           >
@@ -109,17 +119,22 @@ const CreateTable: React.FC<IProps> = (props: IProps) => {
           onClick={createModule}
         >新建模块</Button>
         <Form.Item name="description" label="备注" >
-          <TextArea rows={4} />
+          <TextArea rows={4} maxLength={100} />
         </Form.Item>
         <FromFooterBtn
           onCancel={handleFormCancel}
         />
       </Form>
-      <CreateMenu
-        visibleModal={visibleModal}
-        onCancel={handleCancel}
-        onOk={handleMenuOk}
-      />
+      <CreateModal
+        title="新建数据表"
+        modalVisible={visibleModal}
+        onCancel={() => setVisibleModal(false)}
+      >
+        <CreateMenu
+          onCancel={() => setVisibleModal(false)}
+          onOk={handleMenuOk}
+        />
+      </CreateModal>
     </>
   );
 };

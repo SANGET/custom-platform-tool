@@ -1,6 +1,20 @@
 import { ProColumns, TableDropdown } from '@hy/pro-table';
 import { IOperationalMenuItem, IValueEnum, ITableType } from './interface';
 
+export const MORE_MENU = [{
+  title: "表结构模板",
+  key: "template"
+},{
+  title: "导入表结构",
+  key: "import"
+},{
+  title: "导出表结构",
+  key: "export"
+},{
+  title: "字典管理",
+  key: "dictionary"
+}]
+export const SELECT_ALL = "all"
 export enum MENUS_TYPE  {
   /** 模块 */
   "MODULE",

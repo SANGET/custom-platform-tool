@@ -82,7 +82,7 @@ export const PrimaryTreeItem: React.FC<IProps> = React.memo((props: IProps): Rea
   const getPrimaryTable = async (name: string = "") => {
     const res = await queryTableListService({
       name,
-      type: `${TABLE_TYPE.TABLE},${TABLE_TYPE.TREE}`,
+      // type: `${TABLE_TYPE.TABLE},${TABLE_TYPE.TREE}`,
     })
     const data = construct(res.result?.data || [], {
       pid: "mainTableCode",
@@ -123,7 +123,7 @@ export const PrimaryTreeItem: React.FC<IProps> = React.memo((props: IProps): Rea
 /**  归属模块 */
 export const ModuleTreeItem: React.FC<IProps> = React.memo((props: IProps): ReactElement => {
   const [moduleTree, setModuleTree] = useState<any[]>([])
-  const { label = "归属模块", placeholder = "请选择归属模块", onClick } = props;
+  const { label = "归属模块", placeholder = "请选择归属模块" } = props;
   useEffect(() => {
     getMenusData();
   }, [])

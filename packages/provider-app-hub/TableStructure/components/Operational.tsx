@@ -1,7 +1,7 @@
 import React, { ReactElement } from 'react'
 import { Button, Popconfirm } from 'antd';
 import { IOperationalMenuItem } from '../interface';
-import { OPERATIONALMENU } from '../constant';
+import { OPERATIONALMENU, SPECIES } from '../constant';
 import './index.less'
 interface IProps {
   data: any;
@@ -18,7 +18,7 @@ const Operational: React.FC<IProps> = (props: IProps): ReactElement => {
       {
         OPERATIONALMENU.map((item, index) => {
           if (item.behavior === "popconfirm") {
-            return (<Popconfirm
+            return data.species === SPECIES.BIS ? (<Popconfirm
               key={index}
               placement="topLeft"
               title={'你确定要删除这条记录吗?'}
@@ -28,7 +28,9 @@ const Operational: React.FC<IProps> = (props: IProps): ReactElement => {
               <Button type="link" >
                 {item.title}
               </Button>
-            </Popconfirm>)
+            </Popconfirm>) : (<Button type="link" disabled>
+              {item.title}
+            </Button>)
           } else {
             return (
               <Button key={index} type="link" onClick={() => onClick && onClick(Object.assign(item, data))}>

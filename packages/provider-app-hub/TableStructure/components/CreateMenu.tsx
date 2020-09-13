@@ -8,7 +8,6 @@ import { createMenuService } from '../service';
 import CreateModal from './CreateModal';
 import './index.less'
 interface IProps {
-  visibleModal: boolean;
   onCancel: () => void;
   onOk: () => void;
 }
@@ -17,7 +16,7 @@ const layout = {
   wrapperCol: { span: 19 },
 };
 const CreateMenu: React.FC<IProps> = (props: IProps) => {
-  const { visibleModal = false, onCancel, onOk } = props;
+  const { onCancel, onOk } = props;
   const [form] = Form.useForm();
 
   const handleFinish = async (values) => {
@@ -40,29 +39,25 @@ const CreateMenu: React.FC<IProps> = (props: IProps) => {
     onCancel && onCancel()
   }
   return (
-    <CreateModal
-      title="新建数据表"
-      modalVisible={visibleModal}
-      onCancel={handleClose}
-    >
-      <Form {...layout} form={form} name="control-hooks" onFinish={handleFinish}>
-        <Form.Item
-          name="name"
-          label="模块名称"
-          rules={[
-            { required: true },
-            { pattern: RE.CEN, message: '请输入中文、英文、数字' },
-            { max: 32, message: '最多只能输入32个字符' },
-          ]}
-        >
-          <Input placeholder="" />
-        </Form.Item>
-        <ModuleTreeItem />
-        <FromFooterBtn
-          onCancel={handleClose}
-        />
-      </Form>
-    </CreateModal>
+
+    <Form {...layout} form={form} name="control-hooks" onFinish={handleFinish}>
+      <Form.Item
+        name="name"
+        label="模块名称"
+        rules={[
+          { required: true },
+          { pattern: RE.CEN, message: '请输入中文、英文、数字' },
+          { max: 32, message: '最多只能输入32个字符' },
+        ]}
+      >
+        <Input placeholder="" />
+      </Form.Item>
+      <ModuleTreeItem />
+      <FromFooterBtn
+        onCancel={handleClose}
+      />
+    </Form>
+
   );
 };
 
