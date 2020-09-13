@@ -4,10 +4,10 @@
 
 import React, { Children } from 'react';
 
-import { TypeOfIUBDSL } from "@iub-dsl/core/types";
-import IUBDSLParser from '@iub-dsl/parser/engin';
+import { TypeOfIUBDSL } from "@iub-dsl/types";
+import IUBDSLParser from '@iub-dsl/engine';
 
-import IUBDSLRuntimeContainer from '@iub-dsl/parser/engin/IUBDSLRuntimeContainer';
+import IUBDSLRuntimeContainer from '@iub-dsl/engine/IUBDSLRuntimeContainer';
 import { AuthUIByUIID, $R } from '../../services';
 import { initPageContext } from './context';
 import { Loading } from '../common';

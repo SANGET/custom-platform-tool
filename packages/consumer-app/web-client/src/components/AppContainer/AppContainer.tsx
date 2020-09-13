@@ -9,7 +9,7 @@ import {
 } from "multiple-page-routing";
 
 /** Components */
-import IUBDSLParser from "@iub-dsl/parser/engin";
+import IUBDSLParser from "@iub-dsl/engine";
 import { Nav } from "./Navigator";
 import { PageContainer } from "../PageContainer";
 

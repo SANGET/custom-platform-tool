@@ -1,4 +1,4 @@
-import { TypeOfIUBDSL, ComplexType, FoundationType } from '@iub-dsl/core';
+import { TypeOfIUBDSL, ComplexType, FoundationType } from '@iub-dsl/types';
 
 export const MockLocationType = [
   {
