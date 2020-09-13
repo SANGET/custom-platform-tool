@@ -97,42 +97,47 @@ export const COLUMNS: ProColumns[] = [
     valueType: 'index',
     width: 80,
     hideInSearch: true,
-
   },
   {
     title: '数据表名称',
     dataIndex: 'name',
     width: 140,
+    ellipsis: true,
   },
   {
     title: '数据表编码',
     dataIndex: 'code',
     width: 140,
     hideInSearch: true,
+    ellipsis: true,
   },
   {
     title: '表类型',
     dataIndex: 'type',
     width: 100,
-    valueEnum: TABLE_VALUE_ENUM
+    valueEnum: TABLE_VALUE_ENUM,
+    ellipsis: true,
   },
   {
     title: '归属模块',
-    dataIndex: 'moduleId',
+    dataIndex: 'moduleName',
     width: 140,
     hideInSearch: true,
+    ellipsis: true,
   },
   {
     title: '创建时间',
     dataIndex: 'gmtCreate',
-    width: 160,
+    width: 200,
     hideInSearch: true,
+    valueType: 'dateTime',
   },
   {
     title: '最后修改时间',
     dataIndex: 'gmtModified',
-    width: 160,
+    width: 200,
     hideInSearch: true,
+    valueType: 'dateTime',
   },
   {
     title: '最后修改人员',
