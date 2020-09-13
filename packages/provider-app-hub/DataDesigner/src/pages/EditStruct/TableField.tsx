@@ -1,5 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { Form, Modal } from 'antd';
+import { KeyOutlined } from '@ant-design/icons';
 
 /** 状态管理方法 */
 import { useMappedState, useDispatch } from 'redux-react-hook';
@@ -102,11 +103,11 @@ const TableField = ({ updateListData }) => {
       /** 字段类型-STRING(字符串)INT(整型)TIME(时间)DATE(日期时间)TEXT(超大文本) */
       fieldType: "STRING",
       /** 数据类型 NORMAL(普通字段)PK(主键字段)QUOTE(引用字段)DICT(字典字段)FK(外键字段) */
-      dataType: 'FK',
+      dataType: 'NORMAL',
       /** 业务字段类型 SYS(系统元数据)BIS(业务元数据) */
       species: "BIS",
       /** 小数位 */
-      decimalSize: 0,
+      // decimalSize: ,
       /** 必填 */
       required: 'false',
       /** 唯一 */
@@ -117,7 +118,7 @@ const TableField = ({ updateListData }) => {
        * refDisplayFieldCode
        */
       dictionaryForeign: null,
-      fieldSize: 2,
+      fieldSize: 32,
       /** 转换成拼音 */
       pinyinConvent: 'true',
     };
@@ -170,7 +171,9 @@ const TableField = ({ updateListData }) => {
     }
   };
   /** fieldType 必须配置初始值 */
-  const [link, setLink] = useState({ dataType: 'PK', fieldType: 'STRING' });
+  const [link, setLink] = useState({
+    dataType: 'NORMAL', fieldType: 'STRING', species: 'BIS', id: ''
+  });
   // console.log(fieldLinkObj[link.fieldType].DataTypeEnum);
 
   /**
@@ -179,7 +182,9 @@ const TableField = ({ updateListData }) => {
    * @param dataType-数据类型
    * @param key-禁用设置字段
    */
-  const isDisabled = ({ dataType, fieldType, key }) => {
+  const isDisabled = ({
+    dataType, fieldType, key
+  }) => {
     /**
      * 数据类型,字段类型为空时,允许配置长度 小数位 必填 唯一 字典 是否转拼音 编码规则属性
      * 字段类型和数据类型是必填项,没选这两项之前的选择都是无效选择
@@ -187,8 +192,16 @@ const TableField = ({ updateListData }) => {
     if (!dataType || !fieldType) {
       return false;
     }
-
-    return !fieldLinkObj[fieldType][dataType][key] || false;
+    const species = fieldForm.getFieldValue('species');
+    const id = fieldForm.getFieldValue('id');
+    console.log(id);
+    if (
+      (!['isDisabledFieldName', 'isDisabledPY'].includes(key) && ['系统', '系统元数据'].includes(species))
+      || (['isDisabledFieldType', 'isDisabledFieldCode', 'isDisabledFieldSize'].includes(key) && ['业务元数据'].includes(species))
+      || (id !== undefined && ['isDisabledFieldCode'].includes(key) && ['业务'].includes(species))
+    ) return true;
+    const mapTmpl = fieldLinkObj[fieldType][dataType] || {};
+    return key in mapTmpl ? !mapTmpl[key] : false;
   };
 
   /**
@@ -214,15 +227,22 @@ const TableField = ({ updateListData }) => {
         compAttr: {
           type: 'Input',
           onChange: () => {
+            const species = fieldForm.getFieldValue('species');
+            if (species !== 'BIS') return;
             /** 将表格名称转换为汉字首字母拼音 */
-            fieldForm.setFieldsValue({ code: PinYin.getCamelChars(fieldForm.getFieldValue('name')) });
-          }
+            fieldForm.setFieldsValue({ code: PinYin.getFullChars(fieldForm.getFieldValue('name'))?.toLowerCase() });
+          },
+          disabled: isDisabled({
+            fieldType: link.fieldType, dataType: link.dataType, key: 'isDisabledFieldName'
+          }),
         },
         itemAttr: {
           rules: [{
             required: true,
             message: '请输入字段名称'
-          }]
+          },
+          { pattern: /^[\u4e00-\u9fa5a-zA-Z()][\u4e00-\u9fa5_a-zA-Z0-9()]*$/, message: '输入字段可以为中文、英文、数字、下划线、括号' },
+          { max: 32, message: '最多只能输入32个字符' }]
         }
       },
       width: 200,
@@ -231,12 +251,19 @@ const TableField = ({ updateListData }) => {
       title: '字段编码',
       dataIndex: 'code',
       formConfig: {
-        compAttr: { type: 'Input' },
+        compAttr: {
+          type: 'Input',
+          disabled: isDisabled({
+            fieldType: link.fieldType, dataType: link.dataType, key: 'isDisabledFieldCode'
+          })
+        },
         itemAttr: {
           rules: [{
             required: true,
             message: '请输入字段编码'
-          }]
+          },
+          { pattern: /^[a-zA-Z][_a-zA-Z0-9]*$/, message: '输入字段可以为英文、数字、下划线，且不能以下划线、数字开头' },
+          { max: 64, message: '最多只能输入64个字符' }]
         }
       },
       editable: true,
@@ -254,7 +281,10 @@ const TableField = ({ updateListData }) => {
             setLink({ ...link, fieldType });
             fieldForm.setFieldsValue({ dataType: '' });
             // console.log({ ...link, fieldType }, fieldLinkObj[link.fieldType]);
-          }
+          },
+          disabled: isDisabled({
+            fieldType: link.fieldType, dataType: link.dataType, key: 'isDisabledFieldType'
+          }),
         },
         itemAttr: {
           rules: [{
@@ -275,7 +305,10 @@ const TableField = ({ updateListData }) => {
           enum: fieldLinkObj[link.fieldType].DataTypeEnum,
           onChange: (dataType) => {
             setLink({ ...link, dataType });
-          }
+          },
+          disabled: isDisabled({
+            fieldType: link.fieldType, dataType: link.dataType, key: 'isDisabledDataType'
+          }),
         },
         itemAttr: {
           rules: [{
@@ -293,23 +326,29 @@ const TableField = ({ updateListData }) => {
       formConfig: {
         compAttr: {
           type: 'InputNumber',
-          placeholder: '正整数,2-64',
-          disabled: isDisabled({ fieldType: link.fieldType, dataType: link.dataType, key: 'isDisabledFieldSize' })
+          disabled: isDisabled({
+            fieldType: link.fieldType, dataType: link.dataType, key: 'isDisabledFieldSize'
+          }),
         },
         itemAttr: {
           rules: [
             /** 自定义校验器 */
             ({ getFieldValue }) => ({
+
               validator(rule, value) {
+                const field = getFieldValue();
+                const fieldType = field?.fieldType;
+                const max = {
+                  STRING: 128,
+                  INT: 20,
+                  DATE: 4,
+                  TEXT: 65535
+                };
                 if (value === '' || value === undefined) {
                   return Promise.resolve();
                 }
-                if (!REG.plusInt.test(value)) {
-                  return Promise.reject(new Error('必须是正整数2-64之间'));
-                }
-
-                if (value < 2 || value > 64) {
-                  return Promise.reject(new Error('必须在2-64之间'));
+                if (!REG.plusInt.test(value) || value > max[fieldType]) {
+                  return Promise.reject(new Error(`必须是正整数，且小于${max[fieldType]}`));
                 }
                 return Promise.resolve();
               },
@@ -326,8 +365,14 @@ const TableField = ({ updateListData }) => {
       formConfig: {
         compAttr: {
           type: 'InputNumber',
-          disabled: isDisabled({ fieldType: link.fieldType, dataType: link.dataType, key: 'isDisabledDeciSize' })
+          disabled: isDisabled({
+            fieldType: link.fieldType, dataType: link.dataType, key: 'isDisabledDeciSize'
+          })
         },
+        itemAttr: {
+          rules: [
+            { pattern: /^[1-9]\d*$/, message: '请输入正整数' }]
+        }
       },
       editable: true,
       width: 160
@@ -339,7 +384,9 @@ const TableField = ({ updateListData }) => {
         compAttr: {
           type: 'BasicSelect',
           enum: YNTypeEnum,
-          disabled: isDisabled({ fieldType: link.fieldType, dataType: link.dataType, key: 'isDisabledRequired' })
+          disabled: isDisabled({
+            fieldType: link.fieldType, dataType: link.dataType, key: 'isDisabledRequired'
+          })
         },
       },
       editable: true,
@@ -352,7 +399,9 @@ const TableField = ({ updateListData }) => {
         compAttr: {
           type: 'BasicSelect',
           enum: YNTypeEnum,
-          disabled: isDisabled({ fieldType: link.fieldType, dataType: link.dataType, key: 'isDisabledUni' })
+          disabled: isDisabled({
+            fieldType: link.fieldType, dataType: link.dataType, key: 'isDisabledUni'
+          })
         },
       },
       editable: true,
@@ -364,7 +413,9 @@ const TableField = ({ updateListData }) => {
       formConfig: {
         compAttr: {
           type: 'Input',
-          disabled: isDisabled({ fieldType: link.fieldType, dataType: link.dataType, key: 'isDisabledDict' }),
+          disabled: isDisabled({
+            fieldType: link.fieldType, dataType: link.dataType, key: 'isDisabledDict'
+          }),
           onFocus: () => {
             // console.log('xx');
             setDictFieldVisible(true);
@@ -381,7 +432,9 @@ const TableField = ({ updateListData }) => {
         compAttr: {
           type: 'BasicSelect',
           enum: YNTypeEnum,
-          disabled: isDisabled({ fieldType: link.fieldType, dataType: link.dataType, key: 'isDisabledPY' }),
+          disabled: isDisabled({
+            fieldType: link.fieldType, dataType: link.dataType, key: 'isDisabledPY'
+          }),
         },
       },
       editable: true,
@@ -395,13 +448,26 @@ const TableField = ({ updateListData }) => {
     {
       title: '分类',
       dataIndex: 'species',
-      width: 120
+      width: 120,
     },
+    {
+      title: "",
+      dataIndex: "",
+      width: 60,
+      render: (text, record) => {
+        const dataType = record?.dataType;
+        if (dataType === '主键') {
+          return <KeyOutlined />;
+        }
+        if (dataType === '引用') {
+          return <span style={{ fontSize: '40px', fontWeight: 700 }}>”</span>;
+        }
+        return null;
+      }
+    }
   ];
 
   const [clickRow, setClickRow] = useState({ id: '' });
-
-  // console.log(structRowData.columns);
 
   /**
   * 将后端返回的列表值转换成页面的显示值
@@ -468,7 +534,7 @@ const TableField = ({ updateListData }) => {
     onDelRow: handleDelete,
     updateListData: (data) => updateListData(PageKey, data),
     /** 系统类型不能修改，复制，不能删除 */
-    rowEditBtnDis: (record) => record.species === '系统',
+    rowEditBtnDis: (record) => ['系统'].includes(record.species),
     /** 系统元数据,业务元数据 可以修改 不能删除 */
     rowDelBtnDis: (record) => ['系统', '系统元数据', '业务元数据'].includes(record.species)
   };
@@ -556,7 +622,7 @@ const TableField = ({ updateListData }) => {
       * }
       */
       selDictKey.length && fieldForm.setFieldsValue({
-        dictionaryForeign: selDictKey[0].code
+        dictionaryForeign: selDictKey[0].code,
       });
       setDictFieldVisible(false);
     },

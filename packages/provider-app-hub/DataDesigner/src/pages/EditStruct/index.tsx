@@ -4,7 +4,7 @@ import React, { FC, useState, useEffect } from 'react';
 import { onNavigate } from 'multiple-page-routing';
 import { getUrlParams } from "@mini-code/request/url-resolve";
 import {
-  Tabs, Form, Tag, Row, Col, Button
+  Tabs, Form, Tag, Row, Col, Button, Input
 } from 'antd';
 /*
 * 网络请求工具
@@ -17,7 +17,7 @@ import BasicStory from '@provider-app/data-designer/src/components/BasicStory';
 /** 表类型枚举 */
 import { TableTypeEnum } from '@provider-app/data-designer/src/tools/constant';
 
-import { GetMenuTree, ReqTableDetail } from '@provider-app/data-designer/src/api';
+import { GetMenuTree, GetTableData } from '@provider-app/data-designer/src/api';
 
 import './EditStruct.less';
 /** 可以简化redux书写的语法糖 */
@@ -149,12 +149,11 @@ const EditStruct: HY.SubApp = (props) => {
     /** 如果id丢失,就从localStorage中取缓存的id */
     const rowId = id || structRowData.id;
     /** 查询表结构详情 */
-    $R_P.get(`/data/v1/tables/${rowId}`, {}).then((res) => {
+    $R_P.get(`/data/v1/tables/${rowId}`).then((res) => {
       /** 编辑表表单公共信息 */
       const {
-        name, code, type, moduleId, columns,
-      } = res.result;
-
+        name, code, type, moduleId, columns
+      } = res?.result;
       /** 设置表结构编辑表单公共信息 */
       form.setFieldsValue({
         name, code, type, moduleId
@@ -185,6 +184,7 @@ const EditStruct: HY.SubApp = (props) => {
     {
       text: '保存',
       onClick: () => {
+        console.log(JSON.stringify(structRowData));
         /** 编辑表的主表单在点击保存按钮的时候校验,每个tab中国的表单,在tab页中的子表单中校验 */
         form.validateFields().then(() => {
           /** 新增数据,提交时要清空id,让后端填充 */
@@ -218,14 +218,19 @@ const EditStruct: HY.SubApp = (props) => {
             return item;
           });
 
-          // console.log({ structRowData });
-
           $R_P.put('/data/v1/tables/', structRowData).then((res) => {
-            resetStore();
-            Msg.success('操作成功');
-            onNavigate({
-              type: "GO_BACK",
-            });
+            const { code, msg } = res || {};
+            if (code === '00000') {
+              resetStore();
+              Msg.success('操作成功');
+              // onNavigate({
+              //   type: "PUSH",
+              //   params: { title: '表结构管理' },
+              //   route: '/TableStruct'
+              // });
+            } else {
+              Msg.error(msg);
+            }
           });
         });
       }
@@ -271,6 +276,15 @@ const EditStruct: HY.SubApp = (props) => {
       compAttr: {
         type: 'Input',
         placeholder: '',
+        onChange: (e) => {
+          const name = e?.target?.value;
+          dispatch({
+            type: 'setStructRowData',
+            structRowData: Object.assign({},
+              structRowData,
+              { name })
+          });
+        }
       }
     },
     code: {
@@ -303,11 +317,19 @@ const EditStruct: HY.SubApp = (props) => {
       },
       compAttr: {
         type: 'TreeSelect',
-        enum: TableTypeEnum,
-        treeData: []
+        treeData: [],
+        onSelect: (moduleId, node) => {
+          const moduleName = node?.title;
+          dispatch({
+            type: 'setStructRowData',
+            structRowData: Object.assign({},
+              structRowData,
+              { moduleId, moduleName })
+          });
+        }
         // ...tProps
       }
-    },
+    }
   };
   /** 把formItemsConfig定义成state数据,是因为formItemsConfig的moduleId.compAttr.treeData属性要被更新  */
   /** 把formItemsConfig定义成普通对象,更新formItemsConfig的moduleId.compAttr.treeData属性时组件不渲染  */
@@ -316,14 +338,13 @@ const EditStruct: HY.SubApp = (props) => {
   * 获取树选择数据
   */
   const fetchSelectTreeData = async () => {
-    const data = await GetMenuTree();
-    formItemsConfig.moduleId.compAttr.treeData = data as never[];
+    const dataModule = await GetMenuTree();
+    formItemsConfig.moduleId.compAttr.treeData = dataModule as never[];
     /**
     * 更新表单项--所属模块 TreeSelect组件需要用到的渲染数据
     */
     setFormItemsConfig({ ...formItemsConfig });
   };
-
   /** 重置store状态,主要是为了清除localStorage中的数据,因为store中的数据用localStorage做了持久化 */
   const resetStore = () => {
     dispatch({
@@ -362,6 +383,21 @@ const EditStruct: HY.SubApp = (props) => {
     ]
   };
 
+  const getMainTableWhenSub = () => {
+    const type = structRowData?.type;
+    if (type !== 'AUX_TABLE') return null;
+    const mainTableName = structRowData?.auxTable?.parentTable?.name;
+    if (!mainTableName) return null;
+    return (
+      <Col span={4}>
+        <Form.Item
+          label="主表名称："
+        >
+          <Input disabled={true} defaultValue={mainTableName}/>
+        </Form.Item>
+      </Col>);
+  };
+
   return (
     /**
     * 包裹编辑部容器的main区域 设置了padding：12px
@@ -373,22 +409,21 @@ const EditStruct: HY.SubApp = (props) => {
         form={form}
         {...formItemLayout}
       >
-        <Row gutter={24}>{
-          Object.keys(formItemsConfig).map((key) => (
-            /**
+        <Row gutter={24}>
+          {
+            Object.keys(formItemsConfig).map((key) => (
+              /**
             *    设置表单项每项占行宽的24之五
             */
-            <Col span={5} key={key}>
-              <Form.Item key={key} {...formItemsConfig[key].itemAttr} className="w100">
-                <BasicStory {...formItemsConfig[key].compAttr} />
-              </Form.Item>
-            </Col>
-          ))
-        }
-        {/* 设置按钮的宽度占行宽的24之四 */}
-        <Col span={4} className="form-buts">
-          {formButs.map((item) => (<Button key={item.text} type='primary' className="button" onClick={item.onClick}>{item.text}</Button>))}
-        </Col>
+              <Col key={key} span={5}>
+                <Form.Item key={key} {...formItemsConfig[key].itemAttr} className="w100">
+                  <BasicStory {...formItemsConfig[key].compAttr} />
+                </Form.Item>
+              </Col>
+            ))
+          }
+          { getMainTableWhenSub()}
+
         </Row>
       </Form>
 
@@ -411,6 +446,11 @@ const EditStruct: HY.SubApp = (props) => {
               </CheckableTag>
             ))}
           </div>
+        </Col>
+
+        {/* 设置按钮的宽度占行宽的24之四 */}
+        <Col span={4} className="form-buts">
+          {formButs.map((item) => (<Button key={item.text} type='primary' className="button" onClick={item.onClick}>{item.text}</Button>))}
         </Col>
       </Row>
       {/* tab面板部分 */}
