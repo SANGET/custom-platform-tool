@@ -118,7 +118,7 @@ export const COLUMNS: ProColumns[] = [
   },
   {
     title: '归属模块',
-    dataIndex: 'moduleId',
+    dataIndex: 'moduleName',
     width: 140,
     hideInSearch: true,
   },
