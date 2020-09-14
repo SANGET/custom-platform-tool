@@ -91,7 +91,7 @@ yarn
 ### 4.2. 启动「生产工具」
 
 ```shell
-yarn start:provider-app
+sh ./scripts/start-provider-app.sh
 ```
 
 ### 4.3. 启动「消费工具」

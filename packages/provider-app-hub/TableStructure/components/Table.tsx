@@ -4,7 +4,7 @@ import { Button, Modal, notification, Dropdown, Menu } from 'antd';
 import { FormInstance } from 'antd/lib/form';
 import { ExclamationCircleOutlined, DownOutlined } from '@ant-design/icons';
 import { queryTableListService, allowDeleteTableService, deleteTableService } from '../service';
-import { COLUMNS, OPERATIONALMENU, SELECT_ALL, MORE_MENU } from '../constant';
+import { COLUMNS, OPERATIONALMENU, SELECT_ALL, MORE_MENU, PAGE_SIZE_OPTIONS } from '../constant';
 import Operational from './Operational';
 import { onNavigate } from 'multiple-page-routing';
 import { IStatus } from '../interface';
@@ -108,7 +108,7 @@ const Table: React.FC<IProps> = (props: IProps, ref) => {
         deleteTableSingleLine(id)
       }
     } else {
-      openNotification("error", "删除失败")
+      openNotification("error", res.msg)
     }
   }
   const deleteTableSingleLine = async (id: string) => {
@@ -183,6 +183,7 @@ const Table: React.FC<IProps> = (props: IProps, ref) => {
         toolBarRender={renderToolBarRender}
         pagination={{
           hideOnSinglePage: true,
+          pageSizeOptions: PAGE_SIZE_OPTIONS
         }}
       />
       <CreateModal

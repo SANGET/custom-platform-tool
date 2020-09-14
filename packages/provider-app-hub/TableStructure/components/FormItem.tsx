@@ -85,7 +85,8 @@ export const PrimaryTreeItem: React.FC<IProps> = React.memo((props: IProps): Rea
       // type: `${TABLE_TYPE.TABLE},${TABLE_TYPE.TREE}`,
     })
     const data = construct(res.result?.data || [], {
-      pid: "mainTableCode",
+      pid: "moduleId",
+      id: "id",
       mapping: {
         title: "name",
         value: "code"
@@ -130,10 +131,7 @@ export const ModuleTreeItem: React.FC<IProps> = React.memo((props: IProps): Reac
   const handleSearch = (value: string) => {
     getMenusData(value);
   }
-  /**
-  * 获取归属模块对应的数据 并将数据转换成tree 结构
-  * 表类型为 TABLE(普通表) TREE(树形表) 对应的数据
-  */
+
   const getMenusData = async (name: string = "") => {
     const res = await queryMenusListService({
       name,
@@ -157,7 +155,14 @@ export const ModuleTreeItem: React.FC<IProps> = React.memo((props: IProps): Reac
     open && getMenusData()
   }
   return (
-    <Form.Item name="moduleId" label={label} >
+    <Form.Item
+      name="moduleId"
+      label={label}
+      rules={[{
+        required: true,
+        message: "请填写归属模块"
+      }]}
+    >
       <TreeSelect
         showSearch
         style={{ width: '100%' }}

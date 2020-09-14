@@ -21,13 +21,13 @@ export function construct(nodes: object[], config?: IConfig) {
 	const idMap = {}
 	const jsonTree: IConfig[] = []
 
-	nodes.forEach((node) => { node && (idMap[node[id]] = node) })
+  nodes.forEach((node) => { node && (idMap[node[id]] = node) })
 	nodes.forEach((node) => {
 		if (node) {
-      Object.keys(mapping).map(item=>{
+      Object.keys(mapping).map(item => {
         node[item] = node[mapping[item]]
       })
-			let parent = idMap[node[pid]]
+      let parent = idMap[node[pid]]
 			if (parent) {
 				!parent[children] && (parent[children] = [])
 				parent[children].push(node)
@@ -36,7 +36,6 @@ export function construct(nodes: object[], config?: IConfig) {
 			}
 		}
 	})
-
 	return jsonTree
 }
 

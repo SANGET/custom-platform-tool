@@ -209,13 +209,12 @@ module.exports = function (webpackEnv) {
             {
               test: [/\.tsx?$/],
               use: {
-                loader: 'awesome-typescript-loader',
+                loader: 'ts-loader',
                 options: {
-                  experimentalWatchApi: true,
-                  transpileOnly: true
+                  transpileOnly: true,
                 }
               },
-              exclude: [/\.scss.ts$/, /\.test.tsx?$/]
+              exclude: [/\.scss.ts$/, /\.test.tsx?$/, /node_modules/]
             },
             {
               test: /\.(js|mjs|jsx)$/,
