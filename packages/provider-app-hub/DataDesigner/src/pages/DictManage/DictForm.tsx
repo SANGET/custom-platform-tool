@@ -65,7 +65,7 @@ const DictForm = (props) => {
     {
       text: <MinusOutlined />,
       onClick: (row) => {
-        //console.log('row----', row);
+        // console.log('row----', row);
         const { key } = row;
         handleDelete(key);
       },
@@ -74,7 +74,6 @@ const DictForm = (props) => {
   ];
 
   const openColorPicker = (params) => {
-
     setColorPicker(params);
   };
 
@@ -276,7 +275,7 @@ const DictForm = (props) => {
       setColor(panelColor);
       // 将生效颜色设置到form.list对应的行中
       const values = form.getFieldsValue();
-      console.log(values,'values00--11')
+      console.log(values, 'values00--11');
       const rowIndex = colorPicker.selectRowIndex;
       values.items[rowIndex].renderFontColor = panelColor.fontColor;
       values.items[rowIndex].renderBgColor = panelColor.bgColor;
@@ -285,7 +284,7 @@ const DictForm = (props) => {
     },
     /** 弹框取消按钮回调 */
     onCancel: (e) => {
-      console.log({ color );
+      console.log({ color });
       /** 取消时复原 */
       setPanelColor(color);
       setColorPicker({ visiable: false, title: '', selectRowIndex: 0 });
@@ -352,7 +351,7 @@ const DictForm = (props) => {
         compAttr: {
           type: 'Input',
           placeholder: '请输入字典描述',
-         
+
         }
       }
     },

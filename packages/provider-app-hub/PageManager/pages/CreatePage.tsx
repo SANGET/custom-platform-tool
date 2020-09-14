@@ -72,19 +72,6 @@ const createPageDemo = {
 export const CreatePage = () => {
   const [form] = Form.useForm();
 
-  const onGenderChange = (value) => {
-    switch (value) {
-      case "male":
-        form.setFieldsValue({ note: "Hi, man!" });
-        return;
-      case "female":
-        form.setFieldsValue({ note: "Hi, lady!" });
-        return;
-      case "other":
-        form.setFieldsValue({ note: "Hi there!" });
-    }
-  };
-
   const onFinish = (values) => {
     // console.log(values);
     createPageServices(createPageDemo);
@@ -94,17 +81,13 @@ export const CreatePage = () => {
     form.resetFields();
   };
 
-  const onFill = () => {
-    form.setFieldsValue({
-      note: 'Hello world!',
-      gender: 'male',
-    });
-  };
-
   return (
     <Form {...layout} form={form} name="control-hooks" onFinish={onFinish}>
-      <Form.Item name="note" label="Note">
-        <Input />
+      <Form.Item name="belongToMenuId" label="归属模块">
+        <Input defaultValue="1" />
+      </Form.Item>
+      <Form.Item name="name" label="页面名称">
+        <Input defaultValue="测试页面" />
       </Form.Item>
       <Form.Item {...tailLayout}>
         <Button type="primary" htmlType="submit">

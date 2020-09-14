@@ -27,6 +27,14 @@ export interface LayoutRendererProps extends LayoutParserWrapper {
   RootRender?: (renderRes: React.ElementType[]) => JSX.Element
 }
 
+const Elem = ({
+  id, children
+}) => {
+  return (
+    <div id={id}>{children}</div>
+  );
+};
+
 /**
  * 布局渲染器
  * parserContext 将传入每一个 parser
@@ -60,6 +68,7 @@ const renderLayout = (
         }
 
         res.push(child);
+        // res.push(<Elem id={id} key={id}>{child}</Elem>);
       } else {
         const child: any = componentRenderer && componentRenderer(wrapperContext);
         res.push(child);
