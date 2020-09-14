@@ -5,7 +5,8 @@ import { EditorPropertyItem } from "../../types";
  */
 export interface PropItemRendererProps {
   propItemConfig: EditorPropertyItem
-  componentState
-  propID: string
+  /** 属性项的值 */
+  propItemValue
+  /** 属性项的 onChange 回调 */
   onChange: (value: any, propItem: EditorPropertyItem) => void
 }

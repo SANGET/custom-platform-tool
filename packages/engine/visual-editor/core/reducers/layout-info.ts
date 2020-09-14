@@ -86,7 +86,7 @@ export const layoutInfoReducer = (
       });
       return nextStateInit;
     case UPDATE_ENTITY_STATE:
-      const { selectedEntityInfo: updateSInfo, formState } = action;
+      const { targetEntity: updateSInfo, formState } = action;
       const { nestingIdx: updateIdx } = updateSInfo;
       return produce(state, (draftState) => {
         const targetData = getItemFromNestingItemsByBody(draftState, updateIdx);
@@ -129,9 +129,10 @@ export function flatLayoutItemsReducer(
         [entity.id]: entity
       };
     case UPDATE_ENTITY_STATE:
-      const { selectedEntityInfo: updateSInfo, formState } = action;
-      const { id: updateId } = updateSInfo;
+      const { targetEntity: { entity: updateEntity }, formState } = action;
+      const { id: updateId } = updateEntity;
       return produce(state, (draftState) => {
+        // eslint-disable-next-line no-param-reassign
         draftState[updateId].propState = formState;
         return draftState;
       });

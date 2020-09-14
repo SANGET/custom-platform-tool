@@ -11,16 +11,16 @@ import { Dispatcher } from "@engine/visual-editor/core/actions";
 // import { VisualEditorStore } from "@engine/visual-editor/core/store";
 
 import { VisualEditorState } from "@engine/visual-editor/core/reducers/reducer";
-import { EditButton } from "../components/PageMetadataEditor";
-import { wrapPageData } from "../core/utils/wrap-page-data";
 import {
   getCompClassDeclareData,
   getCompPanelData,
   getPagePropsDeclareData,
   getPropItemDeclareData,
-} from "../mock-data";
+} from "@mock-data/page-designer/mock-data";
+import { ApiGetPageData, ApiSavePage } from "@mock-data/page-designer/mock-api/edit-page";
+import { EditButton } from "../components/PageMetadataEditor";
+import { wrapPageData } from "../core/utils/wrap-page-data";
 import Style from './style';
-import { ApiGetPageData, ApiSavePage } from "../mock-api/edit-page";
 
 import '../style/index.scss';
 import { FrameLayout } from "../components/LayoutFrame";
@@ -159,7 +159,10 @@ const VisualEditorApp: React.FC<VisualEditorAppProps> = (props) => {
                 selectedEntity={activeEntity}
                 defaultEntityState={activeEntity.propState}
                 initEntityState={(entityState) => InitEntityState(selectedInfo, entityState)}
-                updateEntityState={(entityState) => UpdateEntityState(selectedInfo, entityState)}
+                updateEntityState={(entityState) => UpdateEntityState({
+                  nestingIdx: selectedInfo.nestingIdx,
+                  entity: activeEntity
+                }, entityState)}
               />
             )
           }

@@ -1,11 +1,9 @@
 import {
   SELECT_ENTITY, INIT_ENTITY_STATE,
-  SelectEntityAction, InitEntityStateAction,
-  UPDATE_ENTITY_STATE, UpdateEntityStateAction, INIT_APP, UNSELECT_ENTITY,
+  SelectEntityAction, INIT_APP, UNSELECT_ENTITY,
   UnselectEntityAction, InitAppAction, ADD_ENTITY, AddEntityAction,
   SORTING_ENTITY, SortingEntityAction
 } from "../actions";
-import { EditorEntity, EntitiesStateStore, EditorEntityState } from "../../types";
 import { SelectEntityState } from "../types";
 
 export const defaultSelectedEntities: SelectEntityState = {

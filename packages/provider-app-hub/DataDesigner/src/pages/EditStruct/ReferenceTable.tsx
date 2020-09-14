@@ -33,7 +33,6 @@ import Http from '@infra/utils/http';
 * 可编辑表格
 */
 import BasicEditTable from '@provider-app/data-designer/src/components/BasicEditTable';
-import { ItemTypes } from '@engine/visual-editor/spec/types';
 
 /**
  * 引用表和外键设置共用这个组件

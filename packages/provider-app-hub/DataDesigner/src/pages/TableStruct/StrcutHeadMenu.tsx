@@ -12,7 +12,6 @@ import { Menu } from 'antd';
 * 表头菜单组件
 */
 import TableHeadMenu from '@provider-app/data-designer/src/bizComps/TableHeadMenu';
-import { ItemTypes } from '@engine/visual-editor/spec/types';
 
 /**
 * 结构表表头菜单

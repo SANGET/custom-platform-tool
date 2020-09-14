@@ -9,11 +9,12 @@ import {
   EditorComponentEntity,
   PageMetadata
 } from '@engine/visual-editor/types';
-import { ItemTypes } from '@engine/visual-editor/spec/types';
-import { Debounce } from '@mini-code/base-func';
 import {
+  DragableItemTypes,
   dragableItemWrapperFac, WrapperFacOptions, DragableItemWrapperFac, GetStateContext
 } from '@engine/visual-editor/spec';
+import { Debounce } from '@mini-code/base-func';
+
 import { constructCompClass, constructTempEntity } from '@engine/visual-editor/core/utils/component-constructor';
 import { Dispatcher } from '../../core/actions';
 import DropStageContainer from './DropStageContainer';
@@ -166,6 +167,7 @@ class CanvasStage extends React.Component<CanvasStageProps> {
     onMove: this.onMove,
     onDelete: this.deleteElement,
     onClick: this.onSelectEntityForClick,
+    UpdateEntityState: this.props.UpdateEntityState
   };
 
   render() {
@@ -193,8 +195,8 @@ class CanvasStage extends React.Component<CanvasStageProps> {
           )}
           RootRender={(child) => (
             <DropStageContainer
-              triggerCondition={(dragItem) => dragItem && dragItem.type === ItemTypes.DragItemClass}
-              accept={[ItemTypes.DragItemClass, ItemTypes.DragItemEntity]}
+              triggerCondition={(dragItem) => dragItem && dragItem.type === DragableItemTypes.DragItemClass}
+              accept={[DragableItemTypes.DragItemClass, DragableItemTypes.DragItemEntity]}
               onLeave={(item) => {
                 /** 移出 item */
                 typeof item.index !== 'undefined' && DelEntity(item.index, item);
@@ -212,7 +214,7 @@ class CanvasStage extends React.Component<CanvasStageProps> {
                 }, 100);
               }}
               onDrop={(_dragItemClass, dropOptions) => {
-                if (dropOptions.type !== ItemTypes.DragItemClass) return;
+                if (dropOptions.type !== DragableItemTypes.DragItemClass) return;
                 this.dropDispatcher(_dragItemClass);
               }}
               onStageClick={onStageClick}

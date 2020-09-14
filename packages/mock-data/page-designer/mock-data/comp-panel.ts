@@ -6,18 +6,23 @@ export const compPanelData = {
       title: '控件类型',
       itemsGroups: [
         {
-          title: '基础控件',
+          title: '表单控件',
           items: [
             'component-1',
-            'component-table-1',
           ]
         },
         {
-          title: '布局',
+          title: '表格控件',
           items: [
-          // 'container-1'
+            'component-table-1',
           ]
         },
+        // {
+        //   title: '布局控件',
+        //   items: [
+        //   // 'container-1'
+        //   ]
+        // },
       ]
     },
     {
