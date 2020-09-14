@@ -25,6 +25,7 @@ interface VisualEditorAppProps extends VisualEditorState {
 }
 
 const PageDesignerApp: React.FC<VisualEditorAppProps> = (props) => {
+  console.log(props);
   const {
     dispatcher,
     selectedInfo,
