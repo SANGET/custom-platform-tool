@@ -71,6 +71,9 @@ export default class TableEditor extends React.Component<RegisterEditor> {
     return (
       <div>
         {this.renderSetColumn()}
+        <div className="p10">
+          <Button>变量</Button>
+        </div>
         <AntTable columns={usingColumn} dataSource={data} />
         <div className="action-area p10">
           <Button
