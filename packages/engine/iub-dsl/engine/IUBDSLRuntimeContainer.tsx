@@ -1,9 +1,43 @@
 /* eslint-disable no-param-reassign */
-import React, { lazy, Suspense } from 'react';
+import React, { lazy, Suspense, useReducer } from 'react';
+import { count } from 'console';
 import LayoutParser from './layout-parser';
 import { useIUBStore } from './state-manage';
 import { compose, Enhancer } from './utils';
 // import { InitPageState } from './schemas/schemas-parser';
+
+function init(initialCount) {
+  return { count: initialCount };
+}
+
+function reducer(state, action) {
+  switch (action.type) {
+    case 'increment':
+      return { count: state.count + 1 };
+    case 'decrement':
+      return { count: state.count - 1 };
+    case 'reset':
+      return init(action.payload);
+    default:
+      throw new Error();
+  }
+}
+
+function Counter({ initialCount }) {
+  const [state, dispatch] = useReducer(reducer, initialCount, init);
+  return (
+    <>
+      Count: {state.count}
+      <button
+        onClick={() => dispatch({ type: 'reset', payload: initialCount })}
+      >
+        Reset
+      </button>
+      <button onClick={() => dispatch({ type: 'decrement' })}>-</button>
+      <button onClick={() => dispatch({ type: 'increment' })}>+</button>
+    </>
+  );
+}
 
 const IUBDSLRuntimeContainer = ({ dslParseRes }) => {
   const {
@@ -12,6 +46,26 @@ const IUBDSLRuntimeContainer = ({ dslParseRes }) => {
     getSchemasInitValue,
     originSchemas
   } = dslParseRes;
+
+  return <Counter
+    initialCount={10}
+  />;
+
+  // 监测处理完成得改变, 渲染组件
+  // const renderedChild = useMemo(() => {
+  //   if (shouldHandleStateChanges) {
+  //     return (
+  //       <ContextToUse.Provider value={overriddenContextValue}>
+  //         {renderedWrappedComponent}
+  //       </ContextToUse.Provider>
+  //     )
+  //   }
+
+  //   return renderedWrappedComponent
+  // }, [ContextToUse, renderedWrappedComponent, overriddenContextValue])
+
+  // return renderedChild
+
   // console.log(dslParseRes);
   // const { getState, setState } = useIUBStore(getSchemasInitValue);
 
