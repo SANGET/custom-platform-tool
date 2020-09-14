@@ -28,7 +28,6 @@ export interface ResStruct {
 const urlPrefix = 'paas';
 
 const baseReqUrl = resolveUrl(apiUrl, urlPrefix);
-console.log(baseReqUrl);
 
 /**
  * 根据业务扩展的 http 请求工具的类型
