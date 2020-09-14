@@ -161,7 +161,7 @@ const DictModal = ({ onChange, ...rest }) => {
   /** 搜索条件-表名称 */
   const searchProps = {
     form: searchForm,
-    className:'search-form',
+    className: 'search-form',
     colSpan: 9,
     btnSpan: 6,
     items: {
@@ -246,6 +246,6 @@ const DictModal = ({ onChange, ...rest }) => {
       <DictForm form={form} isSub={modalProps.isSub} isAddEditRow={modalProps.isAddEditRow} />
     </Modal>
 
-  </>);
+  </div>);
 };
 export default DictModal;

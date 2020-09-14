@@ -11,6 +11,10 @@ import { setDefaultParams, clearDefaultParams, onNavigate } from "multiple-page-
 import { ShowModal } from "@infra/ui";
 import { authStore } from "../auth/actions";
 
+const defaultApiUrl = 'http://192.168.14.140:6090';
+
+const apiUrl = process.env.REACT_APP_API_URL || defaultApiUrl;
+
 /**
  * 后端返回的数据结构
  */
@@ -21,7 +25,10 @@ export interface ResStruct {
   result?: any
 }
 
-const baseReqUrl = 'http://192.168.14.140:6090/paas';
+const urlPrefix = 'paas';
+
+const baseReqUrl = resolveUrl(apiUrl, urlPrefix);
+console.log(baseReqUrl);
 
 /**
  * 根据业务扩展的 http 请求工具的类型
