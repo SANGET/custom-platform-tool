@@ -157,7 +157,14 @@ export const ModuleTreeItem: React.FC<IProps> = React.memo((props: IProps): Reac
     open && getMenusData()
   }
   return (
-    <Form.Item name="moduleId" label={label} >
+    <Form.Item
+      name="moduleId"
+      label={label}
+      rules={[{
+        required: true,
+        message: "请填写归属模块"
+      }]}
+    >
       <TreeSelect
         showSearch
         style={{ width: '100%' }}

@@ -108,7 +108,7 @@ const Table: React.FC<IProps> = (props: IProps, ref) => {
         deleteTableSingleLine(id)
       }
     } else {
-      openNotification("error", "删除失败")
+      openNotification("error", res.msg)
     }
   }
   const deleteTableSingleLine = async (id: string) => {
