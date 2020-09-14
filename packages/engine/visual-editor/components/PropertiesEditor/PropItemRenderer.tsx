@@ -9,7 +9,7 @@ import { PropItemRendererProps } from './types';
  */
 export const PropItemRenderer: React.FC<PropItemRendererProps> = ({
   propItemConfig,
-  componentState,
+  propItemValue,
   propID,
   onChange,
 }) => {
@@ -28,7 +28,7 @@ export const PropItemRenderer: React.FC<PropItemRendererProps> = ({
       Com = (
         <Input
           {...propsForComponent}
-          value={componentState || ''}
+          value={propItemValue || ''}
           onChange={(value) => {
             // console.log(e.target.value);
             onChange(value, propItemConfig);
@@ -41,7 +41,7 @@ export const PropItemRenderer: React.FC<PropItemRendererProps> = ({
       Com = (
         <Selector
           {...propsForComponent}
-          value={componentState || ''}
+          value={propItemValue || ''}
           onChange={(value) => {
             // console.log(e.target.value);
             onChange(value, propItemConfig);

@@ -421,7 +421,7 @@ const renderOperCol = (operButs) => {
           <Space size="middle" key={i}>
             {
               /** 删除需要弹出二次确认框 */
-              item.text === '删除'
+              item.text === '删除'||item.text ==='删除子项'
                 ? (<Popconfirm placement="topLeft" title={item.title} onConfirm={() => item.onClick(row)} okText="删除" cancelText="取消">
                   <Button type="link" >
                     {item.text}

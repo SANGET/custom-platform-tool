@@ -9,7 +9,7 @@ import { Tabs, Tab } from '@infra/ui';
 
 import DragItem, { DragItemConfig } from '@engine/visual-editor/spec/DragItem';
 import { EditorComponentClass, ComponentPanelConfig } from '@engine/visual-editor/types';
-import { ItemTypes } from '../../spec/types';
+import { DragableItemTypes } from '../../spec';
 
 export interface ComponentPanelProps {
   /** 组件 panel 的配置 */
@@ -38,7 +38,7 @@ const ComponentPanel: React.FC<ComponentPanelProps> = ({
 
   return (
     <div
-      className="component-class-panel"
+      className="component-panel-container"
     >
       <Tabs
         onChangeTab={handleChange}
@@ -59,7 +59,9 @@ const ComponentPanel: React.FC<ComponentPanelProps> = ({
                     } = ig;
                     return (
                       <div key={`${idx}_${_idx}`} className="drag-item-group">
-                        <h5>{igTitle}</h5>
+                        <div className="group-title">
+                          {igTitle}
+                        </div>
                         <div className="drag-items">
                           {
                             items.map((componentClassID, __idx) => {
@@ -70,7 +72,7 @@ const ComponentPanel: React.FC<ComponentPanelProps> = ({
                               return (
                                 <DragItem
                                   key={id} className="drag-comp-item"
-                                  type={ItemTypes.DragItemClass}
+                                  type={DragableItemTypes.DragItemClass}
                                   dragConfig={getDragItemConfig ? getDragItemConfig(componentClass) : {}}
                                   dragItemClass={{
                                     ...componentClass,

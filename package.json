@@ -4,8 +4,10 @@
   "private": true,
   "description": "自定义 3.0 前端工程",
   "workspaces": [
+    "packages/mock-data/*",
     "packages/provider-app-hub/*",
     "packages/provider-app-entry/*",
+    "packages/provider-component/*",
     "packages/engine/**/*",
     "packages/infrastructure/*",
     "packages/consumer-app/*",

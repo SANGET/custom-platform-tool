@@ -5,67 +5,17 @@
  */
 
 import React from 'react';
-import {
-  LayoutWrapperContext
-} from '@engine/layout-renderer';
 import classnames from 'classnames';
-import { EditorEntityState, EditorComponentEntity, TEMP_ENTITY_ID } from '@engine/visual-editor/types';
+import { TEMP_ENTITY_ID } from '@engine/visual-editor/types';
 import {
   DragItemComp,
-  ItemTypes,
-  DragItemActions
+  DragableItemTypes,
 } from '@engine/visual-editor/spec';
 
 import { TempEntityTip } from './TempEntityTip';
 import { ComponentRenderer } from './ComponentRenderer';
+import { DragableItemWrapperFac } from '../types';
 // import { Debounce } from '@mini-code/base-func';
-
-export interface GetStateContext {
-  nestingInfo
-  idx
-  id
-}
-
-export type GetEntityProps = (ctx: GetStateContext) => EditorEntityState | undefined
-export type GetSelectedState = (ctx: GetStateContext) => boolean
-export type GetLayoutNode = (ctx: GetStateContext) => EditorComponentEntity
-
-export interface WrapperFacContext {
-  /** 获取选中的组件实例的状态 */
-  getSelectedState: GetSelectedState
-  /** 获取组件实例的 props */
-  getEntityProps: GetEntityProps
-  /** 扁平的 node 结构 */
-  getLayoutNode: GetLayoutNode
-}
-
-export interface WrapperFacActions extends DragItemActions {
-  /** 响应组件点击事件 */
-  onClick: (event, { entity: EditorComponentEntity, idx: number }) => void
-  /** 响应组件点击事件 */
-  onDelete: (event, { idx: number, entity: EditorComponentEntity }) => void
-}
-
-/**
- * 包装器的 options
- */
-export interface WrapperFacOptions extends WrapperFacContext, WrapperFacActions {
-}
-
-/**
- * 包装器传给被包装的组件的 props
- */
-export interface FacToComponentProps extends LayoutWrapperContext {
-  onClick
-  entity: EditorComponentEntity
-  entityState: EditorEntityState
-}
-
-export type DragableItemWrapperFac = (
-  wrapperFacOptions: WrapperFacOptions
-) => (
-  props: LayoutWrapperContext
-) => JSX.Element
 
 // const debounce = new Debounce();
 
@@ -76,6 +26,7 @@ export const dragableItemWrapperFac: DragableItemWrapperFac = (
   {
     onDrop, onMove, onClick, onDelete,
     getLayoutNode, getSelectedState, getEntityProps,
+    UpdateEntityState,
     // getHoveringEntity, setHoveringEntity
   },
 ) => (propsForChild) => {
@@ -105,9 +56,9 @@ export const dragableItemWrapperFac: DragableItemWrapperFac = (
         onDrop={onDrop}
         onMove={onMove}
         dragItemClass={currEntity}
-        type={ItemTypes.DragItemEntity}
+        type={DragableItemTypes.DragItemEntity}
         className="relative drag-item"
-        accept={[ItemTypes.DragItemEntity, ItemTypes.DragItemClass]}
+        accept={[DragableItemTypes.DragItemEntity, DragableItemTypes.DragItemClass]}
       >
         <ComponentRenderer
           {...propsForChild}

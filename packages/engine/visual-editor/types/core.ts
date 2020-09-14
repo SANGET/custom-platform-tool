@@ -8,11 +8,20 @@ interface GenericComponentType {
   type: string
 }
 
+export interface PropRefItem {
+  /** 引用的属性项的 id */
+  propID: string
+  /** 覆盖属性项定义的值 */
+  override?: {
+    defaultValue?: any
+  }
+}
+
 export interface ComponentBindPropsConfig {
-  /** 绑定的属性的 id */
-  propRefs?: string[]
+  /** 绑定的属性项 */
+  propRefs?: PropRefItem[]
   /** 原生属性配置 */
-  rawProp?: PropertyItemConfig[]
+  rawProp?: PropertyItemConfigFunc[]
 }
 
 /**
@@ -49,12 +58,12 @@ export interface EditorComponentClass<C = GenericComponentType> extends EditorBa
 export interface EditorPropertyItem {
   /** 属性项 ID */
   id: string
-  /** 显示的 label */
+  /** 属性项显示的 label */
   label: string
   /** 用于定位组件实例的属性，例如 entity[propType] */
-  type: string
-  /** 属性作用于组件实例的某种属性 */
-  target: string
+  type: VEExtention.PropItemTypes
+  // /** 属性作用于组件实例的某种属性 */
+  // target: string
   /** 默认值 */
   defaultValue?: any
   /** 用于渲染该属性组件的配置信息 */
@@ -62,6 +71,8 @@ export interface EditorPropertyItem {
     /** 用于找到具体组件 */
     type: string
   }
+  /** 是否需要表达式 */
+  fx?: boolean
 }
 
 /**
@@ -70,15 +81,10 @@ export interface EditorPropertyItem {
 export type PropertyItemConfigFunc = (entity: EditorComponentEntity) => EditorPropertyItem
 
 /**
- * 属性项接入方式
- */
-export type PropertyItemConfig = PropertyItemConfigFunc
-
-/**
  * 属性项集合
  */
 export interface EditorPropertyItemsCollection {
-  [colID: string]: PropertyItemConfig
+  [colID: string]: PropertyItemConfigFunc
 }
 
 /// //////////////// 组件实例状态 ///////////////////
@@ -101,15 +107,7 @@ export interface EntityStyle extends React.CSSProperties {
  * 组件实例状态
  */
 export interface EditorEntityState {
-  /** 原始的实例状态数据 */
-  // propOriginState?: {
-  //   [stateID: string]: any
-  //   // [stateID: string]: EditorEntityStateItem
-  // }
-  // /** 绑定的页面内唯一数据 ID */
-  // dataID?: string
-  /** 样式 */
-  style?: React.CSSProperties
+  value?: any
 }
 
 /**

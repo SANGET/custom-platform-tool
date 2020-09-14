@@ -30,25 +30,25 @@ export const YNTypeEnum :Array<IYNType> = [
 */
 interface IDataType{
   value:"NORMAL" | "PK" | "QUOTE"|"DICT"|"FK";
-  text:"普通字段"|"主键字段"|"引用字段"|"字典字段"|"外键字段";
+  text:""|"主键"|"引用"|"字典"|"外键";
 }
 /**
  * 字段类型枚举
  */
 export const DataTypeEnum :Array<IDataType> = [
-  { value: "NORMAL", text: "普通字段" },
-  { value: "PK", text: "主键字段" },
-  { value: "QUOTE", text: "引用字段" },
-  { value: "DICT", text: "字典字段" },
-  { value: "FK", text: "外键字段" },
+  { value: "NORMAL", text: "" },
+  { value: "PK", text: "主键" },
+  { value: "QUOTE", text: "引用" },
+  { value: "DICT", text: "字典" },
+  { value: "FK", text: "外键" },
 ];
 
 /**
  * 字段类型约束
 */
 interface IFieldType{
-  value:"STRING" | "INT" | "TIME"|"DATE"|"DATETIME"|"TEXT"|"BIGINT";
-  text:"字符串"|"整型"|"时间"|"日期时间"|"超大文本"|"长整型"|"日期";
+  value:"STRING" | "INT" | "TIME"|"DATE"|"DATE_TIME"|"TEXT"|"LONG";
+  text:"字符串"|"整型"|"时间"|"日期"|"日期时间"|"超大文本"|"长整型";
 }
 /**
  * 字段类型枚举
@@ -56,9 +56,10 @@ interface IFieldType{
 export const FieldTypeEnum :Array<IFieldType> = [
   { value: "STRING", text: "字符串" },
   { value: "INT", text: "整型" },
+  { value: "LONG", text: "长整型" },
   { value: "TIME", text: "时间" },
+  { value: "DATE_TIME", text: "日期时间" },
   { value: "DATE", text: "日期" },
-  { value: "DATETIME", text: "日期时间" },
   { value: "TEXT", text: "超大文本" },
 ];
 

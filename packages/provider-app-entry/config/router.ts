@@ -5,6 +5,8 @@ import PageDesignerApp from "@provider-app/page-designer/app/main";
 import {
   TableStruct, DictManage, EditStruct
 } from "@provider-app/data-designer/src/pages";
+
+import TableStructure from "@provider-app/table-structure/app";
 /// //////// 数据设计结束
 
 // interface RouterType {
@@ -37,7 +39,7 @@ const RouterConfig: RouterConfigType = {
     title: '页面管理'
   },
   '/TableStruct': {
-    component: TableStruct,
+    component: TableStructure,
     title: '数据表结构'
   },
   '/page-designer': {
@@ -45,8 +47,8 @@ const RouterConfig: RouterConfigType = {
     title: '页面设计'
   },
   '/DictManage': {
-    title: '字典管理',
-    component: DictManage
+    component: DictManage,
+    title: '字典管理' 
   },
   '/data_designer/edit_struct': {
     title: '编辑表',

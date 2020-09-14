@@ -5,16 +5,17 @@
 export const fieldLinkObj = {
   STRING: {
     DataTypeEnum: [
-      { value: "PK", text: "主键字段" },
-      { value: "QUOTE", text: "引用字段" },
-      { value: "DICT", text: "字典字段" },
-      { value: "FK", text: "外键字段" },
+      { value: "NORMAL", text: "空" },
+      { value: "PK", text: "主键" },
+      { value: "QUOTE", text: "引用" },
+      { value: "DICT", text: "字典" },
+      { value: "FK", text: "外键" },
       { value: "pic", text: "图片" },
       { value: "attach", text: "附件" },
       { value: "video", text: "视频" },
       { value: "audio", text: "音频" },
     ],
-    Empty: {
+    NORMAL: {
       isDisabledFieldSize: true,
       isDisabledDeciSize: false,
       isDisabledRequired: true,
@@ -57,11 +58,43 @@ export const fieldLinkObj = {
   },
   INT: {
     DataTypeEnum: [
-      { value: "PK", text: "主键字段" },
-      { value: "QUOTE", text: "引用字段" },
-      { value: "FK", text: "外键字段" },
+      { value: "NORMAL", text: "空" },
+      { value: "PK", text: "主键" },
+      { value: "QUOTE", text: "引用" },
+      { value: "FK", text: "外键" },
     ],
-    Empty: {
+    NORMAL: {
+      isDisabledFieldSize: true,
+      isDisabledDeciSize: true,
+      isDisabledRequired: true,
+      isDisabledUni: true,
+      isDisabledRule: true
+    },
+    PK: {
+      isDisabledFieldSize: true,
+      isDisabledDeciSize: true,
+      isDisabledRequired: true,
+      isDisabledUni: true,
+    },
+    FK: {
+      isDisabledFieldSize: true,
+      isDisabledDeciSize: true,
+      isDisabledRequired: true,
+    },
+    QUOTE: {
+      isDisabledFieldSize: true,
+      isDisabledDeciSize: true,
+      isDisabledRequired: true,
+    },
+  },
+  LONG: {
+    DataTypeEnum: [
+      { value: "NORMAL", text: "空" },
+      { value: "PK", text: "主键" },
+      { value: "QUOTE", text: "引用" },
+      { value: "FK", text: "外键" },
+    ],
+    NORMAL: {
       isDisabledFieldSize: true,
       isDisabledDeciSize: true,
       isDisabledRequired: true,
@@ -87,11 +120,35 @@ export const fieldLinkObj = {
   },
   TIME: {
     DataTypeEnum: [
-      { value: "PK", text: "主键字段" },
-      { value: "QUOTE", text: "引用字段" },
-      { value: "FK", text: "外键字段" },
+      { value: "NORMAL", text: "空" },
+      { value: "PK", text: "主键" },
+      { value: "QUOTE", text: "引用" },
+      { value: "FK", text: "外键" },
     ],
-    Empty: {
+    NORMAL: {
+      isDisabledRequired: true,
+      isDisabledUni: true,
+      isDisabledRule: true
+    },
+    PK: {
+      isDisabledRequired: true,
+      isDisabledUni: true,
+    },
+    FK: {
+      isDisabledRequired: true,
+    },
+    QUOTE: {
+      isDisabledRequired: true,
+    },
+  },
+  DATE_TIME: {
+    DataTypeEnum: [
+      { value: "NORMAL", text: "空" },
+      { value: "PK", text: "主键" },
+      { value: "QUOTE", text: "引用" },
+      { value: "FK", text: "外键" },
+    ],
+    NORMAL: {
       isDisabledRequired: true,
       isDisabledUni: true,
       isDisabledRule: true
@@ -109,11 +166,12 @@ export const fieldLinkObj = {
   },
   DATE: {
     DataTypeEnum: [
-      { value: "PK", text: "主键字段" },
-      { value: "QUOTE", text: "引用字段" },
-      { value: "FK", text: "外键字段" },
+      { value: "NORMAL", text: "空" },
+      { value: "PK", text: "主键" },
+      { value: "QUOTE", text: "引用" },
+      { value: "FK", text: "外键" },
     ],
-    Empty: {
+    NORMAL: {
       isDisabledFieldSize: true,
       isDisabledRequired: true,
       isDisabledUni: true,
@@ -133,8 +191,10 @@ export const fieldLinkObj = {
     },
   },
   TEXT: {
-    DataTypeEnum: [],
-    Empty: {
+    DataTypeEnum: [
+      { value: "NORMAL", text: "空" }
+    ],
+    NORMAL: {
       isDisabledFieldSize: true,
       isDisabledRequired: true,
       isDisabledUni: true,

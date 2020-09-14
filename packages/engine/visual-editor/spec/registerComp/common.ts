@@ -8,17 +8,20 @@
 import { EditorEntityState } from "../../types";
 
 export interface RegisterCompElementProps {
-  /** 占位符，防止被 eslint 删除 */
   compContext: {
     entityState: EditorEntityState
   }
+}
+
+export interface RegisterEditor extends RegisterCompElementProps {
+  onChange: (nextValue: any) => void
 }
 
 /**
  * 可注册的 component
  */
 export type RegistrableComponent = React.ElementType<RegisterCompElementProps>
-export type RegistrablePropEditor = React.ElementType<RegisterCompElementProps>
+export type RegistrablePropEditor = React.ElementType<RegisterEditor>
 
 export interface RegisterComponentConfig {
   /** 组件的名字 */

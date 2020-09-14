@@ -54,16 +54,16 @@ export const mergeGeneralProp = ({
  * @param param1
  */
 export const entityStateMergeRule: EntityStateMergeRule = (
-  srcEntityState, entityStateItemParams
+  srcEntityState = {}, entityStateItemParams
 ) => {
   const { value, propItemConfig } = entityStateItemParams;
-  const srcEntityStateCopy = srcEntityState || {};
-  const propID = propItemConfig.id;
+  const srcEntityStateCopy = srcEntityState;
+  const { type } = propItemConfig;
 
   const resState = produce(srcEntityStateCopy, (darftData) => {
-    darftData.style = Object.assign({}, srcEntityState.style, getStyle(entityStateItemParams));
-    darftData[propID] = value;
-    Object.assign(darftData, mergeGeneralProp(entityStateItemParams));
+    // darftData.style = Object.assign({}, srcEntityState.style, getStyle(entityStateItemParams));
+    darftData[type] = value;
+    // Object.assign(darftData, mergeGeneralProp(entityStateItemParams));
   });
 
   return resState;

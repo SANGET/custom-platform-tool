@@ -15,13 +15,18 @@
   }
 }
 
-.component-class-panel {
+.component-panel-container {
   padding: 10px;
   .drag-item-group {
+    .group-title {
+      padding: 10px 0;
+      font-size: 16px;
+    }
     .drag-items {
       display: flex;
       flex-wrap: wrap;
       justify-content: space-between;
+      padding: 10px 0;
       .drag-comp-item {
         padding: 5px 20px;
         background-color: #fafafa;
@@ -42,6 +47,17 @@
   .form-title {
     margin-bottom: 10px;
     font-size: 16px;
+  }
+
+  .__mark {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 1;
+    // background-color: #999;
+    // opacity: 0.05;
   }
 }
 

@@ -2,7 +2,7 @@
  * @Author: wangph
  * @Date: 2020-07-10 12:00:29
  * @Last Modified by: aoping
- * @Last Modified time: 2020-09-07 17:03:01
+ * @Last Modified time: 2020-09-08 17:53:29
  */
 
 import React, { useEffect, useState } from 'react';
@@ -140,16 +140,6 @@ const List = (props) => {
         dataIndex: 'gmtCreate',
         width: 160,
       },
-      // {
-      //   title: '版本',
-      //   dataIndex: 'version',
-      //   width: 100
-      // },
-      // {
-      //   title: '标签',
-      //   dataIndex: 'tag',
-      //   width: 100
-      // },
       {
         title: '最后修改时间',
         dataIndex: 'gmtModified',

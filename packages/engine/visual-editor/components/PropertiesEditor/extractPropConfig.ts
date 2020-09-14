@@ -5,14 +5,15 @@ import {
 } from "../../types";
 
 /**
- * 提取 prop config
+ * 提取 prop item config
  */
 export const extractPropConfig = (
   propItemConfigFunc: PropertyItemConfigFunc,
-  entity: EditorComponentEntity
+  entity: EditorComponentEntity,
+  extendProps?
 ): EditorPropertyItem => {
   if (typeof propItemConfigFunc === 'function') {
-    return propItemConfigFunc(produce(entity, (draft) => draft));
+    return Object.assign({}, propItemConfigFunc(produce(entity, (draft) => draft)), extendProps);
   }
   return propItemConfigFunc;
 };

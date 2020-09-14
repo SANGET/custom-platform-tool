@@ -34,11 +34,11 @@ const DictForm = (props) => {
   /**
   * 颜色面板颜色设置
   */
-  const [panelColor, setPanelColor] = useState({ fontColor: '#000000a6', bgColor: 'transparent' });
+  const [panelColor, setPanelColor] = useState({ fontColor: '#000', bgColor: 'transparent' });
   /**
   * 生效颜色设置
   */
-  const [color, setColor] = useState({ fontColor: '#d9d9d9', bgColor: '#fff' });
+  const [color, setColor] = useState({ fontColor: '#000', bgColor: 'transparent' });
 
   //
   const [id, setId] = useState(0);
@@ -65,7 +65,7 @@ const DictForm = (props) => {
     {
       text: <MinusOutlined />,
       onClick: (row) => {
-        console.log('row----', row);
+        //console.log('row----', row);
         const { key } = row;
         handleDelete(key);
       },
@@ -73,95 +73,96 @@ const DictForm = (props) => {
     },
   ];
 
-  const openColorPicker = () => {
-    setVisiable(true);
+  const openColorPicker = (params) => {
+
+    setColorPicker(params);
   };
 
   /**
   * 表字段列属性配置
   */
-  const columns = [
-    {
+  // const columns = [
+  //   {
 
-      title: '编码',
-      dataIndex: 'code',
-      editable: true,
-      formConfig: {
-        attrs: {
-          type: 'Input',
-          placeholder: '请输入编码',
-          onChange: (e) => {
-            console.log('请输入编码', e.target.value); //-------------------
-          }
-        },
-        rules: [{
-          required: true,
-          message: '请输入编码'
-        }]
-      },
-      width: 200,
-    },
-    {
+  //     title: '编码',
+  //     dataIndex: 'code',
+  //     editable: true,
+  //     formConfig: {
+  //       attrs: {
+  //         type: 'Input',
+  //         placeholder: '请输入编码',
+  //         onChange: (e) => {
+  //           console.log('请输入编码', e.target.value); //-------------------
+  //         }
+  //       },
+  //       rules: [{
+  //         required: true,
+  //         message: '请输入编码'
+  //       }]
+  //     },
+  //     width: 200,
+  //   },
+  //   {
 
-      title: '名称',
-      dataIndex: 'dictName',
-      formConfig: {
-        attrs: {
-          type: 'Input',
-          placeholder: '请输入名称',
-          style: { color: color.fontColor, backgroundColor: color.bgColor },
-          onChange: (e) => {
-            console.log('请输入名称', e.target.value);
-          }
-        },
-        rules: [{
-          required: true,
-          message: '请输入名称'
-        }]
-      },
-      editable: true,
-      width: 200,
-    },
-    {
+  //     title: '名称',
+  //     dataIndex: 'dictName',
+  //     formConfig: {
+  //       attrs: {
+  //         type: 'Input',
+  //         placeholder: '请输入名称',
+  //         style: { color: color.fontColor, backgroundColor: color.bgColor },
+  //         onChange: (e) => {
+  //           console.log('请输入名称', e.target.value);
+  //         }
+  //       },
+  //       rules: [{
+  //         required: true,
+  //         message: '请输入名称'
+  //       }]
+  //     },
+  //     editable: true,
+  //     width: 200,
+  //   },
+  //   {
 
-      title: '颜色',
-      dataIndex: 'renderColor',
-      formConfig: {
-        attrs: {
-          type: 'BasicColor',
-          color: 'green',
-          onClick: () => {
-            openColorPicker();
-          }
-        },
-        rules: []
-      },
-      editable: true,
-      width: 160,
-    },
-    renderOperCol(operButs),
-  ];
+  //     title: '颜色',
+  //     dataIndex: 'renderColor',
+  //     formConfig: {
+  //       attrs: {
+  //         type: 'BasicColor',
+  //         color: 'green',
+  //         onClick: () => {
+  //           openColorPicker();
+  //         }
+  //       },
+  //       rules: []
+  //     },
+  //     editable: true,
+  //     width: 160,
+  //   },
+  //   renderOperCol(operButs),
+  // ];
   /**
 * 给表字段的编辑列添加编辑属性设置
 */
-  const mergedColumns = columns.map((col: { [propName: string]: unknown }) => {
-    if (!col.editable) {
-      return col;
-    }
-    return {
-      ...col,
-      /**
-    * 传入单元格里面的参数
-    */
-      onCell: (record) => ({
-        record,
-        formConfig: col.formConfig,
-        dataIndex: col.dataIndex,
-        title: col.title,
-        editing: isEditing(record),
-      }),
-    };
-  });
+  // const mergedColumns = columns.map((col: { [propName: string]: unknown }) => {
+  //   if (!col.editable) {
+  //     return col;
+  //   }
+  //   return {
+  //     ...col,
+  //     /**
+  //   * 传入单元格里面的参数
+  //   */
+  //     onCell: (record) => ({
+  //       record,
+  //       formConfig: col.formConfig,
+  //       dataIndex: col.dataIndex,
+  //       title: col.title,
+  //       editing: isEditing(record),
+  //     }),
+  //   };
+  // });
   /**
 * 编辑行号与记录行号相符时，设置成编辑状态
 */
@@ -189,29 +190,29 @@ const DictForm = (props) => {
   /**
  * 保存编辑行的值
  */
-  const save = async (key: React.Key) => {
-    try {
-      const row = (await form.validateFields()) as Item;
+  // const save = async (key: React.Key) => {
+  //   try {
+  //     const row = (await form.validateFields()) as Item;
 
-      const newData = [...fieldTableData];
-      const index = newData.findIndex((item) => key === item.key);
-      if (index > -1) {
-        const item = newData[index];
-        newData.splice(index, 1, {
-          ...item,
-          ...row,
-        });
-        setFieldTableData(newData);
-        setEditingKey('');
-      } else {
-        newData.push(row);
-        setFieldTableData(newData);
-        setEditingKey('');
-      }
-    } catch (errInfo) {
-      console.log('Validate Failed:', errInfo);
-    }
-  };
+  //     const newData = [...fieldTableData];
+  //     const index = newData.findIndex((item) => key === item.key);
+  //     if (index > -1) {
+  //       const item = newData[index];
+  //       newData.splice(index, 1, {
+  //         ...item,
+  //         ...row,
+  //       });
+  //       setFieldTableData(newData);
+  //       setEditingKey('');
+  //     } else {
+  //       newData.push(row);
+  //       setFieldTableData(newData);
+  //       setEditingKey('');
+  //     }
+  //   } catch (errInfo) {
+  //     console.log('Validate Failed:', errInfo);
+  //   }
+  // };
 
   /**
   * 添加一行记录
@@ -221,7 +222,7 @@ const DictForm = (props) => {
     const newData = {
       key: id,
       /** 字典项名称 */
-      dictName: '',
+      name: '',
       /** 字典项编码 */
       code: '',
       /** 背景颜色 */
@@ -250,14 +251,14 @@ const DictForm = (props) => {
   * 编辑表格属性配置
   */
 
-  const editTableProps = {
-    form,
-    dataSource: fieldTableData,
-    columns: mergedColumns,
-    pagination: {
-      onChange: cancel,
-    }
-  };
+  // const editTableProps = {
+  //   form,
+  //   dataSource: fieldTableData,
+  //   columns: mergedColumns,
+  //   pagination: {
+  //     onChange: cancel,
+  //   }
+  // };
 
   /**
   * 颜色选择器弹窗设置
@@ -275,6 +276,7 @@ const DictForm = (props) => {
       setColor(panelColor);
       // 将生效颜色设置到form.list对应的行中
       const values = form.getFieldsValue();
+      console.log(values,'values00--11')
       const rowIndex = colorPicker.selectRowIndex;
       values.items[rowIndex].renderFontColor = panelColor.fontColor;
       values.items[rowIndex].renderBgColor = panelColor.bgColor;
@@ -283,7 +285,7 @@ const DictForm = (props) => {
     },
     /** 弹框取消按钮回调 */
     onCancel: (e) => {
-      console.log({ color });
+      console.log({ color );
       /** 取消时复原 */
       setPanelColor(color);
       setColorPicker({ visiable: false, title: '', selectRowIndex: 0 });
@@ -308,7 +310,7 @@ const DictForm = (props) => {
   };
 
   /**
-  * 第一层弹窗表单配置
+  * 弹窗表单配置
   */
   const formProps = {
     form,
@@ -338,9 +340,6 @@ const DictForm = (props) => {
         compAttr: {
           type: 'Input',
           placeholder: '请输入字典名称',
-          onChange: (e) => {
-            console.log('请输入字典名称', e.target.value);
-          }
         }
       },
       description: {
@@ -353,17 +352,16 @@ const DictForm = (props) => {
         compAttr: {
           type: 'Input',
           placeholder: '请输入字典描述',
-          onChange: (e) => {
-          }
+         
         }
       }
     },
     listItems: {
-      name: {
+      code: {
         /** 表单项属性 */
         itemAttr: {
           rules: [
-            { required: true, message: '请输入字典项名称' },
+            { required: true, message: '请输入字典项编码' },
             { pattern: /^[\u4e00-\u9fa5_a-zA-Z0-9()]+$/, message: '输入字段可以为中文、英文、数字、下划线、括号' },
             { max: 64, message: '最多只能输入64个字符' },
           ],
@@ -371,29 +369,26 @@ const DictForm = (props) => {
         /** 表单项包裹组件属性 */
         compAttr: {
           type: 'Input',
-          placeholder: '请输入字典项名称',
+          placeholder: '请输入字典项编码',
           onChange: (e, index) => {
             /** 将表格名称转换为汉字首字母拼音 */
             const values = form.getFieldsValue();
-            values.items[index].code = PinYin.getCamelChars(values.items[index].name);
+            values.items[index].code = PinYin.getCamelChars(values.items[index].code);
             form.setFieldsValue({ ...values });
           }
         }
       },
-      code: {
+      name: {
         /** 表单项属性 */
         itemAttr: {
           rules: [
-            { required: true, message: '请输入字典项编码!' },
+            { required: true, message: '请输入字典项名称!' },
           ]
         },
         /** 表单项包裹组件属性 */
         compAttr: {
           type: 'Input',
-          placeholder: '请输入字典项编码',
-          onChange: (e) => {
-            console.log('请输入字典描述', e.target.value);
-          }
+          placeholder: '请输入字典项名称',
         }
       },
       renderFontColor: {
@@ -420,7 +415,7 @@ const DictForm = (props) => {
         compAttr: {
           type: 'BasicColor',
           color: color.bgColor,
-          placeholder: '请选择字体颜色',
+          placeholder: '请选择背景颜色',
           onClick: (e, selectRowIndex) => {
             openColorPicker({ title: '背景颜色', visiable: true, selectRowIndex });
           },
@@ -441,7 +436,7 @@ const DictForm = (props) => {
   // console.log(formConfig);
 
   return (
-    <div className="data-designer">
+    <div className="data-designer" >
       <BasicForm {...formConfig} isAddEditRow={isAddEditRow} />
       <BasicColorPicker {...colorProps} />
     </div>
