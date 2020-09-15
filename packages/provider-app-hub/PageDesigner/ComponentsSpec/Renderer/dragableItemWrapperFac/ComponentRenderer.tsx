@@ -1,6 +1,6 @@
 import React from 'react';
 import classnames from 'classnames';
-import { getCompEntity, FacToComponentProps, RegisterComponentConfig } from '@engine/visual-editor/spec';
+import { FacToComponentProps, RegisterComponentConfig } from '@engine/visual-editor/spec';
 // import ContainerWrapperCom from './ContainerWrapperCom';
 
 export interface ComponentTypeRendererProps extends FacToComponentProps {

@@ -10,3 +10,9 @@ export async function createPageServices(pageData) {
     data: pageData
   });
 }
+
+export async function delPageServices(pageID) {
+  return await $R_P.del({
+    url: `/page/v1/pages/${pageID}`,
+  });
+}

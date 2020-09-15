@@ -35,7 +35,7 @@ export const dragableItemWrapperFac: DragableItemWrapperFac = (
   } = propsForChild;
   const ctx = { idx, id, nestingInfo };
   const isSelected = getSelectedState(ctx);
-  const entityState = getEntityProps(ctx);
+  const entityState = getEntityProps(ctx) || {};
   const currEntity = getLayoutNode(ctx);
   // const isHovering = getHoveringEntity(id);
   const classes = classnames([
@@ -43,6 +43,11 @@ export const dragableItemWrapperFac: DragableItemWrapperFac = (
     'dragable-item',
     isSelected && 'selected',
   ]);
+
+  const updateCtx = {
+    nestingIdx: [...nestingInfo], entity: currEntity
+  };
+
   const isTempEntity = currEntity._state === TEMP_ENTITY_ID;
 
   return isTempEntity ? <TempEntityTip key={id} /> : (() => {
@@ -78,6 +83,7 @@ export const dragableItemWrapperFac: DragableItemWrapperFac = (
           </ComponentRenderer>
           <div className="action-area">
             {
+              // const nestingIfx = nestingInfo;
               PropEditor && (
                 /** 自定义编辑器的接口 */
                 <EditBtn
@@ -88,9 +94,8 @@ export const dragableItemWrapperFac: DragableItemWrapperFac = (
                           entityState
                         }}
                         onChange={(changeVal) => {
-                          UpdateEntityState({
-                            nestingIdx: nestingInfo, entity: currEntity
-                          }, changeVal);
+                          // updateEntityState(changeVal);
+                          UpdateEntityState(updateCtx, changeVal);
                         }}
                       />
                     );

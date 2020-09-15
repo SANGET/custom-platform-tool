@@ -94,7 +94,7 @@ yarn
 sh ./scripts/start-provider-app.sh
 ```
 
-### 4.3. 启动「消费工具」
+### 4.3. 启动「应用端」
 
 ```shell
 yarn start:consumer-app

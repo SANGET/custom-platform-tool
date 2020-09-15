@@ -4,12 +4,9 @@
  */
 
 import { RequestClass, resolveUrl } from "@mini-code/request";
-import produce from "immer";
 import { message as AntdMessage } from 'antd';
 
 import { setDefaultParams, clearDefaultParams, onNavigate } from "multiple-page-routing";
-import { ShowModal } from "@infra/ui";
-import { authStore } from "../auth/actions";
 
 const defaultApiUrl = 'http://192.168.14.140:6090';
 
@@ -155,6 +152,8 @@ function handleRes(resData) {
         useDefaultParams: false
       });
       break;
+    default:
+      AntdMessage.error(msg);
   }
 }
 
