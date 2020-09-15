@@ -3,8 +3,12 @@
   "version": "0.0.1",
   "author": "SANGET",
   "license": "MIT",
+  "devDependencies": {
+    "@types/uuid": "^8.3.0"
+  },
   "dependencies": {
     "@mini-code/request": "^1.0.0-rc1.1",
-    "axios": "^0.19.2"
+    "axios": "^0.19.2",
+    "uuid": "^8.3.0"
   }
 }
