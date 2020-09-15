@@ -14,7 +14,7 @@ export interface RegisterCompElementProps {
 }
 
 export interface RegisterEditor extends RegisterCompElementProps {
-  onChange: (nextValue: any) => void
+  onChange: (nextValue: EditorEntityState) => void
 }
 
 /**

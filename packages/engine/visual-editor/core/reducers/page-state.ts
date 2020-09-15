@@ -3,12 +3,13 @@ import {
   INIT_APP, InitAppAction,
   ADD_ENTITY, AddEntityAction
 } from "../actions";
-import { ComponentPanelConfig, PageMetadata } from "../../types";
+import { PageMetadata } from "../../types";
 
 const DefaultPageMeta: PageMetadata = {
   lastCompID: 0,
   dataSource: {},
-  pageInterface: {}
+  pageInterface: {},
+  linkpage: {},
 };
 
 /**
@@ -43,9 +44,11 @@ export interface AppContext {
   /** 属性项数据 */
   propItemDeclares?: any
   /** 组件类面板数据 */
-  compPanelData?: ComponentPanelConfig
+  compPanelData?: any
+  propPanelData?: any
   /** 页面可编辑属性数据 */
   pagePropsData?: any
+  options?: any
 }
 /**
  * 整个应用的上下文数据
@@ -60,14 +63,16 @@ export function appContextReducer(
     case INIT_APP:
       const {
         compClassDeclares, compPanelData,
+        propPanelData,
+        pagePropsData, propItemDeclares,
         options,
-        pagePropsData, propItemDeclares
       } = action;
       return {
         ready: true,
         options,
         compClassDeclares,
         compPanelData,
+        propPanelData,
         pagePropsData,
         propItemDeclares
       };

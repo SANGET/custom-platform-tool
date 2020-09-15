@@ -1,14 +1,12 @@
 import React, { useEffect } from "react";
 
+import produce from 'immer';
 import { Grid, Button } from '@infra/ui';
 
 import { Dispatcher } from "@engine/visual-editor/core/actions";
 import { VisualEditorState } from "@engine/visual-editor/core/reducers/reducer";
 /// //// mock 数据
-import {
-  getCompClassDeclareData, getCompPanelData, getPagePropsDeclareData, getPropItemDeclareData
-} from "@mock-data/page-designer/mock-data";
-import { ApiGetPageData, ApiSavePage } from "@mock-data/page-designer/mock-api/edit-page";
+import { ApiSavePage } from "@mock-data/page-designer/mock-api/edit-page";
 /// //// mock 数据
 import ToolBar from './components/Toolbar';
 import ComponentPanel from './components/ComponentPanel';
@@ -17,6 +15,8 @@ import PropertiesEditor from './components/PropertiesEditor';
 import { EditButton } from "./PageMetadataEditor/EditButton";
 import { wrapPageData } from "../utils";
 import Style from './style';
+import { updatePageService } from "../services/apis";
+import prepareAppData from "./utils/prepareAppData";
 
 // import { VisualEditorStore } from "@engine/visual-editor/core/store";
 
@@ -24,8 +24,8 @@ interface VisualEditorAppProps extends VisualEditorState {
   dispatcher: Dispatcher
 }
 
-const PageDesignerApp: React.FC<VisualEditorAppProps> = (props) => {
-  console.log(props);
+const PageDesignerApp: React.FC<VisualEditorAppProps & HY.SubApp> = (props) => {
+  const { pageID } = props.location;
   const {
     dispatcher,
     selectedInfo,
@@ -33,7 +33,6 @@ const PageDesignerApp: React.FC<VisualEditorAppProps> = (props) => {
     pageMetadata,
     appContext,
     flatLayoutItems,
-    appKey,
   } = props;
   // console.log(props);
   // 调整整体的数据结构，通过 redux 描述一份完整的{页面数据}
@@ -46,33 +45,13 @@ const PageDesignerApp: React.FC<VisualEditorAppProps> = (props) => {
 
   useEffect(() => {
     /** 初始化数据 */
-    Promise.all([
-      getCompClassDeclareData(),
-      getCompPanelData(),
-      getPagePropsDeclareData(),
-      getPropItemDeclareData()
-    ])
-      .then(([compClassDeclares, compPanelData, pagePropsData, propItemDeclares]) => {
-        ApiGetPageData(appKey)
-          .then((pageData) => {
-            InitApp({
-              compPanelData,
-              compClassDeclares,
-              propItemDeclares,
-              pagePropsData,
-              /** 回填数据的入口 */
-              pageData,
-              options: {
-                appKey
-              }
-            });
-          });
-
-        // SelectEntity(PageEntity);
-      })
-      .catch((err) => {
-        // TODO: 处理异常
+    prepareAppData(pageID).then((resData) => {
+      const initData = produce(resData, (draft) => {
+        return draft;
       });
+
+      InitApp(initData);
+    });
   }, []);
 
   return appContext.ready ? (
@@ -102,13 +81,14 @@ const PageDesignerApp: React.FC<VisualEditorAppProps> = (props) => {
             className="mr10"
             onClick={(e) => {
               const pageData = wrapPageData({
-                id: appKey,
-                pageID: appKey,
+                id: pageID,
+                pageID,
                 name: '测试页面',
                 pageMetadata,
                 layoutInfo,
               });
-              console.log(pageData);
+              // console.log(pageData);
+              updatePageService(pageData);
               ApiSavePage(pageData);
             }}
           >
@@ -150,6 +130,7 @@ const PageDesignerApp: React.FC<VisualEditorAppProps> = (props) => {
                 propItemDeclares={appContext.propItemDeclares}
                 propertiesConfig={appContext?.compClassDeclares[activeEntity?._classID]?.bindProps}
                 selectedEntity={activeEntity}
+                propPanelData={appContext.propPanelData}
                 defaultEntityState={activeEntity.propState}
                 initEntityState={(entityState) => InitEntityState(selectedInfo, entityState)}
                 updateEntityState={(entityState) => UpdateEntityState({

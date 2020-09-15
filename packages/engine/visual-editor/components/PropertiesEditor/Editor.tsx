@@ -12,12 +12,16 @@ import { PropItemRenderer as PropItemRendererDefault } from './PropItemRenderer'
 import { extractPropConfig } from './extractPropConfig';
 import { entityStateMergeRule } from './entityStateMergeRule';
 import { PropItemRendererProps } from './types';
+import { GroupPanel, GroupPanelData } from '../GroupPanel';
+
+export type PropPanelData = GroupPanelData
 
 export type UpdateEntityStateOfEditor = (entityState: EditorEntityState) => void
 export type InitEntityStateOfEditor = (entityState: EditorEntityState) => void
 
 export interface PropertiesEditorProps {
   /** 选中的 entity */
+  propPanelData: PropPanelData
   selectedEntity: EditorEntity
   propItemDeclares: any
   /** 属性项组合配置 */
@@ -241,6 +245,10 @@ PropertiesEditorProps, PropertiesEditorState
     return propertiesConfig && (!!propertiesConfig.propRefs || !!propertiesConfig.rawProp);
   }
 
+  propItemRenderer = () => {
+
+  }
+
   render() {
     const hasProps = this.hasPropertiesConfig();
 
@@ -250,6 +258,10 @@ PropertiesEditorProps, PropertiesEditorState
       <div
         className="entity-prop-editor"
       >
+        {/* <GroupPanel
+        panelData={{}}
+        itemRenderer={this.propItemRenderer}
+        /> */}
         {
           propFormDOM
         }

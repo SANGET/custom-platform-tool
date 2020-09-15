@@ -6,7 +6,7 @@ export interface EditBtnProps {
 }
 
 export const EditBtn: React.FC<EditBtnProps> = ({
-  editorRenderer
+  editorRenderer,
 }) => {
   return (
     <span
