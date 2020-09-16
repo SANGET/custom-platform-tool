@@ -1,76 +1,91 @@
-import React, { useEffect, useState, forwardRef, useImperativeHandle } from 'react';
-import { queryMenusListService } from '../service';
+import React, {
+  useEffect, useState, forwardRef, useImperativeHandle
+} from 'react';
 import { Tree, Input } from 'antd';
-const { Search } = Input;
-import './index.less'
+import { queryMenusListService } from '../service';
+import './index.less';
 import { MENUS_TYPE, SELECT_ALL } from '../constant';
+
+const { Search } = Input;
+
 interface IProps {
   onSelect?: (selectedKeys) => void;
-  ref?: any;
+  ref?: React.Ref<any>;
+}
+
+interface INode {
+  title: string | React.ReactElement;
+  name: string;
+  key: string;
+  id: string;
+  pid: string;
 }
 
 const MeunsTree: React.FC<IProps> = forwardRef((props: IProps, ref) => {
   const { onSelect } = props;
-  let searchValue: string = ""
-  const [menusData, setMenusData] = useState<any[]>([])
+  let searchValue = "";
+  const [menusData, setMenusData] = useState<any[]>([]);
   useImperativeHandle(ref, () => ({
     reload: () => getMenusListData()
   }));
   useEffect(() => {
-    getMenusListData()
-  }, [])
+    getMenusListData();
+  }, []);
   const constructTree = (data) => {
-    const idMap = {}
-    const jsonTree: any[] = []
-    data.forEach((node) => { node && (idMap[node["id"]] = node) })
-    data.forEach((node) => {
+    const idMap = {};
+    const jsonTree: INode[] = [];
+    data.forEach((node) => { node && (idMap[node.id] = node); });
+    data.forEach((node: INode) => {
       if (node) {
-        node.title = renderHighlightValue(node.name)
-        node.key = node.id
-        let parent = idMap[node["pid"]]
+        // eslint-disable-next-line no-param-reassign
+        node.title = renderHighlightValue(node.name);
+        // eslint-disable-next-line no-param-reassign
+        node.key = node.id;
+        const parent = idMap[node.pid];
         if (parent) {
-          !parent["children"] && (parent["children"] = [])
-          parent["children"].push(node)
+          !parent.children && (parent.children = []);
+          parent.children.push(node);
         } else {
-          jsonTree.push(node)
+          jsonTree.push(node);
         }
       }
-    })
-    return jsonTree
-  }
+    });
+    return jsonTree;
+  };
 
-  const renderHighlightValue = (name) => {
+  const renderHighlightValue = (name): React.ReactElement => {
     const index = name.indexOf(searchValue);
     const beforeStr = name.substr(0, index);
     const afterStr = name.substr(index + searchValue.length);
-    const title =
-      index > -1 ? (
+    const title = index > -1
+      ? (
         <span>
           {beforeStr}
           <span className="tree-search-value">{searchValue}</span>
           {afterStr}
         </span>
       ) : (
-          <span>{name}</span>
-        );
-    return title
-  }
+        <span>{name}</span>
+      );
+    return title;
+  };
   const getMenusListData = async () => {
     const res = await queryMenusListService({
       type: MENUS_TYPE.MODULE,
       name: searchValue
-    })
-    const tree = constructTree(res?.result || [])
-    setMenusData(tree)
-
-  }
-  const handleSelect = (selectedKeys, { selected, selectedNodes, node, event }) => {
-    onSelect && onSelect(selected ? selectedKeys[0] : SELECT_ALL)
-  }
+    });
+    const tree = constructTree(res?.result || []);
+    setMenusData(tree);
+  };
+  const handleSelect = (selectedKeys, {
+    selected
+  }) => {
+    onSelect && onSelect(selected ? selectedKeys[0] : SELECT_ALL);
+  };
   const handleSearch = (value) => {
-    searchValue = value
-    getMenusListData()
-  }
+    searchValue = value;
+    getMenusListData();
+  };
   return (
     <div>
       <Search
@@ -83,5 +98,5 @@ const MeunsTree: React.FC<IProps> = forwardRef((props: IProps, ref) => {
       />
     </div>
   );
-})
+});
 export default React.memo(MeunsTree);

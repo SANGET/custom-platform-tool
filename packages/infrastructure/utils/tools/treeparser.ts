@@ -1,9 +1,12 @@
+interface IType {
+  [key: string]: string | number
+}
 interface IConfig {
-	id?: string
-	pid?: string
+  id?: string
+  pid?: string
   children?: string
 
-  mapping?: object
+  mapping?: IType
 }
 
 /**
@@ -12,31 +15,33 @@ interface IConfig {
  * @param nodes 节点对象
  * @param config 配置对象
  */
-export function construct(nodes: object[], config?: IConfig) {
-	const id = config && config.id || 'id'
-	const pid = config && config.pid || 'pid'
-  const children = config && config.children || 'children'
-  const mapping = config && config.mapping || {}
+export function construct(nodes: any[], config?: IConfig) {
+  const id = config && config.id || 'id';
+  const pid = config && config.pid || 'pid';
+  const children = config && config.children || 'children';
+  const mapping = config && config.mapping || {};
 
-	const idMap = {}
-	const jsonTree: IConfig[] = []
+  const idMap = {};
+  const jsonTree: IConfig[] = [];
 
-  nodes.forEach((node) => { node && (idMap[node[id]] = node) })
-	nodes.forEach((node) => {
-		if (node) {
-      Object.keys(mapping).map(item => {
-        node[item] = node[mapping[item]]
-      })
-      let parent = idMap[node[pid]]
-			if (parent) {
-				!parent[children] && (parent[children] = [])
-				parent[children].push(node)
-			} else {
-				jsonTree.push(node)
-			}
-		}
-	})
-	return jsonTree
+  nodes.forEach((node) => { node && (idMap[node[id]] = node); });
+  nodes.forEach((node) => {
+    if (node) {
+      Object.keys(mapping).map((item) => {
+        // eslint-disable-next-line no-param-reassign
+        node[item] = node[mapping[item]];
+        return node;
+      });
+      const parent = idMap[node[pid]];
+      if (parent) {
+        !parent[children] && (parent[children] = []);
+        parent[children].push(node);
+      } else {
+        jsonTree.push(node);
+      }
+    }
+  });
+  return jsonTree;
 }
 
 /**
@@ -45,41 +50,41 @@ export function construct(nodes: object[], config?: IConfig) {
  * @param forest 单个或者多个树型对象
  * @param config 配置
  */
-export function destruct(forest: object[] | object, config?: IConfig) {
-	const id = config && config.id || 'id'
-	const pid = config && config.pid || 'pid'
-	const children = config && config.children || 'children'
+export function destruct(forest: {[key: string]: string }[] | unknown, config?: IConfig) {
+  const id = config && config.id || 'id';
+  const pid = config && config.pid || 'pid';
+  const children = config && config.children || 'children';
 
-	function flatTree(tree: object) {
-		const queue = [tree]
-		const result = []
-		while (queue.length) {
-			let currentNode: Object = queue.shift() || {}
-			if (currentNode.hasOwnProperty(id)) {
-				if (!currentNode.hasOwnProperty(pid)) {
-					currentNode = { ...currentNode, [pid]: null }
-				}
-				if (currentNode[children]) {
-					currentNode[children].forEach((v) => { v && queue.push({ ...v, [pid]: currentNode[id] }) })
+  function flatTree(tree) {
+    const queue = [tree];
+    const result: {[key: string]: string }[] = [];
+    while (queue.length) {
+      let currentNode = queue.shift() || {};
+      // eslint-disable-next-line no-prototype-builtins
+      if (currentNode.hasOwnProperty(id)) {
+        // eslint-disable-next-line no-prototype-builtins
+        if (!currentNode.hasOwnProperty(pid)) {
+          currentNode = { ...currentNode, [pid]: null };
         }
-        // @ts-ignore
-				result.push(currentNode)
-				delete currentNode[children]
-			} else {
-				throw new Error('you need to specify the [id] of the json tree')
-			}
-		}
-		return result
-	}
+        if (currentNode[children]) {
+          currentNode[children].forEach((v) => { v && queue.push({ ...v, [pid]: currentNode[id] }); });
+        }
+        result.push(currentNode);
+        delete currentNode[children];
+      } else {
+        throw new Error('you need to specify the [id] of the json tree');
+      }
+    }
+    return result;
+  }
 
-	if (Array.isArray(forest)) {
-		return forest.map((v) => flatTree(v)).reduce((pre, cur) => pre.concat(cur))
-	} else {
-		return flatTree(forest)
-	}
+  if (Array.isArray(forest)) {
+    return forest.map((v) => flatTree(v)).reduce((pre, cur) => pre.concat(cur));
+  }
+  return flatTree(forest);
 }
 
 export default {
-	construct,
-	destruct,
-}
+  construct,
+  destruct,
+};
