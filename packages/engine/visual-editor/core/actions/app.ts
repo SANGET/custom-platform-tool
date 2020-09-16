@@ -13,21 +13,23 @@ interface AppActionsContext {
   propItemDeclares
   pagePropsData
   pageData: BasePageData
-  options?: any
+  payload?: any
+  name: string
+  id: string
 }
 
 export const INIT_APP = 'app/init';
-export interface InitAppAction extends AppActionsContext{
+export interface InitAppAction extends AppActionsContext {
   type: typeof INIT_APP
 }
 
 /**
  * 初始化应用数据
  */
-export const InitApp = (payload): InitAppAction => {
+export const InitApp = (actionPayload: AppActionsContext): InitAppAction => {
   return {
     type: INIT_APP,
-    ...payload
+    ...actionPayload
   };
 };
 
@@ -38,10 +40,10 @@ export const UPDATE_APP = 'app/update';
 /**
  * 更新 app context 数据
  */
-export const UpdateAppContext = (payload): UpdateAppAction => {
+export const UpdateAppContext = (actionPayload: AppActionsContext): UpdateAppAction => {
   return {
     type: UPDATE_APP,
-    ...payload,
+    ...actionPayload,
   };
 };
 

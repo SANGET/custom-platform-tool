@@ -21,7 +21,7 @@ export interface ComponentPanelProps {
   itemWrapper?: (item: EditorComponentClass) => React.ReactChild
   /** 控制 DragItem 的 drag 配置的 interface，详情参考 react-dnd */
   getDragItemConfig?: (item: EditorComponentClass) => DragItemConfig
-  itemRenderer: (a, b) => JSX.Element
+  itemRenderer?: (a, b) => JSX.Element
 }
 
 const defaultItemRendererFac = (compClassDeclares, getDragItemConfig) => (componentClassID) => {
@@ -53,7 +53,7 @@ const ComponentPanel: React.FC<ComponentPanelProps> = ({
    * 处理 Tabs 更改事件
    */
   const handleChange = () => {
-    console.log('handleChange');
+    // console.log('handleChange');
   };
 
   return (

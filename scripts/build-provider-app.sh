@@ -1,1 +1,1 @@
-REACT_APP_API_URL=http://192.168.14.140:6090 yarn build:provider-app
+REACT_APP_API_URL=http://192.168.14.160:6090 yarn build:provider-app

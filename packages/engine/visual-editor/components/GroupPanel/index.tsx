@@ -15,9 +15,13 @@ export interface PanelItemsGroup {
 }
 
 export interface PanelTabGroupItem {
+  /** 组的标题 */
   title: string
+  /** 组的类型 */
   type: string
   itemsGroups: PanelItemsGroup[]
+  /** 组渲染器，如果存在，则直接返回该渲染 */
+  renderer?: (item, idx) => JSX.Element
 }
 
 export type GroupPanelData = PanelTabGroupItem[]
@@ -53,12 +57,13 @@ export const GroupPanel: React.FC<GroupPanelProps> = ({
             const {
               title: tgTitle,
               type: groupType,
-              itemsGroups
+              itemsGroups,
+              renderer
             } = tg;
             return (
               <Tab label={tgTitle} key={idx}>
                 {
-                  itemsGroups && itemsGroups.map((ig, _idx) => {
+                  typeof renderer === 'function' ? renderer(tg, idx) : itemsGroups && itemsGroups.map((ig, _idx) => {
                     const {
                       title: igTitle,
                       items,
