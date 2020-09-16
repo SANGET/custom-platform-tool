@@ -2,11 +2,11 @@ import React from 'react';
 import { Form, Input, message } from 'antd';
 import { MENUS_TYPE, RE } from '../constant';
 
-import { ModuleTreeItem, FromFooterBtn } from "./FormItem"
+import { ModuleTreeItem, FromFooterBtn } from "./FormItem";
 import { createMenuService } from '../service';
 
-import CreateModal from './CreateModal';
-import './index.less'
+import './index.less';
+
 interface IProps {
   onCancel: () => void;
   onOk: () => void;
@@ -20,24 +20,24 @@ const CreateMenu: React.FC<IProps> = (props: IProps) => {
   const [form] = Form.useForm();
 
   const handleFinish = async (values) => {
-    const { name, moduleId } = values
+    const { name, moduleId } = values;
     const params = {
       name,
       pid: moduleId,
       type: MENUS_TYPE.MODULE
-    }
-    const res = await createMenuService(params)
+    };
+    const res = await createMenuService(params);
     if (res.code === "00000") {
-      message.success("新增成功")
-      onOk && onOk()
+      message.success("新增成功");
+      onOk && onOk();
     } else {
-      message.error(res.msg)
+      message.error(res.msg);
     }
-  }
+  };
 
   const handleClose = () => {
-    onCancel && onCancel()
-  }
+    onCancel && onCancel();
+  };
   return (
 
     <Form {...layout} form={form} name="control-hooks" onFinish={handleFinish}>

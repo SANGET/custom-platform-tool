@@ -1,10 +1,11 @@
-import React, { ReactElement } from 'react'
+import React, { ReactElement } from 'react';
 import { Button, Popconfirm } from 'antd';
 import { IOperationalMenuItem } from '../interface';
 import { OPERATIONALMENU, SPECIES } from '../constant';
-import './index.less'
+import './index.less';
+
 interface IProps {
-  data: any;
+  data: { [key: string]: string };
   onClick?: (item: IOperationalMenuItem) => void;
 }
 /**
@@ -24,22 +25,22 @@ const Operational: React.FC<IProps> = (props: IProps): ReactElement => {
               title={'你确定要删除这条记录吗?'}
               onConfirm={() => onClick && onClick(Object.assign(item, data))}
               okText="确定"
-              cancelText="取消">
+              cancelText="取消"
+            >
               <Button type="link" >
                 {item.title}
               </Button>
             </Popconfirm>) : (<Button type="link" disabled>
               {item.title}
-            </Button>)
-          } else {
-            return (
-              <Button key={index} type="link" onClick={() => onClick && onClick(Object.assign(item, data))}>
-                {item.title}
-              </Button>)
+            </Button>);
           }
+          return (
+            <Button key={index} type="link" onClick={() => onClick && onClick(Object.assign(item, data))}>
+              {item.title}
+            </Button>);
         })
       }
     </div>
-  )
-}
+  );
+};
 export default React.memo(Operational);
