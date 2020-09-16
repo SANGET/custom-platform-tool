@@ -18,6 +18,7 @@ export const wrapPageData = ({
   id,
   name = '测试',
   pageID,
+  type = 2,
   pageMetadata,
   layoutInfo,
 }): BasePageData => {

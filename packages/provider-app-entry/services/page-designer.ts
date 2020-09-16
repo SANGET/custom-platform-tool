@@ -1,17 +1,24 @@
-import { BasePageData } from "@engine/visual-editor/types";
+export interface PageInfo {
+  id: string
+  name: string
+  type: number
+}
 
 /**
  * 更新页面
  */
-export async function updatePageService(pageContent: BasePageData, sourcePageData?) {
-  const { id } = pageContent;
+export async function updatePageService(pageInfo: PageInfo, extendData?) {
+  if (!pageInfo) {
+    return console.error('请传入 pageInfo');
+  }
+  const { id, name, type = 2 } = pageInfo;
   return await $R_P.put({
     url: `/page/v1/pages/${id}`,
-    data: Object.assign({}, sourcePageData, {
-      name: pageContent.name,
-      type: 2,
+    data: Object.assign({}, extendData, {
+      name,
+      type,
       /** TODO: 字段需要更改 */
-      iubDsl: JSON.stringify(pageContent),
+      iubDsl: JSON.stringify(pageInfo),
     })
   });
 }
@@ -31,4 +38,12 @@ export async function getPageDetailService(pageID: string) {
   }
   result.pageContent = pageContent;
   return result;
+}
+
+export async function getDataSourceDetail(tableID) {
+  const resData = await $R_P.get({
+    url: `/data/v1/tables/${tableID}`,
+  });
+
+  return resData.result;
 }

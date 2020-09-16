@@ -12,6 +12,7 @@ export interface PageMetadata {
   pageInterface
   /** 联动配置 */
   linkpage
+  name: string
 }
 
 /**
