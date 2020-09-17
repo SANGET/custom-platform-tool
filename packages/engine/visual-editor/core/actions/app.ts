@@ -7,15 +7,15 @@
 import { BasePageData } from "../../types";
 
 interface AppActionsContext {
-  compPanelData
-  propPanelData
-  compClassDeclares
-  propItemDeclares
-  pagePropsData
-  pageData: BasePageData
+  compPanelData?
+  propPanelData?
+  compClassData?
+  propItemData?
+  pagePropsData?
+  pageContent?: BasePageData
   payload?: any
-  name: string
-  id: string
+  name?: string
+  id?: string
 }
 
 export const INIT_APP = 'app/init';

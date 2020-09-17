@@ -16,7 +16,7 @@ export type ComponentPanelConfig = GroupPanelData
 export interface ComponentPanelProps {
   /** 组件 panel 的配置 */
   componentPanelConfig: ComponentPanelConfig
-  compClassDeclares: any
+  compClassData: any
   /** 可拖拽 item 的包装器 interface */
   itemWrapper?: (item: EditorComponentClass) => React.ReactChild
   /** 控制 DragItem 的 drag 配置的 interface，详情参考 react-dnd */
@@ -24,8 +24,8 @@ export interface ComponentPanelProps {
   itemRenderer?: (a, b) => JSX.Element
 }
 
-const defaultItemRendererFac = (compClassDeclares, getDragItemConfig) => (componentClassID) => {
-  const componentClass = compClassDeclares[componentClassID];
+const defaultItemRendererFac = (compClassData, getDragItemConfig) => (componentClassID) => {
+  const componentClass = compClassData[componentClassID];
   const {
     id, label
   } = componentClass;
@@ -45,7 +45,7 @@ const defaultItemRendererFac = (compClassDeclares, getDragItemConfig) => (compon
 
 const ComponentPanel: React.FC<ComponentPanelProps> = ({
   componentPanelConfig,
-  compClassDeclares,
+  compClassData,
   itemRenderer,
   getDragItemConfig
 }) => {
@@ -62,7 +62,7 @@ const ComponentPanel: React.FC<ComponentPanelProps> = ({
         panelData={componentPanelConfig}
         className="component-panel-container"
         handleChange={handleChange}
-        itemRenderer={itemRenderer ?? defaultItemRendererFac(compClassDeclares, getDragItemConfig)}
+        itemRenderer={itemRenderer ?? defaultItemRendererFac(compClassData, getDragItemConfig)}
       />
     </div>
   );

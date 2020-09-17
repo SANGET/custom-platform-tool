@@ -43,8 +43,8 @@ export const layoutInfoReducer = (
 ): LayoutInfoActionReducerState => {
   switch (action.type) {
     case INIT_APP:
-      const { pageData } = action;
-      return produce(pageData, (draft) => (draft ? draft.content : state));
+      const { pageContent } = action;
+      return produce(pageContent, (draft) => (draft ? draft.content : state));
     case ADD_ENTITY:
       const { entity: addEntity, idx } = action;
       const addNextState = update(state, {
@@ -116,9 +116,9 @@ export function flatLayoutItemsReducer(
 ): FlatLayoutItems {
   switch (action.type) {
     case INIT_APP:
-      const { pageData } = action;
-      if (pageData?.content) {
-        const flatContent = flatArrayToNode(pageData.content);
+      const { pageContent } = action;
+      if (pageContent?.content) {
+        const flatContent = flatArrayToNode(pageContent.content);
         return flatContent;
       }
       return state;
