@@ -4,7 +4,7 @@ import { Table as AntTable } from 'antd';
 import { RegisterEditor } from '@engine/visual-editor/spec';
 import { columns as AllColumns, data } from './mock-data';
 
-export default class TableEditor extends React.Component<RegisterEditor> {
+export class TableEditor extends React.Component<RegisterEditor> {
   state = {
     usingColumn: []
   }

@@ -1,8 +1,6 @@
 import { registerCompClass, registerPropItem, registerEditor } from '@engine/visual-editor/spec/registerComp';
-import Input from './CompClass/Input';
-import { Table } from './CompClass/Table';
-import Selector from './PropItem/Selector';
-import TableEditor from './CompClass/Table/TableEditor';
+import { Input, Table, TableEditor } from './CompClass';
+import { Selector, FieldSelector } from './PropItem';
 
 /**
  * 在应用层面上的组件注册
@@ -29,6 +27,10 @@ export default function registerComponents() {
     {
       name: 'Selector',
       comp: Selector
+    },
+    {
+      name: 'FieldSelector',
+      comp: FieldSelector
     },
   ]);
 }

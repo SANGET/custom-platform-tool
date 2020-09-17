@@ -7,9 +7,9 @@ import DatasourcePanel from './DatasourcePanel';
 export type PageDesignerComponentPanelProps = ComponentPanelProps
 
 const itemRendererFac = (
-  compClassDeclares, getDragItemConfig
+  compClassData, getDragItemConfig
 ) => (componentClassID, groupType) => {
-  const componentClass = compClassDeclares[componentClassID];
+  const componentClass = compClassData[componentClassID];
   const {
     id, label
   } = componentClass;
@@ -37,13 +37,13 @@ const itemRendererFac = (
 };
 
 const ComponentPanelCustom: React.FC<PageDesignerComponentPanelProps> = ({
-  compClassDeclares,
+  compClassData,
   getDragItemConfig,
   ...other
 }) => {
   const itemRenderer = useMemo(
-    () => itemRendererFac(compClassDeclares, getDragItemConfig),
-    [compClassDeclares, getDragItemConfig],
+    () => itemRendererFac(compClassData, getDragItemConfig),
+    [compClassData, getDragItemConfig],
   );
   return (
     <ComponentPanel
