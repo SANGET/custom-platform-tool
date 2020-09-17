@@ -35,7 +35,7 @@
     "less-loader": "^6.2.0",
     "long": "^4.0.0",
     "mini-css-extract-plugin": "0.5.0",
-    "node-sass": "^4.14.1",
+    "sass": "^1.26.10",
     "immutability-helper": "^3.1.1",
     "optimize-css-assets-webpack-plugin": "5.0.1",
     "pnp-webpack-plugin": "1.2.1",
