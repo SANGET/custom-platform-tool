@@ -37,26 +37,26 @@ export default (pageID: string, onUpdatedDatasource) => {
       getPropPanelData(),
     ])
       .then(([
-        compClassDeclares,
+        compClassData,
         compPanelData,
         pagePropsData,
-        propItemDeclares,
+        propItemData,
         propPanelData,
       ]) => {
         getPageDetailService(pageID)
           .then((pageDataRes) => {
             const { dataSources } = pageDataRes;
-            const { pageContent: pageData } = pageDataRes;
+            const { pageContent } = pageDataRes;
             extraDatasources(dataSources)
               .then((datasources) => {
                 const initData = {
                   compPanelData: setCompPanelData(compPanelData, datasources, onUpdatedDatasource),
                   propPanelData,
-                  compClassDeclares,
-                  propItemDeclares,
+                  compClassData,
+                  propItemData,
                   pagePropsData,
                   /** 回填数据的入口 */
-                  pageData,
+                  pageContent,
                   options: {
                     pageDataRes,
                     // 填入 datasources

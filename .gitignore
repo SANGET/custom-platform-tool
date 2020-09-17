@@ -27,7 +27,7 @@ public/html/index.ejs
 public/js/version.txt
 package-lock.json
 
-# yarn.lock
+yarn.lock
 public/posts/
 version.json
 

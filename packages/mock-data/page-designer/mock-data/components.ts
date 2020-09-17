@@ -18,6 +18,7 @@ export const componentClassCollection: ComponentClassCollection = {
         { propID: 'prop_style_title_color' },
         { propID: 'prop_title_value', override: { defaultValue: '文本框' } },
         { propID: 'prop_real_value' },
+        { propID: 'prop_field' },
       ]
     }
   },

@@ -6,6 +6,7 @@ export type PageDesignerPropItemTypes = 'title'
 | 'value'
 | 'labelColor'
 | 'columnCount'
+| 'field'
 
 export interface ColumnItem {
   id: string

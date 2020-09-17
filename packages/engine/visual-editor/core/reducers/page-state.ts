@@ -24,9 +24,9 @@ export function pageMetadataReducer(
   switch (action.type) {
     case INIT_APP:
       const {
-        pageData
+        pageContent
       } = action;
-      return produce(pageData, (draft) => (draft ? draft.meta : state));
+      return produce(pageContent, (draft) => (draft ? draft.meta : state));
     case ADD_ENTITY:
       return produce(state, (draft) => {
         // eslint-disable-next-line no-param-reassign
@@ -43,9 +43,9 @@ export interface AppContext {
   ready: boolean
   /** 存放所有组件的数据 */
   /** 组件类数据 */
-  compClassDeclares?: any
+  compClassData?: any
   /** 属性项数据 */
-  propItemDeclares?: any
+  propItemData?: any
   /** 组件类面板数据 */
   compPanelData?: any
   propPanelData?: any
@@ -66,20 +66,20 @@ export function appContextReducer(
   switch (action.type) {
     case INIT_APP:
       const {
-        compClassDeclares, compPanelData,
+        compClassData, compPanelData,
         propPanelData,
-        pagePropsData, propItemDeclares,
+        pagePropsData, propItemData,
         payload,
         name, id
       } = action;
       return {
         ready: true,
         payload,
-        compClassDeclares,
+        compClassData,
         compPanelData,
         propPanelData,
         pagePropsData,
-        propItemDeclares
+        propItemData
       };
     case UPDATE_APP:
       const { type, ...otherState } = action;

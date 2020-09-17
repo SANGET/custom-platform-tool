@@ -7,7 +7,7 @@ export interface PageInfo {
 /**
  * 更新页面
  */
-export async function updatePageService(pageInfo: PageInfo, extendData?) {
+export async function updatePageService(pageInfo: PageInfo, pageContent, extendData?) {
   if (!pageInfo) {
     return console.error('请传入 pageInfo');
   }
@@ -18,7 +18,7 @@ export async function updatePageService(pageInfo: PageInfo, extendData?) {
       name,
       type,
       /** TODO: 字段需要更改 */
-      iubDsl: JSON.stringify(pageInfo),
+      iubDsl: JSON.stringify(pageContent),
     })
   });
 }

@@ -26,28 +26,6 @@ export const compPanelData: GroupPanelData = [
       // },
     ]
   },
-  // {
-  //   title: '数据源',
-  //   type: 'dataSource',
-  //   itemsGroups: [
-  //     {
-  //       title: '',
-  //       items: [
-  //       ]
-  //     },
-  //   ]
-  // },
-  // {
-  //   title: '控件模版',
-  //   type: 'compTemplate',
-  //   itemsGroups: [
-  //     {
-  //       title: '敬请期待',
-  //       items: [
-  //       ]
-  //     },
-  //   ]
-  // },
 ];
 
 export const getCompPanelData = ApiMock(compPanelData);

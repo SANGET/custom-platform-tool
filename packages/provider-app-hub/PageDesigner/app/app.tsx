@@ -5,15 +5,11 @@ import { Grid, Button } from '@infra/ui';
 
 import { Dispatcher } from "@engine/visual-editor/core/actions";
 import { VisualEditorState } from "@engine/visual-editor/core/reducers/reducer";
-/// //// mock 数据
-import { ApiSavePage } from "@mock-data/page-designer/mock-api/edit-page";
-/// //// mock 数据
 import { getPageDetailService, updatePageService } from "@provider-app/services";
 import ToolBar from './components/Toolbar';
 import ComponentPanel from './components/ComponentPanel';
 import CanvasStage from './components/CanvasStage';
 import PropertiesEditor from './components/PropertiesEditor';
-import { EditButton } from "./PageMetadataEditor/EditButton";
 import { wrapPageData } from "../utils";
 import Style from './style';
 import prepareAppData, { setCompPanelData } from "./utils/prepareAppData";
@@ -26,19 +22,15 @@ interface VisualEditorAppProps extends VisualEditorState {
   dispatcher: Dispatcher
 }
 
-class PageDesignerApp extends React.Component<VisualEditorAppProps & HY.SubApp> {
+class PageDesignerApp extends React.Component<VisualEditorAppProps & HY.SubAppSpec> {
   onUpdatedDatasource = (addingData) => {
     const { appContext, dispatcher, location } = this.props;
     const { pageID, title } = location;
     const { UpdateAppContext } = dispatcher;
     const { compPanelData, payload } = appContext;
-    const pageInfo = {
-      name: title,
-      id: pageID,
-      type: 2
-    };
+    const pageContent = this.getPageContent();
 
-    updatePageService(pageInfo, {
+    updatePageService(this.getPageInfo(), pageContent, {
       dataSources: addingData.map((tableData) => {
         return {
           datasourceId: tableData.id,
@@ -61,6 +53,37 @@ class PageDesignerApp extends React.Component<VisualEditorAppProps & HY.SubApp> 
     });
     // compPanelData.splice(1, 1);
     // console.log('asd');
+  }
+
+  getPageInfo = () => {
+    const {
+      location,
+    } = this.props;
+    const { pageID, title } = location;
+    return {
+      id: pageID,
+      name: title,
+      type: 2
+    };
+  }
+
+  getPageContent = () => {
+    const {
+      layoutInfo,
+      pageMetadata,
+      location,
+    } = this.props;
+    // console.log(location);
+    const { pageID } = location;
+    const pageContent = wrapPageData({
+      id: pageID,
+      pageID,
+      name: '测试页面',
+      pageMetadata,
+      layoutInfo,
+    });
+
+    return pageContent;
   }
 
   componentDidMount() {
@@ -89,7 +112,6 @@ class PageDesignerApp extends React.Component<VisualEditorAppProps & HY.SubApp> 
       location,
     } = this.props;
     // console.log(location);
-    const { pageID } = location;
     // console.log(props);
     // 调整整体的数据结构，通过 redux 描述一份完整的{页面数据}
     const {
@@ -102,44 +124,12 @@ class PageDesignerApp extends React.Component<VisualEditorAppProps & HY.SubApp> 
     return appContext.ready ? (
       <div className="visual-app">
         <header className="app-header">
-          <ToolBar onReleasePage={(e) => {}} />
-          <div className="p10">
-            <Button
-              hola
-              className="mr10"
-              onClick={(e) => {
-                localStorage.clear();
-                location.reload();
-              }}
-            >
-              调试用 - 清除页面数据
-            </Button>
-            <EditButton
-              hola
-              className="mr10"
-              onOK={(e) => {}}
-              onCancel={(e) => {}}
-            >
-              编辑页面属性
-            </EditButton>
-            <Button
-              className="mr10"
-              onClick={(e) => {
-                const pageData = wrapPageData({
-                  id: pageID,
-                  pageID,
-                  name: '测试页面',
-                  pageMetadata,
-                  layoutInfo,
-                });
-                // console.log(pageData);
-                updatePageService(pageData);
-                ApiSavePage(pageData);
-              }}
-            >
-              保存页面
-            </Button>
-          </div>
+          <ToolBar onReleasePage={() => {
+            const pageContent = this.getPageContent();
+            updatePageService(this.getPageInfo(), pageContent);
+            // ApiSavePage(pageContent);
+          }}
+          />
         </header>
         <div className="app-content">
           {/* <DndProvider backend={HTML5Backend}> */}
@@ -148,7 +138,7 @@ class PageDesignerApp extends React.Component<VisualEditorAppProps & HY.SubApp> 
           >
             <ComponentPanel
               componentPanelConfig={appContext.compPanelData}
-              compClassDeclares={appContext.compClassDeclares}
+              compClassData={appContext.compClassData}
             />
           </div>
           <div
@@ -172,8 +162,8 @@ class PageDesignerApp extends React.Component<VisualEditorAppProps & HY.SubApp> 
               activeEntity && (
                 <PropertiesEditor
                   key={activeEntityID}
-                  propItemDeclares={appContext.propItemDeclares}
-                  propertiesConfig={appContext?.compClassDeclares[activeEntity?._classID]?.bindProps}
+                  propItemData={appContext.propItemData}
+                  propertiesConfig={appContext?.compClassData[activeEntity?._classID]?.bindProps}
                   selectedEntity={activeEntity}
                   propPanelData={appContext.propPanelData}
                   defaultEntityState={activeEntity.propState}

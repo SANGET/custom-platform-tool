@@ -63,6 +63,19 @@ export const PropItemRenderer: React.FC<PropItemRendererProps> = ({
         />
       );
       break;
+    case 'FieldSelector':
+      const FieldSelector = comp;
+      Com = (
+        <FieldSelector
+          {...propsForComponent}
+          value={propItemValue || ''}
+          onChange={(value) => {
+            // console.log(e.target.value);
+            onChange(value, propItemConfig);
+          }}
+        />
+      );
+      break;
     default:
       break;
   }

@@ -1,3 +1,3 @@
 import { Input } from '@infra/ui';
 
-export default Input;
+export { Input };
