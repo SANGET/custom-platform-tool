@@ -1,8 +1,7 @@
 import React from 'react';
 import { Button } from '@infra/ui';
 
-import Toolbar from '@engine/visual-editor/components/Toolbar';
-import { EditButton } from "../PageMetadataEditor/EditButton";
+import { EditButton } from "./PageMetadataEditor/EditButton";
 
 interface ToolbarCustomProps {
   onReleasePage?: () => void
@@ -10,7 +9,6 @@ interface ToolbarCustomProps {
 
 const ToolbarCustom: React.FC<ToolbarCustomProps> = ({
   onReleasePage,
-  ...otherProps
 }) => {
   return (
     <div>
@@ -42,7 +40,7 @@ const ToolbarCustom: React.FC<ToolbarCustomProps> = ({
         <Button
           className="mr10"
           onClick={(e) => {
-            onReleasePage();
+            onReleasePage && onReleasePage();
           }}
         >
           保存
@@ -53,7 +51,6 @@ const ToolbarCustom: React.FC<ToolbarCustomProps> = ({
           返回
         </Button>
       </div>
-      <Toolbar {...otherProps} />
     </div>
   );
 };

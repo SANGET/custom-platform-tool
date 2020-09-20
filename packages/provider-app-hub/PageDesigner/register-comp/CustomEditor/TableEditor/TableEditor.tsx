@@ -38,22 +38,24 @@ export class TableEditor extends React.Component<RegisterEditor> {
   renderSetColumn = () => {
     const { usingColumn } = this.state;
     return (
-      <div>{
-        AllColumns.map((col, idx) => {
+      <div>
+        {
+          AllColumns.map((col, idx) => {
           // console.log(col);
-          const { title, key } = col;
-          const isActive = usingColumn.find((item) => item.key === key);
-          return (
-            <span
-              className={`p10 ${isActive ? 't_blue' : ''}`}
-              key={key}
-              onClick={(e) => this.useCol(col, key)}
-            >
-              {title}
-            </span>
-          );
-        })
-      }</div>
+            const { title, key } = col;
+            const isActive = usingColumn.find((item) => item.key === key);
+            return (
+              <span
+                className={`p10 ${isActive ? 't_blue' : ''}`}
+                key={key}
+                onClick={(e) => this.useCol(col, key)}
+              >
+                {title}
+              </span>
+            );
+          })
+        }
+      </div>
     );
   }
 

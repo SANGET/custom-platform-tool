@@ -1,7 +1,7 @@
-import { PanelItemsGroup } from "@engine/visual-editor/components/GroupPanel";
+import { GroupPanelData } from "@engine/visual-editor/components/GroupPanel";
 import { ApiMock } from "./api-mock";
 
-export const compClassForPanelData: PanelItemsGroup = {
+export const compClassForPanelData: GroupPanelData = {
   title: '控件类型',
   type: 'dragableItems',
   itemsGroups: [

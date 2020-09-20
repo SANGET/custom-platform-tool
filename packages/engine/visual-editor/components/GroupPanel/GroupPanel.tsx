@@ -15,7 +15,7 @@ export interface PanelItemsGroup {
   items: GroupPanelItem[]
 }
 
-export interface PanelItemsGroup {
+export interface GroupPanelData {
   /** 组的标题 */
   title: string
   /** 组的类型 */
@@ -25,7 +25,6 @@ export interface PanelItemsGroup {
   renderer?: (item, idx) => JSX.Element
 }
 
-export type GroupPanelData = PanelItemsGroup
 // export interface GroupPanelData {
 //   tabGroup: PanelItemsGroup[]
 // }

@@ -1,24 +1,22 @@
 /* eslint-disable no-param-reassign */
-import React, { useEffect } from "react";
+import React from "react";
 
 import produce from 'immer';
-import { Grid, Button } from '@infra/ui';
 
 import { Dispatcher } from "@engine/visual-editor/core/actions";
 import { VisualEditorState } from "@engine/visual-editor/core/reducers/reducer";
-import { getPageDetailService, updatePageService } from "@provider-app/services";
+import { updatePageService } from "@provider-app/services";
 import { ApiSavePage } from "@mock-data/page-designer/mock-api/edit-page";
 import ToolBar from './components/Toolbar';
 import ComponentPanel from './components/ComponentPanel';
 import CanvasStage from './components/CanvasStage';
 import PropertiesEditor from './components/PropertiesEditor';
-import { wrapPageData } from "../utils";
-import Style from './style';
-import { getDataSourcePanelConfig } from "./components/DataSource";
+import { wrapPageData } from "./utils";
 import {
   getFEDynamicData, getPageContentWithDatasource
-} from "../services";
+} from "./services";
 
+import './style';
 // import { VisualEditorStore } from "@engine/visual-editor/core/store";
 
 interface VisualEditorAppProps extends VisualEditorState {
@@ -43,7 +41,6 @@ class PageDesignerApp extends React.Component<VisualEditorAppProps & HY.SubAppSp
     const { appContext, dispatcher, location } = this.props;
     const { pageID, title } = location;
     const { UpdateAppContext } = dispatcher;
-    const { compClassForPanelData, payload } = appContext;
     const pageContent = this.getPageContent();
 
     await updatePageService(this.getPageInfo(), pageContent, {
@@ -61,13 +58,7 @@ class PageDesignerApp extends React.Component<VisualEditorAppProps & HY.SubAppSp
       options: {
         datasources
       }
-      // compClassForPanelData: [compClassForPanelData[0], getDataSourcePanelConfig({
-      //   datasources,
-      //   onUpdatedDatasource: this.onUpdatedDatasource
-      // })]
     });
-    // compClassForPanelData.splice(1, 1);
-    // console.log('asd');
   }
 
   getPageInfo = () => {
@@ -167,7 +158,6 @@ class PageDesignerApp extends React.Component<VisualEditorAppProps & HY.SubAppSp
           <ToolBar onReleasePage={this.onReleasePage}/>
         </header>
         <div className="app-content">
-          {/* <DndProvider backend={HTML5Backend}> */}
           <div
             className="comp-panel"
           >
@@ -191,7 +181,6 @@ class PageDesignerApp extends React.Component<VisualEditorAppProps & HY.SubAppSp
               {...dispatcher}
             />
           </div>
-          {/* </DndProvider> */}
           <div
             className="prop-panel"
           >
@@ -200,6 +189,7 @@ class PageDesignerApp extends React.Component<VisualEditorAppProps & HY.SubAppSp
                 <PropertiesEditor
                   key={activeEntityID}
                   propItemData={appContext.propItemData}
+                  // eslint-disable-next-line max-len
                   propertiesConfig={appContext?.compClassCollection[activeEntity?._classID]?.bindProps}
                   selectedEntity={activeEntity}
                   propPanelData={appContext.propPanelData}
@@ -214,7 +204,6 @@ class PageDesignerApp extends React.Component<VisualEditorAppProps & HY.SubAppSp
             }
           </div>
         </div>
-        <Style />
       </div>
     ) : (
       // TODO: 优化样式

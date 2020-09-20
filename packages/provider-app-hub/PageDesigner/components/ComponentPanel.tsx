@@ -11,7 +11,7 @@ export interface PageDesignerComponentPanelProps {
   onUpdatedDatasource
   compClassForPanelData: PanelItemsGroup
   compClassCollection: ComponentPanelProps['compClassCollection']
-  getDragItemConfig: ComponentPanelProps['getDragItemConfig']
+  getDragItemConfig?: ComponentPanelProps['getDragItemConfig']
 }
 
 const itemRendererFac = (
