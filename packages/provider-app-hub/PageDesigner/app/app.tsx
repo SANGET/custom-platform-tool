@@ -1,3 +1,4 @@
+/* eslint-disable no-param-reassign */
 import React, { useEffect } from "react";
 
 import produce from 'immer';
@@ -6,15 +7,17 @@ import { Grid, Button } from '@infra/ui';
 import { Dispatcher } from "@engine/visual-editor/core/actions";
 import { VisualEditorState } from "@engine/visual-editor/core/reducers/reducer";
 import { getPageDetailService, updatePageService } from "@provider-app/services";
+import { ApiSavePage } from "@mock-data/page-designer/mock-api/edit-page";
 import ToolBar from './components/Toolbar';
 import ComponentPanel from './components/ComponentPanel';
 import CanvasStage from './components/CanvasStage';
 import PropertiesEditor from './components/PropertiesEditor';
 import { wrapPageData } from "../utils";
 import Style from './style';
-import prepareAppData, { setCompPanelData } from "./utils/prepareAppData";
 import { getDataSourcePanelConfig } from "./components/DataSource";
-import { extraDatasources } from "./utils/datasource-filter";
+import {
+  getFEDynamicData, getPageContentWithDatasource
+} from "../services";
 
 // import { VisualEditorStore } from "@engine/visual-editor/core/store";
 
@@ -23,35 +26,47 @@ interface VisualEditorAppProps extends VisualEditorState {
 }
 
 class PageDesignerApp extends React.Component<VisualEditorAppProps & HY.SubAppSpec> {
-  onUpdatedDatasource = (addingData) => {
+  componentDidMount = async () => {
+    // 在顶层尝试捕获异常
+    try {
+      this.perpareInitData();
+    } catch (e) {
+      console.error(e);
+    }
+  }
+
+  /**
+   * 响应更新数据源的回调
+   * TODO: 优化链路
+   */
+  onUpdatedDatasource = async (addingData) => {
     const { appContext, dispatcher, location } = this.props;
     const { pageID, title } = location;
     const { UpdateAppContext } = dispatcher;
-    const { compPanelData, payload } = appContext;
+    const { compClassForPanelData, payload } = appContext;
     const pageContent = this.getPageContent();
 
-    updatePageService(this.getPageInfo(), pageContent, {
+    await updatePageService(this.getPageInfo(), pageContent, {
       dataSources: addingData.map((tableData) => {
         return {
           datasourceId: tableData.id,
           datasourceType: tableData.type
         };
       })
-    }).then((res) => {
-      getPageDetailService(pageID)
-        .then((pageDataRes) => {
-          extraDatasources(pageDataRes.dataSources)
-            .then((datasources) => {
-              UpdateAppContext({
-                compPanelData: [compPanelData[0], getDataSourcePanelConfig({
-                  datasources,
-                  onUpdatedDatasource: this.onUpdatedDatasource
-                })]
-              });
-            });
-        });
     });
-    // compPanelData.splice(1, 1);
+    const {
+      datasources
+    } = await getPageContentWithDatasource(pageID);
+    UpdateAppContext({
+      options: {
+        datasources
+      }
+      // compClassForPanelData: [compClassForPanelData[0], getDataSourcePanelConfig({
+      //   datasources,
+      //   onUpdatedDatasource: this.onUpdatedDatasource
+      // })]
+    });
+    // compClassForPanelData.splice(1, 1);
     // console.log('asd');
   }
 
@@ -86,19 +101,44 @@ class PageDesignerApp extends React.Component<VisualEditorAppProps & HY.SubAppSp
     return pageContent;
   }
 
-  componentDidMount() {
+  /**
+   * 准备应用初始化数据，并发进行
+   * 1. 获取前端动态资源：所有组件类数据、属性项数据、组件面板数据、属性面板数据、页面可编辑属性项数据
+   * 2. 从远端获取页面数据，包括 页面数据、数据源
+   * 3. 将「数据源面板」插入到组件类面板中
+   * 4. 将数据准备，调用 InitApp 初始化应用
+   */
+  perpareInitData = async () => {
     const { dispatcher, location } = this.props;
-    const { InitApp } = dispatcher;
     const { pageID } = location;
-    /** 初始化数据 */
-    prepareAppData(pageID, this.onUpdatedDatasource)
-      .then((resData) => {
-        const initData = produce(resData, (draft) => {
-          return draft;
-        });
+    const { InitApp } = dispatcher;
 
-        InitApp(initData);
-      });
+    /** 并发获取初始化数据 */
+    const [dynamicData, remotePageData] = await Promise.all([getFEDynamicData(),
+      // getPageContentWithDatasource(pageID)
+    ]);
+    // const {
+    //   datasources, pageContent, pageDataRes
+    // } = remotePageData
+
+    /** 准备初始化数据 */
+    const initData = produce(dynamicData, (draftInitData) => {
+      // draftInitData.pageContent = pageContent;
+      // draftInitData.options = {
+      //   pageDataRes,
+      //   // 填入 datasources
+      //   datasources,
+      // };
+      return draftInitData;
+    });
+
+    InitApp(initData);
+  }
+
+  onReleasePage = () => {
+    const pageContent = this.getPageContent();
+    updatePageService(this.getPageInfo(), pageContent);
+    ApiSavePage(pageContent);
   }
 
   render() {
@@ -124,12 +164,7 @@ class PageDesignerApp extends React.Component<VisualEditorAppProps & HY.SubAppSp
     return appContext.ready ? (
       <div className="visual-app">
         <header className="app-header">
-          <ToolBar onReleasePage={() => {
-            const pageContent = this.getPageContent();
-            updatePageService(this.getPageInfo(), pageContent);
-            // ApiSavePage(pageContent);
-          }}
-          />
+          <ToolBar onReleasePage={this.onReleasePage}/>
         </header>
         <div className="app-content">
           {/* <DndProvider backend={HTML5Backend}> */}
@@ -137,8 +172,10 @@ class PageDesignerApp extends React.Component<VisualEditorAppProps & HY.SubAppSp
             className="comp-panel"
           >
             <ComponentPanel
-              componentPanelConfig={appContext.compPanelData}
-              compClassData={appContext.compClassData}
+              datasources={appContext?.options?.datasources}
+              compClassForPanelData={appContext.compClassForPanelData}
+              compClassCollection={appContext.compClassCollection}
+              onUpdatedDatasource={this.onUpdatedDatasource}
             />
           </div>
           <div
@@ -163,7 +200,7 @@ class PageDesignerApp extends React.Component<VisualEditorAppProps & HY.SubAppSp
                 <PropertiesEditor
                   key={activeEntityID}
                   propItemData={appContext.propItemData}
-                  propertiesConfig={appContext?.compClassData[activeEntity?._classID]?.bindProps}
+                  propertiesConfig={appContext?.compClassCollection[activeEntity?._classID]?.bindProps}
                   selectedEntity={activeEntity}
                   propPanelData={appContext.propPanelData}
                   defaultEntityState={activeEntity.propState}

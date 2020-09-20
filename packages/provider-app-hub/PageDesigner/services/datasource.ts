@@ -1,19 +1,6 @@
 import { getDataSourceDetail } from "@provider-app/services";
 
 /**
- * 通过 datasourceId 包装 request 请求
- * @param dataSources
- */
-export const getDataSourceDetailFromRemote = (dataSourcesFromRemote: any[] = []) => {
-  const getDataPromise: Promise[] = [];
-  dataSourcesFromRemote.forEach((dataS) => {
-    const p = getDataSourceDetail(dataS.datasourceId);
-    getDataPromise.push(p);
-  });
-  return Promise.all([...getDataPromise]);
-};
-
-/**
  * 提取由后端返回的，前端需要的 columns
  */
 export const extraColumnsData = (columns: any[]): PD.Column[] => {
@@ -39,12 +26,25 @@ export const extraDatasourceField = (datasourceData): PD.Datasource => {
 };
 
 /**
+ * 通过 datasourceId 包装 request 请求
+ * @param dataSources
+ */
+export const dataSourceDetailWrapper = (dataSourcesFromRemote: any[] = []) => {
+  const getDataPromise: Promise[] = [];
+  dataSourcesFromRemote.forEach((dataS) => {
+    const p = getDataSourceDetail(dataS.datasourceId);
+    getDataPromise.push(p);
+  });
+  return Promise.all([...getDataPromise]);
+};
+
+/**
  * 通过 datasourceId 从远端获取完整的包括 columns 的数据
  * @param dataSourcesFromRemote
  */
 export const extraDatasources = (dataSourcesFromRemote: any[]): Promise<PD.Datasources> => {
   return new Promise((resolve, reject) => {
-    getDataSourceDetailFromRemote(dataSourcesFromRemote)
+    dataSourceDetailWrapper(dataSourcesFromRemote)
       .then((remoteDSData) => {
         const nextState: PD.Datasources = [];
         remoteDSData.length > 0 && remoteDSData.forEach((data) => {

@@ -31,7 +31,7 @@ const useTableList = (defaultPaging = {
   const getListByPaging = (pagingOptions = defaultPaging) => {
     const { offset = 0, size = tableList.paging.size } = pagingOptions;
     queryTableListService(pagingOptions).then((resData) => {
-      const { total, data } = resData.result;
+      const { total, data } = resData?.result || {};
       setList({
         paging: {
           offset,

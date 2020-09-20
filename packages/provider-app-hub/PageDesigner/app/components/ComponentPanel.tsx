@@ -1,15 +1,23 @@
 import React, { useCallback, useMemo } from 'react';
-import ComponentPanel, { ComponentPanelProps } from '@engine/visual-editor/components/ComponentPanel';
-import DragItem, { DragItemConfig } from '@engine/visual-editor/spec/DragItem';
+import { ComponentPanelProps } from '@engine/visual-editor/components/ComponentPanel';
+import DragItem from '@engine/visual-editor/spec/DragItem';
 import { DragableItemTypes } from '@engine/visual-editor/spec';
-import DatasourcePanel from './DatasourcePanel';
+import { Tab, Tabs } from '@infra/ui';
+import { GroupItemsRender, PanelItemsGroup } from '@engine/visual-editor/components/GroupPanel';
+import { DataSourceDragItem, DataSourceSelector } from './DataSource';
 
-export type PageDesignerComponentPanelProps = ComponentPanelProps
+export interface PageDesignerComponentPanelProps {
+  datasources
+  onUpdatedDatasource
+  compClassForPanelData: PanelItemsGroup
+  compClassCollection: ComponentPanelProps['compClassCollection']
+  getDragItemConfig: ComponentPanelProps['getDragItemConfig']
+}
 
 const itemRendererFac = (
-  compClassData, getDragItemConfig
+  compClassCollection, getDragItemConfig
 ) => (componentClassID, groupType) => {
-  const componentClass = compClassData[componentClassID];
+  const componentClass = compClassCollection[componentClassID];
   const {
     id, label
   } = componentClass;
@@ -37,19 +45,52 @@ const itemRendererFac = (
 };
 
 const ComponentPanelCustom: React.FC<PageDesignerComponentPanelProps> = ({
-  compClassData,
+  compClassCollection,
   getDragItemConfig,
+  datasources,
+  onUpdatedDatasource,
+  compClassForPanelData,
   ...other
 }) => {
   const itemRenderer = useMemo(
-    () => itemRendererFac(compClassData, getDragItemConfig),
-    [compClassData, getDragItemConfig],
+    () => itemRendererFac(compClassCollection, getDragItemConfig),
+    [compClassCollection, getDragItemConfig],
   );
+  const { title: compPanelTitle, type: groupType, ...otherPanelConfig } = compClassForPanelData;
   return (
-    <ComponentPanel
-      {...other}
-      itemRenderer={itemRenderer}
-    />
+    <div className="component-panel-container">
+      <Tabs>
+        <Tab label={compPanelTitle}>
+          {/* <ComponentPanel
+            {...other}
+            componentPanelConfig={[compClassForPanelData]}
+            itemRenderer={itemRenderer}
+          /> */}
+          <GroupItemsRender
+            groupType={groupType}
+            itemRenderer={itemRenderer}
+            {...otherPanelConfig}
+          />
+        </Tab>
+        <Tab label={(
+          <DataSourceSelector
+            datasources={datasources}
+            onAddDataSource={(addData) => {
+              // return console.log(addData);
+              onUpdatedDatasource(addData);
+            }}
+          />
+        )}
+        >
+          <DataSourceDragItem
+            datasources={datasources}
+          />
+        </Tab>
+        <Tab label="控件模版">
+          <div>敬请期待</div>
+        </Tab>
+      </Tabs>
+    </div>
   );
 };
 

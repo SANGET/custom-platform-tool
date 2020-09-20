@@ -1,5 +1,7 @@
 @import '@engine/visual-editor/style/var.scss';
+// 覆盖可视化编辑器引擎提供的变量
 @import './var.scss';
 
+// 覆盖可视化编辑器引擎的样式
 @import '@engine/visual-editor/style/index.scss';
 @import './style.scss';

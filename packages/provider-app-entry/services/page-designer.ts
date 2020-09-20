@@ -45,5 +45,5 @@ export async function getDataSourceDetail(tableID) {
     url: `/data/v1/tables/${tableID}`,
   });
 
-  return resData.result;
+  return resData?.result;
 }

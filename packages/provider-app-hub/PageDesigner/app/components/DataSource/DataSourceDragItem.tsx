@@ -1,19 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import { getDataSourceDetailFromRemote } from '../../utils/datasource-filter';
-
-/**
- * 自定义 react hook，用于管理 datasource 数据
- * @param dataSources
- */
-const useDataSourceData = (dataSources) => {
-  const [dataSourceData, setDataSourceData] = useState<PD.Datasources>([]);
-  useEffect(() => {
-    getDataSourceDetailFromRemote(dataSources).then((res) => {
-      setDataSourceData(dataSources);
-    });
-  }, []);
-  return [dataSourceData];
-};
 
 interface DataSourceDragItemProps {
   datasources: PD.Datasources
@@ -28,7 +13,7 @@ export const DataSourceDragItem: React.FC<DataSourceDragItemProps> = ({
   return (
     <div className="data-source-drag-items">
       {
-        datasources.map((datasourceItem) => {
+        Array.isArray(datasources) && datasources.map((datasourceItem) => {
           const { name: dName, columns } = datasourceItem;
           return (
             <div className="group" key={dName}>

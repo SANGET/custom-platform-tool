@@ -87,6 +87,13 @@ export interface EditorPropertyItemsCollection {
   [colID: string]: PropertyItemConfigFunc
 }
 
+/**
+ * 组件类集合
+ */
+export interface ComponentClassCollection {
+  [id: string]: EditorComponentClass
+}
+
 /// //////////////// 组件实例状态 ///////////////////
 
 /**

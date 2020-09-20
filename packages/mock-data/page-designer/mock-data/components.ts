@@ -1,10 +1,6 @@
-import { EditorComponentClass } from "@engine/visual-editor/types";
+import { ComponentClassCollection } from "@engine/visual-editor/types";
 import { CustomComponent } from "./custom-component-demo";
 import { ApiMock } from "./api-mock";
-
-interface ComponentClassCollection {
-  [id: string]: EditorComponentClass
-}
 
 export const componentClassCollection: ComponentClassCollection = {
   'component-1': {

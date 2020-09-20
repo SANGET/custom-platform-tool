@@ -7,9 +7,9 @@
 import { BasePageData } from "../../types";
 
 interface AppActionsContext {
-  compPanelData?
+  compClassForPanelData?
   propPanelData?
-  compClassData?
+  compClassCollection?
   propItemData?
   pagePropsData?
   pageContent?: BasePageData
