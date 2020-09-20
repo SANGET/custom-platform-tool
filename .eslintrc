@@ -33,6 +33,7 @@
     "no-return-assign": 0,
     "import/extensions": 0,
     "no-case-declarations": 0,
+    "no-param-reassign": 0, // 禁止给参数重新赋值
     "no-plusplus": 0,
     "prefer-object-spread": 0,
     "guard-for-in": 0,
