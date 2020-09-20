@@ -2,3 +2,4 @@ env-scripts/
 __test__/
 node_modules/
 .bak/
+packages/consumer-app/web-platform/config
