@@ -60,6 +60,7 @@
     "jest-environment-jsdom-fourteen": "1.0.1",
     "jest-resolve": "26.2.2",
     "jest-watch-typeahead": "0.6.0",
+    "jest-sonar-reporter": "2.0.0",
     "lerna": "^3.21.0",
     "prettier": "^2.0.5",
     "ts-jest": "26.1.4",
