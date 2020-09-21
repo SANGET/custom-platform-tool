@@ -11,7 +11,7 @@ import {
 } from '@engine/visual-editor/types';
 import {
   DragableItemTypes,
-  dragableItemWrapperFac, WrapperFacOptions, DragableItemWrapperFac, GetStateContext
+  dragableItemWrapperFac, WrapperFacOptions, DragableItemWrapperFac, GetStateContext, WrapperItemClockEvent
 } from '@engine/visual-editor/spec';
 import { Debounce } from '@mini-code/base-func';
 
@@ -122,11 +122,15 @@ class CanvasStage extends React.Component<CanvasStageProps> {
   /**
    * 点击选择组件实例的处理
    */
-  onSelectEntityForClick = (clickEvent, { entity, idx }) => {
+  onSelectEntityForClick: WrapperItemClockEvent = (clickEvent, actionCtx) => {
     const {
-      SelectEntity
+      SelectEntity,
+      selectedInfo
     } = this.props;
-    SelectEntity(entity, idx);
+    const { entity, idx, nestingInfo } = actionCtx;
+    /** 如果已经被选择，则不需要再出发事件了 */
+    if (nestingInfo.join('') === selectedInfo.nestingInfo.join('')) return;
+    SelectEntity(entity, idx, nestingInfo);
   };
 
   /**
@@ -195,7 +199,9 @@ class CanvasStage extends React.Component<CanvasStageProps> {
           )}
           RootRender={(child) => (
             <DropStageContainer
-              triggerCondition={(dragItem) => dragItem && dragItem.type === DragableItemTypes.DragItemClass}
+              triggerCondition={(dragItem) => {
+                return dragItem && dragItem.type === DragableItemTypes.DragItemClass;
+              }}
               accept={[DragableItemTypes.DragItemClass, DragableItemTypes.DragItemEntity]}
               onLeave={(item) => {
                 /** 移出 item */
