@@ -36,7 +36,6 @@ export const ComponentRenderer: React.FC<ComponentTypeRendererProps> = (props) =
     ...otherProps
   } = props;
   const { component } = entity;
-  const { title, labelColor, value } = entityState;
   const { comp } = registeredEntity;
 
   const compContext = {
@@ -48,47 +47,19 @@ export const ComponentRenderer: React.FC<ComponentTypeRendererProps> = (props) =
   if (!component) return Com;
 
   const { type, ...compProps } = component;
+  /**
+   * 如果需要特殊处理，则在此做
+   */
   switch (type) {
-    case 'Input':
-      const Input = comp;
-      Com = (
-        <div className="__Input">
-          <FormLabel
-            style={{
-              color: labelColor
-            }}
-          >
-            {title}
-          </FormLabel>
-          <Input
-            compContext={compContext}
-            value={value || ''}
-            {...compProps}
-          />
-        </div>
-      );
-      break;
-    case 'Table':
-      const Table = comp;
-      Com = (
-        <div className="__Table">
-          <FormLabel>{title}</FormLabel>
-          <Table
-            compContext={compContext}
-            {...compProps}
-          />
-        </div>
-      );
-      break;
-    case 'container':
-      Com = (
-        // <ContainerWrapperCom {...props} />
-        <div>
-          Container
-        </div>
-      );
-      break;
     default:
+      const RendererComp = comp;
+      Com = (
+        <RendererComp
+          compContext={compContext}
+          {...entityState}
+          {...compProps}
+        />
+      );
       break;
   }
   const classes = classnames(

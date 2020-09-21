@@ -197,7 +197,7 @@ class PageDesignerApp extends React.Component<VisualEditorAppProps & HY.SubAppSp
                   defaultEntityState={activeEntity.propState}
                   initEntityState={(entityState) => InitEntityState(selectedInfo, entityState)}
                   updateEntityState={(entityState) => UpdateEntityState({
-                    nestingIdx: selectedInfo.nestingIdx,
+                    nestingInfo: selectedInfo.nestingInfo,
                     entity: activeEntity
                   }, entityState)}
                 />

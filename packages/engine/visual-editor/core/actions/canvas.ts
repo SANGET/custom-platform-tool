@@ -139,14 +139,18 @@ export interface SelectEntityAction {
   type: typeof SELECT_ENTITY
   entity: EditorEntity
   idx: number
+  nestingInfo: ElemNestingInfo
 }
 
 export const SelectEntity = (
-  entity: EditorEntity, idx
+  entity: EditorEntity,
+  idx,
+  nestingInfo
 ): SelectEntityAction => {
   return {
     type: SELECT_ENTITY,
     entity,
-    idx
+    idx,
+    nestingInfo
   };
 };

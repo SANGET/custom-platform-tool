@@ -28,7 +28,7 @@ export const InitEntityState = (
 };
 
 export type UpdateTargetEntity = {
-  nestingIdx: ElemNestingInfo
+  nestingInfo: ElemNestingInfo
   entity: EditorEntity
 }
 export const UPDATE_ENTITY_STATE = 'entityState/update';

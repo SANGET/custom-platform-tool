@@ -77,7 +77,7 @@ export const layoutInfoReducer = (
       });
     case INIT_ENTITY_STATE:
       const { selectedEntityInfo: initSInfo, defaultEntityState } = action;
-      const { nestingIdx: initIdx } = initSInfo;
+      const { nestingInfo: initIdx } = initSInfo;
       const nextStateInit = produce(state, (draftState) => {
         const targetData = getItemFromNestingItemsByBody(draftState, initIdx);
         // eslint-disable-next-line no-param-reassign
@@ -87,7 +87,7 @@ export const layoutInfoReducer = (
       return nextStateInit;
     case UPDATE_ENTITY_STATE:
       const { targetEntity: updateSInfo, formState } = action;
-      const { nestingIdx: updateIdx } = updateSInfo;
+      const { nestingInfo: updateIdx } = updateSInfo;
       return produce(state, (draftState) => {
         const targetData = getItemFromNestingItemsByBody(draftState, updateIdx);
         targetData.propState = formState;
