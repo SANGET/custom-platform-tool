@@ -10,7 +10,11 @@ export default defineConfig({
   antd: {},
   dva: {
     hmr: true,
-    immer: true,
+    // immer: true,
+  },
+  layout: {
+    name: '自定义平台基础数据管理服务',
+    locale: false,
   },
   locale: {
     default: 'zh-CN',

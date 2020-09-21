@@ -11,6 +11,8 @@ export default {
       dataId: null,
       result: null,
     });
-  }
-
+  },
+  'GET /api/login/outLogin': (req: Request, res: Response) => {
+    res.send({ result: {}, code: 0 });
+  },
 };

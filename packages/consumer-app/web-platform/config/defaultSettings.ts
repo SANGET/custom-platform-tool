@@ -14,9 +14,9 @@ const proSettings: DefaultSettings = {
   fixSiderbar: true,
   colorWeak: false,
   menu: {
-    locale: true,
+    locale: false,
   },
-  title: '',
+  title: '自定义平台基础数据管理服务',
   iconfontUrl: '',
 };
 
