@@ -9,7 +9,7 @@ import { SelectEntityState } from "../types";
 export const defaultSelectedEntities: SelectEntityState = {
   selectedList: {},
   id: '',
-  nestingIdx: [],
+  nestingInfo: [],
   entity: undefined
 };
 
@@ -36,13 +36,13 @@ export function selectedInfoReducer(
       return state;
     case ADD_ENTITY:
     case SELECT_ENTITY:
-      const { entity, idx } = action;
+      const { entity, idx, nestingInfo } = action;
       const entityID = entity.id;
       return {
         // selectedList: {
         //   [entityID]: entity
         // },
-        nestingIdx: [idx],
+        nestingInfo: nestingInfo || [idx],
         index: idx,
         id: entityID,
         // activeEntity: entity

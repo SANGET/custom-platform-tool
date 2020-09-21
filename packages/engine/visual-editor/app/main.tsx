@@ -160,7 +160,7 @@ const VisualEditorApp: React.FC<VisualEditorAppProps> = (props) => {
                 defaultEntityState={activeEntity.propState}
                 initEntityState={(entityState) => InitEntityState(selectedInfo, entityState)}
                 updateEntityState={(entityState) => UpdateEntityState({
-                  nestingIdx: selectedInfo.nestingIdx,
+                  nestingInfo: selectedInfo.nestingInfo,
                   entity: activeEntity
                 }, entityState)}
               />

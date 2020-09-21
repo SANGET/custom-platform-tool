@@ -11,7 +11,7 @@ export interface SelectEntityState {
    * 例如 [0] 代表最外层的第 0 个元素中进行排序
    * 例如 [0, 1, 2] 代表最外层第 0 个元素中的第 1 个元素中的第 2 个元素
    */
-  nestingIdx: ElemNestingInfo
+  nestingInfo: ElemNestingInfo
   index?: number
   /** 选中的组件实例 */
   entity?: EditorEntity
