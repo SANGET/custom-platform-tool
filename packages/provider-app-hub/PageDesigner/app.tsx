@@ -105,21 +105,22 @@ class PageDesignerApp extends React.Component<VisualEditorAppProps & HY.SubAppSp
     const { InitApp } = dispatcher;
 
     /** 并发获取初始化数据 */
-    const [dynamicData, remotePageData] = await Promise.all([getFEDynamicData(),
-      // getPageContentWithDatasource(pageID)
+    const [dynamicData, remotePageData] = await Promise.all([
+      getFEDynamicData(),
+      getPageContentWithDatasource(pageID)
     ]);
-    // const {
-    //   datasources, pageContent, pageDataRes
-    // } = remotePageData
+    const {
+      datasources, pageContent, pageDataRes
+    } = remotePageData;
 
     /** 准备初始化数据 */
     const initData = produce(dynamicData, (draftInitData) => {
-      // draftInitData.pageContent = pageContent;
-      // draftInitData.options = {
-      //   pageDataRes,
-      //   // 填入 datasources
-      //   datasources,
-      // };
+      draftInitData.pageContent = pageContent;
+      draftInitData.options = {
+        pageDataRes,
+        // 填入 datasources
+        datasources,
+      };
       return draftInitData;
     });
 

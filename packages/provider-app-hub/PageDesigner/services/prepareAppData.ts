@@ -37,6 +37,8 @@ export const getPageContentWithDatasource = async (pageID) => {
 // : setCompPanelData(compClassForPanelData, datasources, onUpdatedDatasource)
 /**
  * 获取前端动态资源
+ *
+ * // TODO: 需要从远端获取组件类的实际组件
  */
 export const getFEDynamicData = async () => {
   const [
