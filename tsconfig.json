@@ -23,7 +23,7 @@
     "./packages"
   ],
   "exclude": [
-    "src/**/test/*",
-    "src/**/demo/*"
+    "**/test/*",
+    "**/demo/*"
   ]
 }
