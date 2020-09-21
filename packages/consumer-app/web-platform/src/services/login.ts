@@ -24,3 +24,10 @@ export async function accountLogin(params: ILoginParams) {
     data: params,
   });
 }
+
+/**
+ * 用户退出
+ */
+export async function outLogin() {
+  return request('/api/login/outLogin');
+}
