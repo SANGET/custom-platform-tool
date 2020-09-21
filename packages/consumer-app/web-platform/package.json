@@ -1,5 +1,5 @@
 {
-  "name": "自定义3.0",
+  "name": "3.0",
   "version": "1.0.0",
   "private": true,
   "description": "自定义3.0",
@@ -29,7 +29,7 @@
     "prettier": "prettier -c --write \"src/**/*\"",
     "site": "npm run fetch:blocks && npm run build",
     "start": "umi dev",
-    "start:dev": "cross-env REACT_APP_ENV=dev MOCK=none umi dev",
+    "start:dev": "cross-env REACT_APP_ENV=dev umi dev",
     "start:no-mock": "cross-env MOCK=none umi dev",
     "start:no-ui": "cross-env UMI_UI=none umi dev",
     "start:pre": "cross-env REACT_APP_ENV=pre umi dev",
