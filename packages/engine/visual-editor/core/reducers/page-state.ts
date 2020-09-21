@@ -43,11 +43,11 @@ export interface AppContext {
   ready: boolean
   /** 存放所有组件的数据 */
   /** 组件类数据 */
-  compClassData?: any
+  compClassCollection?: any
   /** 属性项数据 */
   propItemData?: any
   /** 组件类面板数据 */
-  compPanelData?: any
+  compClassForPanelData?: any
   propPanelData?: any
   /** 页面可编辑属性数据 */
   pagePropsData?: any
@@ -66,7 +66,7 @@ export function appContextReducer(
   switch (action.type) {
     case INIT_APP:
       const {
-        compClassData, compPanelData,
+        compClassCollection, compClassForPanelData,
         propPanelData,
         pagePropsData, propItemData,
         payload,
@@ -75,8 +75,8 @@ export function appContextReducer(
       return {
         ready: true,
         payload,
-        compClassData,
-        compPanelData,
+        compClassCollection,
+        compClassForPanelData,
         propPanelData,
         pagePropsData,
         propItemData

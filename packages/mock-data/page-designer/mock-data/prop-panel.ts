@@ -1,7 +1,7 @@
-import { PanelTabGroupItem } from "@engine/visual-editor/components/GroupPanel";
+import { PanelItemsGroup } from "@engine/visual-editor/components/GroupPanel";
 import { ApiMock } from "./api-mock";
 
-export const propPanelData: PanelTabGroupItem[] = [
+export const propPanelData: PanelItemsGroup[] = [
   {
     title: '属性',
     type: 'general',

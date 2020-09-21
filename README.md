@@ -45,6 +45,8 @@
 - `dist/` - 打包构建后的文件存放目录
 - `docs/` - 文档
 - `packages/` - 工作区
+  - `spec` - 接入标准
+    - `BusinessComponent` - 业务组件接入标准，在配置端和应用端都使用的组件
   - `provider-app-entry/` - 生产工具入口
   - `provider-app-hub/` - 生产工具 app 集合
     - `[App]` 根据实际需要开发的 app

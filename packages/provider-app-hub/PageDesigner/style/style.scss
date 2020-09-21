@@ -1,0 +1,84 @@
+.canvas-stage {
+  padding: 10px;
+}
+
+.canvas-stage-container {
+  .action-area {
+    position: absolute;
+    right: 0;
+    top: 10px;
+    background-color: #FFF;
+    z-index: 1;
+    // padding: 3px 10px;
+    display: none;
+    box-shadow: 0 0 2px rgba(#000, 0.2);
+  }
+}
+
+.component-panel-container {
+  padding: 10px;
+  .items-group {
+    .group-title {
+      padding: 10px 0;
+      font-size: 16px;
+    }
+    .items-content {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      padding: 10px 0;
+      .item {
+        padding: 5px 20px;
+        background-color: #fafafa;
+        width: 47%;
+        border: 1px solid #EEE;
+      }
+    }
+  }
+  .tabs-container .tab-group .tab .tab-label {
+    padding: 10px;
+  }
+}
+
+.comp-renderer {
+  padding: 10px;
+  background-color: #FFF;
+  // pointer-events: none;
+  .form-title {
+    margin-bottom: 10px;
+    font-size: 16px;
+  }
+
+  .__mark {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 1;
+    // background-color: #999;
+    // opacity: 0.05;
+  }
+}
+
+.dragable-item {
+  position: relative;
+  transition: box-shadow 0.2s ease;
+  .drag-item {
+    z-index: 1;
+  }
+  >.state-mark {
+    z-index: 0;
+  }
+  &:hover {
+    box-shadow: 0 0 3px rgba(#a6bcf8, 1);
+    z-index: 2;
+    .action-area {
+      display: block;
+    }
+  }
+  &.selected {
+    box-shadow: 0 0 3px rgba(#376BFB, 1);
+    z-index: 3;
+  }
+}

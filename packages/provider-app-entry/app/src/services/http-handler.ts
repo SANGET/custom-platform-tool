@@ -157,10 +157,17 @@ function handleRes(resData) {
   }
 }
 
+const handleErr = (e) => {
+  console.log(e);
+};
+
 /**
  * 监听 $R res 处理函数
  */
 $R.on("onRes", handleRes);
+
+/** 处理网络异常 */
+$R.on("onErr", handleErr);
 
 const $request = $R;
 

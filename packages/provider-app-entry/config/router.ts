@@ -1,6 +1,6 @@
 import PageManager from "@provider-app/page-manager/app";
 import MenuManager from "@provider-app/menu-manager/app";
-import PageDesignerApp from "@provider-app/page-designer/app/main";
+import PageDesignerApp from "@provider-app/page-designer/main";
 /// //////// 数据设计
 import {
   TableStruct, DictManage, EditStruct
@@ -48,7 +48,7 @@ const RouterConfig: RouterConfigType = {
   },
   '/DictManage': {
     component: DictManage,
-    title: '字典管理' 
+    title: '字典管理'
   },
   '/data_designer/edit_struct': {
     title: '编辑表',

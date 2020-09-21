@@ -13,7 +13,7 @@ import { Dispatcher } from "@engine/visual-editor/core/actions";
 import { VisualEditorState } from "@engine/visual-editor/core/reducers/reducer";
 import {
   getCompClassDeclareData,
-  getCompPanelData,
+  getCompClassForPanelData,
   getPagePropsDeclareData,
   getPropItemDeclareData,
 } from "@mock-data/page-designer/mock-data";
@@ -60,17 +60,17 @@ const VisualEditorApp: React.FC<VisualEditorAppProps> = (props) => {
     /** 初始化数据 */
     Promise.all([
       getCompClassDeclareData(),
-      getCompPanelData(),
+      getCompClassForPanelData(),
       getPagePropsDeclareData(),
       getPropItemDeclareData()
     ])
-      .then(([compClassData, compPanelData, pagePropsData, propItemData]) => {
+      .then(([compClassCollection, compClassForPanelData, pagePropsData, propItemData]) => {
         ApiGetPageData(appKey)
           .then((pageContent) => {
             console.log(pageContent);
             InitApp({
-              compPanelData,
-              compClassData,
+              compClassForPanelData,
+              compClassCollection,
               propItemData,
               pagePropsData,
               /** 回填数据的入口 */
@@ -130,8 +130,8 @@ const VisualEditorApp: React.FC<VisualEditorAppProps> = (props) => {
           className="comp-panel"
         >
           <ComponentPanel
-            componentPanelConfig={appContext.compPanelData}
-            compClassData={appContext.compClassData}
+            componentPanelConfig={appContext.compClassForPanelData}
+            compClassCollection={appContext.compClassCollection}
           />
         </div>
         <div
@@ -155,7 +155,7 @@ const VisualEditorApp: React.FC<VisualEditorAppProps> = (props) => {
               <PropertiesEditor
                 key={activeEntityID}
                 propItemData={appContext.propItemData}
-                propertiesConfig={appContext?.compClassData[activeEntity?._classID]?.bindProps}
+                propertiesConfig={appContext?.compClassCollection[activeEntity?._classID]?.bindProps}
                 selectedEntity={activeEntity}
                 defaultEntityState={activeEntity.propState}
                 initEntityState={(entityState) => InitEntityState(selectedInfo, entityState)}
