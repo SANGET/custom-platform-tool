@@ -41,16 +41,16 @@ const $R = new RequestClass<ResStruct>({
  * URL 管理器，根据实际业务需求设置 URL
  */
 class UrlManager {
-  currRent = ''
+  currLessee = ''
 
   currApp = ''
 
   /** 登录后需要设置 */
-  setRent = (rent: string) => {
+  setLessee = (lessee: string) => {
     setDefaultParams({
-      rent
+      lessee
     });
-    this.currRent = rent;
+    this.currLessee = lessee;
     this.setRequestBaseUrl();
   }
 
@@ -67,7 +67,7 @@ class UrlManager {
   /** 登出的时候需要设置 */
   reset = () => {
     this.currApp = '';
-    this.currRent = '';
+    this.currLessee = '';
     /** 清除默认 params */
     clearDefaultParams();
     $R.setConfig({
@@ -76,7 +76,7 @@ class UrlManager {
   }
 
   getUrl = () => {
-    return resolveUrl(baseReqUrl, this.currRent, this.currApp);
+    return resolveUrl(baseReqUrl, this.currLessee, this.currApp);
   }
 
   setRequestBaseUrl = () => {

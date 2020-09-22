@@ -94,7 +94,7 @@ function onLoginSuccess({ resData, originForm = {} }) {
       Authorization: token
     },
   });
-  $R_P.urlManager.setRent(resData.lesseeAccessName);
+  $R_P.urlManager.setLessee(resData.lesseeAccessName);
 
   EventEmitter.emit("LOGIN_SUCCESS", { userInfo, loginRes: resData });
   localStorage.setItem(PREV_LOGIN_DATA, JSON.stringify(resultStore));
@@ -135,7 +135,7 @@ const authActions: AuthActions = (store) => ({
     /** TODO: 是否有做 token 是否有效的接口验证 */
     const prevLoginState = getPrevLoginData();
     if (!prevLoginState) return;
-    $R_P.urlManager.setRent(prevLoginState.prevLoginRes.lesseeAccessName);
+    $R_P.urlManager.setLessee(prevLoginState.prevLoginRes.lesseeAccessName);
     // const loginRes = await AUTH_APIS.login({
     //   token
     // });
@@ -148,7 +148,7 @@ const authActions: AuthActions = (store) => ({
   },
   /** 主动登录 */
   async login(state, form, onSuccess) {
-    $R_P.urlManager.setRent(form.loginName);
+    $R_P.urlManager.setLessee(form.loginName);
     store.setState({
       logging: true
     });
