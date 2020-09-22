@@ -177,15 +177,15 @@ export default App;
 由于自定义工具 3.0 采用了 RESTFul 请求机制，格式如下：
 
 ```ts
-const url = `${protocal}://${domain}/paas/${rent}/${application}/${api}`
+const url = `${protocal}://${domain}/paas/${lessee}/${application}/${api}`
 ```
 
-- rent 租户，根据登入的租户动态改变
+- lessee 租户，根据登入的租户动态改变
 - application 应用，根据选择的应用动态改变
 - api 标准的 restful api，根据具体接口，一般是静态的
 
 前端采用了路由与页面分离的策略，所以上述的信息有一部分是挂载在浏览器 URL
-中的。所以这里需要有一个统一的地方设置 url，能够达到灵活响应 rent 和 application 的动态改动：
+中的。所以这里需要有一个统一的地方设置 url，能够达到灵活响应 lessee 和 application 的动态改动：
 
 ```ts
 /** 在 http-handle.ts 中统一设置请求 */
@@ -193,7 +193,7 @@ import { setDefaultParams, clearDefaultParams } from "multiple-page-routing";
 
 /** 根据登录用户、选择的应用，设置默认的 url params */
 setDefaultParams({
-  rent,
+  lessee,
   app
 });
 

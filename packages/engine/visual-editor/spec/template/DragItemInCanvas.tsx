@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import styled from 'styled-components';
 import { Call } from '@mini-code/base-func';
 import classnames from 'classnames';
 import DragItem, { DragItemProps } from '../DragItem';
@@ -12,14 +11,6 @@ export type DragItemConfig = any
 export interface DragItemInCanvasProps extends DragItemProps {
   children: any;
 }
-
-const DragItemWrapper = styled.div`
-  position: relative;
-  padding: 0.1px;
-  &.overing {
-    box-shadow: 0 0 1px 1px rgba(30,89,251, 0.5);
-  }
-`;
 
 /**
  * 拖拽容器
@@ -36,7 +27,7 @@ const DragItemInCanvas: React.FC<DragItemInCanvasProps> = ({
     overing && 'overing'
   );
   return (
-    <DragItemWrapper
+    <div
       onMouseEnter={(e) => {
         setOvering(true);
         Call(onMouseEnter, e);
@@ -50,7 +41,7 @@ const DragItemInCanvas: React.FC<DragItemInCanvasProps> = ({
       <DragItem {...propForDragItem}>
         {children}
       </DragItem>
-    </DragItemWrapper>
+    </div>
   );
 };
 
