@@ -2,7 +2,6 @@ import React, { useState, useEffect, useRef } from 'react';
 import {
   Row, Col, Form, Button, Input, Space, Table
 } from 'antd';
-import styled from 'styled-components';
 
 import {
   DownOutlined, UpOutlined, PlusOutlined, MinusOutlined
@@ -13,52 +12,7 @@ import {
  */
 import BasicStory from '@provider-app/data-designer/src/components/BasicStory';
 import { renderOperCol } from '@provider-app/data-designer/src/components/BasicEditTable';
-
-const FormStyled = styled.div`
-#basic-form{
-  /* margin:16px 20px 0 20px; */
-}
-
-.ant-row{
-  margin-bottom:16px;
-}
-.search-form{
-  margin:0 !important;
-  .ant-row{
-    margin:0 !important;
-  }
-}
-
-.ant-col.ant-col-18.ant-form-item-control{
-  max-width: 100%; 
-}
-.ant-input-number{
-  width:100%;
-}
-`;
-
-/**
-*搜素表单样式
-*/
-const SearchStyled = styled.div`
-[data-theme='compact'] .ant-advanced-search-form,
-.ant-advanced-search-form {
-  padding: 24px;
-  background: #fbfbfb;
-  border: 1px solid #d9d9d9;
-  border-radius: 2px;
-}
-
-[data-theme='compact'] .ant-advanced-search-form .ant-form-item,
-.ant-advanced-search-form .ant-form-item {
-  display: flex;
-}
-
-[data-theme='compact'] .ant-advanced-search-form .ant-form-item-control-wrapper,
-.ant-advanced-search-form .ant-form-item-control-wrapper {
-  flex: 1;
-}
-`;
+import './index.less';
 
 // padding: '16px 20px'
 /**
@@ -213,7 +167,7 @@ const BasicForm = (props) => {
   };
 
   return (
-    <FormStyled >
+    <div className="basic-form">
       <Form
         {...formItemLayout}
         layout={layout}
@@ -228,7 +182,7 @@ const BasicForm = (props) => {
         {props.listItems ? getList(props.listItems) : null}
 
       </Form>
-    </FormStyled>);
+    </div>);
 };
 
 /**

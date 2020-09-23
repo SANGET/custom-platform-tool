@@ -113,35 +113,35 @@ cd ./web-server
 yarn start:dev
 ```
 
-## 部署说明
+## 5. 部署说明
 
 - [参考](./docs/工程/deployment.md)
 
 ---
 
-## 5. 进阶（Advance）
+## 6. 进阶（Advance）
 
 - [搭建独立应用](./docs/工程/write-sub-app.md)
 
 ---
 
-## 6. 配置端接入
+## 7. 配置端接入
 
 [配置端接入参考文档](./packages/provider-app-hub/README.md)
 
 ---
 
-## 7. 应用端接入
+## 8. 应用端接入
 
 ---
 
-## 8. 共用 UI
+## 9. 共用 UI
 
 如何编写共用的 UI？[点击查看](./packages/infrastructure/ui/README.md)
 
 ---
 
-## 9. 测试
+## 10. 测试
 
 通过 jest 测试，可以在需要测试的模块的目录下新建 `__test__` 目录并且写测试用例。然后在项目根目录执行 `yarn test` 即可进行测试。
 
