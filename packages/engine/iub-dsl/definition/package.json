@@ -1,5 +1,5 @@
 {
-  "name": "@iub-dsl/types",
+  "name": "@iub-dsl/definition",
   "version": "0.0.1",
   "scripts": {
     "start": "start"

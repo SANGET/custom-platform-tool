@@ -1,7 +1,7 @@
 import React, {
   useContext, useState, useMemo, useEffect
 } from 'react';
-import { AllComponentType } from "@iub-dsl/types";
+import { AllComponentType } from "@iub-dsl/definition";
 import { cloneDeep } from 'lodash';
 import { HyInput, HyToolTip } from '../ui';
 import componentConf from './mock';

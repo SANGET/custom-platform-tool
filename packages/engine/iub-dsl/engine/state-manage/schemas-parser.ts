@@ -6,7 +6,7 @@ import {
   CommonObjStruct,
   ComplexType, FoundationType,
   AllType
-} from "@iub-dsl/types";
+} from "@iub-dsl/definition";
 import { MockLocationData, MockLocationType } from "@iub-dsl/demo/business-case/location-manager";
 import { Enhancer, sleep, EnhancerHook } from "../utils";
 import {

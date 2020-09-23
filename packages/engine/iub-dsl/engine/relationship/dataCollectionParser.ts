@@ -1,4 +1,4 @@
-import { DataCollectionRelationship, CommonObjStruct } from "@iub-dsl/types";
+import { DataCollectionRelationship, CommonObjStruct } from "@iub-dsl/definition";
 
 const DataCollectionParser = (dataCollection: DataCollectionRelationship, context) => {
   const collectionKey = Object.keys(dataCollection);

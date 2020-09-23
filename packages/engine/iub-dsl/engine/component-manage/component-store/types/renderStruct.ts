@@ -8,30 +8,27 @@
  *  1. 扩展外部干预
  */
 
-interface BaseRenderStruct {
-  type: 'BaseRenderStruct'
+interface PubRenderStructInfo {
   compTag: string;
   canSkip: boolean;
   canUseProps: string[];
   canUseGroupProps?: string[];
 }
-
 interface ChildrenStruct {
   children?: FullRenderStruct[]
 }
 
-interface ArrayRenderStruct {
-  type: 'ArrayRenderStruct',
-  canUseCompList: {
-    compTag: string;
-    canSkip: boolean;
-    canUseProps: string[];
-    canUseGroupProps?: string[];
-  }[];
+type BaseRenderStruct = {
+  type: 'BaseRenderStruct'
+} & PubRenderStructInfo & ChildrenStruct
 
+type ArrayRenderStruct = {
+  type: 'ArrayRenderStruct',
+  canUseCompList: PubRenderStructInfo[];
   isloop: boolean;
-}
-type FullRenderStruct = (BaseRenderStruct & ChildrenStruct) | (ArrayRenderStruct & ChildrenStruct)
+} & ChildrenStruct
+
+type FullRenderStruct = BaseRenderStruct | ArrayRenderStruct
 
 type ActualRenderStruct = {
   compTag: string;
@@ -40,6 +37,8 @@ type ActualRenderStruct = {
 }
 
 export {
+  BaseRenderStruct,
+  ArrayRenderStruct,
   FullRenderStruct,
   ActualRenderStruct
 };

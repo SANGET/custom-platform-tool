@@ -1,5 +1,5 @@
 /* eslint-disable no-param-reassign */
-import { FoundationTypeSchemas } from '@iub-dsl/types';
+import { FoundationTypeSchemas } from '@iub-dsl/definition';
 import { DefaultParserFn } from '../../types';
 
 /** 可以使用默认基础类型解析器的key */

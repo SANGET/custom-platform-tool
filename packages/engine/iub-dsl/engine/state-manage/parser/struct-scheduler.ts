@@ -1,6 +1,6 @@
 import {
   Schemas, SchemaItem, ComplexType, FoundationType
-} from "@iub-dsl/types";
+} from "@iub-dsl/definition";
 
 /**
  * 基础解析时上下文

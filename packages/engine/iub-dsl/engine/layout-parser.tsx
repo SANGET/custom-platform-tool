@@ -1,9 +1,9 @@
 import React from 'react';
-import { LayoutContentElement } from '@iub-dsl/types';
+import { LayoutContentElement } from '@iub-dsl/definition';
 import { ElementBasic } from "@engine/layout-renderer/types";
 
 import componentParser from "./component-parser";
-import { ParserContextGroup } from '../types';
+import { ParserContextGroup } from '../definition';
 
 interface WrapperContext {
   id: ElementBasic['id'],

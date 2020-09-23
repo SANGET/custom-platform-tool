@@ -2,7 +2,7 @@
 import { Subject } from 'rxjs';
 import {
   ComplexType, FoundationType, Schemas
-} from '@iub-dsl/types';
+} from '@iub-dsl/definition';
 import schemasAnalysis from './analysis/analysis';
 import { PATH_SPLIT_MARK, PATH_SPLIT_MARK_ARR } from './const';
 import { PathMapInfoItem } from './analysis/i-analysis';

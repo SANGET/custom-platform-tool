@@ -1,5 +1,5 @@
-import { FoundationType, TypeOfIUBDSL, ComplexType } from "@iub-dsl/types";
-import { ActionFlowKeywork } from "@iub-dsl/types/actions-manage/action-flow";
+import { FoundationType, TypeOfIUBDSL, ComplexType } from "@iub-dsl/definition";
+import { ActionFlowKeywork } from "@iub-dsl/definition/actions-manage/action-flow";
 import { ApbFunction } from "../../apb-dsl";
 
 /**

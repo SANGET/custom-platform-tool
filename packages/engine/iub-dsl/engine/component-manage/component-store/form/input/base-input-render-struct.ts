@@ -1,5 +1,5 @@
 import { AllUI } from "../../../UI-factory/types/all-UI";
-import { FullRenderStruct, ActualRenderStruct } from "../../types/renderStruct";
+import { FullRenderStruct, ActualRenderStruct, BaseRenderStruct } from "../../types/renderStruct";
 import { fromItemKes, toolTipPropsKes, baseInputPropsKes } from "../../../UI-factory";
 
 export const genBaseInputFullRenderStruct = () => {
@@ -82,6 +82,16 @@ const getValidCompProps = (
  * 2. 如果涉及多层, 再扩展考虑, 再进行路径考虑
  * 3. 设计多层的conf, 也可能参与递归
  */
+
+const structItemParser = (structItem: BaseRenderStruct) => {
+  const baseMark = '';
+  const index = '';
+
+  const {
+    canUseProps, compTag, canSkip, children
+  } = structItem;
+  const mark = `${baseMark}-${compTag}${index}`;
+};
 
 export const baseInputRenderStructParser = (
   options: CommonRenderStructParser

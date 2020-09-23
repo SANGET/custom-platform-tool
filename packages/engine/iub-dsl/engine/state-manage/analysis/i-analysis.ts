@@ -1,6 +1,6 @@
 import {
   FoundationTypeSchemas, CommonObjStruct, ComplexTypeSchemas, AllType
-} from "@iub-dsl/types";
+} from "@iub-dsl/definition";
 import { SCHEMAS_DEFAULT_KEY, SCHEMAS_DEFAULT_KEY_TYPE } from "../const";
 import { BaseSchedulerCtx } from "../parser/struct-scheduler";
 

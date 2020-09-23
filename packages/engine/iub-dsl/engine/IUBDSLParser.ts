@@ -1,6 +1,6 @@
 /** dont Overengineering */
 
-import { CommonObjStruct, TypeOfIUBDSL } from "@iub-dsl/types";
+import { CommonObjStruct, TypeOfIUBDSL } from "@iub-dsl/definition";
 import SchemasParser from "./state-manage/schemas";
 import componentParser from "./component-manage/component-parser";
 // import { componentParser } from "./component-manage/c";

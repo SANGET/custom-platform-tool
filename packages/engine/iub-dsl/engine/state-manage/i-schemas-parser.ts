@@ -3,7 +3,7 @@ import {
   FoundationTypeSchemas,
   CommonObjStruct,
   ComplexTypeSchemas,
-} from "@iub-dsl/types";
+} from "@iub-dsl/definition";
 
 /** 基础解析时上下文 */
 interface BaseParseContext<T> {

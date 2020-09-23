@@ -18,7 +18,7 @@
 
 import {
   Schemas, FoundationTypeSchemas, ComplexType, ComplexTypeSchemas
-} from "@iub-dsl/types";
+} from "@iub-dsl/definition";
 import { structScheduler, ParseBaseOptions } from "../parser/struct-scheduler";
 import { SchemasAnalysisRes, SchemasAnalysisExtralCtx, SchemasAnalysisCtx } from "./i-analysis";
 import { SCHEMAS_DEFAULT_KEY, PATH_SPLIT_MARK_ARR, PATH_SPLIT_MARK } from "../const";

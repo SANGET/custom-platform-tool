@@ -4,7 +4,7 @@
 
 import React, { Children } from 'react';
 
-import { TypeOfIUBDSL } from "@iub-dsl/types";
+import { TypeOfIUBDSL } from "@iub-dsl/definition";
 import IUBDSLParser from '@iub-dsl/engine';
 
 import IUBDSLRuntimeContainer from '@iub-dsl/engine/IUBDSLRuntimeContainer';

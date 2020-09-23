@@ -1,4 +1,4 @@
-import { AllComponentType } from "@iub-dsl/types";
+import { AllComponentType } from "@iub-dsl/definition";
 
 const inputC = {
   compType: AllComponentType.Input,
