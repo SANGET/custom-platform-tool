@@ -1,105 +1,126 @@
 /* eslint-disable no-param-reassign */
-import React, { lazy, Suspense, useReducer } from 'react';
-import { count } from 'console';
-import LayoutParser from './layout-parser';
-import { useIUBStore } from './state-manage';
-import { compose, Enhancer } from './utils';
+import React, { useState, useReducer, useMemo } from 'react';
+import {
+  Layout, Menu, Breadcrumb, Table
+} from 'antd';
+import { UserOutlined, LaptopOutlined, NotificationOutlined } from '@ant-design/icons';
+import 'antd/dist/antd.less';
+import { AllUI } from './component-manage/UI-factory/types';
+import {
+  TootipFactory, FromWrapFactory, BaseInputFactory, FormItemFactory
+} from './component-manage/UI-factory';
+import { RenderComp } from './component-manage/component-store/render-component';
+/** 这是旧的 */
+// import TableFactory from './component-manage/UI-factory/data-display/table';
+
+const { SubMenu } = Menu;
+const { Header, Content, Sider } = Layout;
+
+const RenderComponentList = {
+  [AllUI.FormItem]: FormItemFactory,
+  [AllUI.Tootip]: TootipFactory,
+  [AllUI.BaseInput]: BaseInputFactory
+};
+export const DefaultCtx = React.createContext({});
+
+const Child: React.FC<any> = (props = {}) => {
+  console.log(`--- re-render ---`);
+  return (
+    <div>
+      <p>number is : {props.number}</p>
+    </div>
+  );
+};
+
+const ChildMemo: React.FC<any> = (props = {}) => {
+  console.log(`--- component re-render ---`);
+  return useMemo(() => {
+    console.log(`--- useMemo re-render ---`);
+    return <div>
+      <p>number is : {props.number}</p>
+    </div>;
+  }, [props.number]);
+};
+
 // import { InitPageState } from './schemas/schemas-parser';
 
-function init(initialCount) {
-  return { count: initialCount };
-}
-
-function reducer(state, action) {
-  switch (action.type) {
-    case 'increment':
-      return { count: state.count + 1 };
-    case 'decrement':
-      return { count: state.count - 1 };
-    case 'reset':
-      return init(action.payload);
-    default:
-      throw new Error();
-  }
-}
-
-function Counter({ initialCount }) {
-  const [state, dispatch] = useReducer(reducer, initialCount, init);
-  return (
-    <>
-      Count: {state.count}
-      <button
-        onClick={() => dispatch({ type: 'reset', payload: initialCount })}
-      >
-        Reset
-      </button>
-      <button onClick={() => dispatch({ type: 'decrement' })}>-</button>
-      <button onClick={() => dispatch({ type: 'increment' })}>+</button>
-    </>
-  );
-}
+const renderComponentList = ['compId1'];
 
 const IUBDSLRuntimeContainer = ({ dslParseRes }) => {
   const {
-    layoutContent, componentParseRes,
+    layoutContent, componentParseRes, getCompParseInfo,
     schemas, mappingEntity,
     getSchemasInitValue,
-    originSchemas
+    originSchemas,
   } = dslParseRes;
 
-  return <Counter
-    initialCount={10}
-  />;
+  const [state, setstate] = useState('嘻嘻哈哈');
 
-  // 监测处理完成得改变, 渲染组件
-  // const renderedChild = useMemo(() => {
-  //   if (shouldHandleStateChanges) {
-  //     return (
-  //       <ContextToUse.Provider value={overriddenContextValue}>
-  //         {renderedWrappedComponent}
-  //       </ContextToUse.Provider>
-  //     )
-  //   }
+  const ctx = {
+    state
+  };
 
-  //   return renderedWrappedComponent
-  // }, [ContextToUse, renderedWrappedComponent, overriddenContextValue])
+  setTimeout(() => {
+    setstate('呵呵嘻嘻');
+  }, 5000);
 
-  // return renderedChild
+  const actualRenderComponentList = useMemo(() => {
+    const renderCompFactory = RenderComp(RenderComponentList);
+    return renderComponentList.map((id) => ({
+      compId: id,
+      Comp: renderCompFactory(getCompParseInfo(id))
+    }));
+  }, [RenderComponentList]);
 
-  // console.log(dslParseRes);
-  // const { getState, setState } = useIUBStore(getSchemasInitValue);
-
-  // const get = (getParam) => {
-  //   const originState = getState(getParam);
-  //   console.log(originSchemas);
-  //   console.log(originState);
-
-  //   return originState;
-  // };
-
-  // const IUBRuntimeContext = {
-  //   stateManage: {
-  //     setState,
-  //     getState: get
-  //   }
-  // };
-  // dslParseRes.bindComponent = (compId) => componentParseRes[compId](IUBRuntimeContext);
-
-  // return <pre>{JSON.stringify(getState(), null, 2)}</pre>;
-
-  // return <pre>{JSON.stringify(getState({
-  //   dId4: 'dId4',
-  //   d4: 'dId4[1].sdId1',
-  //   d5: 'dId5.sdId2',
-  //   d6: 'dId5.sdId2.ssdId1',
-  // }), null, 2)}</pre>;
-  // return LayoutParser({
-  //   layoutNode: layoutContent.content,
-  //   componentWrapper: (Comp, { id, idx }) => {
-  //     // console.log(id, idx);
-  //     return <div key={id} style={{ margin: '5px' }}>{Comp}</div>;
-  //   }
-  // }, dslParseRes);
+  return (
+    <DefaultCtx.Provider value={ctx}>
+      <TempLayout>
+        <FromWrapFactory>
+          {actualRenderComponentList.map(({ compId, Comp }) => {
+            return <Comp key={compId} extral={'扩展props'} suffix={state}/>;
+          })}
+        </FromWrapFactory>
+        {/* {TableFactory()} */}
+      </TempLayout>
+    </DefaultCtx.Provider>
+  );
 };
 
 export default IUBDSLRuntimeContainer;
+
+const TempLayout = ({ children }) => (
+  <Layout>
+    <Header className="header">
+      <Menu theme="dark" mode="horizontal" defaultSelectedKeys={['2']}>
+        <Menu.Item key="1">nav 1</Menu.Item>
+        <Menu.Item key="2">nav 2</Menu.Item>
+      </Menu>
+    </Header>
+    <Layout>
+      <Sider width={200} className="site-layout-background">
+        <Menu
+          mode="inline"
+          defaultSelectedKeys={['1']}
+          defaultOpenKeys={['sub1']}
+          style={{ height: '100%', borderRight: 0 }}
+        >
+          <SubMenu key="sub1" icon={<UserOutlined />} title="subnav 1">
+            <Menu.Item key="1">option1</Menu.Item>
+            <Menu.Item key="2">option2</Menu.Item>
+          </SubMenu>
+        </Menu>
+      </Sider>
+      <Layout style={{ padding: '0 24px 24px' }}>
+        <Content
+          className="site-layout-background"
+          style={{
+            padding: 24,
+            margin: 0,
+            minHeight: 480,
+          }}
+        >
+          {children}
+        </Content>
+      </Layout>
+    </Layout>
+  </Layout>);
