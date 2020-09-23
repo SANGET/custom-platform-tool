@@ -28,7 +28,7 @@ export const ComponentRenderer: React.FC<ComponentTypeRendererProps> = (props) =
   const {
     entity,
     entityState = {},
-    node,
+    layoutNodeItem,
     className,
     onClick,
     nestingInfo,
