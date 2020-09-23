@@ -3,17 +3,7 @@ import { VariableSizeGrid as Grid } from 'react-window';
 import ResizeObserver from 'rc-resize-observer';
 import classNames from 'classnames';
 import { Table } from 'antd';
-import styled from 'styled-components';
-
-const TableStyled = styled.div`
-.virtual-table-cell.virtual-table-cell-last{
-  line-height: 54px;
-  padding: 0 20px;
-  &:hover{
-  background-color: #F1F6FD;
-}
-}
-`;
+import './index.less';
 
 function VirtualTable(props) {
   const { columns, scroll, onRow } = props;
@@ -102,19 +92,17 @@ function VirtualTable(props) {
         setTableWidth(width);
       }}
     >
-      <TableStyled>
-        <Table
-          {...props}
-          bordered
-          onRow={onRow}
-          className="virtual-table"
-          columns={mergedColumns}
-          pagination={false}
-          components={{
-            body: renderVirtualList,
-          }}
-        />
-      </TableStyled>
+      <Table
+        {...props}
+        bordered
+        onRow={onRow}
+        className="virtual-table"
+        columns={mergedColumns}
+        pagination={false}
+        components={{
+          body: renderVirtualList,
+        }}
+      />
     </ResizeObserver>
 
   );
