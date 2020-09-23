@@ -5,11 +5,11 @@
 /**
  * 用于记录布局节点信息的数据结构
  */
-export interface LayoutNodeInfo {
+export interface LayoutNodeItem {
   /** id */
   id: string;
   /** 子布局内容 */
-  body?: LayoutNodeInfo[]
+  body?: LayoutNodeItem[]
 }
 
 /**
