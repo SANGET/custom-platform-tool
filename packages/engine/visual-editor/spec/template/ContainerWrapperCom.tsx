@@ -3,14 +3,7 @@
  */
 
 import React from 'react';
-import styled from 'styled-components';
 import { FacToComponentProps } from '../dragable-item-wrapper-fac';
-
-const ContainerWrapper = styled.div`
-  position: relative;
-  padding: 20px;
-  background-color: rgba(0,0,0, 0.1);
-`;
 
 const containerLayoutParser = (layoutInfo): React.CSSProperties => {
   return {
@@ -29,13 +22,13 @@ const ContainerWrapperCom: React.FC<ContainerWrapperComProps> = (props) => {
   const { style, layout: layoutProps } = entityState;
 
   return (
-    <ContainerWrapper>
+    <div className="container-wrapper">
       <div
         style={containerLayoutParser(layoutProps)}
       >
         {children}
       </div>
-    </ContainerWrapper>
+    </div>
   );
 };
 

@@ -6,37 +6,44 @@
 
 import { BasePageData } from "../../types";
 
+interface AppActionsContext {
+  compClassForPanelData?
+  propPanelData?
+  compClassCollection?
+  propItemData?
+  pagePropsData?
+  pageContent?: BasePageData
+  payload?: any
+  name?: string
+  id?: string
+}
+
 export const INIT_APP = 'app/init';
-export interface InitAppAction {
+export interface InitAppAction extends AppActionsContext {
   type: typeof INIT_APP
-  compPanelData
-  compClassDeclares
-  propItemDeclares
-  pagePropsData
-  pageData: BasePageData
-  options?: any
 }
 
 /**
  * 初始化应用数据
  */
-export const InitApp = ({
-  /** 组件类面板数据 */
-  compPanelData,
-  compClassDeclares,
-  propItemDeclares,
-  pagePropsData,
-  pageData,
-  options = {}
-}): InitAppAction => {
+export const InitApp = (actionPayload: AppActionsContext): InitAppAction => {
   return {
     type: INIT_APP,
-    compPanelData,
-    compClassDeclares,
-    propItemDeclares,
-    pagePropsData,
-    pageData,
-    options,
+    ...actionPayload
+  };
+};
+
+export interface UpdateAppAction extends AppActionsContext {
+  type: typeof UPDATE_APP
+}
+export const UPDATE_APP = 'app/update';
+/**
+ * 更新 app context 数据
+ */
+export const UpdateAppContext = (actionPayload: AppActionsContext): UpdateAppAction => {
+  return {
+    type: UPDATE_APP,
+    ...actionPayload,
   };
 };
 
@@ -48,7 +55,7 @@ export interface UnmountAppAction {
 /**
  * 初始化应用数据
  */
-export const UnmountApp = (): InitAppAction => {
+export const UnmountApp = (): UnmountAppAction => {
   return {
     type: UNMOUNT_APP,
   };

@@ -1,16 +1,21 @@
 import React, { useRef, useState, useEffect } from 'react';
 import ProTable, { ProColumns } from '@hy/pro-table';
-import { Button, Modal, notification, Dropdown, Menu } from 'antd';
+import {
+  Button, Modal, notification, Dropdown, Menu
+} from 'antd';
 import { FormInstance } from 'antd/lib/form';
 import { ExclamationCircleOutlined, DownOutlined } from '@ant-design/icons';
-import { queryTableListService, allowDeleteTableService, deleteTableService } from '../service';
-import { COLUMNS, OPERATIONALMENU, SELECT_ALL, MORE_MENU, PAGE_SIZE_OPTIONS } from '../constant';
-import Operational from './Operational';
 import { onNavigate } from 'multiple-page-routing';
+import { queryTableListService, allowDeleteTableService, deleteTableService } from '../service';
+import {
+  COLUMNS, OPERATIONALMENU, SELECT_ALL, MORE_MENU, PAGE_SIZE_OPTIONS
+} from '../constant';
+import Operational from './Operational';
 import { IStatus } from '../interface';
 import CreateModal from './CreateModal';
 import CreateTable from './CreateTable';
 import CopyTable from './CopyTable';
+
 const { confirm } = Modal;
 
 interface IProps {
@@ -23,17 +28,17 @@ interface ActionType {
   reset: () => void;
 }
 
-interface ICopyData {
-  id: string;
-  name: string;
-  code: string;
+export interface ICopyData {
+  id?: string;
+  name?: string;
+  code?: string;
 }
 
 const Table: React.FC<IProps> = (props: IProps, ref) => {
-  let moduleId: string = "";
-  let actionRef = useRef<ActionType>();
+  let moduleId = "";
+  const actionRef = useRef<ActionType>();
   const formRef = useRef<FormInstance>();
-  const [copyData, setCopyData] = useState<ICopyData>();
+  const [copyData = {}, setCopyData] = useState<ICopyData>();
   const [visibleCopyModal, setVisibleCopyModal] = useState<boolean>(false);
   const [visibleCrateTableModal, setVisibleCrateTableModal] = useState<boolean>(false);
 
@@ -52,16 +57,16 @@ const Table: React.FC<IProps> = (props: IProps, ref) => {
       proTableReset();
       fromReset();
     }
-  }, [props.moduleId])
+  }, [props.moduleId]);
   const handleMenuClick = ({ key }) => {
-    console.dir(key)
+    console.dir(key);
     if (key === "dictionary") {
       onNavigate({
         type: "PUSH",
         route: '/DictManage',
       });
     }
-  }
+  };
   const getData = async (params, sorter, filter) => {
     const { current, pageSize } = params;
     const tableParmas = {
@@ -69,17 +74,19 @@ const Table: React.FC<IProps> = (props: IProps, ref) => {
       offset: (current - 1) * pageSize || 0,
       size: pageSize || 10,
       moduleId
-    }
-    const res = await queryTableListService(tableParmas)
+    };
+    const res = await queryTableListService(tableParmas);
     const { data, total } = res.result;
     return Promise.resolve({
       data: data || [],
       success: true,
       total: total || 0
-    })
-  }
+    });
+  };
   const handleTableOperational = async (item) => {
-    const { operate, id, name, code } = item
+    const {
+      operate, id, name, code
+    } = item;
     if (operate === "edit") {
       onNavigate({
         type: "PUSH",
@@ -87,14 +94,14 @@ const Table: React.FC<IProps> = (props: IProps, ref) => {
         params: { id, title: '编辑表' }
       });
     } else if (operate === "delete") {
-      checkBeforeDelete(id)
+      checkBeforeDelete(id);
     } else if (operate === "copy") {
-      setCopyData({ id, name, code })
-      setVisibleCopyModal(true)
+      setCopyData({ id, name, code });
+      setVisibleCopyModal(true);
     }
-  }
+  };
   const checkBeforeDelete = async (id: string) => {
-    const res = await allowDeleteTableService(id)
+    const res = await allowDeleteTableService(id);
     if (res.code === "00000") {
       if (res.result) {
         confirm({
@@ -102,59 +109,57 @@ const Table: React.FC<IProps> = (props: IProps, ref) => {
           icon: <ExclamationCircleOutlined />,
           okText: '确定',
           cancelText: '取消',
-          onOk: () => { deleteTableSingleLine(id) }
-        })
+          onOk: () => { deleteTableSingleLine(id); }
+        });
       } else {
-        deleteTableSingleLine(id)
+        deleteTableSingleLine(id);
       }
     } else {
-      openNotification("error", res.msg)
+      openNotification("error", res.msg);
     }
-  }
+  };
   const deleteTableSingleLine = async (id: string) => {
-    const res = await deleteTableService(id)
+    const res = await deleteTableService(id);
     if (res.code === "00000") {
-      openNotification("success", "删除成功")
-      proTableReload()
+      openNotification("success", "删除成功");
+      proTableReload();
     } else {
-      openNotification("error", "删除失败")
+      openNotification("error", "删除失败");
     }
-  }
-  const openNotification = (type: IStatus, msg: string = "", description: string = "") => {
+  };
+  const openNotification = (type: IStatus, msg = "", description = "") => {
     notification[type]({
       message: msg,
-      description: description
+      description
     });
-  }
+  };
   const proTableReload = () => {
     actionRef?.current?.reload();
-  }
+  };
   const proTableReset = () => {
     actionRef?.current?.reload();
-  }
+  };
   const fromReset = () => {
-    formRef.current?.resetFields()
-  }
+    formRef.current?.resetFields();
+  };
   const handleCratetTableOk = () => {
     setVisibleCrateTableModal(false);
     proTableReload();
-  }
+  };
   const handleCopyTableOk = () => {
     setVisibleCopyModal(false);
     proTableReload();
-  }
+  };
   const handleUpdataMenus = () => {
-    props.updataMenus && props.updataMenus()
-  }
-  const renderMenu = () =>
-    <Menu onClick={handleMenuClick}>
-      {
-        MORE_MENU.map(item =>
-          <Menu.Item key={item.key} >
-            {item.title}
-          </Menu.Item>)
-      }
-    </Menu>
+    props.updataMenus && props.updataMenus();
+  };
+  const renderMenu = () => <Menu onClick={handleMenuClick}>
+    {
+      MORE_MENU.map((item) => <Menu.Item key={item.key} >
+        {item.title}
+      </Menu.Item>)
+    }
+  </Menu>;
   const renderToolBarRender = () => [
     <Button key="3" type="primary" onClick={() => setVisibleCrateTableModal(true)}>
       新建表
@@ -164,7 +169,7 @@ const Table: React.FC<IProps> = (props: IProps, ref) => {
         更多按钮 <DownOutlined />
       </Button>
     </Dropdown>
-  ]
+  ];
   return (
     <>
       <ProTable
@@ -210,6 +215,6 @@ const Table: React.FC<IProps> = (props: IProps, ref) => {
       </CreateModal>
     </>
   );
-}
+};
 
 export default React.memo(Table);

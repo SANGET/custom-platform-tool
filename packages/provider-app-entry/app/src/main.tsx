@@ -12,6 +12,7 @@ import {
 } from "./auth/actions";
 import Style from './style/style';
 import App from "./app";
+import CatchError from "./components/CatchError";
 
 const defaultLang = navigator.language || navigator.userLanguage;
 
@@ -92,6 +93,7 @@ const C = () => (
     <Provider store={authStore}>
       <LoginFilterWithStore />
     </Provider>
+    <CatchError />
     <Style/>
   </>
 );

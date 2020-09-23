@@ -37,8 +37,6 @@ export async function copyTableService(params) {
   });
 }
 
-
-
 /** 查询 菜单 */
 export async function queryMenusListService(params) {
   return await $R_P.get({
@@ -47,7 +45,6 @@ export async function queryMenusListService(params) {
   });
 }
 
-
 /** 新增菜单 */
 export async function createMenuService(params) {
   return await $R_P.post({
@@ -55,4 +52,3 @@ export async function createMenuService(params) {
     data: params
   });
 }
-

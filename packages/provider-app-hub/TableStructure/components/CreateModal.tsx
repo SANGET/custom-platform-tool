@@ -6,7 +6,7 @@ interface IProps {
   onCancel: () => void;
 
   title: string;
-  children?: any;
+  children?: React.ReactElement;
 }
 
 const CreateModal: React.FC<IProps> = (props) => {

@@ -7,7 +7,6 @@ export interface ComponentTypeRendererProps
   extends React.DetailedHTMLProps<React.HTMLAttributes<HTMLDivElement>, HTMLDivElement> {
   entity: EditorComponentEntity
   entityState: EditorEntityState
-  node
 }
 
 const FormLabel = ({ children, className = '', ...props }) => (children ? (
@@ -24,7 +23,6 @@ export const ComponentRenderer: React.FC<ComponentTypeRendererProps> = (props) =
   const {
     entity,
     entityState = {},
-    node,
     className,
     ...otherProps
   } = props;

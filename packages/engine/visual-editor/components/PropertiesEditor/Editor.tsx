@@ -12,14 +12,18 @@ import { PropItemRenderer as PropItemRendererDefault } from './PropItemRenderer'
 import { extractPropConfig } from './extractPropConfig';
 import { entityStateMergeRule } from './entityStateMergeRule';
 import { PropItemRendererProps } from './types';
+import { GroupPanel, GroupPanelData } from '../GroupPanel';
+
+export type PropPanelData = GroupPanelData
 
 export type UpdateEntityStateOfEditor = (entityState: EditorEntityState) => void
 export type InitEntityStateOfEditor = (entityState: EditorEntityState) => void
 
 export interface PropertiesEditorProps {
   /** 选中的 entity */
+  propPanelData: PropPanelData
   selectedEntity: EditorEntity
-  propItemDeclares: any
+  propItemData: any
   /** 属性项组合配置 */
   propertiesConfig: ComponentBindPropsConfig
   /** 属性编辑器的配置，通过该配置生成有层级结构的属性编辑面板 */
@@ -146,7 +150,7 @@ PropertiesEditorProps, PropertiesEditorState
   renderPropItem = () => {
     const {
       selectedEntity,
-      propItemDeclares,
+      propItemData,
       propItemRenderer = this.defaultPropItemRenderer
     } = this.props;
     const { entityState } = this.state;
@@ -170,13 +174,16 @@ PropertiesEditorProps, PropertiesEditorState
          *
          * 此配置为函数，需要在此做过滤
          */
-        propOriginConfigItem = propItemDeclares[propID];
+        propOriginConfigItem = propItemData[propID];
 
         /**
          * 通过传入 entity 来提取 propItemConfig
          */
         propItemConfig = extractPropConfig(propOriginConfigItem, selectedEntity, override);
       }
+
+      // 应对绑定了一个没有的属性
+      if (!propItemConfig) return null;
 
       /**
        * 将实例状态回填到属性项
@@ -241,6 +248,10 @@ PropertiesEditorProps, PropertiesEditorState
     return propertiesConfig && (!!propertiesConfig.propRefs || !!propertiesConfig.rawProp);
   }
 
+  propItemRenderer = () => {
+
+  }
+
   render() {
     const hasProps = this.hasPropertiesConfig();
 
@@ -250,6 +261,10 @@ PropertiesEditorProps, PropertiesEditorState
       <div
         className="entity-prop-editor"
       >
+        {/* <GroupPanel
+        panelData={{}}
+        itemRenderer={this.propItemRenderer}
+        /> */}
         {
           propFormDOM
         }

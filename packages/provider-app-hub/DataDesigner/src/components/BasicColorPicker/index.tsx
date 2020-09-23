@@ -1,23 +1,9 @@
 import React from 'react';
 import { Modal } from 'antd';
 
-import styled from 'styled-components';
 import { SketchPicker } from 'react-color';
 
-const PickerStyled = styled.div`
-  /** 颜色选择器容器样式模拟 */
-  border: 1px solid #d9d9d9;
-  height: 32px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  /** 颜色选择器容器-色块 */
-  .color-block{
-    width:20px;
-    height:20px;
-    border: 1px solid #d9d9d9;
-  }  
-`;
+import './index.less';
 
 /**
  * 基本颜色选择器
@@ -43,10 +29,12 @@ const BasicColorPicker = ({
  * @param onClick-点击事件回调-打开颜色选择器
  */
 const BasicColor = ({ color, onClick }) => {
-  console.log(color,'color000000')
-  return (<PickerStyled onClick={ onClick}>
-    <div className="color-block" style={{ backgroundColor: `${color}` }}></div>
-  </PickerStyled>);
+  console.log(color, 'color000000');
+  return (
+    <div className="color-picker" onClick={ onClick}>
+      <div className="color-block" style={{ backgroundColor: `${color}` }}></div>
+    </div>
+  );
 };
 export default BasicColorPicker;
 export { BasicColor };

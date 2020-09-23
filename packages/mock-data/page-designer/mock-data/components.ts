@@ -1,10 +1,6 @@
-import { EditorComponentClass } from "@engine/visual-editor/types";
+import { ComponentClassCollection } from "@engine/visual-editor/types";
 import { CustomComponent } from "./custom-component-demo";
 import { ApiMock } from "./api-mock";
-
-interface ComponentClassCollection {
-  [id: string]: EditorComponentClass
-}
 
 export const componentClassCollection: ComponentClassCollection = {
   'component-1': {
@@ -18,6 +14,7 @@ export const componentClassCollection: ComponentClassCollection = {
         { propID: 'prop_style_title_color' },
         { propID: 'prop_title_value', override: { defaultValue: '文本框' } },
         { propID: 'prop_real_value' },
+        { propID: 'prop_field' },
       ]
     }
   },

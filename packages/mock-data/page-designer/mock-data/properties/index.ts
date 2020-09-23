@@ -1,11 +1,14 @@
 import { EditorPropertyItemsCollection } from "@engine/visual-editor/types";
 import { ApiMock } from "../api-mock";
 import PropValue from './value';
+import PropField from './field';
 
 /**
  * TODO: 搞清楚属性如何影响组件实例，或者是说组件实例如何根据属性数据进行调整
  */
 export const propertiesItemCollection: EditorPropertyItemsCollection = {
+  prop_field: PropField,
+  prop_real_value: PropValue,
   prop_style_title_color: (entity) => {
     return {
       id: 'prop_style_title_color',
@@ -28,7 +31,6 @@ export const propertiesItemCollection: EditorPropertyItemsCollection = {
       }
     };
   },
-  prop_real_value: PropValue,
   prop_flex_config: (entity) => {
     return {
       id: 'prop_flex_config',

@@ -1,15 +1,16 @@
 import React, { useEffect } from 'react';
 import { Form, message, notification } from 'antd';
-import { NameCodeItem, FromFooterBtn } from "./FormItem"
-import pinyin4js from 'pinyin4js'
-import './index.less'
+import pinyin4js from 'pinyin4js';
+import { NameCodeItem, FromFooterBtn } from "./FormItem";
+import './index.less';
 import { copyTableService } from '../service';
+import { ICopyData } from './Table';
 
 interface IProps {
   onOk: () => void;
   onCancel: () => void;
 
-  data: any;
+  data: ICopyData;
 }
 const layout = {
   labelCol: { span: 5 },
@@ -21,34 +22,34 @@ const CopyTable: React.FC<IProps> = (props: IProps) => {
 
   useEffect(() => {
     const { name, code } = data;
-    const suffixName = `_副本_${randomCode(5)}`
+    const suffixName = `_副本_${randomCode(5)}`;
     form && form.setFieldsValue({
       name: name + suffixName,
       code: code + pinyin4js.convertToPinyinString(suffixName, "", pinyin4js.WITHOUT_TONE)
-    })
-  }, [])
+    });
+  }, []);
 
   const randomCode = (number: number) => {
-    const weights = parseInt(`10${Array(number).join('0')}`)
-    console.dir(weights)
-    return Math.floor(Math.random() * weights)
-  }
+    const weights = parseInt(`10${Array(number).join('0')}`, 10);
+    console.dir(weights);
+    return Math.floor(Math.random() * weights);
+  };
   const handleFinish = async (values) => {
-    const res = await copyTableService({ ...values, id: data.id })
+    const res = await copyTableService({ ...values, id: data.id });
     if (res.code === "00000") {
       notification.success({
         message: "复制成功",
         duration: 2
       });
-      onOk && onOk()
+      onOk && onOk();
     } else {
-      message.error(res.msg)
+      message.error(res.msg);
     }
-  }
+  };
 
   const handleFormCancel = () => {
-    onCancel && onCancel()
-  }
+    onCancel && onCancel();
+  };
   return (
     <Form {...layout} form={form} name="control-hooks" onFinish={handleFinish}>
       <NameCodeItem form={form} />

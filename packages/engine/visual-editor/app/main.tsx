@@ -13,7 +13,7 @@ import { Dispatcher } from "@engine/visual-editor/core/actions";
 import { VisualEditorState } from "@engine/visual-editor/core/reducers/reducer";
 import {
   getCompClassDeclareData,
-  getCompPanelData,
+  getCompClassForPanelData,
   getPagePropsDeclareData,
   getPropItemDeclareData,
 } from "@mock-data/page-designer/mock-data";
@@ -60,21 +60,21 @@ const VisualEditorApp: React.FC<VisualEditorAppProps> = (props) => {
     /** 初始化数据 */
     Promise.all([
       getCompClassDeclareData(),
-      getCompPanelData(),
+      getCompClassForPanelData(),
       getPagePropsDeclareData(),
       getPropItemDeclareData()
     ])
-      .then(([compClassDeclares, compPanelData, pagePropsData, propItemDeclares]) => {
+      .then(([compClassCollection, compClassForPanelData, pagePropsData, propItemData]) => {
         ApiGetPageData(appKey)
-          .then((pageData) => {
-            console.log(pageData);
+          .then((pageContent) => {
+            console.log(pageContent);
             InitApp({
-              compPanelData,
-              compClassDeclares,
-              propItemDeclares,
+              compClassForPanelData,
+              compClassCollection,
+              propItemData,
               pagePropsData,
               /** 回填数据的入口 */
-              pageData
+              pageContent
             });
           });
 
@@ -111,14 +111,14 @@ const VisualEditorApp: React.FC<VisualEditorAppProps> = (props) => {
           <Button
             className="mr10"
             onClick={(e) => {
-              const pageData = wrapPageData({
+              const pageContent = wrapPageData({
                 id: appKey,
                 pageID: appKey,
                 name: '测试页面',
                 pageMetadata,
                 layoutInfo,
               });
-              ApiSavePage(pageData);
+              ApiSavePage(pageContent);
             }}
           >
             保存页面
@@ -130,8 +130,8 @@ const VisualEditorApp: React.FC<VisualEditorAppProps> = (props) => {
           className="comp-panel"
         >
           <ComponentPanel
-            componentPanelConfig={appContext.compPanelData}
-            compClassDeclares={appContext.compClassDeclares}
+            componentPanelConfig={appContext.compClassForPanelData}
+            compClassCollection={appContext.compClassCollection}
           />
         </div>
         <div
@@ -154,13 +154,13 @@ const VisualEditorApp: React.FC<VisualEditorAppProps> = (props) => {
             activeEntity && (
               <PropertiesEditor
                 key={activeEntityID}
-                propItemDeclares={appContext.propItemDeclares}
-                propertiesConfig={appContext?.compClassDeclares[activeEntity?._classID]?.bindProps}
+                propItemData={appContext.propItemData}
+                propertiesConfig={appContext?.compClassCollection[activeEntity?._classID]?.bindProps}
                 selectedEntity={activeEntity}
                 defaultEntityState={activeEntity.propState}
                 initEntityState={(entityState) => InitEntityState(selectedInfo, entityState)}
                 updateEntityState={(entityState) => UpdateEntityState({
-                  nestingIdx: selectedInfo.nestingIdx,
+                  nestingInfo: selectedInfo.nestingInfo,
                   entity: activeEntity
                 }, entityState)}
               />

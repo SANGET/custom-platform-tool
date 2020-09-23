@@ -5,14 +5,13 @@ import {
   LayoutWrapperContext
 } from '@engine/layout-renderer';
 import { DragItemActions } from '..';
-import { UpdateEntityStateOfEditor } from '../../components/PropertiesEditor';
 import { Dispatcher } from '../../core/actions';
-import { EditorComponentEntity, EditorEntityState } from '../../types';
+import { EditorComponentEntity, EditorEntityState, ElemNestingInfo } from '../../types';
 
 export interface GetStateContext {
-  nestingInfo
-  idx
-  id
+  nestingInfo: ElemNestingInfo
+  idx: number
+  id: string
 }
 
 export type GetEntityProps = (ctx: GetStateContext) => EditorEntityState | undefined
@@ -29,14 +28,23 @@ export interface WrapperFacContext {
   UpdateEntityState: Dispatcher['UpdateEntityState']
 }
 
+interface ActionCtx {
+  entity: EditorComponentEntity
+  idx: number
+  nestingInfo: ElemNestingInfo
+}
+
+export type WrapperItemClockEvent = (event, actionCtx: ActionCtx) => void
+export type WrapperItemDeleteEvent = (event, actionCtx: ActionCtx) => void
+
 /**
  * 包装器的 actions
  */
 export interface WrapperFacActions extends DragItemActions {
   /** 响应组件点击事件 */
-  onClick: (event, { entity: EditorComponentEntity, idx: number }) => void
+  onClick: WrapperItemClockEvent
   /** 响应组件点击事件 */
-  onDelete: (event, { idx: number, entity: EditorComponentEntity }) => void
+  onDelete: WrapperItemDeleteEvent
 }
 
 /**
@@ -49,7 +57,7 @@ export interface WrapperFacOptions extends WrapperFacContext, WrapperFacActions 
  * 包装器传给被包装的组件的 props
  */
 export interface FacToComponentProps extends LayoutWrapperContext {
-  onClick
+  onClick: React.DOMAttributes<HTMLDivElement>['onClick']
   entity: EditorComponentEntity
   entityState: EditorEntityState
 }

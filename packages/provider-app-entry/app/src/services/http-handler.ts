@@ -4,12 +4,9 @@
  */
 
 import { RequestClass, resolveUrl } from "@mini-code/request";
-import produce from "immer";
 import { message as AntdMessage } from 'antd';
 
 import { setDefaultParams, clearDefaultParams, onNavigate } from "multiple-page-routing";
-import { ShowModal } from "@infra/ui";
-import { authStore } from "../auth/actions";
 
 const defaultApiUrl = 'http://192.168.14.140:6090';
 
@@ -44,16 +41,16 @@ const $R = new RequestClass<ResStruct>({
  * URL 管理器，根据实际业务需求设置 URL
  */
 class UrlManager {
-  currRent = ''
+  currLessee = ''
 
   currApp = ''
 
   /** 登录后需要设置 */
-  setRent = (rent: string) => {
+  setLessee = (lessee: string) => {
     setDefaultParams({
-      rent
+      lessee
     });
-    this.currRent = rent;
+    this.currLessee = lessee;
     this.setRequestBaseUrl();
   }
 
@@ -70,7 +67,7 @@ class UrlManager {
   /** 登出的时候需要设置 */
   reset = () => {
     this.currApp = '';
-    this.currRent = '';
+    this.currLessee = '';
     /** 清除默认 params */
     clearDefaultParams();
     $R.setConfig({
@@ -79,7 +76,7 @@ class UrlManager {
   }
 
   getUrl = () => {
-    return resolveUrl(baseReqUrl, this.currRent, this.currApp);
+    return resolveUrl(baseReqUrl, this.currLessee, this.currApp);
   }
 
   setRequestBaseUrl = () => {
@@ -155,13 +152,22 @@ function handleRes(resData) {
         useDefaultParams: false
       });
       break;
+    default:
+      AntdMessage.error(msg);
   }
 }
+
+const handleErr = (e) => {
+  console.log(e);
+};
 
 /**
  * 监听 $R res 处理函数
  */
 $R.on("onRes", handleRes);
+
+/** 处理网络异常 */
+$R.on("onErr", handleErr);
 
 const $request = $R;
 

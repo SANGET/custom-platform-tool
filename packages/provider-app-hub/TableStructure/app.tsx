@@ -2,10 +2,10 @@ import React, { PureComponent } from 'react';
 import { Row, Col } from 'antd';
 import MeunsTree from './components/MenusTree';
 import Table from './components/Table';
-import "./index.less"
+import "./index.less";
 
 interface IProps {
-
+  children: React.ReactNode
 }
 interface IMenuInstance {
   reload: () => void;
@@ -13,14 +13,16 @@ interface IMenuInstance {
 interface IState {
   moduleId: string;
 }
-class DataDesign extends PureComponent<IProps, IState>{
+class DataDesign extends PureComponent<IProps, IState> {
   public menuRef = React.createRef<IMenuInstance>()
+
   constructor(props: IProps) {
     super(props);
     this.state = {
       moduleId: "",
-    }
+    };
   }
+
   /**
    * 点击树选中
    * @param id
@@ -30,14 +32,16 @@ class DataDesign extends PureComponent<IProps, IState>{
     if (id === moduleId) return;
     this.setState({
       moduleId: id
-    })
+    });
   }
+
   /**
    * 更新树菜单
    */
   public handleUpdataMenus = () => {
-    this.menuRef?.current?.reload()
+    this.menuRef?.current?.reload();
   }
+
   public render() {
     const { moduleId } = this.state;
     return (
@@ -55,8 +59,7 @@ class DataDesign extends PureComponent<IProps, IState>{
           />
         </Col>
 
-      </Row>)
+      </Row>);
   }
-
 }
 export default DataDesign;

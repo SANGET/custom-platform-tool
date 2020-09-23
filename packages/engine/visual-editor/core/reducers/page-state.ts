@@ -1,14 +1,17 @@
 import produce from 'immer';
+import { mergeDeep } from '@infra/utils/tools';
 import {
   INIT_APP, InitAppAction,
-  ADD_ENTITY, AddEntityAction
+  ADD_ENTITY, AddEntityAction, UPDATE_APP, UpdateAppAction
 } from "../actions";
-import { ComponentPanelConfig, PageMetadata } from "../../types";
+import { PageMetadata } from "../../types";
 
 const DefaultPageMeta: PageMetadata = {
   lastCompID: 0,
   dataSource: {},
-  pageInterface: {}
+  pageInterface: {},
+  linkpage: {},
+  name: ''
 };
 
 /**
@@ -21,9 +24,9 @@ export function pageMetadataReducer(
   switch (action.type) {
     case INIT_APP:
       const {
-        pageData
+        pageContent
       } = action;
-      return produce(pageData, (draft) => (draft ? draft.meta : state));
+      return produce(pageContent, (draft) => (draft ? draft.meta : state));
     case ADD_ENTITY:
       return produce(state, (draft) => {
         // eslint-disable-next-line no-param-reassign
@@ -38,14 +41,18 @@ export function pageMetadataReducer(
 export interface AppContext {
   /** App 是否做好准备 */
   ready: boolean
+  /** 存放所有组件的数据 */
   /** 组件类数据 */
-  compClassDeclares?: any
+  compClassCollection?: any
   /** 属性项数据 */
-  propItemDeclares?: any
+  propItemData?: any
   /** 组件类面板数据 */
-  compPanelData?: ComponentPanelConfig
+  compClassForPanelData?: any
+  propPanelData?: any
   /** 页面可编辑属性数据 */
   pagePropsData?: any
+  /** 页面元数据 */
+  payload?: any
 }
 /**
  * 整个应用的上下文数据
@@ -54,23 +61,33 @@ export function appContextReducer(
   state = {
     ready: false
   },
-  action: InitAppAction
+  action: InitAppAction | UpdateAppAction
 ): AppContext {
   switch (action.type) {
     case INIT_APP:
       const {
-        compClassDeclares, compPanelData,
-        options,
-        pagePropsData, propItemDeclares
+        compClassCollection, compClassForPanelData,
+        propPanelData,
+        pagePropsData, propItemData,
+        payload,
+        name, id
       } = action;
       return {
         ready: true,
-        options,
-        compClassDeclares,
-        compPanelData,
+        payload,
+        compClassCollection,
+        compClassForPanelData,
+        propPanelData,
         pagePropsData,
-        propItemDeclares
+        propItemData
       };
+    case UPDATE_APP:
+      const { type, ...otherState } = action;
+      return produce(state, (draftState) => {
+        // Object.assign(draftState, otherState);
+        const nextStateVal = mergeDeep(draftState, otherState);
+        return nextStateVal;
+      });
     default:
       return state;
   }

@@ -17,6 +17,7 @@ import {
 import { AuthStoreState } from "./auth/actions";
 
 import { GetMenu } from "./apis";
+import { ToApp } from "./components/ToApp";
 
 interface AppContainerState extends RouterState {
   ready?: boolean;
@@ -149,8 +150,11 @@ export default class App extends RouterMultiple<AppContainerProps, AppContainerS
       routers, routerInfo, activeRoute,
       navMenu, ready,
     } = this.state;
-    const hasPage = routers.length > 0;
-    return hasPage ? (
+    /**
+     * 是否选择了应用，必须选择应用后才现实菜单
+     */
+    const selectedApp = routers.length > 0;
+    return selectedApp ? (
       <Nav
         navConfig={navMenu}
       />
@@ -177,6 +181,7 @@ export default class App extends RouterMultiple<AppContainerProps, AppContainerS
                 />
                 {this.renderNav()}
                 <span className="flex"></span>
+                <ToApp />
                 <UserStatusbar logout={logout} />
               </header>
               <div id="provider_app_content">

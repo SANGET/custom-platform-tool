@@ -12,23 +12,26 @@
 
 ## 2. 技术选型
 
-- 页面渲染
-  - react
-  - less
-  - sass
-  - styled-components
-- 数据管理
-  - redux
-- 基础工具
-  - rxjs
-- 拖拽技术
-  - react-dnd
 - 工程管理
   - webpack
   - yarn
   - lerna
+- 前端
+  - 页面渲染
+    - react
+    - less
+    - sass
+    - styled-components
+  - 数据管理
+    - redux
+  - 基础工具
+    - rxjs
+  - 拖拽技术
+    - react-dnd
 - 服务
   - node
+  - nest
+    - MVC 框架，强依赖 ts、依赖注入的方式进行开发，node 版的 spring
 
 ---
 
@@ -44,7 +47,10 @@
 - `.vscode/` - 编辑器配置
 - `dist/` - 打包构建后的文件存放目录
 - `docs/` - 文档
+- `web-server` - 配置端 web 资源服务
 - `packages/` - 工作区
+  - `spec` - 接入标准
+    - `BusinessComponent` - 业务组件接入标准，在配置端和应用端都使用的组件
   - `provider-app-entry/` - 生产工具入口
   - `provider-app-hub/` - 生产工具 app 集合
     - `[App]` 根据实际需要开发的 app
@@ -79,7 +85,7 @@
 
 ---
 
-## 4. 开始（Getting started）
+## 4. 开始开发（Getting started）
 
 ### 4.1. 准备
 
@@ -88,93 +94,54 @@ git clone https://github.com/SANGET/custom-platform-tool.git
 yarn
 ```
 
-### 4.2. 启动「生产工具」
+### 4.2. 启动「生产工具 - 配置前端」
 
 ```shell
 sh ./scripts/start-provider-app.sh
 ```
 
-### 4.3. 启动「消费工具」
+### 4.3. 启动「应用前端」
 
 ```shell
 yarn start:consumer-app
 ```
 
----
+### 4.4. 启动「web 资源服务」
 
-## 5. 进阶（Advance）
-
-### 5.1. 搭建独立应用
-
-在 `packages/` 中对应的目录（根据需要开发的子应用决定，以下以 CustomSubApp 为例）。
-
-> 可以参考[子应用模版](./.template/CustomSubApp/package.json)。
-
-1. 新建文件夹 `CustomSubApp`
-2. 在 `CustomSubApp/` 添加 `package.json`
-3. 添加 `public/`，可以从模版中 copy
-4. 在 `package.json` 的 `scripts` 中添加 `"start": "cross-env PORT=9988 minictl start"`，端口可以自定义
-5. 添加 `.mini-scripts.json` 工程化配置文件
-6. 添加 `src/app.tsx` 和 `src/index.tsx`，内容参考子应用模版
-7. 在最外层的 `package.json` 中添加启动 script: `"start:custom-sub-app": "cd ./package/CustomSubApp && npm start"`
-8. 打开命令后输入 `yarn && yarn start:custom-sub-app`，等待片刻即可
-
-### 5.2. 搭建自定义模块
-
-#### 5.2.1. 定义
-
-更多时候需要搭建一些共用的模块，用于提高团队合作效率，以下是搭建过程：
-
-> 可以参考[模块模版](./.template/CustomModule/package.json)。
-
-1. 新建文件夹 `CustomModule`
-2. 在 `CustomModule/` 添加 `package.json`
-
-package.json 的必要字段：
-
-```json
-{
-  "name": "@scope-name/module-name",
-  "version": "0.0.1",
-  "private": true,
-  "author": "SANGET",
-  "license": "MIT"
-}
+```shell
+cd ./web-server
+yarn start:dev
 ```
 
-`name` 的规则是 `npm` 的 `scope` 标准。
+## 5. 部署说明
 
-完成上述步骤后，需要在项目根目录通过 `yarn` 将模块连接起来（link），link 工作由 yarn 和 lerna 完成。
-
-#### 5.2.2. 使用
-
-通过上述操作后，其他模块可以引用 `@scope-name/module-name` 中的模块：
-
-```ts
-import { moduleName } from '@scope-name/module-name';
-
-moduleName();
-```
+- [参考](./docs/工程/deployment.md)
 
 ---
 
-## 6. 配置端接入
+## 6. 进阶（Advance）
+
+- [搭建独立应用](./docs/工程/write-sub-app.md)
+
+---
+
+## 7. 配置端接入
 
 [配置端接入参考文档](./packages/provider-app-hub/README.md)
 
 ---
 
-## 7. 应用端接入
+## 8. 应用端接入
 
 ---
 
-## 7. 共用 UI
+## 9. 共用 UI
 
 如何编写共用的 UI？[点击查看](./packages/infrastructure/ui/README.md)
 
 ---
 
-## 8. 测试
+## 10. 测试
 
 通过 jest 测试，可以在需要测试的模块的目录下新建 `__test__` 目录并且写测试用例。然后在项目根目录执行 `yarn test` 即可进行测试。
 
@@ -182,22 +149,6 @@ moduleName();
 
 ---
 
-## 9. 部署
-
-### 9.1. CI
-
-持续集成 - 测试，每个提交都可以通过 CI 工具做持续集成。
-
-TODO
-
-### 9.2. CD
-
-持续部署，通过分支管理，根据制定的功能分支做持续部署。
-
-TODO
-
----
-
-## 10. 最后
+## 11. 最后
 
 Thanks
