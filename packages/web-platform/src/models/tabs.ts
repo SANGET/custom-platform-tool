@@ -19,11 +19,11 @@ export enum TABS_OPERATION {
 }
 export interface ITabsList {
   /** 显示名称 */
-  title?: string;
+  title: string;
   /** 对应路由地址 */
-  path?: string;
+  path: string;
   /** 类型判断 主要区分首页和动态加载的路由 */
-  page?: TAB_TYPE;
+  page: TAB_TYPE;
   /** tabs 是否可以关闭 */
   closable?: boolean;
 
@@ -36,6 +36,13 @@ export interface ITabsModelState {
 
   maxTabs: number;
 }
+const goToRouter = (page: TAB_TYPE, link: string) => {
+  if (page === TAB_TYPE.PAGE) {
+    history.push(`${ROUTER_SUFFIX}?path=${link}`);
+  } else {
+    history.push(link);
+  }
+};
 export interface ITabsModel {
   namespace: string;
   state: ITabsModelState;
@@ -61,6 +68,7 @@ const inintState: ITabsModelState = {
   maxTabs: 5,
   openKeys: []
 };
+
 const TabsModel: ITabsModel = {
   namespace: 'tabs',
 
@@ -101,7 +109,7 @@ const TabsModel: ITabsModel = {
       state.list = filterTabs;
       if (filterTabs.length > 0) {
         state.activeKey = filterTabs[currentIndex].path || "";
-        history.push(state.activeKey);
+        goToRouter(filterTabs[currentIndex].page, state.activeKey);
       }
       return state;
     },
