@@ -77,7 +77,7 @@ module.exports = {
     "max-classes-per-file": 0,
     "object-curly-spacing": ["error", "always"],
     'import/no-extraneous-dependencies': [
-      'error',
+      1,
       { devDependencies: ['**/*spec.ts'] },
     ],
     'no-useless-constructor': 'off',

@@ -51,3 +51,4 @@ export class PageDataController {
     return resData;
   }
 }
+// if(!request.headers) return { code: '500', msg: '未授权' };
