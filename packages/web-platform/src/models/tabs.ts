@@ -54,6 +54,7 @@ export interface ITabsModel {
     remove: Reducer<ITabsModelState>;
     updata: Reducer<ITabsModelState>;
     close: Reducer<ITabsModelState>;
+    destory: Reducer<ITabsModelState>;
   };
 }
 
@@ -81,7 +82,7 @@ const TabsModel: ITabsModel = {
   reducers: {
     /** 新增tabs 主要是点击菜单 */
     add(state: ITabsModelState = inintState, { payload }): ITabsModelState {
-      const { title, path } = payload;
+      const { title, path, closable = true } = payload;
       const { activeKey, list } = state;
       const findSameTab = list.find((tab) => tab.path === path);
       const page = history.location.pathname === ROUTER_SUFFIX ? TAB_TYPE.PAGE : TAB_TYPE.BUILT_IN;
@@ -89,12 +90,12 @@ const TabsModel: ITabsModel = {
         const findCurrent: number = list.findIndex((tab) => tab.path === activeKey);
         if (!findSameTab) {
           list[findCurrent] = {
-            title, path, page, closable: true
+            title, path, page, closable
           };
         }
       } else if (!findSameTab) {
         list.push({
-          title, path, page, closable: true
+          title, path, page, closable
         });
       }
       state.activeKey = path;
@@ -136,6 +137,10 @@ const TabsModel: ITabsModel = {
     updata(state: ITabsModelState = inintState, { payload }): ITabsModelState {
       state.activeKey = payload;
       return state;
+    },
+    /** */
+    destory(state: ITabsModelState = inintState, { payload }): ITabsModelState {
+      return inintState;
     }
   },
 };

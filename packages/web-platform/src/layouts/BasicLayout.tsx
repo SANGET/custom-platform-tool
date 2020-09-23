@@ -16,6 +16,8 @@ import { SiderMenuProps } from '@ant-design/pro-layout/lib/SiderMenu/SiderMenu';
 import MenuExtra from '@/components/MenuExtra';
 import TabsContainer from '@/components/TabsContainer';
 import { parsePathToOpenKeys } from '@/utils/utils';
+import { MODE_PREVIEW } from '@/constant';
+
 
 export interface IBasicLayoutProps extends ProLayoutProps {
   settings: Settings;
@@ -37,13 +39,49 @@ class BasicLayout extends React.PureComponent<IBasicLayoutProps, IBaseLayoutStat
   }
 
   public async componentDidMount() {
+    this.setPreviewMenuAndTabs();
     const res = await this.getMenu();
     if (res.code === 0) {
       this.setDefaultTabs(res.result || []);
       this.setInintopenKeys();
     }
   }
+  componentWillUnmount() {
+    const { dispatch } = this.props;
+    dispatch({
+      type: 'menus/destory',
+    });
+    dispatch({
+      type: 'tabs/destory',
+    });
+  }
 
+  /**
+   * 预览模式添加菜单和tabs
+   */
+  public setPreviewMenuAndTabs() {
+    const { pathname } = history.location;
+    if (pathname === MODE_PREVIEW) {
+      const { dispatch } = this.props;
+      dispatch({
+        type: "menus/addMenu",
+        payload: {
+          id: "1111",
+          path: "/preview",
+          name: "预览"
+        }
+      });
+      dispatch({
+        type: "tabs/add",
+        payload: {
+          path: "/preview",
+          title: "预览",
+          closable: false
+        }
+      });
+    }
+    // console.dir()
+  }
   /**
    * 根据url query path 参数设置 初始 展开的 SubMenu 菜单项 key 数组
    *
@@ -203,6 +241,7 @@ class BasicLayout extends React.PureComponent<IBasicLayoutProps, IBaseLayoutStat
     );
   }
 }
+
 export default connect(({
   global, settings, menus, loading, tabs
 }: ConnectState) => ({
