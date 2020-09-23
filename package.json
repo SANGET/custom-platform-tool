@@ -11,12 +11,13 @@
     "packages/engine/**/*",
     "packages/infrastructure/*",
     "packages/consumer-app/*",
+    "packages/web-platform/*",
     "packages/spec/*"
   ],
   "scripts": {
     "lerna:bootstrap": "lerna bootstrap",
     "start:all": "lerna run --parallel --stream start",
-    "start:web-platform": "cd ./packages/consumer-app/web-platform && npm run dev",
+    "start:web-platform": "cd ./packages/web-platform && npm run dev",
     "start:provider-app": "cd ./packages/provider-app-entry/app && npm start",
     "start:data": "cd ./packages/provider-app-entry/app && npm start",
     "start:visual-editor": "cd ./packages/engine/visual-editor && npm start",

@@ -32,5 +32,5 @@
     "typescript",
     "typescriptreact"
   ],
-  "typescript.tsdk": "node_modules/typescript/lib"
+  "typescript.tsdk": "/Users/igola/haoyun/custom-platform-v3-frontend/node_modules/typescript/lib"
 }
