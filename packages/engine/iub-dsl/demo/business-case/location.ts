@@ -167,6 +167,37 @@ const IUBLocationForm: TypeOfIUBDSL = {
         }
       }
     },
+    dId6: {
+      type: ComplexType.structObject,
+      struct: {
+        sdId0: {
+          type: FoundationType.string,
+          fieldMapping: 'tableId1.filedId1',
+        },
+        sdId3: {
+          type: ComplexType.structObject,
+          desc: '上级位置',
+          // TODO: 使用关系描述处理
+          struct: {
+            ssdId0: {
+              type: FoundationType.string,
+              fieldMapping: 'tableId1.filedId1',
+              compTag: 'value',
+            },
+            ssdId1: {
+              type: ComplexType.structObject,
+              desc: '上级位置名字',
+              struct: {
+                sssdId1: {
+                  type: FoundationType.string,
+                  fieldMapping: ''
+                }
+              }
+            },
+          }
+        },
+      }
+    },
     dId5: { // 位置管理表格数据
       type: ComplexType.structArray,
       desc: '位置管理表格数据',

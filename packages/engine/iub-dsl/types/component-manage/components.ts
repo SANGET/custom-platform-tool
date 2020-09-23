@@ -3,6 +3,14 @@ type FieldHook = {
   after: () => {};
 };
 
+export enum AllComponentType {
+  Input = "Input",
+  Selector = "Selector",
+  TreeSelector = "TreeSelector",
+  Table = "Table",
+  Button = "Button"
+}
+
 export interface BaseForm {
   key: string;
   /** 对应schemas的store */
@@ -18,17 +26,17 @@ export interface BaseForm {
 }
 
 export interface Selector extends BaseForm {
-  type: "Selector";
+  type: AllComponentType.Selector;
   /** 对应schemas的store, stroe必须是∂ */
   dataSource: any[];
 }
 
 export interface Input extends BaseForm {
-  type: "Input";
+  type: AllComponentType.Input;
 }
 
 export interface TreeSelector extends BaseForm {
-  type: "TreeSelector";
+  type: AllComponentType.TreeSelector;
   dataSource: {
     tableName: string;
   };
@@ -36,12 +44,12 @@ export interface TreeSelector extends BaseForm {
 
 export interface Table {
   key: string;
-  type: "Table";
+  type: AllComponentType.Table;
   dataSource: {};
 }
 
 export interface Button {
   key: string;
-  type: "Button";
+  type: AllComponentType.Button;
   text: string;
 }
