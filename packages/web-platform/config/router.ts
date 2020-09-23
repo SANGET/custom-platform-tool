@@ -22,6 +22,9 @@ export default [{
         },{
           path: '/page',
           component: './Welcome',
+        },{
+          path: '/preview',
+          component: './Welcome',
         },
         {
           path: '/dashboard',
