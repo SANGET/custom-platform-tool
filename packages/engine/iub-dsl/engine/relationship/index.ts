@@ -1,5 +1,5 @@
-import RelationshipsCollection from "@iub-dsl/types/relationship/relationship-collection";
-import { CommonObjStruct } from "@iub-dsl/types";
+import RelationshipsCollection from "@iub-dsl/definition/relationship/relationship-collection";
+import { CommonObjStruct } from "@iub-dsl/definition";
 import DataChangeParser from "./dataChangeParser";
 import DataCollectionParser from "./dataCollectionParser";
 

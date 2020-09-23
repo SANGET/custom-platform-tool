@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { TypeOfIUBDSL, DefaultSchemas } from "@iub-dsl/engine";
-import { StructRef, FieldRef } from '@iub-dsl/types/schemas/default-schemas';
+import { StructRef, FieldRef } from '@iub-dsl/definition/schemas/default-schemas';
 import { dependencyInspect } from "..";
 
 const generateDataSource = (dataSource) => {

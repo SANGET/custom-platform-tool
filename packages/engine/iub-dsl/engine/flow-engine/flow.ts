@@ -1,4 +1,4 @@
-import { ActionFlow } from "@iub-dsl/types/actions/action-collection";
+import { ActionFlow } from "@iub-dsl/definition/actions/action-collection";
 
 /**
  * 流程执行器

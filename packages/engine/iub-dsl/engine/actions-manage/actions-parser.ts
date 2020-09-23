@@ -1,5 +1,5 @@
 /* eslint-disable no-param-reassign */
-import { ActionFlow } from "@iub-dsl/types";
+import { ActionFlow } from "@iub-dsl/definition";
 import { conditionP, whenP, funcP } from './code-engine';
 
 interface ParseResultRef {

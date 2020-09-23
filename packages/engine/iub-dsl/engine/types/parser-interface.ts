@@ -2,9 +2,9 @@
  * 解析器通用的 interface
  */
 
-import { TypeOfIUBDSL } from "@iub-dsl/types";
-import { ComponentElement } from '@iub-dsl/types/component/collection';
-import { ActionFlow } from '@iub-dsl/types/actions/action-collection';
+import { TypeOfIUBDSL } from "@iub-dsl/definition";
+import { ComponentElement } from '@iub-dsl/definition/component/collection';
+import { ActionFlow } from '@iub-dsl/definition/actions/action-collection';
 import { RequestAPIOfIUBDSL } from "./request-types";
 
 // TODO: 设计 context
