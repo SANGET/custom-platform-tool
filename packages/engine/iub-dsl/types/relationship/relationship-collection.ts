@@ -1,4 +1,4 @@
-import TriggerEvents from "../actions-manage/events";
+import TriggerEvents from "../actions/events";
 import { DataCollectionRelationship } from "./data-collection";
 import DataAndComponent from "./data-and-component";
 

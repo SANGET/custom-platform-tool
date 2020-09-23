@@ -1,4 +1,4 @@
-import Expression from "../actions-manage/expression";
+import Expression from "../actions/expression";
 
 type FieldType = "string" | "int" | "num";
 

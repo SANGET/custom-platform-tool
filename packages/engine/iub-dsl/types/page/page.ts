@@ -2,12 +2,12 @@ import PageMetadata from '@spec/page-metadata';
 
 import {
   ComponentElement,
-} from "../component-manage";
+} from "../component";
 import SRCInterface from "./src-interface";
 import RelationshipsCollection from "../relationship/relationship-collection";
-import { ActionFn } from "../actions-manage/action-collection";
+import { ActionFn } from "../actions/action-collection";
 import { Schemas } from "../schemas";
-import { LayoutContent } from "../layout-content";
+import { LayoutContent } from "../layout";
 import { MetadataMappingCollection } from "..";
 
 /**
