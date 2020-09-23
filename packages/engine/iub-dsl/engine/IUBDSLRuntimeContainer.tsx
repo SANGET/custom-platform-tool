@@ -74,14 +74,14 @@ const IUBDSLRuntimeContainer = ({ dslParseRes }) => {
 
   return (
     <DefaultCtx.Provider value={ctx}>
-      <TempLayout>
-        <FromWrapFactory>
-          {actualRenderComponentList.map(({ compId, Comp }) => {
-            return <Comp key={compId} extral={'扩展props'} suffix={state}/>;
-          })}
-        </FromWrapFactory>
-        {/* {TableFactory()} */}
-      </TempLayout>
+      {/* <TempLayout> */}
+      <FromWrapFactory>
+        {actualRenderComponentList.map(({ compId, Comp }) => {
+          return <Comp key={compId} extral={'扩展props'} suffix={state}/>;
+        })}
+      </FromWrapFactory>
+      {/* {TableFactory()} */}
+      {/* </TempLayout> */}
     </DefaultCtx.Provider>
   );
 };
