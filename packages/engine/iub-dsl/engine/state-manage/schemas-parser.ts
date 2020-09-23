@@ -9,7 +9,6 @@ import {
 } from "@iub-dsl/types";
 import { MockLocationData, MockLocationType } from "@iub-dsl/demo/business-case/location-manager";
 import { Enhancer, sleep, EnhancerHook } from "../utils";
-import { complexStructParserMiddleware, foundationParserMiddleware, testEnhancer } from "./test-middleware";
 import {
   FiledKey, DefaultFoundationTypeParser,
   SchedulerBasicContext, ReduceExtraContext

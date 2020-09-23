@@ -3,14 +3,7 @@ import {
   FoundationTypeSchemas,
   CommonObjStruct,
   ComplexTypeSchemas,
-  DefaultParserFn
 } from "@iub-dsl/types";
-
-/** 可以使用默认基础类型解析器的key */
-export type FiledKey =('type' | 'defaultVal'| 'fieldMapping') & keyof FoundationTypeSchemas
-
-/** 默认基础类型解析器 */
-export type DefaultFoundationTypeParser = DefaultParserFn<FoundationTypeSchemas>
 
 /** 基础解析时上下文 */
 interface BaseParseContext<T> {
