@@ -1,5 +1,5 @@
 import { registerCompClass, registerPropItem, registerEditor } from '@engine/visual-editor/spec/registerComp';
-import { Input, Table } from '@spec/business-components';
+import { Input, FormInput, Table } from '@spec/business-components';
 import { TableEditor } from './CustomEditor/TableEditor';
 import { Selector, FieldSelector } from './PropItem';
 
@@ -10,8 +10,8 @@ export default function registerComponents() {
   /** 注册组件类 */
   registerCompClass([
     {
-      name: 'Input',
-      comp: Input
+      name: 'FormInput',
+      comp: FormInput
     },
     {
       name: 'Table',

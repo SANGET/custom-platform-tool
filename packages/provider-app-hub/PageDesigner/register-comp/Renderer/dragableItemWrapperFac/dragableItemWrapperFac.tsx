@@ -56,8 +56,10 @@ export const dragableItemWrapperFac: DragableItemWrapperFac = (
 
   return isTempEntity ? <TempEntityTip key={id} /> : (() => {
     const { component } = currEntity;
+
+    // TODO: 调整获取组件的链路，通过远程获取的方式处理
     const registeredEntity = getCompEntity(component.type);
-    const { propEditor: PropEditor } = registeredEntity;
+    const { propEditor: PropEditor } = registeredEntity || {};
     const actionCtx = { entity: currEntity, idx, nestingInfo };
     return (
       <div
