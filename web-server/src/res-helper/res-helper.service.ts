@@ -18,7 +18,7 @@ export class ResHelperService {
   wrapResStruct(options: WrapResStructOptions) {
     const { data, code = BusinessCodes.Success, msg = 'Success' } = options;
     return {
-      data,
+      result: data,
       code,
       msg
     };

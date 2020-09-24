@@ -12,5 +12,10 @@ export default {
       changeOrigin: true,
       pathRewrite: { '^': '' },
     },
+    '/web/': {
+      target: "http://10.11.6.193:3000",
+      changeOrigin: true,
+      pathRewrite: { '/web/': '' },
+    }
   }
 };

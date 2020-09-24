@@ -1,5 +1,4 @@
 import { Subscription, Reducer, Effect } from 'umi';
-import { NoticeIconData } from '@/components/NoticeIcon';
 
 export interface IGlobalModelState {
   collapsed: boolean;

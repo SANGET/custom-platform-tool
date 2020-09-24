@@ -16,6 +16,8 @@ import { SiderMenuProps } from '@ant-design/pro-layout/lib/SiderMenu/SiderMenu';
 import MenuExtra from '@/components/MenuExtra';
 import TabsContainer from '@/components/TabsContainer';
 import { parsePathToOpenKeys } from '@/utils/utils';
+import { MODE_PREVIEW } from '@/constant';
+
 
 export interface IBasicLayoutProps extends ProLayoutProps {
   settings: Settings;
@@ -37,13 +39,49 @@ class BasicLayout extends React.PureComponent<IBasicLayoutProps, IBaseLayoutStat
   }
 
   public async componentDidMount() {
+    this.setPreviewMenuAndTabs();
     const res = await this.getMenu();
     if (res.code === 0) {
       this.setDefaultTabs(res.result || []);
       this.setInintopenKeys();
     }
   }
+  componentWillUnmount() {
+    const { dispatch } = this.props;
+    dispatch({
+      type: 'menus/destory',
+    });
+    dispatch({
+      type: 'tabs/destory',
+    });
+  }
 
+  /**
+   * 预览模式添加菜单和tabs
+   */
+  public setPreviewMenuAndTabs() {
+    const { pathname } = history.location;
+    if (pathname === MODE_PREVIEW) {
+      const { dispatch } = this.props;
+      dispatch({
+        type: "menus/addMenu",
+        payload: {
+          id: "1308242886768336896",
+          path: "/preview",
+          name: "预览"
+        }
+      });
+      dispatch({
+        type: "tabs/add",
+        payload: {
+          path: "/preview",
+          title: "预览",
+          closable: false
+        }
+      });
+    }
+    // console.dir()
+  }
   /**
    * 根据url query path 参数设置 初始 展开的 SubMenu 菜单项 key 数组
    *
@@ -57,7 +95,16 @@ class BasicLayout extends React.PureComponent<IBasicLayoutProps, IBaseLayoutStat
       });
     }
   }
-
+  public getQueryByParams = (params: string[]) => {
+    const { query } = history.location;
+    let result = ""
+    params.map(item => {
+      if (query[item]) {
+        result === "" ? result += `${item}=${query[item]}` : result += `&${item}=${query[item]}`;
+      }
+    });
+    return result;
+  }
   public getHistoryQueryPath = (): string => {
     const { query } = history.location;
     const { path } = query;
@@ -126,7 +173,6 @@ class BasicLayout extends React.PureComponent<IBasicLayoutProps, IBaseLayoutStat
    */
   public handleMenuSelect = (info): void => {
     const { item, key } = info;
-    console.dir(info);
     const { dispatch, activeKey } = this.props;
     if (key === activeKey) return;
     const { innerText } = item.node;
@@ -152,7 +198,6 @@ class BasicLayout extends React.PureComponent<IBasicLayoutProps, IBaseLayoutStat
   }
 
   public handleOpenChange = (openKeys) => {
-    console.dir(openKeys);
     this.setState({
       openKeys
     });
@@ -163,8 +208,6 @@ class BasicLayout extends React.PureComponent<IBasicLayoutProps, IBaseLayoutStat
       menuData, settings, activeKey
     } = this.props;
     const { openKeys } = this.state;
-    console.dir("=====render ProLayout =========");
-
     return (
       <ProLayout
         menuHeaderRender={false}
@@ -198,11 +241,13 @@ class BasicLayout extends React.PureComponent<IBasicLayoutProps, IBaseLayoutStat
         }}
       >
         <TabsContainer children={this.props.children} />
+        {this.props.children}
       </ProLayout >
 
     );
   }
 }
+
 export default connect(({
   global, settings, menus, loading, tabs
 }: ConnectState) => ({

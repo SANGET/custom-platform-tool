@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { connect, Dispatch } from 'umi';
 import {
   Alert, Form, Input, Button
@@ -8,12 +8,12 @@ import { LockTwoTone, UserOutlined } from '@ant-design/icons';
 import { ConnectState } from '@/models/connect';
 
 import { CLIENT_TYPE } from '@/services/login';
-import { IStateType } from '@/models/login';
+import { ILoginModelState } from '@/models/login';
 import styles from './style.less';
 
 interface ILoginProps {
   dispatch: Dispatch;
-  userLogin: IStateType;
+  userLogin: ILoginModelState;
   submitting?: boolean;
 }
 
@@ -45,7 +45,7 @@ const Login: React.FC<ILoginProps> = (props) => {
   };
   return (
     <div className={styles.main}>
-      { message && (
+      {message && (
         <LoginMessage content={message} />
       )}
       <Form

@@ -15,6 +15,8 @@ export interface IMenusModel {
   };
   reducers: {
     setMeunList: Reducer<IMenusModelState>;
+    addMenu: Reducer<IMenusModelState>;
+    destory: Reducer<IMenusModelState>;
   };
 }
 const inintState = {
@@ -49,8 +51,16 @@ const MenusModel: IMenusModel = {
           page: ROUTER_SUFFIX
         }
       });
-      state.list = list;
+      state.list = [...state.list, ...list];
       return state;
+    },
+    addMenu(state: IMenusModelState = inintState, { payload }): IMenusModelState {
+      state.list.push(payload);
+      return state;
+    },
+    destory(state: IMenusModelState = inintState, { payload }): IMenusModelState {
+      state =inintState;
+      return state
     }
   },
 };

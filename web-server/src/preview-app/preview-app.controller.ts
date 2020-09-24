@@ -10,8 +10,10 @@ export class PreviewAppController {
   
   @Post()
   previewApp(@Body() body, @Req() request: Request) {
-    const { authorization } = request.headers;
-    console.log(authorization);
+    const { authorization: token } = request.headers;
+    const { lessee, app } = body;
+    // console.log(authorization);
+    this.previewAppService.setToken(lessee, token);
     return 'aaa';
   }
 }

@@ -2,7 +2,7 @@ import { Effect, Reducer } from 'umi';
 
 import { queryCurrent } from '@/services/user';
 
-export interface CurrentUser {
+export interface ICurrentUser {
   avatar?: string;
   name?: string;
   title?: string;
@@ -13,7 +13,7 @@ export interface CurrentUser {
 }
 
 export interface IUserModelState {
-  currentUser?: CurrentUser;
+  currentUser?: ICurrentUser;
 }
 
 export interface IUserModel {
@@ -31,7 +31,7 @@ const UserModel: IUserModel = {
   namespace: 'user',
 
   state: {
-    currentUser: {},
+
   },
 
   effects: {
