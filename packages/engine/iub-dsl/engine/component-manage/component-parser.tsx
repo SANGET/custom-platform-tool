@@ -3,7 +3,6 @@ import React, {
 } from 'react';
 import { AllComponentType } from "@iub-dsl/definition";
 import { cloneDeep } from 'lodash';
-import { HyInput, HyToolTip } from '../ui';
 import componentConf from './mock';
 import { baseInputCompParser } from './component-parser/base-input-parser';
 

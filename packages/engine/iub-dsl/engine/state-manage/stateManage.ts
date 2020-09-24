@@ -2,7 +2,7 @@
 import React, { useState, useEffect, useContext } from 'react';
 import {
   get as LGet, set as LSet, defaultsDeep, cloneDeep
-} from '../component-manage/node_modules/lodash';
+} from 'lodash';
 
 type GetParam = string | {
   [str: string]: GetParam;
