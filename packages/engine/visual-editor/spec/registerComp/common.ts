@@ -50,7 +50,8 @@ export const getRegisteredComp = (compName: string) => {
   if (comp) {
     return comp;
   }
-  throw Error(`发现尚未注册的组件类型 ${compName}，请检查是否注册成功`);
+  // throw Error(`发现尚未注册的组件类型 ${compName}，请检查是否注册成功`);
+  return null;
 };
 
 /**

@@ -7,7 +7,7 @@ export const componentClassCollection: ComponentClassCollection = {
     id: 'component-1',
     label: '文本框',
     component: {
-      type: 'Input'
+      type: 'FormInput'
     },
     bindProps: {
       propRefs: [

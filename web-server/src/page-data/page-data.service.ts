@@ -25,13 +25,20 @@ export class PageDataService {
       componentsCollection: {},
       actionsCollection: {},
       layoutContent: {},
+      pageID: '',
+      name: '',
+      type: '',
     };
     try {
       contentData = JSON.parse(iubDsl);
+      const pageContent = contentData.content;
       IUBDSLData.layoutContent = {
         type: 'general',
-        content: contentData.content
+        content: pageContent
       };
+      IUBDSLData.pageID = contentData.id;
+      IUBDSLData.name = contentData.name;
+      IUBDSLData.type = 'config';
     } catch(e) {
       console.log(e);
       contentData = iubDsl;
