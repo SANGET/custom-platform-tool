@@ -74,6 +74,7 @@ module.exports = {
     "class-methods-use-this": 0,
     "no-restricted-syntax": 0,
     "no-return-await": 0,
+    "import/no-unresolved": 0,
     "max-classes-per-file": 0,
     "object-curly-spacing": ["error", "always"],
     'import/no-extraneous-dependencies': [

@@ -1,8 +1,11 @@
-import { Controller, Get, Param, Query } from '@nestjs/common';
+import { Controller, Get, Param, Query, UseGuards } from '@nestjs/common';
+import { RolesGuard } from 'src/auth-guard/roles.guard';
 import { ResHelperService } from 'src/res-helper/res-helper.service';
+import { Roles } from 'src/roles/roles.decorator';
 import { PageDataService } from './page-data.service';
 
 @Controller('page-data')
+@UseGuards(RolesGuard)
 export class PageDataController {
   constructor(
     private readonly pageDataService: PageDataService,
@@ -27,13 +30,29 @@ export class PageDataController {
     };
   }
 
+  async getPageData(options) {
+    try {
+      const pageData = await this.pageDataService.getPageDataFromRemote(options);
+      return {
+        data: pageData
+      };
+    } catch(e) {
+      return {
+        err: e
+      };
+    }
+  }
+
   @Get(`:lessee/:app/page/:id`)
+  @Roles('admin')
   async getPageRest(@Param() params, @Query() queryString) {
-    console.log(params, queryString);
     const { id, lessee, app } = params;
     const { mode } = queryString;
-    const pageData = await this.pageDataService.getPageDataFromRemote({ lessee, app, id });
-    const resData = this.resHelperService.wrapResStruct({ data: pageData });
+    const { err, data } = await this.getPageData({ id, lessee, app });
+    const resData = this.resHelperService.wrapResStruct({ 
+      data,
+      code: err ? this.resHelperService.BusinessCodes.Error : this.resHelperService.BusinessCodes.Success
+    });
     return resData;
   }
 
