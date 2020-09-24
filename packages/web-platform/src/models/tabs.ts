@@ -66,7 +66,7 @@ const inintState: ITabsModelState = {
     closable: false
   }],
   activeKey: "/dashboard",
-  maxTabs: 5,
+  maxTabs: 8,
   openKeys: []
 };
 
@@ -140,7 +140,8 @@ const TabsModel: ITabsModel = {
     },
     /** */
     destory(state: ITabsModelState = inintState, { payload }): ITabsModelState {
-      return inintState;
+      state = inintState;
+      return state;
     }
   },
 };

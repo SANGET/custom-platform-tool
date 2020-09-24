@@ -59,7 +59,8 @@ const MenusModel: IMenusModel = {
       return state;
     },
     destory(state: IMenusModelState = inintState, { payload }): IMenusModelState {
-      return inintState;
+      state =inintState;
+      return state
     }
   },
 };

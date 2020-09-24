@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { connect, Dispatch } from 'umi';
 import {
   Alert, Form, Input, Button

@@ -31,7 +31,6 @@ const TabsContainer: React.FC<ITabsContainerProps> = (props): React.ReactElement
   const handleTabChange = (key: string) => {
     if (key === props.activeKey) return;
     const tab = tabsData.find((item) => item.path === key);
-    console.dir(tab);
     const link = tab.page === TAB_TYPE.PAGE ? `${ROUTER_SUFFIX}?path=${key}` : key;
     dispatch({
       type: "tabs/updata",
@@ -53,7 +52,6 @@ const TabsContainer: React.FC<ITabsContainerProps> = (props): React.ReactElement
       type: "tabs/close",
       payload: +key
     });
-    console.dir(info);
   };
   const renderOperations = (): React.ReactElement => {
     const menu = (
@@ -82,7 +80,6 @@ const TabsContainer: React.FC<ITabsContainerProps> = (props): React.ReactElement
       {
         tabsData?.map((item) => (
           <TabPane tab={item.title} key={item.path} closable={item.closable}>
-            {children}
           </TabPane>
         ))
       }

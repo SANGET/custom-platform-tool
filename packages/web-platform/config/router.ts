@@ -24,7 +24,7 @@ export default [{
           component: './Welcome',
         },{
           path: '/preview',
-          component: './Welcome',
+          component: './container',
         },
         {
           path: '/dashboard',

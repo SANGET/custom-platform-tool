@@ -66,7 +66,7 @@ class BasicLayout extends React.PureComponent<IBasicLayoutProps, IBaseLayoutStat
       dispatch({
         type: "menus/addMenu",
         payload: {
-          id: "1111",
+          id: "1308242886768336896",
           path: "/preview",
           name: "预览"
         }
@@ -95,7 +95,16 @@ class BasicLayout extends React.PureComponent<IBasicLayoutProps, IBaseLayoutStat
       });
     }
   }
-
+  public getQueryByParams = (params: string[]) => {
+    const { query } = history.location;
+    let result = ""
+    params.map(item => {
+      if (query[item]) {
+        result === "" ? result += `${item}=${query[item]}` : result += `&${item}=${query[item]}`;
+      }
+    });
+    return result;
+  }
   public getHistoryQueryPath = (): string => {
     const { query } = history.location;
     const { path } = query;
@@ -164,7 +173,6 @@ class BasicLayout extends React.PureComponent<IBasicLayoutProps, IBaseLayoutStat
    */
   public handleMenuSelect = (info): void => {
     const { item, key } = info;
-    console.dir(info);
     const { dispatch, activeKey } = this.props;
     if (key === activeKey) return;
     const { innerText } = item.node;
@@ -190,7 +198,6 @@ class BasicLayout extends React.PureComponent<IBasicLayoutProps, IBaseLayoutStat
   }
 
   public handleOpenChange = (openKeys) => {
-    console.dir(openKeys);
     this.setState({
       openKeys
     });
@@ -201,8 +208,6 @@ class BasicLayout extends React.PureComponent<IBasicLayoutProps, IBaseLayoutStat
       menuData, settings, activeKey
     } = this.props;
     const { openKeys } = this.state;
-    console.dir("=====render ProLayout =========");
-
     return (
       <ProLayout
         menuHeaderRender={false}
@@ -236,6 +241,7 @@ class BasicLayout extends React.PureComponent<IBasicLayoutProps, IBaseLayoutStat
         }}
       >
         <TabsContainer children={this.props.children} />
+        {this.props.children}
       </ProLayout >
 
     );
