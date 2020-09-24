@@ -46,4 +46,15 @@ declare namespace API {
     dataId: null;
     result: ICurrentUser;
   }
+
+  export interface IPageDataParams {
+    id: string;
+    mode: string;
+    lessee: string;
+    app: string;
+  }
+
+  export interface IPageDataType extends IResponseBaseType {
+    result: string;
+  }
 }
