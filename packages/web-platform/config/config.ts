@@ -2,9 +2,7 @@ import { defineConfig } from 'umi';
 import defaultSettings from './defaultSettings';
 import proxy from './proxy';
 import router from './router';
-
 const { REACT_APP_ENV } = process.env;
-
 export default defineConfig({
   hash: true,
   antd: {},
@@ -36,5 +34,14 @@ export default defineConfig({
   proxy: proxy[REACT_APP_ENV || 'dev'],
   manifest: {
     basePath: '/',
+  },
+  chainWebpack: (memo, { env, webpack, createCSSRule }) => {
+    memo.module
+      .rule('js')
+      .test(/\.(js|mjs|jsx|ts|tsx)$/)
+      .include.add(join(__dirname, '..', '..', '..' ,'packages')).end()
+      .exclude.add(/node_modules/).end()
+      .use('babel-loader')
+    return memo;
   },
 });

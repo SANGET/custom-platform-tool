@@ -51,7 +51,8 @@ export class PageDataController {
     const { err, data } = await this.getPageData({ id, lessee, app });
     const resData = this.resHelperService.wrapResStruct({ 
       data,
-      code: err ? this.resHelperService.BusinessCodes.Error : this.resHelperService.BusinessCodes.Success
+      code: err ? this.resHelperService.BusinessCodes.Error : this.resHelperService.BusinessCodes.Success,
+      msg: err || undefined
     });
     return resData;
   }

@@ -1,25 +1,13 @@
 import React from 'react';
 import classnames from 'classnames';
 import { FacToComponentProps, RegisterComponentConfig } from '@engine/visual-editor/spec';
+import { Unexpect } from './Unexpect';
 // import ContainerWrapperCom from './ContainerWrapperCom';
 
 export interface ComponentTypeRendererProps extends FacToComponentProps {
   className?
-  registeredEntity: RegisterComponentConfig
+  registeredEntity?: RegisterComponentConfig
 }
-
-const FormLabel = ({
-  children,
-  className = '',
-  ...props
-}) => (children ? (
-  <div
-    className="control-label form-title"
-    {...props}
-  >
-    {children}
-  </div>
-) : null);
 
 /**
  * 根据 component entity 解析的组件渲染器
@@ -36,7 +24,7 @@ export const ComponentRenderer: React.FC<ComponentTypeRendererProps> = (props) =
     ...otherProps
   } = props;
   const { component } = entity;
-  const { comp } = registeredEntity;
+  const { comp } = registeredEntity || {};
 
   const compContext = {
     entityState
@@ -53,13 +41,13 @@ export const ComponentRenderer: React.FC<ComponentTypeRendererProps> = (props) =
   switch (type) {
     default:
       const RendererComp = comp;
-      Com = (
+      Com = RendererComp ? (
         <RendererComp
           compContext={compContext}
           {...entityState}
           {...compProps}
         />
-      );
+      ) : <Unexpect />;
       break;
   }
   const classes = classnames(
