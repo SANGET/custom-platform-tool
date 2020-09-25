@@ -1,5 +1,6 @@
+/* eslint-disable camelcase */
 import React from 'react';
-import { connect, Dispatch } from 'umi';
+import { connect, Dispatch, history } from 'umi';
 import {
   Alert, Form, Input, Button
 } from 'antd';
@@ -9,6 +10,7 @@ import { ConnectState } from '@/models/connect';
 
 import { CLIENT_TYPE } from '@/services/login';
 import { ILoginModelState } from '@/models/login';
+import { getPageQuery, getQueryByParams } from '@/utils/utils';
 import styles from './style.less';
 
 interface ILoginProps {
@@ -36,12 +38,42 @@ interface ILoginParamsType {
 const Login: React.FC<ILoginProps> = (props) => {
   const { submitting, userLogin: { message } } = props;
 
-  const onFinish = (values: ILoginParamsType) => {
+  const onFinish = async (values: ILoginParamsType) => {
     const { dispatch } = props;
-    dispatch({
+    const res = await dispatch({
       type: 'login/login',
       payload: { ...values, clientType: CLIENT_TYPE.WEB },
     });
+    const { access_token, refresh_token } = res;
+    if (access_token) {
+      dispatch({
+        type: 'user/setCurrentUser',
+        payload: {
+          token: access_token,
+          refreshToken: refresh_token
+        }
+      });
+      routerLink();
+    }
+  };
+  const routerLink = () => {
+    const urlParams = new URL(window.location.href);
+    const params = getPageQuery();
+    const queryLink = getQueryByParams(["mode", "app", "lessee"]);
+    let { redirect } = params as { redirect: string };
+    if (redirect) {
+      const redirectUrlParams = new URL(redirect);
+      if (redirectUrlParams.origin === urlParams.origin) {
+        redirect = redirect.substr(urlParams.origin.length);
+        if (redirect.match(/^\/.*#/)) {
+          redirect = redirect.substr(redirect.indexOf('#') + 1);
+        }
+      } else {
+        window.location.href = `/?${queryLink}`;
+        return;
+      }
+    }
+    history.replace(redirect || '/?${queryLink');
   };
   return (
     <div className={styles.main}>

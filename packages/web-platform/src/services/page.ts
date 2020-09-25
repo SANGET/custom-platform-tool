@@ -7,6 +7,6 @@ import request from '@/utils/request';
 export async function queryPageData(params: API.IPageDataParams) {
   return request<API.IPageDataType>('/web/page-data', {
     method: 'GET',
-    params: params,
+    params,
   });
 }

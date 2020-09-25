@@ -19,11 +19,8 @@ export default [{
         {
           path: '/',
           redirect: '/dashboard',
-        },{
+        }, {
           path: '/page',
-          component: './Welcome',
-        },{
-          path: '/preview',
           component: './container',
         },
         {
