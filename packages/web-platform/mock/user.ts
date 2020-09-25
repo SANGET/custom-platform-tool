@@ -3,7 +3,7 @@ import { Request, Response } from 'express';
 // 代码中会兼容本地 service mock 以及部署站点的静态数据
 export default {
   // 支持值为 Object 和 Array
-  'GET /api/currentUser': (req: Request, res: Response) => {
+  'GET /auth/user/info/cur': (req: Request, res: Response) => {
     res.send({
       status: null,
       success: true,
@@ -11,28 +11,60 @@ export default {
       message: "成功",
       dataId: null,
       result: {
-        name: 'Serati Ma',
-        avatar: 'https://gw.alipayobjects.com/zos/antfincdn/XAosXuNZyF/BiazfanxmamNRoxxVxka.png',
-        userid: '00000001',
-        email: '122344@qq.com',
-        signature: '海纳百川，有容乃大',
-        title: '交互专家',
-        group: 'UED',
-        notifyCount: 12,
-        unreadCount: 11,
-        country: 'China',
-        geographic: {
-          province: {
-            label: '广东省',
-            key: '330000',
-          },
-          city: {
-            label: '广州市',
-            key: '330100',
-          },
+        account: {
+          create_userid: "3cd8a151c4f944fb898bc6e392dafd8b",
+          PswLastChangeTime: "2019-08-06 15:57:02",
+          create_time: 1564609094000,
+          loginname: "admin",
+          MemberId: "3b1ff0fcc60740689aff9da29bbc522c",
+          last_update_time: 1565078222000,
+          password: "/fOMjRWQGQ2mGvPcfFNWdA==",
+          last_update_userid: "3cd8a151c4f944fb898bc6e392dafd8b",
+          yonghunichen: "admin",
+          bczt: 0,
+          _state: "",
+          qiyonghuojinyongzhuangtai: "1",
+          id: "b77f482dcd80402e9adff614bb2645b0",
+          username: "admin"
         },
-        address: '番禺区',
-        phone: '020-123456',
+        organization: {
+          create_userid: "4be6ef3a5d914cd19c388313583e2b5d",
+          create_time: 1556319695000,
+          bczt: 0,
+          name: "12212",
+          id: "008276d8163d4e489fb302c341a40aa6",
+          Code: "12"
+        },
+        roles: [
+          {
+            IsRoot: "1",
+            last_update_time: 1547155260000,
+            create_time: 1547155260000,
+            bczt: 1,
+            jiaosebieming: "系统管理员",
+            name: "系统管理员",
+            id: "48c4bf3a55894e1ca0f542c233948036",
+            Remark: ""
+          }
+        ],
+        member: {
+          create_userid: "3cd8a151c4f944fb898bc6e392dafd8b",
+          Email: "wenlingmin@haoyuntech.com",
+          create_time: 1564609062000,
+          Sex: "男",
+          MobilePhone: "1233211234567",
+          Weight: "90",
+          Name: "管理员",
+          OrgId: "008276d8163d4e489fb302c341a40aa6",
+          last_update_time: 1564609062000,
+          last_update_userid: "3cd8a151c4f944fb898bc6e392dafd8b",
+          bczt: 0,
+          WorkNumber: "100001",
+          Height: "1",
+          id: "3b1ff0fcc60740689aff9da29bbc522c",
+          PostStatus: "1"
+
+        }
       }
     });
   },

@@ -5,12 +5,12 @@ import {
 } from 'umi';
 import { stringify } from 'querystring';
 import { ConnectState } from '@/models/connect';
-import { ICurrentUser } from '@/models/user';
+import { IUserModelState } from '@/models/user';
 import { getQueryByParams } from '@/utils/utils';
 
 interface SecurityLayoutProps {
   loading?: boolean;
-  currentUser?: ICurrentUser;
+  currentUser?: IUserModelState;
   dispatch: Dispatch;
 }
 
@@ -38,7 +38,7 @@ class SecurityLayout extends React.PureComponent<SecurityLayoutProps, SecurityLa
   render() {
     const { isReady } = this.state;
     const { children, loading, currentUser } = this.props;
-    const isLogin = currentUser && currentUser.userid;
+    const isLogin = currentUser && currentUser.token;
     const queryLink = getQueryByParams(["mode", "app", "lessee"]);
     const queryString = stringify({
       redirect: window.location.href,

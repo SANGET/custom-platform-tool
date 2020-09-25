@@ -15,7 +15,12 @@ declare namespace API {
 
   export interface ILoginType extends IResponseBaseType {
     dataId: null;
-    result: null;
+    "access_token": string;
+    "token_type": string;
+    "refresh_token": string;
+    "expires_in": number;
+    "scope": string;
+
   }
 
   export interface IMenuData {
@@ -49,9 +54,9 @@ declare namespace API {
 
   export interface IPageDataParams {
     id: string;
-    mode: string;
-    lessee: string;
-    app: string;
+    mode?: string;
+    lessee?: string;
+    app?: string;
   }
 
   export interface IPageDataType extends IResponseBaseType {
