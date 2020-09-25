@@ -2,7 +2,7 @@ import { stringify } from 'querystring';
 import { history, Reducer, Effect } from 'umi';
 
 import { accountLogin } from '@/services/login';
-import { getPageQuery } from '@/utils/utils';
+import { getPageQuery, getQueryByParams } from '@/utils/utils';
 
 export interface ILoginModelState {
   message?: string;
@@ -36,6 +36,7 @@ const Model: ILoginModel = {
       if (response.code === 0) {
         const urlParams = new URL(window.location.href);
         const params = getPageQuery();
+        const queryLink = getQueryByParams(["mode", "app", "lessee"]);
         let { redirect } = params as { redirect: string };
         if (redirect) {
           const redirectUrlParams = new URL(redirect);
@@ -45,11 +46,11 @@ const Model: ILoginModel = {
               redirect = redirect.substr(redirect.indexOf('#') + 1);
             }
           } else {
-            window.location.href = '/';
+            window.location.href = `/?${queryLink}`;
             return;
           }
         }
-        history.replace(redirect || '/');
+        history.replace(redirect || '/?${queryLink');
       } else {
         yield put({
           type: 'setLoginMessage',
@@ -61,12 +62,17 @@ const Model: ILoginModel = {
      * 用户退出
      */
     logout() {
-      const { redirect } = getPageQuery();
+      const {
+        redirect, mode, app, lessee
+      } = getPageQuery();
       if (window.location.pathname !== '/user/login' && !redirect) {
         history.replace({
           pathname: '/user/login',
           search: stringify({
             redirect: window.location.href,
+            mode,
+            app,
+            lessee
           }),
         });
       }

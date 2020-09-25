@@ -15,9 +15,8 @@ import { ConnectState } from '@/models/connect';
 import { SiderMenuProps } from '@ant-design/pro-layout/lib/SiderMenu/SiderMenu';
 import MenuExtra from '@/components/MenuExtra';
 import TabsContainer from '@/components/TabsContainer';
-import { parsePathToOpenKeys } from '@/utils/utils';
+import { parsePathToOpenKeys, getQueryByParams } from '@/utils/utils';
 import { MODE_PREVIEW } from '@/constant';
-
 
 export interface IBasicLayoutProps extends ProLayoutProps {
   settings: Settings;
@@ -46,6 +45,7 @@ class BasicLayout extends React.PureComponent<IBasicLayoutProps, IBaseLayoutStat
       this.setInintopenKeys();
     }
   }
+
   componentWillUnmount() {
     const { dispatch } = this.props;
     dispatch({
@@ -60,14 +60,15 @@ class BasicLayout extends React.PureComponent<IBasicLayoutProps, IBaseLayoutStat
    * 预览模式添加菜单和tabs
    */
   public setPreviewMenuAndTabs() {
-    const { pathname } = history.location;
-    if (pathname === MODE_PREVIEW) {
+    const mode = this.getHistoryQueryValue("mode");
+    if (mode === MODE_PREVIEW) {
       const { dispatch } = this.props;
       dispatch({
-        type: "menus/addMenu",
+        type: "menus/addPreViewMenu",
         payload: {
-          id: "1308242886768336896",
-          path: "/preview",
+          id: "preview",
+          path: "preview",
+          page: "/page",
           name: "预览"
         }
       });
@@ -76,18 +77,18 @@ class BasicLayout extends React.PureComponent<IBasicLayoutProps, IBaseLayoutStat
         payload: {
           path: "/preview",
           title: "预览",
-          closable: false
+          closable: true
         }
       });
     }
-    // console.dir()
   }
+
   /**
    * 根据url query path 参数设置 初始 展开的 SubMenu 菜单项 key 数组
    *
    */
   public setInintopenKeys() {
-    const path = this.getHistoryQueryPath();
+    const path = this.getHistoryQueryValue("path");
     if (path) {
       const openKeys: string[] = parsePathToOpenKeys(path);
       this.setState({
@@ -95,24 +96,26 @@ class BasicLayout extends React.PureComponent<IBasicLayoutProps, IBaseLayoutStat
       });
     }
   }
+
   public getQueryByParams = (params: string[]) => {
     const { query } = history.location;
-    let result = ""
-    params.map(item => {
+    let result = "";
+    params.map((item) => {
       if (query[item]) {
         result === "" ? result += `${item}=${query[item]}` : result += `&${item}=${query[item]}`;
       }
+      return item;
     });
     return result;
   }
-  public getHistoryQueryPath = (): string => {
+
+  public getHistoryQueryValue = (key: string): string => {
     const { query } = history.location;
-    const { path } = query;
-    return path || "";
+    return query[key] || "";
   }
 
   public setDefaultTabs = (menu) => {
-    const path = this.getHistoryQueryPath();
+    const path = this.getHistoryQueryValue("path");
     if (path) {
       const currentPath = path.split("/").pop();
       const findMenu = menu.find((item) => item.id === currentPath);
@@ -208,6 +211,7 @@ class BasicLayout extends React.PureComponent<IBasicLayoutProps, IBaseLayoutStat
       menuData, settings, activeKey
     } = this.props;
     const { openKeys } = this.state;
+    const queryLink = getQueryByParams(["mode", "app", "lessee"]);
     return (
       <ProLayout
         menuHeaderRender={false}
@@ -225,10 +229,10 @@ class BasicLayout extends React.PureComponent<IBasicLayoutProps, IBaseLayoutStat
             return defaultDom;
           }
           const { page, path } = menuItemProps;
-          return <Link to={page ? `${page}?path=${path}` : path}>{defaultDom}</Link>;
+          return <Link to={page ? `${page}?path=${path}&${queryLink}` : `${path}?${queryLink}`}>{defaultDom}</Link>;
         }}
         collapsedButtonRender={false}
-        siderWidth={300}
+        // siderWidth={300}
         menuDataRender={(menus) => [...menus, ...menuData]}
         menuContentRender={this.renderMenuContent}
         rightContentRender={() => <RightContent />}

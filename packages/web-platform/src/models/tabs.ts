@@ -1,5 +1,6 @@
 import { Reducer, history } from 'umi';
 import { ROUTER_SUFFIX } from '@/constant';
+import { getQueryByParams } from '@/utils/utils';
 
 export enum TAB_TYPE {
   /** 动态菜单获取的界面 */
@@ -36,13 +37,7 @@ export interface ITabsModelState {
 
   maxTabs: number;
 }
-const goToRouter = (page: TAB_TYPE, link: string) => {
-  if (page === TAB_TYPE.PAGE) {
-    history.push(`${ROUTER_SUFFIX}?path=${link}`);
-  } else {
-    history.push(link);
-  }
-};
+
 export interface ITabsModel {
   namespace: string;
   state: ITabsModelState;
@@ -108,19 +103,25 @@ const TabsModel: ITabsModel = {
       const filterTabs = state.list.filter((tab) => tab.path !== payload);
       const currentIndex = index > 0 ? index - 1 : 0;
       state.list = filterTabs;
+      const queryLink = getQueryByParams(["mode", "app", "lessee"]);
       if (filterTabs.length > 0) {
         state.activeKey = filterTabs[currentIndex].path || "";
-        goToRouter(filterTabs[currentIndex].page, state.activeKey);
+        if (filterTabs[currentIndex].page === TAB_TYPE.PAGE) {
+          history.push(`${ROUTER_SUFFIX}?path=${state.activeKey}&${queryLink}`);
+        } else {
+          history.push(`${state.activeKey}?${queryLink}`);
+        }
       }
       return state;
     },
     /** tabs 右侧操作栏关闭事件 */
     close(state:ITabsModelState = inintState, { payload }): ITabsModelState {
+      const queryLink = getQueryByParams(["mode", "app", "lessee"]);
       if (payload === TABS_OPERATION.CLOSE_ALL_PAGE) {
         state.list = inintState.list;
         if (state.activeKey !== inintState.activeKey) {
           state.activeKey = inintState.activeKey;
-          history.push(state.activeKey);
+          history.push(`${state.activeKey}?${queryLink}`);
         }
       } else if (payload === TABS_OPERATION.CLOSE_OTHER_PAGE) {
         const filterList = state.list.filter((item) => item.path === state.activeKey);
@@ -129,7 +130,7 @@ const TabsModel: ITabsModel = {
         const filterList = state.list.filter((item) => item.path !== state.activeKey);
         state.list = filterList;
         state.activeKey = inintState.activeKey;
-        history.push(state.activeKey);
+        history.push(`${state.activeKey}?${queryLink}`);
       }
       return state;
     },

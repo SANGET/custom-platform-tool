@@ -6,6 +6,7 @@ import {
 import { stringify } from 'querystring';
 import { ConnectState } from '@/models/connect';
 import { ICurrentUser } from '@/models/user';
+import { getQueryByParams } from '@/utils/utils';
 
 interface SecurityLayoutProps {
   loading?: boolean;
@@ -38,6 +39,7 @@ class SecurityLayout extends React.PureComponent<SecurityLayoutProps, SecurityLa
     const { isReady } = this.state;
     const { children, loading, currentUser } = this.props;
     const isLogin = currentUser && currentUser.userid;
+    const queryLink = getQueryByParams(["mode", "app", "lessee"]);
     const queryString = stringify({
       redirect: window.location.href,
     });
@@ -45,7 +47,7 @@ class SecurityLayout extends React.PureComponent<SecurityLayoutProps, SecurityLa
       return <PageLoading />;
     }
     if (!isLogin && window.location.pathname !== '/user/login') {
-      return <Redirect to={`/user/login?${queryString}`} />;
+      return <Redirect to={`/user/login?${queryString}&${queryLink}`} />;
     }
     return children;
   }
