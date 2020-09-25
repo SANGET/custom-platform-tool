@@ -6,7 +6,7 @@
 
 import React from 'react';
 import classnames from 'classnames';
-import { TEMP_ENTITY_ID } from '@engine/visual-editor/types';
+import { TEMP_ENTITY_ID } from '@engine/visual-editor/data-structure';
 import {
   DragItemComp,
   DragableItemTypes,

@@ -1,4 +1,4 @@
-import { EditorEntity, ElemNestingInfo } from "../../types";
+import { EditorEntity, ElemNestingInfo } from "../data-structure";
 
 /**
  * 选中的组件实例的数据结构

@@ -4,7 +4,7 @@
  * 应用的 action，需要留有足够的扩展空间
  */
 
-import { BasePageData } from "../../types";
+import { BasePageData } from "../../data-structure";
 
 interface AppActionsContext {
   compClassForPanelData?

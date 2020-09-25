@@ -1,8 +1,42 @@
 import { Injectable } from '@nestjs/common';
 import axios from 'axios';
+import produce from 'immer';
 import { PreviewAppService } from 'src/preview-app/preview-app.service';
 
 const mockToken = 'Bearer 1295915065878388737';
+
+const flatLayoutNode = (layoutNode, parentID?) => {
+  console.log(parentID);
+  const componentsCollection = {};
+  const layoutContentBody = [];
+  layoutNode.forEach((nodeItem) => {
+    // const nodeItemI = produce(nodeItem, draft => draft);
+    const { id, body } = nodeItem;
+    Object.assign(nodeItem, {
+      type: 'componentRef',
+      component: {
+        ...nodeItem.component,
+        ...nodeItem.propState
+      }
+    });
+    // 删除内部字段
+    delete nodeItem._classID;
+    delete nodeItem._state;
+    delete nodeItem.propState;
+    componentsCollection[id] = Object.assign({}, nodeItem,
+      parentID && {
+        parentID
+      });
+    nodeItem.componentID = id;
+    nodeItem.refID = id;
+    layoutContentBody.push(nodeItem);
+    
+    if(body) {
+      flatLayoutNode(body, id);
+    }
+  });
+  return { componentsCollection, layoutContentBody };
+};
 
 @Injectable()
 export class PageDataService {
@@ -32,13 +66,15 @@ export class PageDataService {
     try {
       contentData = JSON.parse(iubDsl);
       const pageContent = contentData.content;
+      const { componentsCollection, layoutContentBody } = flatLayoutNode(pageContent);
       IUBDSLData.layoutContent = {
         type: 'general',
-        content: pageContent
+        content: layoutContentBody
       };
       IUBDSLData.pageID = contentData.id;
       IUBDSLData.name = contentData.name;
       IUBDSLData.type = 'config';
+      IUBDSLData.componentsCollection = componentsCollection;
     } catch(e) {
       console.log(e);
       contentData = iubDsl;

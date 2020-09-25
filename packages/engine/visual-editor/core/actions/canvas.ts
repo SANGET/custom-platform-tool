@@ -7,7 +7,7 @@ import {
   EditorComponentEntity,
   EditorEntity,
   ElemNestingInfo
-} from "../../types";
+} from "../../data-structure";
 
 /**
  * 添加组件实例

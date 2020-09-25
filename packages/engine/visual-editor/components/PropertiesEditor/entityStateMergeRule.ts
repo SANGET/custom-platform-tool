@@ -1,6 +1,6 @@
 /* eslint-disable no-param-reassign */
 import produce from 'immer';
-import { EditorEntityState, EditorPropertyItem } from "../../types";
+import { EditorEntityState, EditorPropertyItem } from "../../data-structure";
 
 interface EntityStateItemParams {
   value: any,

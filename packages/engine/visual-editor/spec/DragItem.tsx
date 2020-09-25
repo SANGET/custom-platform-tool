@@ -5,7 +5,7 @@ import {
 import { TargetType } from 'dnd-core';
 import { HasValue } from '@mini-code/base-func';
 import { DragableItemTypes } from '.';
-import { DragItemClass, DropCollectType } from '../types';
+import { DragItemClass, DropCollectType } from '../data-structure';
 import { isNodeInChild } from '../utils';
 
 /**

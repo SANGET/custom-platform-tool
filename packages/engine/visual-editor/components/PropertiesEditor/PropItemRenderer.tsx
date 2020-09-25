@@ -1,5 +1,5 @@
 import React from 'react';
-import { EditorPropertyItem } from '../../types';
+import { EditorPropertyItem } from '../../data-structure';
 import { getPropItem } from '../../spec/registerComp';
 import { PropItemRendererProps } from './types';
 

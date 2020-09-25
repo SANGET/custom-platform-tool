@@ -7,7 +7,7 @@
 import React from 'react';
 
 import DragItem, { DragItemConfig } from '@engine/visual-editor/spec/DragItem';
-import { EditorComponentClass } from '@engine/visual-editor/types';
+import { EditorComponentClass } from '@engine/visual-editor/data-structure';
 import { DragableItemTypes } from '../../spec';
 import { GroupPanel, GroupPanelData } from '../GroupPanel';
 

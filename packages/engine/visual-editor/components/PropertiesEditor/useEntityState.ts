@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { EditorEntityState, EditorPropertyItem } from "../../types";
+import { EditorEntityState, EditorPropertyItem } from "../../data-structure";
 import { entityStateMergeRule } from "./entityStateMergeRule";
 
 export type UpdateEntityStateCallback = (
