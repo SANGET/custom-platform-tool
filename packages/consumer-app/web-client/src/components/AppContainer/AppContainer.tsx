@@ -77,6 +77,7 @@ export class AppContainer extends RouterMultiple<AppContainerProps, AppContainer
           } else {
             LoadPage(pageID)
               .then((pageData) => {
+                console.log(pageData);
                 pageCache[pageID] = IUBDSLParser({ dsl: pageData });
                 this.setState({
                   preparingPage: false
