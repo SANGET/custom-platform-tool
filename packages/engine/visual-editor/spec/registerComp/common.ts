@@ -5,7 +5,7 @@
  * TODO: 放到前端动态资源管理服务中进行统一管理
  */
 
-import { EditorEntityState } from "../../types";
+import { EditorEntityState } from "../../data-structure";
 
 export interface RegisterCompElementProps {
   compContext: {

@@ -6,7 +6,7 @@ import {
 } from '@engine/layout-renderer';
 import { DragItemActions } from '..';
 import { Dispatcher } from '../../core/actions';
-import { EditorComponentEntity, EditorEntityState, ElemNestingInfo } from '../../types';
+import { EditorComponentEntity, EditorEntityState, ElemNestingInfo } from '../../data-structure';
 
 export interface GetStateContext {
   nestingInfo: ElemNestingInfo

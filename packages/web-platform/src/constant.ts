@@ -11,4 +11,4 @@ export enum EDIT_STATUS {
 export const ROUTER_SUFFIX = "/page";
 
 /** 预览模式 */
-export const MODE_PREVIEW = '/preview'
+export const MODE_PREVIEW = 'preview';

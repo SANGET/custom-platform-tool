@@ -1,6 +1,6 @@
 import update from 'immutability-helper';
 import produce from 'immer';
-import { LayoutInfoActionReducerState, FlatLayoutItems } from "../../types";
+import { LayoutInfoActionReducerState, FlatLayoutItems } from "../../data-structure";
 import {
   ADD_ENTITY, SET_LAYOUT_STATE, DEL_ENTITY,
   AddEntityAction, DelEntityAction, SetLayoutAction,

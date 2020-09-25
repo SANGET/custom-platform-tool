@@ -4,7 +4,7 @@ import {
   INIT_APP, InitAppAction,
   ADD_ENTITY, AddEntityAction, UPDATE_APP, UpdateAppAction
 } from "../actions";
-import { PageMetadata } from "../../types";
+import { PageMetadata } from "../../data-structure";
 
 const DefaultPageMeta: PageMetadata = {
   lastCompID: 0,

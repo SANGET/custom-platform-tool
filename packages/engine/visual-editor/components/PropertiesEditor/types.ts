@@ -1,4 +1,4 @@
-import { EditorPropertyItem } from "../../types";
+import { EditorPropertyItem } from "../../data-structure";
 
 /**
  * 属性项的渲染器标准接口

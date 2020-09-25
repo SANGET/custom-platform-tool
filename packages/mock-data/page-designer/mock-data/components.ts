@@ -1,4 +1,4 @@
-import { ComponentClassCollection } from "@engine/visual-editor/types";
+import { ComponentClassCollection } from "@engine/visual-editor/data-structure";
 import { CustomComponent } from "./custom-component-demo";
 import { ApiMock } from "./api-mock";
 

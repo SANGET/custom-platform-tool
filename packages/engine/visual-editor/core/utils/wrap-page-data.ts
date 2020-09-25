@@ -1,5 +1,5 @@
 import produce from 'immer';
-import { BasePageData } from "../../types";
+import { BasePageData } from "../../data-structure";
 
 const mergeStateToContent = (layoutData, entityState) => {
   const res = produce(layoutData, (darftData) => {

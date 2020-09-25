@@ -1,4 +1,4 @@
-import { EditorPropertyItemsCollection } from "@engine/visual-editor/types";
+import { EditorPropertyItemsCollection } from "@engine/visual-editor/data-structure";
 import { ApiMock } from "../api-mock";
 import PropValue from './value';
 import PropField from './field';

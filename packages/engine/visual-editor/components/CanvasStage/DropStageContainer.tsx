@@ -7,7 +7,7 @@ import classnames from 'classnames';
 import {
   DragItemClass, DropCollectType, EntitiesStateStore,
   EditorPageEntity
-} from '@engine/visual-editor/types';
+} from '@engine/visual-editor/data-structure';
 import { Call } from '@mini-code/base-func';
 
 /**

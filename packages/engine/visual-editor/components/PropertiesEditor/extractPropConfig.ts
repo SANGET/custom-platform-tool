@@ -2,7 +2,7 @@ import { produce } from "immer";
 import {
   PropertyItemConfigFunc, EditorComponentEntity,
   EditorPropertyItem, EditorPageEntity
-} from "../../types";
+} from "../../data-structure";
 
 /**
  * 提取 prop item config
