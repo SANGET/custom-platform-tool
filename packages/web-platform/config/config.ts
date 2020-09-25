@@ -1,7 +1,9 @@
 import { defineConfig } from 'umi';
+import { join } from 'path';
 import defaultSettings from './defaultSettings';
 import proxy from './proxy';
 import router from './router';
+
 const { REACT_APP_ENV } = process.env;
 export default defineConfig({
   hash: true,
@@ -39,9 +41,9 @@ export default defineConfig({
     memo.module
       .rule('js')
       .test(/\.(js|mjs|jsx|ts|tsx)$/)
-      .include.add(join(__dirname, '..', '..', '..' ,'packages')).end()
+      .include.add(join(__dirname, '..', '..', '..', 'packages')).end()
       .exclude.add(/node_modules/).end()
-      .use('babel-loader')
+      .use('babel-loader');
     return memo;
   },
 });
