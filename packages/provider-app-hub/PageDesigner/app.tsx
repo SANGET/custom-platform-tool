@@ -152,7 +152,6 @@ class PageDesignerApp extends React.Component<VisualEditorAppProps & HY.SubAppSp
       SetLayoutInfo, DelEntity, AddEntity,
     } = dispatcher;
     const { id: activeEntityID, entity: activeEntity } = selectedInfo;
-    console.log(appContext);
 
     return appContext.ready ? (
       <div className="visual-app">
