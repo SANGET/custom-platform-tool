@@ -13,6 +13,7 @@ import {
 } from '@ant-design/icons';
 
 import { TABS_OPERATION, TAB_TYPE } from '@/models/tabs';
+import { getQueryByParams } from '@/utils/utils';
 import styles from "./index.less";
 
 const { TabPane } = Tabs;
@@ -26,12 +27,13 @@ interface ITabsContainerProps {
 
 const TabsContainer: React.FC<ITabsContainerProps> = (props): React.ReactElement => {
   const {
-    activeKey, tabsData, dispatch, children
+    activeKey, tabsData, dispatch
   } = props;
+  const queryLink = getQueryByParams(["mode", "app", "lessee"]);
   const handleTabChange = (key: string) => {
     if (key === props.activeKey) return;
     const tab = tabsData.find((item) => item.path === key);
-    const link = tab.page === TAB_TYPE.PAGE ? `${ROUTER_SUFFIX}?path=${key}` : key;
+    const link = tab.page === TAB_TYPE.PAGE ? `${ROUTER_SUFFIX}?path=${key}&${queryLink}` : `${key}?${queryLink}`;
     dispatch({
       type: "tabs/updata",
       payload: key

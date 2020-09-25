@@ -11,7 +11,7 @@ const proSettings: IDefaultSettings = {
   layout: 'mix',
   contentWidth: 'Fluid',
   fixedHeader: false,
-  fixSiderbar: true,
+  fixSiderbar: false,
   colorWeak: false,
   menu: {
     locale: false,
