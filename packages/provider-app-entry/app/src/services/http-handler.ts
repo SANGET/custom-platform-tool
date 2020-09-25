@@ -8,10 +8,6 @@ import { message as AntdMessage } from 'antd';
 
 import { setDefaultParams, clearDefaultParams, onNavigate } from "multiple-page-routing";
 
-const defaultApiUrl = 'http://192.168.14.140:6090';
-
-const apiUrl = process.env.REACT_APP_API_URL || defaultApiUrl;
-
 /**
  * 后端返回的数据结构
  */
@@ -23,8 +19,17 @@ export interface ResStruct {
 }
 
 const urlPrefix = 'paas';
+let baseReqUrl = '';
 
-const baseReqUrl = resolveUrl(apiUrl, urlPrefix);
+/**
+ * 设置请求平台服务的 api 地址
+ */
+export const setPlatformApiUrl = (platformApiUrl: string) => {
+  baseReqUrl = resolveUrl(platformApiUrl, urlPrefix);
+  $R.setConfig({
+    baseUrl: baseReqUrl
+  });
+};
 
 /**
  * 根据业务扩展的 http 请求工具的类型
@@ -34,7 +39,7 @@ export interface RExtend extends RequestClass {
 }
 
 const $R = new RequestClass<ResStruct>({
-  baseUrl: `${baseReqUrl}`
+  // baseUrl: `${baseReqUrl}`
 }) as RExtend;
 
 /**
@@ -177,9 +182,6 @@ export type $Request = typeof $R
 
 declare global {
   const $R_P: typeof $R;
-}
-
-declare global {
   interface Window {
     /** Request helper for Provider app，简写 R_P，$ 是全局变量前缀, 生产工具的 HTTP 请求助手 */
     $R_P: $Request;
