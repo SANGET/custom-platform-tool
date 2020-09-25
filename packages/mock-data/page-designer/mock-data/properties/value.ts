@@ -1,4 +1,4 @@
-import { PropertyItemConfigFunc } from "@engine/visual-editor/types";
+import { PropertyItemConfigFunc } from "@engine/visual-editor/data-structure";
 
 const PropValue: PropertyItemConfigFunc = (entity) => {
   return {

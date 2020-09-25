@@ -55,7 +55,7 @@ class PageDesignerApp extends React.Component<VisualEditorAppProps & HY.SubAppSp
       datasources
     } = await getPageContentWithDatasource(pageID);
     UpdateAppContext({
-      options: {
+      payload: {
         datasources
       }
     });
@@ -116,7 +116,7 @@ class PageDesignerApp extends React.Component<VisualEditorAppProps & HY.SubAppSp
     /** 准备初始化数据 */
     const initData = produce(dynamicData, (draftInitData) => {
       draftInitData.pageContent = pageContent;
-      draftInitData.options = {
+      draftInitData.payload = {
         pageDataRes,
         // 填入 datasources
         datasources,
@@ -152,6 +152,7 @@ class PageDesignerApp extends React.Component<VisualEditorAppProps & HY.SubAppSp
       SetLayoutInfo, DelEntity, AddEntity,
     } = dispatcher;
     const { id: activeEntityID, entity: activeEntity } = selectedInfo;
+    console.log(appContext);
 
     return appContext.ready ? (
       <div className="visual-app">
@@ -163,7 +164,7 @@ class PageDesignerApp extends React.Component<VisualEditorAppProps & HY.SubAppSp
             className="comp-panel"
           >
             <ComponentPanel
-              datasources={appContext?.options?.datasources}
+              datasources={appContext?.payload?.datasources}
               compClassForPanelData={appContext.compClassForPanelData}
               compClassCollection={appContext.compClassCollection}
               onUpdatedDatasource={this.onUpdatedDatasource}

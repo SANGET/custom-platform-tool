@@ -6,7 +6,7 @@ import {
 } from '@engine/visual-editor/utils';
 import {
   EditorComponentClass, EditorComponentEntity, TempEntity, TEMP_ENTITY_ID
-} from '../../types';
+} from '../../data-structure';
 
 export type ConstructCompClass = (
   componentClass: EditorComponentClass,

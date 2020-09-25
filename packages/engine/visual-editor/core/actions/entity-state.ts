@@ -1,7 +1,7 @@
 import {
   EditorEntity,
   EditorEntityState, ElemNestingInfo
-} from "../../types";
+} from "../../data-structure";
 import { SelectEntityState } from "../types";
 
 /// entityState /////////////////

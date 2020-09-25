@@ -1,5 +1,5 @@
 import React from 'react';
-import { EditorComponentEntity, EditorEntityState } from '@engine/visual-editor/types';
+import { EditorComponentEntity, EditorEntityState } from '@engine/visual-editor/data-structure';
 import classnames from 'classnames';
 import { getCompEntity } from '../registerComp';
 

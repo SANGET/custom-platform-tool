@@ -7,7 +7,7 @@ import { Debounce } from '@mini-code/base-func';
 import {
   EditorEntity, EditorEntityState, EditorPropertyItem,
   ComponentBindPropsConfig,
-} from '../../types';
+} from '../../data-structure';
 import { PropItemRenderer as PropItemRendererDefault } from './PropItemRenderer';
 import { extractPropConfig } from './extractPropConfig';
 import { entityStateMergeRule } from './entityStateMergeRule';

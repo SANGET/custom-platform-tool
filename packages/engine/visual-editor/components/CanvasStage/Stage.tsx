@@ -8,7 +8,7 @@ import {
   TempEntity,
   EditorComponentEntity,
   PageMetadata
-} from '@engine/visual-editor/types';
+} from '@engine/visual-editor/data-structure';
 import {
   DragableItemTypes,
   dragableItemWrapperFac, WrapperFacOptions, DragableItemWrapperFac, GetStateContext, WrapperItemClockEvent
