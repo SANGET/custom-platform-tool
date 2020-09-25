@@ -18,9 +18,8 @@ const Container: React.FC<IContainerProps> = (props) => {
       lessee: "hy",
       app: "app"
     });
-    console.log(res);
-    if (res.code === '0') {
-      const result = JSON.parse(res.result);
+    if (res.code === "00000") {
+      const { result } = res;
       setData(result);
     }
   };

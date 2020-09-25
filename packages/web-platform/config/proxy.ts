@@ -13,9 +13,14 @@ export default {
       pathRewrite: { '^': '' },
     },
     '/web/': {
-      target: "http://10.11.6.193:3000",
+      target: "http://localhost:3000",
       changeOrigin: true,
       pathRewrite: { '/web/': '' },
-    }
+    },
+    // '/web/': {
+    //   target: "http://10.11.6.193:3000",
+    //   changeOrigin: true,
+    //   pathRewrite: { '/web/': '' },
+    // },
   }
 };
