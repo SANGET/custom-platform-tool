@@ -42,7 +42,7 @@ export const widgetClassDataCollection: WidgetClassDataCollection = {
     id: 'component-table-1',
     label: '表格',
     widgetDef: {
-      type: 'Table'
+      type: 'NormalTable'
     },
     bindPropItems: {
       propItemRefs: [

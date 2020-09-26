@@ -5,7 +5,7 @@ export interface BusinessWidgetAccessSpec {
   name: string
   /** 组件挂载的回调 */
   didMount?: () => void
-  propEditor?
+  propEditor?: (props) => JSX.Element
   /** 用于渲染的组件 */
   render: (props) => JSX.Element
 }

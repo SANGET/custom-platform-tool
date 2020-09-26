@@ -1,6 +1,17 @@
 import { BusinessWidgetAccessSpec } from './interfaces';
-import FormInputSpec from './Widgets/FormInput';
+import * as Widgets from './Widgets';
+
+const getWidgetSpecName = (widgetType) => `${widgetType}Spec`;
+
+const getWidgetSpec = (
+  widgetType
+) => Widgets[getWidgetSpecName(widgetType)];
 
 export const getWidget = (widgetType: string): BusinessWidgetAccessSpec => {
-  return new FormInputSpec();
+  // console.log(widgetType);
+  const WidgetConfig = getWidgetSpec(widgetType);
+  if (typeof WidgetConfig === 'function') {
+    return new WidgetConfig();
+  }
+  return {};
 };
