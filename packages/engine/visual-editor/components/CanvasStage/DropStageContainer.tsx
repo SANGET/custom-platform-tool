@@ -6,7 +6,6 @@ import { useDrop } from 'react-dnd';
 import classnames from 'classnames';
 import {
   DragableItemType, DropCollectType,
-  PageStageEntity
 } from '@engine/visual-editor/data-structure';
 import { Call } from '@mini-code/base-func';
 
@@ -19,7 +18,7 @@ export interface DropStageProps {
   onEnter?: (dragItem: DragableItemType) => void
   /** 触发 onEnter 和 onLeave 的条件 */
   triggerCondition?: (dragItem: DragableItemType) => boolean
-  onStageClick
+  onStageClick?: () => void
   style
   className?
   accept

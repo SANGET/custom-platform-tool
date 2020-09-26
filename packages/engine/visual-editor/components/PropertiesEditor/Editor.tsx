@@ -70,8 +70,6 @@ interface PropertiesEditorState {
 
 /**
  * 属性编辑器面板
- *
- * @description 由于此业务逻辑略复杂，React.FC 并不能满足，所以采用 ClassComponent，更好的组织优化逻辑
  */
 class PropertiesEditor extends React.Component<
 PropertiesEditorProps, PropertiesEditorState

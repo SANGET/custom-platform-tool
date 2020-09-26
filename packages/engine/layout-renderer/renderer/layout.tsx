@@ -37,7 +37,6 @@ const Elem = ({
 
 /**
  * 布局渲染器
- * parserContext 将传入每一个 parser
  */
 const renderLayout = (
   layoutNode: LayoutNodeItem[],
@@ -79,7 +78,7 @@ const renderLayout = (
 };
 
 /**
- * 布局渲染引擎入口
+ * 布局渲染器
  */
 const LayoutRenderer: React.FC<LayoutRendererProps> = (
   props,

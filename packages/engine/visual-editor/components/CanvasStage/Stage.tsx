@@ -11,7 +11,7 @@ import {
 } from '@engine/visual-editor/data-structure';
 import {
   DragableItemTypes,
-  dragableItemWrapperFac, WrapperFacOptions, DragableItemWrapperFac,
+  WrapperFacOptions, DragableItemWrapperFac,
   GetStateContext, WrapperItemClickEvent
 } from '@engine/visual-editor/spec';
 import { Debounce } from '@mini-code/base-func';
@@ -20,14 +20,14 @@ import {
   VEDispatcher, SelectEntityState
 } from '@engine/visual-editor/core';
 import DropStageContainer from './DropStageContainer';
-import { DnDContext } from '../../spec/DragItem';
+import { DnDContext } from '../../spec';
 
 /**
  * 中央舞台组件的 props
  */
 export interface CanvasStageProps extends VEDispatcher {
   /** 组件包接入规范  */
-  dragableItemWrapper?: DragableItemWrapperFac
+  dragableItemWrapper: DragableItemWrapperFac
   /** 页面的状态 */
   pageEntityState?: {
     style: CSSStyleRule
@@ -181,7 +181,7 @@ class CanvasStage extends React.Component<CanvasStageProps> {
       selectedInfo,
       onStageClick,
       DelEntity,
-      dragableItemWrapper = dragableItemWrapperFac,
+      dragableItemWrapper,
     } = this.props;
     // console.log(layoutNodeInfo);
     const hasNode = layoutNodeInfo.length > 0;

@@ -1,16 +1,16 @@
 import React from 'react';
 import CanvasStage from '@engine/visual-editor/components/CanvasStage';
-import { dragableItemWrapperFac } from '../register-comp/Renderer/dragableItemWrapperFac';
+import { PDdragableItemWrapperFac } from './PDDragableItemWrapperFac';
 
-const CanvasStageCustom = (props) => {
+const PDCanvasStage = (props) => {
   return (
     <div style={{ height: '100%' }}>
       <CanvasStage
-        dragableItemWrapper={dragableItemWrapperFac}
+        dragableItemWrapper={PDdragableItemWrapperFac}
         {...props}
       />
     </div>
   );
 };
 
-export default CanvasStageCustom;
+export default PDCanvasStage;

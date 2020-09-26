@@ -1,12 +1,15 @@
 import React from 'react';
 import Editor, { PropertiesEditorProps } from '@engine/visual-editor/components/PropertiesEditor';
-import { PropItemRenderer } from '../register-comp/Renderer/PropItemRenderer';
+import { PropItemRenderer } from './PropItemRenderer';
 
 interface PropsEditorProps extends PropertiesEditorProps {
   customConfig?: any
 }
 
-const PropertiesEditor = ({
+/**
+ * Page design prop editor
+ */
+const PDPropertiesEditor = ({
   ...otherProps
 }: PropsEditorProps) => {
   return (
@@ -21,4 +24,4 @@ const PropertiesEditor = ({
   );
 };
 
-export default PropertiesEditor;
+export default PDPropertiesEditor;

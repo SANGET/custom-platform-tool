@@ -1,5 +1,5 @@
 import { registerCompClass, registerPropItem, registerEditor } from '@engine/visual-editor/spec/registerComp';
-import { Input, FormInput, Table } from '@spec/business-components';
+import { Input, FormInput, Table } from '@spec/business-widget';
 import { TableEditor } from './CustomEditor/TableEditor';
 import { Selector, FieldSelector } from './PropItem';
 
