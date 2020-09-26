@@ -4,10 +4,10 @@ const PropValue: PropItemConfig = (entity) => {
   return {
     id: 'prop_real_value',
     label: '值',
-    type: 'value',
+    whichAttr: 'value',
     useFx: true,
     propItemCompDef: {
-      type: 'Input',
+      type: 'NormalInput',
     }
   };
 };

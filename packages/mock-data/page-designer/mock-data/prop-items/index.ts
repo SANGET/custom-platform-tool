@@ -13,9 +13,9 @@ export const propItemsCollection: PropItemsCollection = {
     return {
       id: 'prop_style_title_color',
       label: '标题颜色',
-      type: 'labelColor',
+      whichAttr: 'labelColor',
       propItemCompDef: {
-        type: 'Input'
+        type: 'NormalInput'
       }
     };
   },
@@ -24,10 +24,10 @@ export const propItemsCollection: PropItemsCollection = {
     return {
       id: 'prop_title_value',
       label: '标题',
-      type: 'title',
+      whichAttr: 'title',
       defaultValue: label,
       propItemCompDef: {
-        type: 'Input',
+        type: 'NormalInput',
       }
     };
   },
@@ -35,9 +35,9 @@ export const propItemsCollection: PropItemsCollection = {
     return {
       id: 'prop_flex_config',
       label: '列数量',
-      type: 'columnCount',
+      whichAttr: 'columnCount',
       propItemCompDef: {
-        type: 'Selector',
+        type: 'DropdownSelector',
         defaultValue: 1,
         values: [{
           text: 1,

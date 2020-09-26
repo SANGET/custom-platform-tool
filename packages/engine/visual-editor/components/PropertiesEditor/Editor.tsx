@@ -187,12 +187,12 @@ PropertiesEditorProps, PropertiesEditorState
        * 将实例状态回填到属性项
        */
       const activeState = entityState
-        ? entityState[propItemConfig.type]
+        ? entityState[propItemConfig.whichAttr]
         : undefined;
 
       /** 确保 propItemConfig 的 ID 与集合中的 ID 一致 */
       // propItemConfig.id = propID;
-      const propItemType = propItemConfig.type;
+      const propItemType = propItemConfig.whichAttr;
 
       if (!this.hasDefaultEntityState) {
         /**

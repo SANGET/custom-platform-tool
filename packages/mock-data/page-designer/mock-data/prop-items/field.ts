@@ -4,7 +4,7 @@ const PropField: PropItemConfig = (entity) => {
   return {
     id: 'prop_field',
     label: '列',
-    type: 'field',
+    whichAttr: 'field',
     propItemCompDef: {
       type: 'FieldSelector',
     }

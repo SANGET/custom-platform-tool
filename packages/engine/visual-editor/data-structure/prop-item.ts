@@ -9,8 +9,8 @@ export interface PropItemType {
   id: string
   /** 属性项显示的 label */
   label: string
-  /** 用于定位组件实例的属性，例如 entity[propType] */
-  type: VEExtention.PropItemTypes
+  /** 作用于组件实例的属性，例如 entity[propType] */
+  whichAttr: VEExtention.PropItemTypes
   // /** 属性作用于组件实例的某种属性 */
   // target: string
   /** 默认值 */

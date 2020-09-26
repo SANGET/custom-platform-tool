@@ -23,33 +23,18 @@ export const WidgetRenderer: React.FC<PDWidgetRendererProps> = (props) => {
     ...otherProps
   } = props;
   const { widgetDef } = entity;
-  const { render: bizWidgetRender } = businessWidgetConfig || {};
-
-  const compContext = {
-    entityState
-  };
-  // console.log(entityState);
 
   let Com = <div></div>;
   if (!widgetDef) return Com;
 
   const { type, ...restWidgetProps } = widgetDef;
   const widgetProps = Object.assign({}, restWidgetProps, entityState);
-  /**
-   * 如果需要特殊处理，则在此做
-   */
-  switch (type) {
-    default:
-      Com = bizWidgetRender ? bizWidgetRender(widgetProps) : <Unexpect />;
-      // const RendererComp = comp;
-      // Com = RendererComp ? (
-      //   <RendererComp
-      //     compContext={compContext}
-      //     {...entityState}
-      //     {...widgetProps}
-      //   />
-      // ) : <Unexpect />;
-      break;
+
+  if (businessWidgetConfig.unexpected) {
+    // 处理异常组件
+    Com = <Unexpect />;
+  } else {
+    Com = businessWidgetConfig.render(widgetProps);
   }
   const classes = classnames(
     "comp-renderer",

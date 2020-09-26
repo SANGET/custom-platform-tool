@@ -13,7 +13,7 @@ export const PropItemRenderer: React.FC<PropItemRendererProps> = ({
   onChange,
 }) => {
   const {
-    label, propItemCompDef, type
+    label, propItemCompDef
   } = propItemConfig;
   const { type: componentType, defaultValue, ...propsForComponent } = propItemCompDef;
 

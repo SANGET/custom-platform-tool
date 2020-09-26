@@ -12,7 +12,7 @@ import {
   DragableItemTypes,
   DragableItemWrapperFac
 } from '@engine/visual-editor/spec';
-import { getWidget } from '@spec/business-widget/getWidget';
+import { getWidget } from '@spec/business-widget';
 import { TempEntityTip } from './TempEntityTip';
 import { WidgetRenderer } from '../WidgetRenderer';
 import { EditBtn } from './EditBtn';

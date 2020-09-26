@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { PropItemRendererProps } from '@engine/visual-editor/components/PropertiesEditor/types';
-import { getPropItem } from '@spec/business-widget/getPropItem';
+import { getPropItem } from '@spec/business-widget';
 import { FXContainer } from './FXContainer';
+import { Unexpect } from '../WidgetRenderer';
 
 /**
  * 属性项渲染器
@@ -13,77 +14,33 @@ export const PropItemRenderer: React.FC<PropItemRendererProps> = ({
   onChange,
 }) => {
   const {
-    label, propItemCompDef, type, useFx,
-    defaultValue
+    label, propItemCompDef, useFx,
   } = propItemConfig;
   const { type: propItemCompType, ...propsForComponent } = propItemCompDef;
 
-  // console.log('propItemConfig', propItemConfig);
-  // console.log('propItemValue', propItemValue);
   let Com;
-  const { render: propItemRenderer } = getPropItem(propItemCompType);
-  // const { comp } = propItemConfig;
-  switch (propItemCompType) {
-    // case 'Input':
-    //   const Input = comp;
-    //   Com = (
-    //     <div>
-    //       <Input
-    //         {...propsForComponent}
-    //         value={propItemValue || ''}
-    //         onChange={(value) => {
-    //         // console.log(e.target.value);
-    //           onChange(value, propItemConfig);
-    //         }}
-    //       />
-    //       {
-    //         // TODO: 确定需求，是否固定值和表达式只能存在一个
-    //         useFx && (
-    //           <FXContainer
-    //             onChange={(val) => {
-    //             // TODO: 完善 useFx
-    //               console.log('useFx change:', val);
-    //             }}
-    //           />
-    //         )
-    //       }
-    //     </div>
-    //   );
-    //   break;
-    // case 'Selector':
-    //   const Selector = comp;
-    //   Com = (
-    //     <Selector
-    //       {...propsForComponent}
-    //       value={propItemValue || ''}
-    //       onChange={(value) => {
-    //         // console.log(e.target.value);
-    //         onChange(value, propItemConfig);
-    //       }}
-    //     />
-    //   );
-    //   break;
-    // case 'FieldSelector':
-    //   const FieldSelector = comp;
-    //   Com = (
-    //     <FieldSelector
-    //       {...propsForComponent}
-    //       value={propItemValue || ''}
-    //       onChange={(value) => {
-    //         // console.log(e.target.value);
-    //         onChange(value, propItemConfig);
-    //       }}
-    //     />
-    //   );
-    //   break;
-    default:
-      Com = propItemRenderer({});
-      break;
+  const propItemCompConfig = getPropItem(propItemCompType);
+  if (propItemCompConfig.unexpected) {
+    // 处理异常组件
+    Com = <Unexpect />;
+  } else {
+    Com = propItemCompConfig.render(propItemValue, onChange);
   }
+  const fxComp = useFx && (
+    <FXContainer
+      onChange={(val) => {
+        // TODO: 完善 useFx
+        console.log('useFx change:', val);
+      }}
+    />
+  );
   return (
     <div className="mb10">
       <div className="label mb5">{label}</div>
-      <div className="content">{Com}</div>
+      <div className="content">
+        {Com}
+        {fxComp}
+      </div>
     </div>
   );
 };
