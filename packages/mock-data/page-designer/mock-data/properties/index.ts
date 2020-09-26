@@ -1,4 +1,4 @@
-import { EditorPropertyItemsCollection } from "@engine/visual-editor/data-structure";
+import { PropItemsCollection } from "@engine/visual-editor/data-structure";
 import { ApiMock } from "../api-mock";
 import PropValue from './value';
 import PropField from './field';
@@ -6,7 +6,7 @@ import PropField from './field';
 /**
  * TODO: 搞清楚属性如何影响组件实例，或者是说组件实例如何根据属性数据进行调整
  */
-export const propertiesItemCollection: EditorPropertyItemsCollection = {
+export const propertiesItemCollection: PropItemsCollection = {
   prop_field: PropField,
   prop_real_value: PropValue,
   prop_style_title_color: (entity) => {
@@ -14,7 +14,7 @@ export const propertiesItemCollection: EditorPropertyItemsCollection = {
       id: 'prop_style_title_color',
       label: '标题颜色',
       type: 'labelColor',
-      component: {
+      propItemCompDef: {
         type: 'Input'
       }
     };
@@ -26,7 +26,7 @@ export const propertiesItemCollection: EditorPropertyItemsCollection = {
       label: '标题',
       type: 'title',
       defaultValue: label,
-      component: {
+      propItemCompDef: {
         type: 'Input',
       }
     };
@@ -36,7 +36,7 @@ export const propertiesItemCollection: EditorPropertyItemsCollection = {
       id: 'prop_flex_config',
       label: '列数量',
       type: 'columnCount',
-      component: {
+      propItemCompDef: {
         type: 'Selector',
         defaultValue: 1,
         values: [{

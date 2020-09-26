@@ -24,7 +24,7 @@ import { DragableItemWrapperFac } from '../types';
  */
 export const dragableItemWrapperFac: DragableItemWrapperFac = (
   {
-    onDrop, onMove, onClick, onDelete,
+    onItemDrop, onItemMove, onItemClick, onDelete,
     getLayoutNode, getSelectedState, getEntityProps,
     UpdateEntityState,
     // getHoveringEntity, setHoveringEntity
@@ -53,18 +53,18 @@ export const dragableItemWrapperFac: DragableItemWrapperFac = (
       <DragItemComp
         id={id}
         index={idx}
-        onDrop={onDrop}
-        onMove={onMove}
-        dragItemClass={currEntity}
+        onItemDrop={onItemDrop}
+        onItemMove={onItemMove}
+        dragableWidgetType={currEntity}
         type={DragableItemTypes.DragItemEntity}
         className="relative drag-item"
-        accept={[DragableItemTypes.DragItemEntity, DragableItemTypes.DragItemClass]}
+        accept={[DragableItemTypes.DragItemEntity, DragableItemTypes.DragableItemType]}
       >
         <ComponentRenderer
           {...propsForChild}
           onClick={(e) => {
             e.stopPropagation();
-            onClick(e, { entity: currEntity, idx });
+            onItemClick(e, { entity: currEntity, idx });
           }}
           entity={currEntity}
           entityState={entityState || {}}

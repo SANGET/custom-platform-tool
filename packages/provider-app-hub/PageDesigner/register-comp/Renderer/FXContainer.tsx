@@ -47,7 +47,7 @@ export const FXContainer = ({
         });
       }}
     >
-      fx
+      useFx
     </span>
   );
 };

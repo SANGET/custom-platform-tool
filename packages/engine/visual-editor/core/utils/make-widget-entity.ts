@@ -5,23 +5,23 @@ import {
   increaseID,
 } from '@engine/visual-editor/utils';
 import {
-  EditorComponentClass, EditorComponentEntity, TempEntity, TEMP_ENTITY_ID
+  WidgetClassType, WidgetEntity, TempWidgetEntityType, TEMP_ENTITY_ID
 } from '../../data-structure';
 
-export type ConstructCompClass = (
-  componentClass: EditorComponentClass,
+export type MakeWidgetEntity = (
+  widgetType: WidgetClassType,
   options?: {
     idCount?: number
     extendEntityID?: string
     state?: string
   }
-) => EditorComponentEntity
+) => WidgetEntity
 
 /**
- * 实例化 componentClass
+ * 实例化 widgetType
  */
-export const constructCompClass: ConstructCompClass = (
-  componentClass: EditorComponentClass,
+export const makeWidgetEntity: MakeWidgetEntity = (
+  widgetType: WidgetClassType,
   options = {}
 ) => {
   const {
@@ -29,8 +29,8 @@ export const constructCompClass: ConstructCompClass = (
     extendEntityID = '',
     state = 'active'
   } = options;
-  /** 外部可以通过 entityID 设置 componentClass id */
-  let { entityID = '' } = componentClass;
+  /** 外部可以通过 entityID 设置 widgetType id */
+  let { entityID = '' } = widgetType;
   if (!entityID) {
     /** 如果外部没有传入，则通过生成器生成 ID */
     entityID = increaseID(idCount, ENTITY_ID);
@@ -43,17 +43,17 @@ export const constructCompClass: ConstructCompClass = (
    *
    * 下划线前缀为内部字段，用于表示已经实例化
    */
-  const entity = produce(componentClass, (draft) => {
-    delete draft.bindProps;
+  const entity = produce(widgetType, (draft) => {
+    delete draft.bindPropItems;
     draft.id = entityID;
-    draft._classID = componentClass.id;
+    draft._classID = widgetType.id;
     draft._state = state;
   });
 
   return entity;
 };
 
-export const constructTempEntity = (props = {}): TempEntity => ({
+export const makeTempWidgetEntity = (props = {}): TempWidgetEntityType => ({
   ...props,
   id: increaseID(Math.random(), TEMP_ENTITY_ID),
   _state: TEMP_ENTITY_ID,

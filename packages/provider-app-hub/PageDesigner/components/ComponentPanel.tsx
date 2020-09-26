@@ -26,9 +26,9 @@ const itemRendererFac = (
       return (
         <DragItem
           className="drag-comp-item"
-          type={DragableItemTypes.DragItemClass}
+          type={DragableItemTypes.DragableItemType}
           dragConfig={getDragItemConfig ? getDragItemConfig(componentClass) : {}}
-          dragItemClass={{
+          dragableWidgetType={{
             ...componentClass,
           }}
         >

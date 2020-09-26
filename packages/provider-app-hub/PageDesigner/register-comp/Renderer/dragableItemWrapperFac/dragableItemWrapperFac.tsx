@@ -24,7 +24,7 @@ import { EditBtn } from './EditBtn';
  */
 export const dragableItemWrapperFac: DragableItemWrapperFac = (
   {
-    onDrop, onMove, onClick, onDelete,
+    onItemDrop, onItemMove, onItemClick, onDelete,
     getLayoutNode, getSelectedState, getEntityProps,
     UpdateEntityState
     // getHoveringEntity, setHoveringEntity
@@ -55,11 +55,11 @@ export const dragableItemWrapperFac: DragableItemWrapperFac = (
   const isTempEntity = currEntity._state === TEMP_ENTITY_ID;
 
   return isTempEntity ? <TempEntityTip key={id} /> : (() => {
-    const { component } = currEntity;
+    const { widgetDef } = currEntity;
 
     // TODO: 调整获取组件的链路，通过远程获取的方式处理
-    const registeredEntity = getCompEntity(component.type);
-    const { propEditor: PropEditor } = registeredEntity || {};
+    const registeredEntity = getCompEntity(widgetDef.type) || {};
+    const { propEditor: PropEditor } = registeredEntity;
     const actionCtx = { entity: currEntity, idx, nestingInfo };
     return (
       <div
@@ -69,18 +69,18 @@ export const dragableItemWrapperFac: DragableItemWrapperFac = (
         <DragItemComp
           id={id}
           index={idx}
-          onDrop={onDrop}
-          onMove={onMove}
-          dragItemClass={currEntity}
+          onItemDrop={onItemDrop}
+          onItemMove={onItemMove}
+          dragableWidgetType={currEntity}
           type={DragableItemTypes.DragItemEntity}
           className="relative drag-item"
-          accept={[DragableItemTypes.DragItemEntity, DragableItemTypes.DragItemClass]}
+          accept={[DragableItemTypes.DragItemEntity, DragableItemTypes.DragableItemType]}
         >
           <ComponentRenderer
             {...propsForChild}
             onClick={(e) => {
               e.stopPropagation();
-              onClick(e, actionCtx);
+              onItemClick(e, actionCtx);
             }}
             entity={currEntity}
             registeredEntity={registeredEntity}

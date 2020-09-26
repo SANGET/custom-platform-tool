@@ -1,12 +1,12 @@
 import React from 'react';
-import { EditorComponentEntity, EditorEntityState } from '@engine/visual-editor/data-structure';
+import { WidgetEntity, WidgetEntityState } from '@engine/visual-editor/data-structure';
 import classnames from 'classnames';
 import { getCompEntity } from '../registerComp';
 
 export interface ComponentTypeRendererProps
   extends React.DetailedHTMLProps<React.HTMLAttributes<HTMLDivElement>, HTMLDivElement> {
-  entity: EditorComponentEntity
-  entityState: EditorEntityState
+  entity: WidgetEntity
+  entityState: WidgetEntityState
 }
 
 const FormLabel = ({ children, className = '', ...props }) => (children ? (
@@ -26,7 +26,7 @@ export const ComponentRenderer: React.FC<ComponentTypeRendererProps> = (props) =
     className,
     ...otherProps
   } = props;
-  const { component } = entity;
+  const { widgetDef } = entity;
   const { label, style } = entityState;
 
   const compContext = {
@@ -35,9 +35,9 @@ export const ComponentRenderer: React.FC<ComponentTypeRendererProps> = (props) =
   // console.log(entityState);
 
   let Com = <div></div>;
-  if (!component) return Com;
+  if (!widgetDef) return Com;
 
-  const { type, ...compProps } = component;
+  const { type, ...compProps } = widgetDef;
   switch (type) {
     case 'Input':
       const { comp: Input } = getCompEntity(type);

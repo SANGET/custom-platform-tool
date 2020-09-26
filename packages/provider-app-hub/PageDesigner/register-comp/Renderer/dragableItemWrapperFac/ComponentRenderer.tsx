@@ -10,7 +10,7 @@ export interface ComponentTypeRendererProps extends FacToComponentProps {
 }
 
 /**
- * 根据 component entity 解析的组件渲染器
+ * 根据 widget entity 解析的组件渲染器
  */
 export const ComponentRenderer: React.FC<ComponentTypeRendererProps> = (props) => {
   const {
@@ -23,7 +23,7 @@ export const ComponentRenderer: React.FC<ComponentTypeRendererProps> = (props) =
     registeredEntity,
     ...otherProps
   } = props;
-  const { component } = entity;
+  const { widgetDef } = entity;
   const { comp } = registeredEntity || {};
 
   const compContext = {
@@ -32,9 +32,9 @@ export const ComponentRenderer: React.FC<ComponentTypeRendererProps> = (props) =
   // console.log(entityState);
 
   let Com = <div></div>;
-  if (!component) return Com;
+  if (!widgetDef) return Com;
 
-  const { type, ...compProps } = component;
+  const { type, ...compProps } = widgetDef;
   /**
    * 如果需要特殊处理，则在此做
    */

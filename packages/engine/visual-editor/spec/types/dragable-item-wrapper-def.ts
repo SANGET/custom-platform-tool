@@ -5,8 +5,8 @@ import {
   LayoutWrapperContext
 } from '@engine/layout-renderer';
 import { DragItemActions } from '..';
-import { Dispatcher } from '../../core/actions';
-import { EditorComponentEntity, EditorEntityState, ElemNestingInfo } from '../../data-structure';
+import { VEDispatcher } from '../../core/actions';
+import { WidgetEntity, WidgetEntityState, ElemNestingInfo } from '../../data-structure';
 
 export interface GetStateContext {
   nestingInfo: ElemNestingInfo
@@ -14,9 +14,9 @@ export interface GetStateContext {
   id: string
 }
 
-export type GetEntityProps = (ctx: GetStateContext) => EditorEntityState | undefined
+export type GetEntityProps = (ctx: GetStateContext) => WidgetEntityState | undefined
 export type GetSelectedState = (ctx: GetStateContext) => boolean
-export type GetLayoutNode = (ctx: GetStateContext) => EditorComponentEntity
+export type GetLayoutNode = (ctx: GetStateContext) => WidgetEntity
 
 export interface WrapperFacContext {
   /** 获取选中的组件实例的状态 */
@@ -25,16 +25,16 @@ export interface WrapperFacContext {
   getEntityProps: GetEntityProps
   /** 扁平的 node 结构 */
   getLayoutNode: GetLayoutNode
-  UpdateEntityState: Dispatcher['UpdateEntityState']
+  UpdateEntityState: VEDispatcher['UpdateEntityState']
 }
 
 interface ActionCtx {
-  entity: EditorComponentEntity
+  entity: WidgetEntity
   idx: number
   nestingInfo: ElemNestingInfo
 }
 
-export type WrapperItemClockEvent = (event, actionCtx: ActionCtx) => void
+export type WrapperItemClickEvent = (event, actionCtx: ActionCtx) => void
 export type WrapperItemDeleteEvent = (event, actionCtx: ActionCtx) => void
 
 /**
@@ -42,7 +42,7 @@ export type WrapperItemDeleteEvent = (event, actionCtx: ActionCtx) => void
  */
 export interface WrapperFacActions extends DragItemActions {
   /** 响应组件点击事件 */
-  onClick: WrapperItemClockEvent
+  onItemClick: WrapperItemClickEvent
   /** 响应组件点击事件 */
   onDelete: WrapperItemDeleteEvent
 }
@@ -58,8 +58,8 @@ export interface WrapperFacOptions extends WrapperFacContext, WrapperFacActions 
  */
 export interface FacToComponentProps extends LayoutWrapperContext {
   onClick: React.DOMAttributes<HTMLDivElement>['onClick']
-  entity: EditorComponentEntity
-  entityState: EditorEntityState
+  entity: WidgetEntity
+  entityState: WidgetEntityState
 }
 
 /**

@@ -1,11 +1,11 @@
-import { PropertyItemConfigFunc } from "@engine/visual-editor/data-structure";
+import { PropItemConfig } from "@engine/visual-editor/data-structure";
 
-const PropField: PropertyItemConfigFunc = (entity) => {
+const PropField: PropItemConfig = (entity) => {
   return {
     id: 'prop_field',
     label: '列',
     type: 'field',
-    component: {
+    propItemCompDef: {
       type: 'FieldSelector',
     }
   };

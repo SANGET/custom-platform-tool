@@ -1,5 +1,4 @@
 import React from 'react';
-import { EditorPropertyItem } from '../../data-structure';
 import { getPropItem } from '../../spec/registerComp';
 import { PropItemRendererProps } from './types';
 
@@ -14,9 +13,9 @@ export const PropItemRenderer: React.FC<PropItemRendererProps> = ({
   onChange,
 }) => {
   const {
-    label, component, type
+    label, propItemCompDef, type
   } = propItemConfig;
-  const { type: componentType, defaultValue, ...propsForComponent } = component;
+  const { type: componentType, defaultValue, ...propsForComponent } = propItemCompDef;
 
   /** 将 ID 写入 propItemConfig */
   // propItemConfig.id = propID;

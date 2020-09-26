@@ -107,20 +107,20 @@ class PageDesignerApp extends React.Component<VisualEditorAppProps & HY.SubAppSp
     /** 并发获取初始化数据 */
     const [dynamicData, remotePageData] = await Promise.all([
       getFEDynamicData(),
-      getPageContentWithDatasource(pageID)
+      // getPageContentWithDatasource(pageID)
     ]);
-    const {
-      datasources, pageContent, pageDataRes
-    } = remotePageData;
+    // const {
+    //   datasources, pageContent, pageDataRes
+    // } = remotePageData;
 
     /** 准备初始化数据 */
     const initData = produce(dynamicData, (draftInitData) => {
-      draftInitData.pageContent = pageContent;
-      draftInitData.payload = {
-        pageDataRes,
-        // 填入 datasources
-        datasources,
-      };
+      // draftInitData.pageContent = pageContent;
+      // draftInitData.payload = {
+      //   pageDataRes,
+      //   // 填入 datasources
+      //   datasources,
+      // };
       return draftInitData;
     });
 
@@ -191,7 +191,7 @@ class PageDesignerApp extends React.Component<VisualEditorAppProps & HY.SubAppSp
                   key={activeEntityID}
                   propItemData={appContext.propItemData}
                   // eslint-disable-next-line max-len
-                  propertiesConfig={appContext?.compClassCollection[activeEntity?._classID]?.bindProps}
+                  propertiesConfig={appContext?.compClassCollection[activeEntity?._classID]?.bindPropItems}
                   selectedEntity={activeEntity}
                   propPanelData={appContext.propPanelData}
                   defaultEntityState={activeEntity.propState}

@@ -7,7 +7,7 @@ import ComponentPanel from '@engine/visual-editor/components/ComponentPanel';
 import CanvasStage from '@engine/visual-editor/components/CanvasStage';
 import PropertiesEditor from '@engine/visual-editor/components/PropertiesEditor';
 
-import { Dispatcher } from "@engine/visual-editor/core/actions";
+import { VEDispatcher } from "@engine/visual-editor/core/actions";
 // import { VisualEditorStore } from "@engine/visual-editor/core/store";
 
 import { VisualEditorState } from "@engine/visual-editor/core/reducers/reducer";
@@ -26,15 +26,15 @@ import '../style/index.scss';
 import { FrameLayout } from "../components/LayoutFrame";
 
 interface VisualEditorAppProps extends VisualEditorState {
-  dispatcher: Dispatcher
+  dispatcher: VEDispatcher
 }
 
 // const PAGE_ENTITY_ID = '__PAGE__ENTITY__ID__';
-// const PageEntity: EditorPageEntity = {
+// const PageEntity: PageStageEntity = {
 //   id: PAGE_ENTITY_ID,
 //   pageID: '',
-//   bindProps: {
-//     rawProp: pagePropsData
+//   bindPropItems: {
+//     rawPropItems: pagePropsData
 //   },
 // };
 const VisualEditorApp: React.FC<VisualEditorAppProps> = (props) => {
@@ -155,7 +155,7 @@ const VisualEditorApp: React.FC<VisualEditorAppProps> = (props) => {
               <PropertiesEditor
                 key={activeEntityID}
                 propItemData={appContext.propItemData}
-                propertiesConfig={appContext?.compClassCollection[activeEntity?._classID]?.bindProps}
+                propertiesConfig={appContext?.compClassCollection[activeEntity?._classID]?.bindPropItems}
                 selectedEntity={activeEntity}
                 defaultEntityState={activeEntity.propState}
                 initEntityState={(entityState) => InitEntityState(selectedInfo, entityState)}

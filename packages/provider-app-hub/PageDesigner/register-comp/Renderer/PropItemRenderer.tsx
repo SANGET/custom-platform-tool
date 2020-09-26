@@ -13,10 +13,10 @@ export const PropItemRenderer: React.FC<PropItemRendererProps> = ({
   onChange,
 }) => {
   const {
-    label, component, type, fx,
+    label, propItemCompDef, type, useFx,
     defaultValue
   } = propItemConfig;
-  const { type: componentType, ...propsForComponent } = component;
+  const { type: componentType, ...propsForComponent } = propItemCompDef;
 
   // console.log('propItemConfig', propItemConfig);
   // console.log('propItemValue', propItemValue);
@@ -38,11 +38,11 @@ export const PropItemRenderer: React.FC<PropItemRendererProps> = ({
           />
           {
             // TODO: 确定需求，是否固定值和表达式只能存在一个
-            fx && (
+            useFx && (
               <FXContainer
                 onChange={(val) => {
-                // TODO: 完善 fx
-                  console.log('fx change:', val);
+                // TODO: 完善 useFx
+                  console.log('useFx change:', val);
                 }}
               />
             )

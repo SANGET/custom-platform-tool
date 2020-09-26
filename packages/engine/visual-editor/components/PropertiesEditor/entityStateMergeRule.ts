@@ -1,16 +1,16 @@
 /* eslint-disable no-param-reassign */
 import produce from 'immer';
-import { EditorEntityState, EditorPropertyItem } from "../../data-structure";
+import { WidgetEntityState, PropItemType } from "../../data-structure";
 
 interface EntityStateItemParams {
   value: any,
-  propItemConfig: EditorPropertyItem
+  propItemConfig: PropItemType
 }
 
 type EntityStateMergeRule = (
-  srcEntityState: EditorEntityState,
+  srcEntityState: WidgetEntityState,
   entityStateItemParams: EntityStateItemParams
-) => EditorEntityState
+) => WidgetEntityState
 
 /**
  * 提取属性中的 style

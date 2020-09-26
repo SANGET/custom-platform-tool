@@ -1,5 +1,5 @@
 export const DragableItemTypes = {
-  DragItemClass: 'DragItemClass',
+  DragableItemType: 'DragableItemType',
   DragItemEntity: 'DragItemEntity',
   DragContainer: 'DragContainer',
 };

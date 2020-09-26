@@ -1,4 +1,5 @@
 import { LayoutInfoActionReducerState } from "./layout";
+import { WidgetBindPropItemsType } from "./widget";
 
 /**
  * 页面的配置
@@ -29,4 +30,16 @@ export interface BasePageData {
   content: LayoutInfoActionReducerState
   /** 页面元数据，包括联动、表达式、以及大部分的业务扩展 */
   meta: PageMetadata
+}
+
+/**
+ * 页面元数据
+ */
+export interface PageStageEntity {
+  /** 内部 page id，一般为固定 id */
+  id: string
+  /** 存放后端返回的 page id */
+  pageID: string
+  /** 绑定可编辑的属性 */
+  bindPropItems: WidgetBindPropItemsType
 }
