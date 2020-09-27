@@ -21,7 +21,7 @@ export const propPanelData: PanelItemsGroup[] = [
       // {
       //   title: '布局控件',
       //   items: [
-      //   // 'container-1'
+      //   // 'widget-id-2'
       //   ]
       // },
     ]
