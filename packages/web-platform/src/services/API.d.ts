@@ -24,9 +24,25 @@ declare namespace API {
   }
 
   export interface IMenuData {
-    id: string;
-    menuName: string;
-    pid: string;
+    id: number;
+    version: number;
+    createdBy: number;
+    gmtCreate: number;
+    modifiedBy: number;
+    gmtModified: number;
+    deleteFlag: number;
+    name: string;
+    type: number;
+    pageLink: number;
+    icon: string;
+    status: number;
+    pid: number;
+    sort: number;
+    level: number;
+    path: string;
+    pageName: string;
+    createdUserName: string;
+    modifiedUserName: string;
   }
 
   export interface IMenunType extends IResponseBaseType {

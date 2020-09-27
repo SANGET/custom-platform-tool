@@ -43,10 +43,6 @@ const MenusModel: IMenusModel = {
   reducers: {
     setMeunList(state: IMenusModelState = inintState, { payload }): IMenusModelState {
       const list: any[] = construct(payload, {
-        mapping: {
-          name: "menuName",
-          path: "id"
-        },
         attribute: {
           page: ROUTER_SUFFIX
         }

@@ -1,5 +1,50 @@
-import { menuData } from "./data";
-
 export default {
-  'POST /api/menu/list': menuData,
+  'POST /api/menu/list': {
+    status: null,
+    success: true,
+    code: 0,
+    message: "成功",
+    dataId: null,
+    result: [{
+      id: "1299257429757927424",
+      version: 1,
+      createdBy: 1295915065878388736,
+      gmtCreate: 1598602084947,
+      modifiedBy: 1295915065878388736,
+      gmtModified: 1598602084947,
+      deleteFlag: 0,
+      name: "父页面",
+      type: 1,
+      pageLink: 123,
+      icon: "primary",
+      status: 1,
+      pid: "",
+      sort: 2,
+      level: 1,
+      path: "1299257429757927424",
+      pageName: null,
+      createdUserName: null,
+      modifiedUserName: null
+    }, {
+      id: "129925742975792742",
+      version: 1,
+      createdBy: 1295915065878388736,
+      gmtCreate: 1598602084947,
+      modifiedBy: 1295915065878388736,
+      gmtModified: 1598602084947,
+      deleteFlag: 0,
+      name: "子页面",
+      type: 1,
+      pageLink: 123,
+      icon: "primary",
+      status: 1,
+      pid: "1299257429757927424",
+      sort: 2,
+      level: 1,
+      path: "129925742975792742",
+      pageName: null,
+      createdUserName: null,
+      modifiedUserName: null
+    }]
+  },
 };
