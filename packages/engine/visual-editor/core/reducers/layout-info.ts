@@ -31,7 +31,7 @@ export type LayoutInfoActionReducerAction =
 //  * state 的数据结构
 //  */
 // export interface LayoutInfoActionReducerState {
-//   [entityID: string]: EditorComponentEntity
+//   [entityID: string]: WidgetEntity
 // }
 
 /**

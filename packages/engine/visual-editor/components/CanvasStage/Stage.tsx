@@ -5,29 +5,29 @@ import React from 'react';
 import { LayoutRenderer } from '@engine/layout-renderer';
 import {
   LayoutInfoActionReducerState,
-  TempEntity,
-  EditorComponentEntity,
+  TempWidgetEntityType,
+  WidgetEntity,
   PageMetadata
 } from '@engine/visual-editor/data-structure';
 import {
   DragableItemTypes,
-  dragableItemWrapperFac, WrapperFacOptions, DragableItemWrapperFac, GetStateContext, WrapperItemClockEvent
+  WrapperFacOptions, DragableItemWrapperFac,
+  GetStateContext, WrapperItemClickEvent
 } from '@engine/visual-editor/spec';
 import { Debounce } from '@mini-code/base-func';
-
-import { constructCompClass, constructTempEntity } from '@engine/visual-editor/core/utils/component-constructor';
-import { Dispatcher } from '../../core/actions';
+import {
+  makeWidgetEntity, makeTempWidgetEntity, getItemFromNestingItems,
+  VEDispatcher, SelectEntityState
+} from '@engine/visual-editor/core';
 import DropStageContainer from './DropStageContainer';
-import { DnDContext } from '../../spec/DragItem';
-import { getItemFromNestingItems } from '../../core/utils';
-import { SelectEntityState } from '../../core/types';
+import { DnDContext } from '../../spec';
 
 /**
  * 中央舞台组件的 props
  */
-export interface CanvasStageProps extends Dispatcher {
+export interface CanvasStageProps extends VEDispatcher {
   /** 组件包接入规范  */
-  dragableItemWrapper?: DragableItemWrapperFac
+  dragableItemWrapper: DragableItemWrapperFac
   /** 页面的状态 */
   pageEntityState?: {
     style: CSSStyleRule
@@ -76,9 +76,9 @@ class CanvasStage extends React.Component<CanvasStageProps> {
 
   /**
    * 相应拖放的放的动作的过滤器
-   * 用于实例化 componentClass 或者更新 componentEntity
+   * 用于实例化 widgetType 或者更新 componentEntity
    */
-  dropDispatcher = (componentClass, dropCtx?: DnDContext) => {
+  dropDispatcher = (widgetType, dropCtx?: DnDContext) => {
     const {
       layoutNodeInfo,
       pageMetadata,
@@ -94,7 +94,7 @@ class CanvasStage extends React.Component<CanvasStageProps> {
       }
     }
 
-    const itemClassCopy = Object.assign({}, componentClass);
+    const itemClassCopy = Object.assign({}, widgetType);
     if (parentID) {
       itemClassCopy.parentID = parentID;
     }
@@ -105,7 +105,7 @@ class CanvasStage extends React.Component<CanvasStageProps> {
 
     if (!isMotify) {
       /** 实例化组件类 */
-      const entity = constructCompClass(itemClassCopy, {
+      const entity = makeWidgetEntity(itemClassCopy, {
         idCount: pageMetadata.lastCompID
       });
       _entity = entity;
@@ -122,7 +122,7 @@ class CanvasStage extends React.Component<CanvasStageProps> {
   /**
    * 点击选择组件实例的处理
    */
-  onSelectEntityForClick: WrapperItemClockEvent = (clickEvent, actionCtx) => {
+  onSelectEntityForClick: WrapperItemClickEvent = (clickEvent, actionCtx) => {
     const {
       SelectEntity,
       selectedInfo
@@ -136,7 +136,7 @@ class CanvasStage extends React.Component<CanvasStageProps> {
   /**
    * 响应元素的拖事件，作用于排序
    */
-  onMove = (dragIndex, hoverIndex, dragItem?) => {
+  onItemMove = (dragIndex, hoverIndex, dragItem?) => {
     /** 防止没有 dragIndex 的产生坏数据 */
     if (typeof dragIndex === 'undefined') return;
     // this.dragItemOriginIdx = dragIndex;
@@ -146,11 +146,11 @@ class CanvasStage extends React.Component<CanvasStageProps> {
       layoutNodeInfo,
       SortingEntity,
     } = this.props;
-    let dragEntity: TempEntity | EditorComponentEntity = layoutNodeInfo[dragIndex];
+    let dragEntity: TempWidgetEntityType | WidgetEntity = layoutNodeInfo[dragIndex];
     let replaceItem = false;
     if (!dragEntity) {
       /** 如果没有实例，则创建临时实例 */
-      dragEntity = constructTempEntity();
+      dragEntity = makeTempWidgetEntity();
       replaceItem = true;
     }
     /** 将最后的实例 idx 存储下来 */
@@ -167,10 +167,10 @@ class CanvasStage extends React.Component<CanvasStageProps> {
     getLayoutNode: this.getLayoutNode,
     getSelectedState: this.getSelectedState,
     getEntityProps: this.getEntityProps,
-    onDrop: this.dropDispatcher,
-    onMove: this.onMove,
+    onItemDrop: this.dropDispatcher,
+    onItemMove: this.onItemMove,
     onDelete: this.deleteElement,
-    onClick: this.onSelectEntityForClick,
+    onItemClick: this.onSelectEntityForClick,
     UpdateEntityState: this.props.UpdateEntityState
   };
 
@@ -181,7 +181,7 @@ class CanvasStage extends React.Component<CanvasStageProps> {
       selectedInfo,
       onStageClick,
       DelEntity,
-      dragableItemWrapper = dragableItemWrapperFac,
+      dragableItemWrapper,
     } = this.props;
     // console.log(layoutNodeInfo);
     const hasNode = layoutNodeInfo.length > 0;
@@ -200,9 +200,9 @@ class CanvasStage extends React.Component<CanvasStageProps> {
           RootRender={(child) => (
             <DropStageContainer
               triggerCondition={(dragItem) => {
-                return dragItem && dragItem.type === DragableItemTypes.DragItemClass;
+                return dragItem && dragItem.type === DragableItemTypes.DragableItemType;
               }}
-              accept={[DragableItemTypes.DragItemClass, DragableItemTypes.DragItemEntity]}
+              accept={[DragableItemTypes.DragableItemType, DragableItemTypes.DragItemEntity]}
               onLeave={(item) => {
                 /** 移出 item */
                 typeof item.index !== 'undefined' && DelEntity(item.index, item);
@@ -216,12 +216,12 @@ class CanvasStage extends React.Component<CanvasStageProps> {
                  * 延后将临时组件实例添加到画布，属于交互体验优化
                  */
                 debounceAddTempEntity.exec(() => {
-                  this.onMove(layoutNodeInfoLen, layoutNodeInfoLen, item);
+                  this.onItemMove(layoutNodeInfoLen, layoutNodeInfoLen, item);
                 }, 100);
               }}
-              onDrop={(_dragItemClass, dropOptions) => {
-                if (dropOptions.type !== DragableItemTypes.DragItemClass) return;
-                this.dropDispatcher(_dragItemClass);
+              onItemDrop={(_dragableItemDef, dropOptions) => {
+                if (dropOptions.type !== DragableItemTypes.DragableItemType) return;
+                this.dropDispatcher(_dragableItemDef);
               }}
               onStageClick={onStageClick}
               style={pageStyle}

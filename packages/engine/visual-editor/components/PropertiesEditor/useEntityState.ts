@@ -1,20 +1,20 @@
 import { useState } from "react";
-import { EditorEntityState, EditorPropertyItem } from "../../data-structure";
+import { WidgetEntityState, PropItemType } from "../../data-structure";
 import { entityStateMergeRule } from "./entityStateMergeRule";
 
 export type UpdateEntityStateCallback = (
-  propItemConfig: EditorPropertyItem,
+  propItemConfig: PropItemType,
   value: any,
 ) => void
 
 /**
  * 存储属性编辑器产出的表单数据
  */
-const useEntityState = (defaultEntityState: EditorEntityState = {
+const useEntityState = (defaultEntityState: WidgetEntityState = {
 }): [
-  EditorEntityState, UpdateEntityStateCallback
+  WidgetEntityState, UpdateEntityStateCallback
 ] => {
-  const [entityState, setFormState] = useState<EditorEntityState>(defaultEntityState);
+  const [entityState, setFormState] = useState<WidgetEntityState>(defaultEntityState);
 
   const updateEntityState: UpdateEntityStateCallback = (propItemConfig, value) => {
     /**

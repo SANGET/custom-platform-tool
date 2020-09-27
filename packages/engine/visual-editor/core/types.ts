@@ -1,4 +1,4 @@
-import { EditorEntity, ElemNestingInfo } from "../data-structure";
+import { WidgetEntity, ElemNestingInfo } from "../data-structure";
 
 /**
  * 选中的组件实例的数据结构
@@ -14,9 +14,9 @@ export interface SelectEntityState {
   nestingInfo: ElemNestingInfo
   index?: number
   /** 选中的组件实例 */
-  entity?: EditorEntity
+  entity?: WidgetEntity
   /** 可支持多选 */
   selectedList?: {
-    [id: string]: EditorEntity
+    [id: string]: WidgetEntity
   }
 }
