@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { history } from 'umi';
 import { queryPageData } from "@/services/page";
 import { IUBDSLRenderer } from '@iub-dsl/platform/react';
 
@@ -12,22 +13,23 @@ const Container: React.FC<IContainerProps> = (props) => {
     getPageData();
   }, []);
   const getPageData = async () => {
-    const res = await queryPageData({
-      id: "1308242886768336896",
-      mode: "preview",
-      lessee: "hy",
-      app: "app"
-    });
-    console.log(res);
-    // if (res.code === '0') {
-    //   const result = JSON.parse(res.result);
-    //   setData(result);
-    // }
+    const { query } = history.location;
+    const {
+      pageId, mode, lessee, app
+    } = query;
+    if (pageId) {
+      const res = await queryPageData({
+        id: pageId,
+        mode,
+        lessee,
+        app
+      });
+      setData(res?.result || {});
+    }
   };
-  // console.dir(IUBDSLRenderer);
   return (
     <>
-      {/* <IUBDSLRenderer dsl={data} /> */}
+      <IUBDSLRenderer dsl={data} />
     </>
   );
 };
