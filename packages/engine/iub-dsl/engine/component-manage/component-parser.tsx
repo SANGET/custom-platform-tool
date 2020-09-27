@@ -2,9 +2,10 @@ import React, {
   useContext, useState, useMemo, useEffect
 } from 'react';
 import { AllComponentType } from "@iub-dsl/definition";
-import { cloneDeep } from 'lodash';
 import componentConf from './mock';
 import { baseInputCompParser } from './component-parser/base-input-parser';
+import { AllUI } from './UI-factory/types';
+import { ActualRenderInfo } from './component-store/types/renderStruct';
 
 /**
  * 调度对应的组件解析器进行解析
@@ -12,13 +13,19 @@ import { baseInputCompParser } from './component-parser/base-input-parser';
  * @param confItem IUB-DSL组件配置
  * @param options 选项
  */
-const compParseScheduler = (id, confItem, options) => {
+const compParseScheduler = (id, confItem, options): ActualRenderInfo[] => {
   const { compType } = confItem;
   switch (compType) {
-    case AllComponentType.Input:
+    case AllComponentType.FormInput:
       return baseInputCompParser(id, confItem, options);
     default:
-      return () => {};
+      return [{
+        compTag: AllUI.Error,
+        mark: id,
+        propsKeys: [],
+        propsMap: [],
+        renderStruct: [],
+      }];
   }
 };
 

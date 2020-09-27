@@ -1,6 +1,6 @@
 /** dont Overengineering */
 
-import { CommonObjStruct, TypeOfIUBDSL } from "@iub-dsl/definition";
+import { CommonObjStruct, TypeOfIUBDSL, AllComponentType } from "@iub-dsl/definition";
 import SchemasParser from "./state-manage/schemas";
 import componentParser from "./component-manage/component-parser";
 // import { componentParser } from "./component-manage/c";
@@ -16,24 +16,23 @@ const IUBDSLParser = ({ dsl }) => {
     actionsCollection, sysRtCxtInterface,
     componentsCollection, schemas,
     metadataCollection, relationshipsCollection,
-    layoutContent, id, name, type
+    layoutContent, pageID, name, type
   } = dsl as TypeOfIUBDSL;
 
-  // 状态管理
-  const d = Date.now();
-  // console.log(dsl);
   let parseContext: any = {
     metadataCollection,
     sysRtCxtInterface,
     relationshipsCollection,
     layoutContent,
-    id,
+    pageID,
     name,
     type,
     schemas
   };
 
+  /** 页面模型解析 */
   const schemasParseRes = SchemasParser(schemas);
+  /** 动作解析 */
   // const parseActionResult = ActionsCollectionParser(actionsCollection);
 
   parseContext = {
@@ -42,12 +41,27 @@ const IUBDSLParser = ({ dsl }) => {
     // bindAction: (actionID) => parseActionResult[actionID]
   };
 
-  const componentParseRes = componentParser();
+  /** 数据转换兼容 */
+  const { content } = layoutContent;
+  const renderComponentKeys = Object.keys(componentsCollection);
+  const tempCompConf: any = renderComponentKeys.reduce((res, key, i) => {
+    res[key] = tempFnCompTransform(componentsCollection[key], i);
+    return res;
+  }, {});
+  // let tempCompConf: any = Array.isArray(content) && content.map(tempFnCompTransform) || [];
+  // tempCompConf = tempCompConf.reduce((res, val) => ({ ...res, [val.id]: val }), {});
+  // const renderComponentKeys = Object.keys(tempCompConf);
+  // layoutContent.content = Object.keys(tempCompConf).map()
+  /** 数据转换兼容 */
+
+  /** 组件解析 */
+  const componentParseRes = componentParser(tempCompConf);
   console.log(componentParseRes);
 
   parseContext = {
     ...parseContext,
     componentParseRes,
+    renderComponentKeys,
     getCompParseInfo: (compId) => componentParseRes[compId]
   };
 
@@ -55,3 +69,17 @@ const IUBDSLParser = ({ dsl }) => {
 };
 
 export default IUBDSLParser;
+
+/**
+ * 临时转换函数
+ */
+const tempFnCompTransform = (compInfo, i) => {
+  return {
+    ...compInfo,
+    compCode: compInfo.id,
+    compId: compInfo.id,
+    unit: '单位',
+    placeholder: '请输入内容?',
+    tipContent: `${compInfo.title}Tip:${i}`,
+  };
+};

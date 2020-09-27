@@ -1,7 +1,7 @@
 import { AllComponentType } from "@iub-dsl/definition";
 
 const inputC = {
-  compType: AllComponentType.Input,
+  compType: AllComponentType.FormInput,
   label: '位置名称',
   value: '',
   unit: '位',
