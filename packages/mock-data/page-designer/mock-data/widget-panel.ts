@@ -9,6 +9,7 @@ export const widgetPanelData: GroupPanelData = {
       title: '表单控件',
       items: [
         'widget-id-1',
+        'widget-id-5',
       ]
     },
     {

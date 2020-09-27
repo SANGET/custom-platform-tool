@@ -1,12 +1,12 @@
 # 前端部署说明
 
-## 项目地址
+## 1. 项目地址
 
 - https://10.0.4.55/custom-platform-v3-frontend-group/custom-platform-v3-frontend
 
 ---
 
-## 环境准备
+## 2. 环境准备
 
 - node > v14
 - yarn > v1.22
@@ -15,7 +15,7 @@
 
 ---
 
-## npm 源
+## 3. npm 源
 
 选其中之一
 
@@ -31,7 +31,7 @@ edunpm ----- http://registry.enpmjs.org/
 
 ---
 
-## 安装 yarn
+## 4. 安装 yarn
 
 ```bash
 npm install -g yarn
@@ -39,9 +39,9 @@ npm install -g yarn
 
 ---
 
-## 构建开始
+## 5. 构建开始
 
-### 准备工作
+### 5.1. 准备工作
 
 ```bash
 git clone https://10.0.4.55/custom-platform-v3-frontend-group/custom-platform-v3-frontend {项目名}
@@ -49,27 +49,31 @@ cd /{项目名}
 yarn
 ```
 
-### 构建配置平台前端
+### 5.2. 前端静态资源
 
-通过环境变量`REACT_APP_API_URL`更改后端 api 地址
+环境配置文件是 `{部署目录}/public/config.json` ，由 docker 启动时动态指定。
+
+#### 5.2.1. 构建配置平台前端
 
 ```bash
-REACT_APP_API_URL=http://192.168.14.140:6090 yarn build:provider-app
+yarn build:provider-app
 ```
 
-构建后文件输出到：`/项目目录/packages/provider-app-entry/app/build`，启动 web 服务即可。
+构建后文件输出到：`/项目目录/packages/provider-app-entry/app/build`
+
+#### 5.2.2. 构建应用平台前端
+
+```bash
+yarn build:web-platform
+```
+
+构建后文件输出到：`/项目目录/packages/web-platform/dist`
 
 ---
 
-### 构建应用平台前端
+### 5.3. web 资源服务
 
-TODO 胡东亮
-
----
-
-### web 资源服务
-
-#### 构建
+#### 5.3.1. 构建
 
 ```bash
 cd ./web-server
@@ -84,7 +88,7 @@ pm2 start {目录}web-server/dist/main.js
 
 ---
 
-## nginx部署
+## 6. nginx部署
 
 复制构建完成后的内容到nginx服务目录下：
 
