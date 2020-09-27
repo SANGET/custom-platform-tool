@@ -14,7 +14,7 @@ const AuthTootipFactory = ({ children, ...props }) => {
     : (<Fragment>{[...children, 'tips无权限']}</Fragment>);
 };
 
-const allComponentList = {
+const allWidgetList = {
   [AllUI.FormItem]: FormItemFactory,
   // [AllUI.Tootip]: TootipFactory,
   [AllUI.Tootip]: AuthTootipFactory,
@@ -22,4 +22,8 @@ const allComponentList = {
   [AllUI.Error]: ErrorFactory
 };
 
-export { allComponentList };
+/** uitls: 获取真实组件 */
+const getWidget = (
+  compTag: AllUI
+) => allWidgetList[compTag];
+export { getWidget };

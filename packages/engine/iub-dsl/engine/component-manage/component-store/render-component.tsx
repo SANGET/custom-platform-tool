@@ -3,12 +3,6 @@ import { ActualRenderInfo } from "./types/renderStruct";
 import { AllUI } from "../UI-factory/types";
 import { handlePropsList } from "../tempfn";
 
-/** uitls: 获取真实组件 */
-const commonGetComp = (
-  compTag: AllUI,
-  renderCompList: any
-) => renderCompList[compTag];
-
 /**
  * 渲染list结构的组件
  * @param actualRenderInfo
@@ -16,7 +10,7 @@ const commonGetComp = (
  */
 const actualRenderInfoListRenderer = (
   actualRenderInfo: ActualRenderInfo[],
-  context: {renderCompList: any},
+  context: {getWidget},
 ) => {
   const renderer: any[] = [];
   const structLength = actualRenderInfo.length;
@@ -34,14 +28,14 @@ const actualRenderInfoListRenderer = (
  */
 const actualRenderInfoRenderer = (
   actualRenderInfo: ActualRenderInfo,
-  context: {renderCompList: any},
+  { getWidget }: {getWidget},
   options?: { index: number }
 ) => {
   return (extralProps) => {
     const {
       compTag, mark, renderStruct, propsKeys, propsMap
     } = actualRenderInfo;
-    const Comp = commonGetComp(compTag, context.renderCompList);
+    const Comp = getWidget(compTag);
     let compProps;
     switch (compTag) {
       case AllUI.BaseInput:
@@ -54,7 +48,7 @@ const actualRenderInfoRenderer = (
     }
 
     const childrens = renderStruct?.length
-      ? actualRenderInfoListRenderer(renderStruct, context) : undefined;
+      ? actualRenderInfoListRenderer(renderStruct, { getWidget }) : undefined;
 
     const actualExtralProps = useMemo(() => {
       return extralProps;
@@ -114,7 +108,7 @@ const useDefaultCompProps = (propsMap) => {
 };
 
 /** 渲染前锁定阶段 */
-const RenderComp = (RenderCompList) => {
+const RenderComp = (getWidget) => {
   return (actualRenderInfo: ActualRenderInfo[]) => {
     /** 渲染前锁定阶段 -- End */
     const RenderCompFn = React.memo<any>((extralProps) => {
@@ -125,10 +119,10 @@ const RenderComp = (RenderCompList) => {
       const RenderComponentList = useMemo(() => {
         const Comps = actualRenderInfoListRenderer(
           actualRenderInfo,
-          { renderCompList: RenderCompList },
+          { getWidget },
         );
         return Comps;
-      }, [actualRenderInfo, RenderCompList]);
+      }, [actualRenderInfo, getWidget]);
       const RenderComponent = useMemo(() => {
         return RenderComponentList.map((Comp, i) => <Comp key={i} {...extralProps}/>);
       }, [extralProps]);

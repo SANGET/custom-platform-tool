@@ -2,7 +2,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { LayoutRenderer } from '@engine/layout-renderer';
 import { RenderComp } from './component-manage/component-store/render-component';
-import { allComponentList } from './component-manage/UI-factory/all-UI';
+import { getWidget } from './component-manage/UI-factory/all-UI';
 import { FromWrapFactory } from './component-manage/UI-factory';
 
 export const DefaultCtx = React.createContext({});
@@ -35,12 +35,12 @@ const IUBDSLRuntimeContainer = React.memo<{dslParseRes: any}>(({ dslParseRes }) 
   // const { content = [], type: pageType } = layoutContent;
 
   const actualRenderComponentList = useMemo(() => {
-    const renderCompFactory = RenderComp(allComponentList);
+    const renderCompFactory = RenderComp(getWidget);
     return renderComponentKeys.map((id) => ({
       id,
       Comp: renderCompFactory(getCompParseInfo(id))
     }));
-  }, [allComponentList]);
+  }, [getWidget, dslParseRes]);
 
   return (
     <DefaultCtx.Provider value={ctx}>
@@ -62,6 +62,10 @@ const IUBDSLRuntimeContainer = React.memo<{dslParseRes: any}>(({ dslParseRes }) 
       </FromWrapFactory>
     </DefaultCtx.Provider>
   );
+}, (prev, next) => {
+  console.log(prev?.dslParseRes?.pageID === next?.dslParseRes?.pageID);
+
+  return prev?.dslParseRes?.pageID === next?.dslParseRes?.pageID;
 });
 
 export default IUBDSLRuntimeContainer;
