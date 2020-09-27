@@ -4,12 +4,14 @@ const defaultAppUrl = 'http://localhost:8000/preview?path=/preview&mode=preview&
 
 const defaultWebServerUrl = 'http://localhost:3000';
 
-const getPreviewUrl = (pageID) => `http://localhost:8000/preview?path=/preview&mode=preview&pageId=${pageID}`;
+const getPreviewUrl = (location) => {
+  const { pageID, lessee = 'hy', app } = location;
+  return `http://localhost:8000/page?path=/preview&mode=preview&pageId=${pageID}&lessee=${lessee}&app=${app}`;
+};
 
 export const ToApp = ({
   location
 }) => {
-  const { pageID } = location;
   return (
     <div
       onClick={(e) => {
@@ -21,7 +23,7 @@ export const ToApp = ({
       }}
     >
       <a
-        href={getPreviewUrl(pageID)}
+        href={getPreviewUrl(location)}
         target="_blank"
         style={{ color: "white" }}
       >
