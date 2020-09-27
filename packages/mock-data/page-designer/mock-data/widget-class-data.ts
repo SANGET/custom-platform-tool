@@ -3,8 +3,8 @@ import { CustomComponent } from "./custom-component-demo";
 import { ApiMock } from "./api-mock";
 
 export const widgetClassDataCollection: WidgetClassDataCollection = {
-  'component-1': {
-    id: 'component-1',
+  'widget-id-1': {
+    id: 'widget-id-1',
     label: '文本框',
     widgetDef: {
       type: 'FormInput'
@@ -18,7 +18,7 @@ export const widgetClassDataCollection: WidgetClassDataCollection = {
       ]
     }
   },
-  'container-1': {
+  'widget-id-2': {
     id: 'con1',
     widgetDef: {
       type: 'container',
@@ -38,8 +38,8 @@ export const widgetClassDataCollection: WidgetClassDataCollection = {
       ]
     }
   },
-  'component-table-1': {
-    id: 'component-table-1',
+  'widget-id-3': {
+    id: 'widget-id-3',
     label: '表格',
     widgetDef: {
       type: 'NormalTable'
@@ -51,19 +51,14 @@ export const widgetClassDataCollection: WidgetClassDataCollection = {
       ]
     }
   },
-  'component-custom-1': {
-    id: 'component-custom-1',
-    type: 'component',
+  'widget-id-4': {
+    id: 'widget-id-4',
     label: '自定义组件',
     widgetDef: {
       type: 'Custom',
       render: CustomComponent
     },
     bindPropItems: {
-      // propItemRefs: [
-      //   'prop_style_title_color',
-      //   'prop_flex_config'
-      // ]
       rawPropItems: [
         (entity) => {
           return {
@@ -71,6 +66,18 @@ export const widgetClassDataCollection: WidgetClassDataCollection = {
             label: ''
           };
         }
+      ]
+    }
+  },
+  'widget-id-5': {
+    id: 'widget-id-5',
+    label: '下拉选择器',
+    widgetDef: {
+      type: 'DropdownSelector',
+    },
+    bindPropItems: {
+      propItemRefs: [
+        { propID: 'prop_style_title_color' },
       ]
     }
   },
