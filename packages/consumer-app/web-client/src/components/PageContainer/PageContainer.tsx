@@ -63,13 +63,14 @@ export const PageContainer = (props: PageContainerProps) => {
     return <Loading></Loading>;
   }
 
-  if (dsl.id === undefined) {
+  if (dsl.pageID === undefined) {
     return (<div>IUB-DSL格式错误</div>);
   }
 
-  const { name, id, type } = dsl;
+  const { name, type } = dsl;
+  debugger;
 
-  if (validAuth(pageAuthInfo, dsl.id)) {
+  if (validAuth(pageAuthInfo, dsl.pageID)) {
     // 数据的可用性统一管理  (状态校验: loading、路由鉴权)。
     const ParserResult = parserLoader(type, appContext, {
       dsl,

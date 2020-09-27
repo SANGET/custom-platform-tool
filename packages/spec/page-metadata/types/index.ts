@@ -12,7 +12,7 @@ type PageTypes =
  */
 export interface PageMetadata {
   /** 页面 ID */
-  id: string
+  pageID: string
   /** 页面类型 */
   type: PageTypes
   /** 页面名称 */

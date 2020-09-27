@@ -27,8 +27,6 @@ export const tootipCompName = AllUI.Tootip;
 const TootipFactory = ({
   id, children, tipContent, ...ohterProps
 }) => {
-  console.log(ohterProps);
-
   /** 下面三步确保props全部正确可用 */
   const allPropsKey = Object.keys(ohterProps);
   const canUsePropsKey = pickBaseInputPropsKey(allPropsKey);

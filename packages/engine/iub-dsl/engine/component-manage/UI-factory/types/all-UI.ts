@@ -2,5 +2,6 @@ export enum AllUI {
   Tootip = 'Tootip',
   BaseInput = 'BaseInput',
   FormItem = 'FormItem',
-  FromWrap = 'FromWrap'
+  FromWrap = 'FromWrap',
+  Error = 'Error',
 }

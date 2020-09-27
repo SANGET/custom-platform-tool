@@ -1,3 +1,4 @@
+import { AllUI } from "../../UI-factory/types/all-UI";
 /**
  * 解析的目的
  * 1. 解析组件
@@ -8,39 +9,70 @@
  *  1. 扩展外部干预
  */
 
+/** 公共渲染信息的定义 */
 interface PubRenderStructInfo {
-  compTag: string;
+  compTag: AllUI;
+  // compTag: string;
   canSkip: boolean;
   canUseProps: string[];
   canUseGroupProps?: string[];
 }
+
+/** 子渲染结构 */
 interface ChildrenStruct {
   children?: FullRenderStruct[]
 }
 
+/** 基础渲染结构 */
 type BaseRenderStruct = {
   type: 'BaseRenderStruct'
-} & PubRenderStructInfo & ChildrenStruct
+} & PubRenderStructInfo
 
+/** 同一层渲染的结构 */
 type ArrayRenderStruct = {
   type: 'ArrayRenderStruct',
   canUseCompList: PubRenderStructInfo[];
   isloop: boolean;
-} & ChildrenStruct
+}
 
-type FullRenderStruct = BaseRenderStruct | ArrayRenderStruct
+/** 所有可以渲染的结构 */
+type FullRenderStruct = (BaseRenderStruct | ArrayRenderStruct) & ChildrenStruct
 
-type ActualRenderStruct = {
-  compTag: string;
+/** 实际用于渲染的结构规范 */
+type ActualRenderInfo = {
+  compTag: AllUI;
+  // compTag: string;
   mark: string;
-  renderStruct: ActualRenderStruct[]
+  propsMap: CompPropsMap[];
+  propsKeys: string[];
+  renderStruct: ActualRenderInfo[];
+}
+
+interface CommonRenderStructParser {
+  allConfKey: string[]
+  originConf: any;
+  baseMark: string;
+}
+
+interface genRenderStructListContext {
+  allConfKey: string[];
+  originConf: any;
+  baseMark: string;
+  actualRenderInfo: ActualRenderInfo[];
+}
+
+export interface CompPropsMap<T = any> {
+  key: string;
+  val: T
 }
 
 export {
   BaseRenderStruct,
   ArrayRenderStruct,
   FullRenderStruct,
-  ActualRenderStruct
+  ActualRenderInfo,
+  genRenderStructListContext,
+  CommonRenderStructParser
 };
 
 /**

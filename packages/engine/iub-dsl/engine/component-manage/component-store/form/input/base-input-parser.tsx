@@ -1,35 +1,28 @@
 import { baseInputRenderStructParser, genBaseInputFullRenderStruct } from "./base-input-render-struct";
 
+/** 表单输入框组件所以配置的keys */
 const getInputCompAllConfKeys = (conf) => Object.keys(conf);
+
 /**
-  *
-  * @param id
-  * @param conf
-  * @param options
-  */
+ * 解析组件入口, 需要merge其他选择
+ * @param id 组件唯一ID
+ * @param conf 组件配置
+ * @param options 解析选项
+ */
 const baseInputCompParser = (id, conf, options) => {
   /** 解析阶段 */
-  console.log(id, conf, options);
   const allConfKey = getInputCompAllConfKeys(conf);
-  const renderInfo = baseInputRenderStructParser({
-    baseMark: id,
-    allConfKey,
-    originConf: conf,
-    struct: genBaseInputFullRenderStruct(),
-    // TODO: 类型问题
-    renderStruct: [],
-    compPropsList: {}
-  });
-  const { renderStruct, compPropsList } = renderInfo;
-
-  console.log(renderInfo);
+  const renderInfo = baseInputRenderStructParser(
+    genBaseInputFullRenderStruct(),
+    {
+      baseMark: id,
+      allConfKey,
+      originConf: conf,
+    }
+  );
 
   /** 解析阶段 - end */
-  return {
-    renderStruct,
-    compPropsList,
-    originConf: conf
-  };
+  return renderInfo;
 };
 
 export { baseInputCompParser };

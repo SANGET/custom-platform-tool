@@ -12,17 +12,21 @@ const flatLayoutNode = (layoutNode, parentID?) => {
   layoutNode.forEach((nodeItem) => {
     // const nodeItemI = produce(nodeItem, draft => draft);
     const { id, body } = nodeItem;
+    
     Object.assign(nodeItem, {
       type: 'componentRef',
-      component: {
-        ...nodeItem.component,
+      compType: nodeItem.component.type,
+      // component: {
+        // ...nodeItem.component,
         ...nodeItem.propState
-      }
+      // }
     });
     // 删除内部字段
-    delete nodeItem._classID;
-    delete nodeItem._state;
-    delete nodeItem.propState;
+    Reflect.deleteProperty(nodeItem, '_classID')
+    Reflect.deleteProperty(nodeItem, '_state')
+    Reflect.deleteProperty(nodeItem, 'propState')
+    Reflect.deleteProperty(nodeItem, 'component')
+    
     componentsCollection[id] = Object.assign({}, nodeItem,
       parentID && {
         parentID
@@ -71,7 +75,7 @@ export class PageDataService {
         type: 'general',
         content: layoutContentBody
       };
-      IUBDSLData.pageID = contentData.id;
+      IUBDSLData.pageID = contentData.id || 'testIDs';
       IUBDSLData.name = contentData.name;
       IUBDSLData.type = 'config';
       IUBDSLData.componentsCollection = componentsCollection;
