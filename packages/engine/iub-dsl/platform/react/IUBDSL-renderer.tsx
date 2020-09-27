@@ -17,16 +17,16 @@ const tempDsl = {
   relationshipsCollection: {},
   componentsCollection: {
     entity_25: {
-      id: "entity_25", label: "文本框", type: "componentRef", compType: "FormInput", title: "文本框"
+      id: "entity_25", label: "test文本框1", type: "componentRef", compType: "FormInput", title: "文本框"
     },
     entity_26: {
-      id: "entity_26", label: "文本框", type: "componentRef", compType: "FormInput", title: "文本框"
+      id: "entity_26", label: "文本框2", type: "componentRef", compType: "FormInput", title: "文本框"
     },
     entity_27: {
       id: "entity_27", label: "表格", type: "componentRef", compType: "Table", title: "文本框"
     },
     entity_28: {
-      id: "entity_28", label: "文本框", type: "componentRef", compType: "FormInput", title: "文本框"
+      id: "entity_28", label: "文本框3", type: "componentRef", compType: "FormInput", title: "文本框"
     }
   },
   actionsCollection: {},
@@ -42,7 +42,7 @@ const tempDsl = {
       id: "entity_28", label: "文本框", type: "componentRef", compType: "FormInput", title: "文本框", componentID: "entity_28", refID: "entity_28"
     }]
   },
-  pageID: "1308242886768336896",
+  pageID: "testPage",
   name: "测试页面",
   type: "config"
 };
@@ -57,12 +57,12 @@ const IUBDSLRenderer = React.memo<{dsl: any}>(({ dsl }) => {
   }
   // 临时添加schemas
   dsl.schemas = testSchemas;
-  console.log(dsl);
 
   let dslParseRes;
   try {
     if (!(dslParseRes = resolvedDsl[pageID])) {
       dslParseRes = IUBDSLParser({ dsl });
+      resolvedDsl[dsl.pageID] = dslParseRes;
     }
   } catch (e) {
     console.error(e);
