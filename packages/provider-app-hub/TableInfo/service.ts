@@ -73,6 +73,26 @@ export const infoReducer = (state, action) => {
         ...state,
         references: state?.references?.filter((item) => item?.id !== action?.name)
       };
+    case 'editForeignKeys':
+      const { foreignKeys } = state || {};
+      const foreignKeysTmpl = JSON?.parse(JSON?.stringify(foreignKeys));
+      for (const key in action?.name) {
+        foreignKeys[key] = { ...foreignKeys?.[key], ...action?.name?.[key] };
+      }
+      return {
+        ...state,
+        foreignKeys: foreignKeysTmpl
+      };
+    case 'unShiftForeignKey':
+      return {
+        ...state,
+        foreignKeys: [action?.name, ...state?.foreignKeys]
+      };
+    case 'deleteForeignKeysById':
+      return {
+        ...state,
+        foreignKeys: state?.foreignKeys?.filter((item) => item?.id !== action?.name)
+      };
   }
   return {};
 };

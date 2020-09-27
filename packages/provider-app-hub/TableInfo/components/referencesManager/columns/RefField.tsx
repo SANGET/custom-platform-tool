@@ -28,7 +28,8 @@ export const RefField: React.FC<IProps> = (props: IProps) => {
     getTableInfo(id).then((res) => {
     /** 如果接口没有提供提示信息 */
       if (!res?.msg) {
-        return openNotification(NOTIFICATION_TYPE?.ERROR, API_ERROR_MSG?.ALLOWDELETE);
+        openNotification(NOTIFICATION_TYPE?.ERROR, API_ERROR_MSG?.ALLOWDELETE);
+        return;
       }
       const fieldOptions = translateRefFieldsToSelectMenus(res?.result?.columns);
       setOptions(fieldOptions);

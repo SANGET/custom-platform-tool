@@ -8,11 +8,11 @@ import {
 import { canColumnEdit, getlabelByMenue, filterOptionsForChoose } from '../service';
 import RenderText from '../../RenderText';
 
-import { IForeignKey, IReference, ISELECTSMENU } from '../../../interface';
+import { IForeignKey, ISELECTSMENU } from '../../../interface';
 
 interface IProps {
   text: string
-  record: IReference
+  record: IForeignKey
   form: FormInstance
   options:ISELECTSMENU[]
   foreignKeys: IForeignKey[]
@@ -28,7 +28,7 @@ export const FieldName: React.FC<IProps> = (props: IProps) => {
     /** 设置字段编码 */
     form.setFieldsValue({ [FOREIGNKEYS_KEY.FIELDCODE]: value });
     dispatchInfo({
-      type: 'editReferences',
+      type: 'editForeignKeys',
       name: { [index]: { ...record, fieldCode: value } }
     });
   };

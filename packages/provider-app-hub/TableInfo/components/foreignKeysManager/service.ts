@@ -4,7 +4,7 @@ import {
   translateRefTablesToSelectMenus, translateRefFieldsToSelectMenus
 } from '../../service';
 import {
-  IReference, FormInstance, IReferenceShowKey
+  IForeignKey, FormInstance, IForeignKeyShowKey
 } from '../../interface';
 import { columnEditConfig } from './columnConfig';
 import { DATATYPE } from './constant';
@@ -16,7 +16,7 @@ import { DATATYPE } from './constant';
  * @param dataIndex 当前字段名
  */
 export const canColumnEdit = (
-  record: IReference, formTmpl: FormInstance, dataIndex: IReferenceShowKey
+  record: IForeignKey, formTmpl: FormInstance, dataIndex: IForeignKeyShowKey
 ): boolean => {
   const canRowEdit = record?.editable;
   /** 非编辑行无需考虑 */
@@ -34,11 +34,11 @@ export const translateColumnsToOptions = (columns) => {
 };
 
 /**
- * references 的 dispatch执行体
+ * ForeignKeys 的 dispatch执行体
  * @param state 执行前数据
  * @param action 动作
  */
-export const referenceReducer = (state, action) => {
+export const foreignKeyReducer = (state, action) => {
   switch (action?.type) {
     case 'changeEditingIndex':
       return {

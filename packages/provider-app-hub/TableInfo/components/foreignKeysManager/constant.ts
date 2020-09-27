@@ -19,7 +19,7 @@ export enum FOREIGNKEYS_KEY {
   'ID' = 'id',
   'SPECIES' = 'species',
   'EDITABLE' = 'editable',
-  'CREATEDCUSTOMED' = 'createdCustomed',
   'DELETESTRATEGY' = 'deleteStrategy',
-  'UPDATESTRATEGY' = 'updateStrategy'
+  'UPDATESTRATEGY' = 'updateStrategy',
+  'CREATEDCUSTOMED' = 'createdCustomed',
 }

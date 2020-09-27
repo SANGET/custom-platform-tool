@@ -6,14 +6,14 @@ import { canColumnEdit, openNotification, translateRefFieldsToSelectMenus } from
 import RenderText from '../../RenderText';
 import { FOREIGNKEYS_KEY, NOTIFICATION_TYPE, API_ERROR_MSG } from '../constant';
 
-import { IReference, ISELECTSMENU, IReferenceShowKey } from '../../../interface';
+import { IForeignKey, ISELECTSMENU, IForeignKeyShowKey } from '../../../interface';
 import { getTableInfo } from '../../../api';
 
 interface IProps {
   text: string
-  record: IReference
+  record: IForeignKey
   form: FormInstance
-  code: IReferenceShowKey
+  code: IForeignKeyShowKey
   name: string
 }
 export const RefField: React.FC<IProps> = (props: IProps) => {

@@ -11,11 +11,11 @@ import {
 import { queryTablesList } from '../../../api';
 import RenderText from '../../RenderText';
 
-import { IReference, ISELECTSMENU } from '../../../interface';
+import { IForeignKey, ISELECTSMENU } from '../../../interface';
 
 interface IProps {
   text: string
-  record: IReference
+  record: IForeignKey
   form: FormInstance
 }
 export const RefTableCode: React.FC<IProps> = (props: IProps) => {
@@ -29,7 +29,8 @@ export const RefTableCode: React.FC<IProps> = (props: IProps) => {
       queryTablesList().then((res) => {
         /** 如果接口没有提供提示信息 */
         if (!res?.msg) {
-          return openNotification(NOTIFICATION_TYPE.ERROR, API_ERROR_MSG.ALLOWDELETE);
+          openNotification(NOTIFICATION_TYPE.ERROR, API_ERROR_MSG.ALLOWDELETE);
+          return;
         }
         setOptions(translateRefTablesToSelectMenus(res?.result?.data));
       });

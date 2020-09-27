@@ -8,7 +8,7 @@ import {
 
 import { IForeignKey, ITableColumn, FormInstance } from '../../interface';
 import {
-  referenceReducer, translateColumnsToOptions, getRowKeysEditable, deleteConfirm
+  foreignKeyReducer, translateColumnsToOptions, getRowKeysEditable, deleteConfirm
 } from './service';
 import { FieldName, RefTableCode, RefField } from './columns';
 import RenderText from '../RenderText';
@@ -24,7 +24,7 @@ interface IProps {
 }
 export const ForeignKeysManager: React.FC<IProps> = React.memo((props: IProps) => {
   const { foreignKeys, columns, dispatchInfo } = props;
-  const [foreignKeysInfo, dispatchReferences] = useReducer(referenceReducer, {
+  const [foreignKeysInfo, dispatchForeignKeys] = useReducer(foreignKeyReducer, {
     /** 选中行列表 */
     selectedRowKeys: [],
     /** 编辑行的索引 */
@@ -56,10 +56,10 @@ export const ForeignKeysManager: React.FC<IProps> = React.memo((props: IProps) =
   /** 更改数据 */
   const dispatchColumnsAndEditingIndex = (foreignKeysTmpl, editingIndex) => {
     dispatchInfo({
-      type: 'editReferences',
+      type: 'editForeignKeys',
       name: foreignKeysTmpl
     });
-    dispatchReferences({
+    dispatchForeignKeys({
       type: 'changeEditingIndex',
       name: editingIndex
     });
@@ -98,7 +98,7 @@ export const ForeignKeysManager: React.FC<IProps> = React.memo((props: IProps) =
   /** 行点击操作 */
   const handleRowClick = (formTmpl: FormInstance, record: IForeignKey, index: number) => {
     const { editingIndex } = foreignKeysInfo;
-    dispatchReferences({ type: 'pushSelectedRowKey', name: record?.[FOREIGNKEYS_KEY?.ID] });
+    dispatchForeignKeys({ type: 'pushSelectedRowKey', name: record?.[FOREIGNKEYS_KEY?.ID] });
     if (index === editingIndex) return;
     saveRow(formTmpl);
   };
@@ -123,10 +123,10 @@ export const ForeignKeysManager: React.FC<IProps> = React.memo((props: IProps) =
       [FOREIGNKEYS_KEY?.CREATEDCUSTOMED]: true
     };
     dispatchInfo({
-      type: 'unShiftReference',
+      type: 'unShiftForeignKey',
       name: row
     });
-    dispatchReferences({
+    dispatchForeignKeys({
       type: 'allIn',
       name: {
         editingIndex: 0,
@@ -153,10 +153,10 @@ export const ForeignKeysManager: React.FC<IProps> = React.memo((props: IProps) =
       deleteConfirm({
         onOk: () => {
           dispatchInfo({
-            type: 'deleteReferencesById',
+            type: 'deleteForeignKeysById',
             name: selectedKey
           });
-          dispatchReferences({ type: 'allIn', name: { selectedRowKeys: [], editingKey: '' } });
+          dispatchForeignKeys({ type: 'allIn', name: { selectedRowKeys: [], editingKey: '' } });
           dispatchInfo({ type: 'changeInfo', name: { foreignKeysValid: true } });
         }
       });
@@ -166,7 +166,7 @@ export const ForeignKeysManager: React.FC<IProps> = React.memo((props: IProps) =
    * 判断记录是否能被删除
    * @param selectedKey
    */
-  const cantReferenceDelete = (selectedKey) => {
+  const cantForeignKeyDelete = (selectedKey) => {
     /** 没有选中记录则不允许删除 */
     if ((selectedKey?.length || 0) === 0) return true;
     return foreignKeys.some((item:IForeignKey) => {
@@ -258,7 +258,7 @@ export const ForeignKeysManager: React.FC<IProps> = React.memo((props: IProps) =
   return (
     <Row className="margin-blr10 columns-manager">
       <Descriptions
-        title="引用字段列表"
+        title="外键列表"
         extra={
           <>
             <Button
@@ -271,7 +271,7 @@ export const ForeignKeysManager: React.FC<IProps> = React.memo((props: IProps) =
               type={BUTTON_TYPE?.PRIMARY}
               size={BUTTON_SIZE?.SMALL}
               disabled={
-                cantReferenceDelete(foreignKeysInfo?.selectedRowKeys)
+                cantForeignKeyDelete(foreignKeysInfo?.selectedRowKeys)
               }
               onClick={handleDelete}
             >删除</Button>

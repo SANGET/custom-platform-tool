@@ -147,6 +147,7 @@ export interface IRef {
   editable: boolean
 }
 export type IReferenceShowKey = "id" | "fieldCode" | "fieldName" | "refTableCode" | "refFieldCode" | "refDisplayFieldCode" | "createdCustomed" | "species" | "editable"
+export type IForeignKeyShowKey = "id" | "fieldCode" | "fieldName" | "refTableCode" | "refFieldCode" | "refDisplayFieldCode" | "createdCustomed" | "species" | "editable"
 /** 外键设置 */
 export type IStrategy = "RESTRICT" | "CASCADE" | "SET_NULL" | "NO_ACTION";
 export interface IForeignKey extends IRef {
