@@ -61,6 +61,8 @@ class BasicLayout extends React.PureComponent<IBasicLayoutProps, IBaseLayoutStat
    */
   public setPreviewMenuAndTabs() {
     const mode = this.getHistoryQueryValue("mode");
+    const { query } = history.location;
+    const { pageId } = query;
     if (mode === MODE_PREVIEW) {
       const { dispatch } = this.props;
       dispatch({
@@ -69,7 +71,8 @@ class BasicLayout extends React.PureComponent<IBasicLayoutProps, IBaseLayoutStat
           id: "preview",
           path: "preview",
           page: "/page",
-          name: "预览"
+          name: "预览",
+          pageId
         }
       });
       dispatch({
@@ -77,7 +80,8 @@ class BasicLayout extends React.PureComponent<IBasicLayoutProps, IBaseLayoutStat
         payload: {
           path: "/preview",
           title: "预览",
-          closable: true
+          closable: true,
+          pageId
         }
       });
     }
@@ -228,8 +232,8 @@ class BasicLayout extends React.PureComponent<IBasicLayoutProps, IBaseLayoutStat
           if (menuItemProps.isUrl || !menuItemProps.path) {
             return defaultDom;
           }
-          const { page, path } = menuItemProps;
-          return <Link to={page ? `${page}?path=${path}&${queryLink}` : `${path}?${queryLink}`}>{defaultDom}</Link>;
+          const { page, path, pageId } = menuItemProps;
+          return <Link to={page ? `${page}?path=${path}&${queryLink}&pageId=${pageId}` : `${path}?${queryLink}`}>{defaultDom}</Link>;
         }}
         collapsedButtonRender={false}
         // siderWidth={300}

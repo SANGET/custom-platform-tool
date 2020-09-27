@@ -12,7 +12,7 @@ import {
   EllipsisOutlined
 } from '@ant-design/icons';
 
-import { TABS_OPERATION, TAB_TYPE } from '@/models/tabs';
+import { TABS_OPERATION, TAB_TYPE, ITabsItem } from '@/models/tabs';
 import { getQueryByParams } from '@/utils/utils';
 import styles from "./index.less";
 
@@ -21,7 +21,7 @@ const { TabPane } = Tabs;
 interface ITabsContainerProps {
   activeKey: string;
   dispatch: Dispatch;
-  tabsData: any[];
+  tabsData: ITabsItem[];
   children: React.ReactNode;
 }
 
@@ -33,7 +33,7 @@ const TabsContainer: React.FC<ITabsContainerProps> = (props): React.ReactElement
   const handleTabChange = (key: string) => {
     if (key === props.activeKey) return;
     const tab = tabsData.find((item) => item.path === key);
-    const link = tab.page === TAB_TYPE.PAGE ? `${ROUTER_SUFFIX}?path=${key}&${queryLink}` : `${key}?${queryLink}`;
+    const link = tab?.page === TAB_TYPE.PAGE ? `${ROUTER_SUFFIX}?path=${key}&${queryLink}&pageId=${tab?.pageId}` : `${key}?${queryLink}`;
     dispatch({
       type: "tabs/updata",
       payload: key

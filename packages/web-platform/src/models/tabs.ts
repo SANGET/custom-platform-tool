@@ -18,7 +18,7 @@ export enum TABS_OPERATION {
   /** 关闭所有界面 */
   CLOSE_ALL_PAGE,
 }
-export interface ITabsList {
+export interface ITabsItem {
   /** 显示名称 */
   title: string;
   /** 对应路由地址 */
@@ -28,9 +28,11 @@ export interface ITabsList {
   /** tabs 是否可以关闭 */
   closable?: boolean;
 
+  pageId?: string;
+
 }
 export interface ITabsModelState {
-  list: ITabsList[];
+  list: ITabsItem[];
   activeKey: string;
 
   openKeys: string[];
@@ -77,7 +79,9 @@ const TabsModel: ITabsModel = {
   reducers: {
     /** 新增tabs 主要是点击菜单 */
     add(state: ITabsModelState = inintState, { payload }): ITabsModelState {
-      const { title, path, closable = true } = payload;
+      const {
+        title, path, closable = true, pageId
+      } = payload;
       const { activeKey, list } = state;
       const findSameTab = list.find((tab) => tab.path === path);
       const page = history.location.pathname === ROUTER_SUFFIX ? TAB_TYPE.PAGE : TAB_TYPE.BUILT_IN;
@@ -85,12 +89,12 @@ const TabsModel: ITabsModel = {
         const findCurrent: number = list.findIndex((tab) => tab.path === activeKey);
         if (!findSameTab) {
           list[findCurrent] = {
-            title, path, page, closable
+            title, path, page, closable, pageId
           };
         }
       } else if (!findSameTab) {
         list.push({
-          title, path, page, closable
+          title, path, page, closable, pageId
         });
       }
       state.activeKey = path;
@@ -105,9 +109,10 @@ const TabsModel: ITabsModel = {
       state.list = filterTabs;
       const queryLink = getQueryByParams(["mode", "app", "lessee"]);
       if (filterTabs.length > 0) {
-        state.activeKey = filterTabs[currentIndex].path || "";
+        const { path, pageId } = filterTabs[currentIndex];
+        state.activeKey = path || "";
         if (filterTabs[currentIndex].page === TAB_TYPE.PAGE) {
-          history.push(`${ROUTER_SUFFIX}?path=${state.activeKey}&${queryLink}`);
+          history.push(`${ROUTER_SUFFIX}?path=${state.activeKey}&${queryLink}&pageId=${pageId}`);
         } else {
           history.push(`${state.activeKey}?${queryLink}`);
         }
