@@ -8,4 +8,4 @@ mkdir -p ./dist/web-server
 pwd=$PWD
 
 # 构建所有项目
-cd "$pwd/web-server" && yarn build
+cd "$pwd/packages/web-server" && yarn build

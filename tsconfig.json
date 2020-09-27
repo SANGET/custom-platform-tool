@@ -26,6 +26,6 @@
   "exclude": [
     "**/test/*",
     "**/demo/*",
-    "./web-server"
+    "./packages/web-server"
   ]
 }
