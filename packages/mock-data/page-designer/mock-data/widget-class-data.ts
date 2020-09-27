@@ -22,13 +22,13 @@ export const widgetClassDataCollection: WidgetClassDataCollection = {
     id: 'con1',
     widgetDef: {
       type: 'container',
-      props: {
-        type: 'flex', // 布局方式
-        values: {
-          justifyContent: 'start',
-          justifyItems: 'start'
-        }
-      },
+      // props: {
+      //   type: 'flex', // 布局方式
+      //   values: {
+      //     justifyContent: 'start',
+      //     justifyItems: 'start'
+      //   }
+      // },
     },
     label: 'Flex 布局',
     bindPropItems: {
@@ -78,6 +78,7 @@ export const widgetClassDataCollection: WidgetClassDataCollection = {
     bindPropItems: {
       propItemRefs: [
         { propID: 'prop_style_title_color' },
+        // { propID: 'prop_flex_config' },
       ]
     }
   },

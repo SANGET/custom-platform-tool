@@ -181,7 +181,7 @@ export default class App extends RouterMultiple<AppContainerProps, AppContainerS
                 />
                 {this.renderNav()}
                 <span className="flex"></span>
-                <ToApp />
+                <ToApp location={this.location} />
                 <UserStatusbar logout={logout} />
               </header>
               <div id="provider_app_content">

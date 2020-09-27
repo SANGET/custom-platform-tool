@@ -6,7 +6,6 @@ import { Input } from 'antd';
 
 export const FormInputComp = ({
   title,
-  compContext,
   value,
 }) => {
   return (
