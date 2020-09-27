@@ -32,8 +32,6 @@ export const BaseInputFactory: React.FC<BaseInputProps> = React.memo(
   ({
     value, onChange, id = '', ...ohterProps
   }) => {
-    console.log(ohterProps);
-
     /** 下面三步确保props全部正确可用 */
     const allPropsKey = Object.keys(ohterProps);
     const canUsePropsKey = pickBaseInputPropsKey(allPropsKey);
@@ -45,7 +43,7 @@ export const BaseInputFactory: React.FC<BaseInputProps> = React.memo(
         value={value}
         key={id}
         onChange={(e) => {
-        onChange?.(e);
+          onChange?.(e);
         }}
         {...actualProps}
       />
