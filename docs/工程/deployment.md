@@ -56,7 +56,7 @@ yarn
 #### 5.2.1. 构建配置平台前端
 
 ```bash
-yarn build:provider-app
+yarn build:provider-app-entry
 ```
 
 构建后文件输出到：`/项目目录/packages/provider-app-entry/app/dist`
