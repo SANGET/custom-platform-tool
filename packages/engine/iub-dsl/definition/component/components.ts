@@ -4,11 +4,12 @@ type FieldHook = {
 };
 
 export enum AllComponentType {
-  Input = "Input",
+  FormInput = "FormInput",
   Selector = "Selector",
   TreeSelector = "TreeSelector",
   Table = "Table",
-  Button = "Button"
+  Button = "Button",
+  Error = "Error"
 }
 
 export interface BaseForm {
@@ -31,8 +32,8 @@ export interface Selector extends BaseForm {
   dataSource: any[];
 }
 
-export interface Input extends BaseForm {
-  type: AllComponentType.Input;
+export interface FormInput extends BaseForm {
+  type: AllComponentType.FormInput;
 }
 
 export interface TreeSelector extends BaseForm {
