@@ -8,19 +8,19 @@ export const widgetPanelData: GroupPanelData = {
     {
       title: '表单控件',
       items: [
-        'component-1',
+        'widget-id-1',
       ]
     },
     {
       title: '表格控件',
       items: [
-        'component-table-1',
+        'widget-id-3',
       ]
     },
     // {
     //   title: '布局控件',
     //   items: [
-    //   // 'container-1'
+    //   // 'widget-id-2'
     //   ]
     // },
   ]
