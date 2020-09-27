@@ -23,6 +23,7 @@
     "start:visual-editor": "cd ./packages/engine/visual-editor && npm start",
     "start:page-designer": "cd ./packages/provider-app-hub/PageDesigner && npm start",
     "start:consumer-app": "cd ./packages/consumer-app/web-client && npm start",
+    "start:web-server": "cd ./packages/web-server && npm run start:dev",
     "build:all": "sh ./scripts/build-all.sh",
     "build:provider-app-entry": "sh ./scripts/build-provider-app.sh",
     "build:web-platform": "sh ./scripts/build-web-platform.sh",
