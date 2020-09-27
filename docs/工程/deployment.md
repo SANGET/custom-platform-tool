@@ -59,7 +59,7 @@ yarn
 yarn build:provider-app
 ```
 
-构建后文件输出到：`/项目目录/packages/provider-app-entry/app/build`
+构建后文件输出到：`/项目目录/packages/provider-app-entry/app/dist`
 
 #### 5.2.2. 构建应用平台前端
 
@@ -76,11 +76,10 @@ yarn build:web-platform
 #### 5.3.1. 构建
 
 ```bash
-cd ./web-server
-npm run build
+yarn build:web-server
 ```
 
-将构建后的文件输出到目录 `{目录}web-server/dist` 之中，然后使用 `pm2` 进程守卫来启动程序：
+将构建后的文件输出到目录 `/项目目录/web-server/dist` 之中，然后使用 `pm2` 进程守卫来启动程序：
 
 ```bash
 pm2 start {目录}web-server/dist/main.js
