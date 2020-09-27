@@ -1,6 +1,6 @@
 import {
-  getCompClassDeclareData, getCompClassForPanelData,
-  getPagePropsDeclareData, getPropItemDeclareData,
+  getWidgetDefinitionData, getWidgetPanelData,
+  getPagePropItems, getPropItemData,
   getPropPanelData,
 } from "@mock-data/page-designer/mock-data";
 import { getPageDetailService } from "@provider-app/services";
@@ -48,10 +48,10 @@ export const getFEDynamicData = async () => {
     propItemData,
     propPanelData,
   ] = await Promise.all([
-    getCompClassDeclareData(),
-    getCompClassForPanelData(),
-    getPagePropsDeclareData(),
-    getPropItemDeclareData(),
+    getWidgetDefinitionData(),
+    getWidgetPanelData(),
+    getPagePropItems(),
+    getPropItemData(),
     getPropPanelData(),
   ]);
 

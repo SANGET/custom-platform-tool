@@ -1,5 +1,5 @@
 import { ElemNestingInfo } from '@engine/layout-renderer/types';
-import { EditorComponentEntity } from './core';
+import { WidgetEntity } from './core';
 
 export {
   ElemNestingInfo
@@ -8,8 +8,8 @@ export {
 /**
  * state 的数据结构
  */
-export type LayoutInfoActionReducerState = EditorComponentEntity[]
+export type LayoutInfoActionReducerState = WidgetEntity[]
 
 export interface FlatLayoutItems {
-  [entityID: string]: EditorComponentEntity
+  [entityID: string]: WidgetEntity
 }

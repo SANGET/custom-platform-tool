@@ -7,7 +7,7 @@ export enum CLIENT_TYPE {
  * 用户登录
  */
 export async function accountLogin(params: API.ILoginParams) {
-  return request<API.ILoginType>('/api/login/account', {
+  return request<API.ILoginType>('/auth/token', {
     method: 'POST',
     data: params,
   });

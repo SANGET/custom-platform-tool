@@ -4,15 +4,15 @@ import {
 } from 'antd';
 import React from 'react';
 import {
-  history, ConnectProps, connect, Dispatch
+  ConnectProps, connect, Dispatch
 } from 'umi';
 import { ConnectState } from '@/models/connect';
-import { CurrentUser } from '@/models/user';
+import { IAccount } from '@/models/user';
 import HeaderDropdown from '../HeaderDropdown';
 import styles from './index.less';
 
 export interface GlobalHeaderRightProps extends Partial<ConnectProps> {
-  currentUser?: CurrentUser;
+  account?: IAccount;
   menu?: boolean;
   dispatch?: Dispatch;
 }
@@ -37,10 +37,7 @@ class AvatarDropdown extends React.Component<GlobalHeaderRightProps> {
 
   render(): React.ReactNode {
     const {
-      currentUser = {
-        avatar: '',
-        name: '',
-      }
+      account
     } = this.props;
     const menuHeaderDropdown = (
       <Menu className={styles.menu} selectedKeys={[]} onClick={this.onMenuClick}>
@@ -60,11 +57,11 @@ class AvatarDropdown extends React.Component<GlobalHeaderRightProps> {
         </Menu.Item>
       </Menu>
     );
-    return currentUser && currentUser.name ? (
+    return account && account.loginname ? (
       <HeaderDropdown overlay={menuHeaderDropdown}>
         <span className={`${styles.action} ${styles.account}`}>
-          <Avatar size="small" className={styles.avatar} src={currentUser.avatar} alt="avatar" />
-          <span className={`${styles.name} anticon`}>{currentUser.name}</span>
+          <Avatar size="small" className={styles.avatar} alt="avatar" />
+          <span className={`${styles.name} anticon`}>{account.username}</span>
         </span>
       </HeaderDropdown>
     )
@@ -83,5 +80,5 @@ class AvatarDropdown extends React.Component<GlobalHeaderRightProps> {
 }
 
 export default connect(({ user }: ConnectState) => ({
-  currentUser: user,
+  account: user.account,
 }))(AvatarDropdown);

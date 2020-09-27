@@ -1,6 +1,6 @@
 import {
-  EditorEntity,
-  EditorEntityState, ElemNestingInfo
+  WidgetEntity,
+  WidgetEntityState, ElemNestingInfo
 } from "../../data-structure";
 import { SelectEntityState } from "../types";
 
@@ -29,13 +29,13 @@ export const InitEntityState = (
 
 export type UpdateTargetEntity = {
   nestingInfo: ElemNestingInfo
-  entity: EditorEntity
+  entity: WidgetEntity
 }
 export const UPDATE_ENTITY_STATE = 'entityState/update';
 export interface UpdateEntityStateAction {
   type: typeof UPDATE_ENTITY_STATE
   targetEntity: UpdateTargetEntity,
-  formState: EditorEntityState
+  formState: WidgetEntityState
 }
 
 /**
@@ -43,7 +43,7 @@ export interface UpdateEntityStateAction {
  */
 export const UpdateEntityState = (
   targetEntity: UpdateTargetEntity,
-  formState: EditorEntityState
+  formState: WidgetEntityState
 ): UpdateEntityStateAction => {
   return {
     type: UPDATE_ENTITY_STATE,
