@@ -19,15 +19,15 @@ const Container: React.FC<IContainerProps> = (props) => {
       app: "app"
     });
     console.log(res);
-    if (res.code === '0') {
-      const result = JSON.parse(res.result);
-      setData(result);
-    }
+    // if (res.code === '0') {
+    //   const result = JSON.parse(res.result);
+    //   setData(result);
+    // }
   };
   // console.dir(IUBDSLRenderer);
   return (
     <>
-      <IUBDSLRenderer dsl={data} />
+      {/* <IUBDSLRenderer dsl={data} /> */}
     </>
   );
 };

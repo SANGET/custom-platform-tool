@@ -13,6 +13,7 @@ declare module '*.tiff';
 declare module 'omit.js';
 
 interface Window {
+  HOST: any;
   reloadAuthorized: () => void;
 }
 
