@@ -1,81 +1,139 @@
-import React, { useEffect, useMemo } from "react";
-// !! TODO 传值与暴露的问题
-const baseRenderCompStruct = ({
-  renderStruct,
-  compPropsList,
-  RenderCompList,
-  originConf
-}) => {
-  /** 此处的结构可以根据条件改变 */
-  return renderStruct.map((structInfo) => {
-    const { compTag, mark, renderStruct: childrenRenderStruct } = structInfo;
-    const Comp = RenderCompList[compTag];
-    /** 此处的props是key-value形式 */
-    const compProps = compPropsList[mark].reduce((res, propInfo) => ({
-      ...res,
-      [propInfo?.key]: propInfo?.val
-    }), {});
-    const childrens = childrenRenderStruct?.length ? baseRenderCompStruct({
-      renderStruct: childrenRenderStruct,
-      compPropsList,
-      RenderCompList,
-      originConf
-    }) : undefined;
-    // console.log('renderStructReMake');
+import React, { useEffect, useMemo, useState } from "react";
+import { ActualRenderInfo } from "./types/renderStruct";
+import { AllUI } from "../UI-factory/types";
+import { handlePropsList } from "../tempfn";
 
-    /** 1. 传入扩展的props 2. 渲染所有子级 */
-    return (extralProps) => {
-      const ctxx = {};
+/** uitls: 获取真实组件 */
+const commonGetComp = (
+  compTag: AllUI,
+  renderCompList: any
+) => renderCompList[compTag];
 
-      const actualExtralProps = useMemo(() => {
-        return extralProps;
-      }, [extralProps]);
+/**
+ * 渲染list结构的组件
+ * @param actualRenderInfo
+ * @param context
+ */
+const actualRenderInfoListRenderer = (
+  actualRenderInfo: ActualRenderInfo[],
+  context: {renderCompList: any},
+) => {
+  const renderer: any[] = [];
+  const structLength = actualRenderInfo.length;
+  for (let i = 0; i < structLength; i++) {
+    renderer.push(actualRenderInfoRenderer(actualRenderInfo[i], context, { index: i }));
+  }
+  return renderer;
+};
 
-      const actualChild = childrens?.map((Ch, i) => <Ch key={mark + i} {...actualExtralProps}/>);
-      const RenderComp = useMemo(() => {
-        return <Comp
-          {...compProps} {...actualExtralProps}
-          // key、id、children 都应该在后面
-          key={mark} id={mark}
-          children={actualChild}
-        />;
-      }, [compProps]);
-      return RenderComp;
+/**
+ * 渲染单个组件
+ * @param actualRenderInfo 单个组件信息
+ * @param context 上下文
+ * @param options 渲染选项
+ */
+const actualRenderInfoRenderer = (
+  actualRenderInfo: ActualRenderInfo,
+  context: {renderCompList: any},
+  options?: { index: number }
+) => {
+  return (extralProps) => {
+    const {
+      compTag, mark, renderStruct, propsKeys, propsMap
+    } = actualRenderInfo;
+    const Comp = commonGetComp(compTag, context.renderCompList);
+    let compProps;
+    switch (compTag) {
+      case AllUI.BaseInput:
+        compProps = useFormInputPops(propsMap)?.compProps || {};
+        break;
+      case AllUI.Error:
+      default:
+        compProps = useDefaultCompProps(propsMap)?.compProps || {};
+        break;
+    }
+
+    const childrens = renderStruct?.length
+      ? actualRenderInfoListRenderer(renderStruct, context) : undefined;
+
+    const actualExtralProps = useMemo(() => {
+      return extralProps;
+    }, [extralProps]);
+
+    const actualChild = childrens?.map((Ch, i) => <Ch key={mark + i} {...actualExtralProps}/>);
+    const RenderComp = useMemo(() => {
+      return <Comp
+        {...compProps} {...actualExtralProps}
+        // key、id、children 都应该在后面
+        key={mark} id={mark}
+        children={actualChild}
+      />;
+    }, [
+      compProps,
+      actualExtralProps // 监测额外的全局属性
+    ]);
+    return RenderComp;
+  };
+};
+
+/**
+ * 处理输入框属性的hooks「此函数临时放在此处」
+ * @param propsMap 传入组件的属性的处理
+ */
+const useFormInputPops = (propsMap) => {
+  const { compProps, setCompProps } = useDefaultCompProps(propsMap);
+
+  /** 测试内容 */
+  useEffect(() => {
+    let timer;
+    if (Math.random() > 0.3) {
+      timer = setTimeout(() => {
+        setCompProps({ ...compProps, placeholder: '异步内容!!~~~~!!' });
+      }, 2000);
+    }
+    return () => {
+      clearTimeout(timer);
     };
-  });
+  }, []);
+
+  return { compProps, setCompProps };
+};
+
+/**
+ * 处理默认属性的hooks 「此函数临时放在此处」
+ * @param propsMap 传入组件的属性的处理
+ */
+const useDefaultCompProps = (propsMap) => {
+  const [tempCompProps, setCompProps] = useState(handlePropsList(propsMap));
+  return {
+    compProps: useMemo(() => {
+      return tempCompProps;
+    }, [tempCompProps]),
+    setCompProps
+  };
 };
 
 /** 渲染前锁定阶段 */
 const RenderComp = (RenderCompList) => {
-  return ({
-    renderStruct,
-    compPropsList,
-    originConf
-  }): React.FC<any> => {
+  return (actualRenderInfo: ActualRenderInfo[]) => {
     /** 渲染前锁定阶段 -- End */
-    const RenderCompFn = React.memo((extralProps) => {
+    const RenderCompFn = React.memo<any>((extralProps) => {
       /** 渲染 */
-      useEffect(() => {
-        console.log(1111);
-      }, []);
+      // useEffect(() => {
+      // }, []);
       /** 放在哪才是最好的, 才可以控制不会一直渲染 */
       const RenderComponentList = useMemo(() => {
-        console.log(1);
-        const Comps = baseRenderCompStruct({
-          renderStruct,
-          compPropsList,
-          RenderCompList,
-          originConf
-        });
+        const Comps = actualRenderInfoListRenderer(
+          actualRenderInfo,
+          { renderCompList: RenderCompList },
+        );
         return Comps;
-      }, [renderStruct, compPropsList, RenderCompList]);
+      }, [actualRenderInfo, RenderCompList]);
       const RenderComponent = useMemo(() => {
-        console.log(2);
         return RenderComponentList.map((Comp, i) => <Comp key={i} {...extralProps}/>);
       }, [extralProps]);
 
       return RenderComponent;
-      // return RenderComponentList;
     });
 
     return RenderCompFn;
