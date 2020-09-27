@@ -16,44 +16,9 @@ import BasicStory from '@provider-app/data-designer/src/components/BasicStory';
 */
 import { Rule } from 'rc-field-form/lib/interface';
 
-import styled from 'styled-components';
 import { PinYin, randomNum } from '@provider-app/data-designer/src/tools/mix';
-
+import './index.less';
 /** 中文转拼音 */
-
-/**
-* 编辑表页面样式
-*/
-const EditTableStyled = styled.div`
-
-
-.select-row{
-  background-color:#f0f0f0;
-}
-
-.editable-cell {
-  position: relative;
-}
-
-.editable-cell-value-wrap {
-  padding: 5px 12px;
-  cursor: pointer;
-}
-
-.editable-row:hover .editable-cell-value-wrap {
-  border: 1px solid #d9d9d9;
-  border-radius: 4px;
-  padding: 4px 11px;
-}
-
-[data-theme='dark'] .editable-row:hover .editable-cell-value-wrap {
-  border: 1px solid #434343;
-}
-
-.el-table__header {
-  table-layout: auto !important;
-}
-`;
 
 /**
  * 编辑表格属性约束
@@ -350,7 +315,7 @@ const BasicEditTable = ({
   };
 
   return (
-    <EditTableStyled>
+    <div className="edit-table">
       <Form form={form} component={false}>
         <Table
           components={{
@@ -375,7 +340,7 @@ const BasicEditTable = ({
 
         />
       </Form>
-    </EditTableStyled>
+    </div>
   );
 };
 /**
@@ -421,7 +386,7 @@ const renderOperCol = (operButs) => {
           <Space size="middle" key={i}>
             {
               /** 删除需要弹出二次确认框 */
-              item.text === '删除'||item.text ==='删除子项'
+              item.text === '删除' || item.text === '删除子项'
                 ? (<Popconfirm placement="topLeft" title={item.title} onConfirm={() => item.onClick(row)} okText="删除" cancelText="取消">
                   <Button type="link" >
                     {item.text}

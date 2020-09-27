@@ -4,10 +4,9 @@
  */
 
 import {
-  EditorComponentEntity,
-  EditorEntity,
+  WidgetEntity,
   ElemNestingInfo
-} from "../../types";
+} from "../../data-structure";
 
 /**
  * 添加组件实例
@@ -15,12 +14,12 @@ import {
 export const ADD_ENTITY = 'entity/add';
 export interface AddEntityAction {
   type: typeof ADD_ENTITY
-  entity: EditorComponentEntity
+  entity: WidgetEntity
   idx: number
 }
 
 export const AddEntity = (
-  entity: EditorComponentEntity,
+  entity: WidgetEntity,
   idx: number
 ): AddEntityAction => {
   return {
@@ -37,7 +36,7 @@ export const DEL_ENTITY = 'entity/del';
 export interface DelEntityAction {
   type: typeof DEL_ENTITY
   idx: number
-  entity: EditorComponentEntity
+  entity: WidgetEntity
 }
 
 export const DelEntity = (
@@ -137,13 +136,13 @@ export const UnselectEntity = (
 export const SELECT_ENTITY = 'entity/select';
 export interface SelectEntityAction {
   type: typeof SELECT_ENTITY
-  entity: EditorEntity
+  entity: WidgetEntity
   idx: number
   nestingInfo: ElemNestingInfo
 }
 
 export const SelectEntity = (
-  entity: EditorEntity,
+  entity: WidgetEntity,
   idx,
   nestingInfo
 ): SelectEntityAction => {

@@ -1,9 +1,9 @@
-import { ActionFlow } from "@iub-dsl/types/actions/action-collection";
+import { ParserContextGroup, } from "../types";
 
 /**
  * 流程执行器
  */
-const flowExecutor = (actionFlow: ActionFlow, parserContext: ParserContextGroup) => {
+const flowExecutor = (actionFlow: any, parserContext: ParserContextGroup) => {
   console.log(actionFlow);
   // TODO: 流程表达式解析
 };

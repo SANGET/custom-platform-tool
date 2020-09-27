@@ -1,17 +1,17 @@
 import { produce } from "immer";
 import {
-  PropertyItemConfigFunc, EditorComponentEntity,
-  EditorPropertyItem, EditorPageEntity
-} from "../../types";
+  PropItemConfig, WidgetEntity,
+  PropItemType, PageStageEntity
+} from "../../data-structure";
 
 /**
  * 提取 prop item config
  */
 export const extractPropConfig = (
-  propItemConfigFunc: PropertyItemConfigFunc,
-  entity: EditorComponentEntity,
+  propItemConfigFunc: PropItemConfig,
+  entity: WidgetEntity,
   extendProps?
-): EditorPropertyItem => {
+): PropItemType => {
   if (typeof propItemConfigFunc === 'function') {
     return Object.assign({}, propItemConfigFunc(produce(entity, (draft) => draft)), extendProps);
   }

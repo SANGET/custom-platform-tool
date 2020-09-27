@@ -13,6 +13,18 @@ export interface SubAppSpec extends ProviderAppContext {
   location
 }
 
+interface AppConfig {
+  apiUrl: string
+}
+
+declare global {
+  const $AppConfig = AppConfig;
+  const $GetAppConfig;
+  interface Window {
+    $AppConfig: AppConfig
+  }
+}
+
 /**
  * 子应用的配型
  */

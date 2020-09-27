@@ -1,11 +1,11 @@
-import { CommonObjStruct, TypeOfIUBDSL } from "@iub-dsl/types";
-import LayoutParser from "./layout-parser";
-import flowExecutor from "./flow-engine";
-import { RelationParser } from "./relationship";
-import { ActionsCollectionParser } from "./actions-manage/actions-parser";
-import ComponentCollectionParser from "./component-manage/component-parser";
-import SchemasParser from "./state-manage/schemas-parser";
+/** dont Overengineering */
 
+import { CommonObjStruct, TypeOfIUBDSL } from "@iub-dsl/definition";
+import SchemasParser from "./state-manage/schemas";
+import componentParser from "./component-manage/component-parser";
+// import { componentParser } from "./component-manage/c";
+
+// 全局的页面通信?
 // state贯穿全局, 数据状态贯穿全局
 // condition、when, 单步控制  // 全局?
 // code、低代码引擎
@@ -34,19 +34,21 @@ const IUBDSLParser = ({ dsl }) => {
   };
 
   const schemasParseRes = SchemasParser(schemas);
-  const parseActionResult = ActionsCollectionParser(actionsCollection);
+  // const parseActionResult = ActionsCollectionParser(actionsCollection);
 
   parseContext = {
     ...parseContext,
     ...schemasParseRes,
-    bindAction: (actionID) => parseActionResult[actionID]
+    // bindAction: (actionID) => parseActionResult[actionID]
   };
 
-  const componentParseRes = ComponentCollectionParser(componentsCollection, parseContext);
+  const componentParseRes = componentParser();
+  console.log(componentParseRes);
+
   parseContext = {
     ...parseContext,
-    componentParseRes
-    // initComp: (IUBRuntimeContext) => (compId) => componentParseRes[compId](IUBRuntimeContext)
+    componentParseRes,
+    getCompParseInfo: (compId) => componentParseRes[compId]
   };
 
   return parseContext;

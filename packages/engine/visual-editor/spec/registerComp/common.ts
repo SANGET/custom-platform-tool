@@ -5,16 +5,16 @@
  * TODO: 放到前端动态资源管理服务中进行统一管理
  */
 
-import { EditorEntityState } from "../../types";
+import { WidgetEntityState } from "../../data-structure";
 
 export interface RegisterCompElementProps {
   compContext: {
-    entityState: EditorEntityState
+    entityState: WidgetEntityState
   }
 }
 
 export interface RegisterEditor extends RegisterCompElementProps {
-  onChange: (nextValue: EditorEntityState) => void
+  onChange: (nextValue: WidgetEntityState) => void
 }
 
 /**
@@ -50,7 +50,8 @@ export const getRegisteredComp = (compName: string) => {
   if (comp) {
     return comp;
   }
-  throw Error(`发现尚未注册的组件类型 ${compName}，请检查是否注册成功`);
+  // throw Error(`发现尚未注册的组件类型 ${compName}，请检查是否注册成功`);
+  return null;
 };
 
 /**

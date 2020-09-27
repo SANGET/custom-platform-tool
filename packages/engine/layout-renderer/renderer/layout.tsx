@@ -1,5 +1,5 @@
 import React from 'react';
-import { LayoutNodeInfo, ElemNestingInfo } from '../types';
+import { LayoutNodeItem, ElemNestingInfo } from '../types';
 
 /**
  * LayoutWrapper 上下文
@@ -12,7 +12,7 @@ export interface LayoutWrapperContext {
   /** 组件嵌套信息 */
   nestingInfo: ElemNestingInfo
   /** 组件节点信息 */
-  node: LayoutNodeInfo
+  layoutNodeItem: LayoutNodeItem
   /** 组件的 children */
   children?: React.ElementType[]
 }
@@ -23,7 +23,7 @@ export interface LayoutParserWrapper {
 }
 
 export interface LayoutRendererProps extends LayoutParserWrapper {
-  layoutNode: LayoutNodeInfo[]
+  layoutNode: LayoutNodeItem[]
   RootRender?: (renderRes: React.ElementType[]) => JSX.Element
 }
 
@@ -37,10 +37,9 @@ const Elem = ({
 
 /**
  * 布局渲染器
- * parserContext 将传入每一个 parser
  */
 const renderLayout = (
-  layoutNode: LayoutNodeInfo[],
+  layoutNode: LayoutNodeItem[],
   wrapper: LayoutParserWrapper,
 ) => {
   const res: React.ElementType[] = [];
@@ -48,16 +47,16 @@ const renderLayout = (
     let nestingDeep = 0;
     const nestingInfo: number[] = [];
     for (let i = 0; i < layoutNode.length; i++) {
-      const node = layoutNode[i];
+      const layoutNodeItem = layoutNode[i];
       nestingInfo[nestingDeep] = i;
 
-      const { id } = node;
+      const { id } = layoutNodeItem;
       const { componentRenderer } = wrapper;
       const wrapperContext: LayoutWrapperContext = {
-        id, idx: i, node, nestingInfo
+        id, idx: i, layoutNodeItem, nestingInfo
       };
-      if (node.body) {
-        const childOfContainer = renderLayout(node.body, wrapper);
+      if (layoutNodeItem.body) {
+        const childOfContainer = renderLayout(layoutNodeItem.body, wrapper);
         nestingDeep += 1;
         let child;
         if (typeof componentRenderer === 'function') {
@@ -79,7 +78,7 @@ const renderLayout = (
 };
 
 /**
- * 布局渲染引擎入口
+ * 布局渲染器
  */
 const LayoutRenderer: React.FC<LayoutRendererProps> = (
   props,

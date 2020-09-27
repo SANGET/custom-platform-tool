@@ -1,5 +1,4 @@
 /* eslint-disable no-param-reassign */
-import { ActionFlow } from "@iub-dsl/types";
 import { conditionP, whenP, funcP } from './code-engine';
 
 interface ParseResultRef {
@@ -21,7 +20,7 @@ export const funcWrap = (param: ParseResultRef) => {
     };
   };
 };
-export const parseActionItem = (actionID, actionItem: ActionFlow) => {
+export const parseActionItem = (actionID, actionItem: any) => {
   const result: ParseResultRef = {
     actionID,
     type: '',
@@ -42,7 +41,7 @@ export const parseActionItem = (actionID, actionItem: ActionFlow) => {
 };
 
 export const ActionsCollectionParser = (actionsCollection: {
-  [actionID: string]: ActionFlow;
+  [actionID: string]: any;
 }) => {
   return Object.keys(actionsCollection).reduce((actionParseRes, actionID) => {
     actionParseRes[actionID] = parseActionItem(actionID, actionsCollection[actionID]);

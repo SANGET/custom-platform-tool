@@ -1,16 +1,16 @@
 /* eslint-disable no-param-reassign */
 import produce from 'immer';
-import { EditorEntityState, EditorPropertyItem } from "../../types";
+import { WidgetEntityState, PropItemType } from "../../data-structure";
 
 interface EntityStateItemParams {
   value: any,
-  propItemConfig: EditorPropertyItem
+  propItemConfig: PropItemType
 }
 
 type EntityStateMergeRule = (
-  srcEntityState: EditorEntityState,
+  srcEntityState: WidgetEntityState,
   entityStateItemParams: EntityStateItemParams
-) => EditorEntityState
+) => WidgetEntityState
 
 /**
  * 提取属性中的 style
@@ -19,7 +19,7 @@ export const getStyle = ({
   value,
   propItemConfig
 }: EntityStateItemParams) => {
-  if (propItemConfig.type === 'style') {
+  if (propItemConfig.whichAttr === 'style') {
     const { target } = propItemConfig;
     return {
       [target]: value
@@ -35,7 +35,7 @@ export const mergeGeneralProp = ({
   value,
   propItemConfig
 }: EntityStateItemParams) => {
-  if (propItemConfig.type === 'general') {
+  if (propItemConfig.whichAttr === 'general') {
     const { target } = propItemConfig;
     return {
       [target]: value
@@ -58,11 +58,11 @@ export const entityStateMergeRule: EntityStateMergeRule = (
 ) => {
   const { value, propItemConfig } = entityStateItemParams;
   const srcEntityStateCopy = srcEntityState;
-  const { type } = propItemConfig;
+  const { whichAttr } = propItemConfig;
 
   const resState = produce(srcEntityStateCopy, (darftData) => {
     // darftData.style = Object.assign({}, srcEntityState.style, getStyle(entityStateItemParams));
-    darftData[type] = value;
+    darftData[whichAttr] = value;
     // Object.assign(darftData, mergeGeneralProp(entityStateItemParams));
   });
 

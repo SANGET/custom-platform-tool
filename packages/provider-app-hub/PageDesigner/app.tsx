@@ -1,14 +1,11 @@
 /* eslint-disable no-param-reassign */
 import React from "react";
-
 import produce from 'immer';
-
-import { Dispatcher } from "@engine/visual-editor/core/actions";
-import { VisualEditorState } from "@engine/visual-editor/core/reducers/reducer";
+import { VEDispatcher, VisualEditorState } from "@engine/visual-editor/core";
 import { updatePageService } from "@provider-app/services";
 import { ApiSavePage } from "@mock-data/page-designer/mock-api/edit-page";
 import ToolBar from './components/Toolbar';
-import ComponentPanel from './components/ComponentPanel';
+import WidgetPanel from './components/WidgetPanel';
 import CanvasStage from './components/CanvasStage';
 import PropertiesEditor from './components/PropertiesEditor';
 import { wrapPageData } from "./utils";
@@ -20,7 +17,7 @@ import './style';
 // import { VisualEditorStore } from "@engine/visual-editor/core/store";
 
 interface VisualEditorAppProps extends VisualEditorState {
-  dispatcher: Dispatcher
+  dispatcher: VEDispatcher
 }
 
 class PageDesignerApp extends React.Component<VisualEditorAppProps & HY.SubAppSpec> {
@@ -55,7 +52,7 @@ class PageDesignerApp extends React.Component<VisualEditorAppProps & HY.SubAppSp
       datasources
     } = await getPageContentWithDatasource(pageID);
     UpdateAppContext({
-      options: {
+      payload: {
         datasources
       }
     });
@@ -116,7 +113,7 @@ class PageDesignerApp extends React.Component<VisualEditorAppProps & HY.SubAppSp
     /** 准备初始化数据 */
     const initData = produce(dynamicData, (draftInitData) => {
       draftInitData.pageContent = pageContent;
-      draftInitData.options = {
+      draftInitData.payload = {
         pageDataRes,
         // 填入 datasources
         datasources,
@@ -162,8 +159,8 @@ class PageDesignerApp extends React.Component<VisualEditorAppProps & HY.SubAppSp
           <div
             className="comp-panel"
           >
-            <ComponentPanel
-              datasources={appContext?.options?.datasources}
+            <WidgetPanel
+              datasources={appContext?.payload?.datasources}
               compClassForPanelData={appContext.compClassForPanelData}
               compClassCollection={appContext.compClassCollection}
               onUpdatedDatasource={this.onUpdatedDatasource}
@@ -191,7 +188,7 @@ class PageDesignerApp extends React.Component<VisualEditorAppProps & HY.SubAppSp
                   key={activeEntityID}
                   propItemData={appContext.propItemData}
                   // eslint-disable-next-line max-len
-                  propertiesConfig={appContext?.compClassCollection[activeEntity?._classID]?.bindProps}
+                  propertiesConfig={appContext?.compClassCollection[activeEntity?._classID]?.bindPropItems}
                   selectedEntity={activeEntity}
                   propPanelData={appContext.propPanelData}
                   defaultEntityState={activeEntity.propState}

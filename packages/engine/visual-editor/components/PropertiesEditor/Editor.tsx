@@ -5,9 +5,9 @@ import React from 'react';
 import { Input, Button } from '@infra/ui';
 import { Debounce } from '@mini-code/base-func';
 import {
-  EditorEntity, EditorEntityState, EditorPropertyItem,
-  ComponentBindPropsConfig,
-} from '../../types';
+  WidgetEntity, WidgetEntityState, PropItemType,
+  WidgetBindPropItemsType,
+} from '../../data-structure';
 import { PropItemRenderer as PropItemRendererDefault } from './PropItemRenderer';
 import { extractPropConfig } from './extractPropConfig';
 import { entityStateMergeRule } from './entityStateMergeRule';
@@ -16,20 +16,20 @@ import { GroupPanel, GroupPanelData } from '../GroupPanel';
 
 export type PropPanelData = GroupPanelData
 
-export type UpdateEntityStateOfEditor = (entityState: EditorEntityState) => void
-export type InitEntityStateOfEditor = (entityState: EditorEntityState) => void
+export type UpdateEntityStateOfEditor = (entityState: WidgetEntityState) => void
+export type InitEntityStateOfEditor = (entityState: WidgetEntityState) => void
 
 export interface PropertiesEditorProps {
   /** 选中的 entity */
   propPanelData: PropPanelData
-  selectedEntity: EditorEntity
+  selectedEntity: WidgetEntity
   propItemData: any
   /** 属性项组合配置 */
-  propertiesConfig: ComponentBindPropsConfig
+  propertiesConfig: WidgetBindPropItemsType
   /** 属性编辑器的配置，通过该配置生成有层级结构的属性编辑面板 */
   editorConfig?: any
   /** 默认的表单数据state */
-  defaultEntityState?: EditorEntityState
+  defaultEntityState?: WidgetEntityState
   /** 保存属性 */
   updateEntityState: UpdateEntityStateOfEditor
   /** 初始化实例 */
@@ -65,13 +65,11 @@ class DefaultEntityStateManager {
 const defaultEntityStateManager = new DefaultEntityStateManager();
 
 interface PropertiesEditorState {
-  entityState: EditorEntityState
+  entityState: WidgetEntityState
 }
 
 /**
  * 属性编辑器面板
- *
- * @description 由于此业务逻辑略复杂，React.FC 并不能满足，所以采用 ClassComponent，更好的组织优化逻辑
  */
 class PropertiesEditor extends React.Component<
 PropertiesEditorProps, PropertiesEditorState
@@ -130,12 +128,12 @@ PropertiesEditorProps, PropertiesEditorState
     const {
       propertiesConfig,
     } = this.props;
-    const { propRefs = [], rawProp = [] } = propertiesConfig;
-    const bindProps = [
-      ...propRefs,
-      ...rawProp
+    const { propItemRefs = [], rawPropItems = [] } = propertiesConfig;
+    const bindPropItems = [
+      ...propItemRefs,
+      ...rawPropItems
     ];
-    return bindProps;
+    return bindPropItems;
   }
 
   defaultPropItemRenderer = (props) => {
@@ -154,14 +152,14 @@ PropertiesEditorProps, PropertiesEditorState
       propItemRenderer = this.defaultPropItemRenderer
     } = this.props;
     const { entityState } = this.state;
-    // const { bindProps } = selectedEntity;
-    const bindProps = this.mergePropConfig();
+    // const { bindPropItems } = selectedEntity;
+    const bindPropItems = this.mergePropConfig();
 
-    return Array.isArray(bindProps)
-    && bindProps.map((bindProp) => {
+    return Array.isArray(bindPropItems)
+    && bindPropItems.map((bindProp) => {
       // let propID: string;
       let propOriginConfigItem;
-      let propItemConfig: EditorPropertyItem;
+      let propItemConfig: PropItemType;
       if (typeof bindProp === 'function') {
         propItemConfig = extractPropConfig(bindProp, selectedEntity);
         // propID = propItemConfig.id;
@@ -189,12 +187,12 @@ PropertiesEditorProps, PropertiesEditorState
        * 将实例状态回填到属性项
        */
       const activeState = entityState
-        ? entityState[propItemConfig.type]
+        ? entityState[propItemConfig.whichAttr]
         : undefined;
 
       /** 确保 propItemConfig 的 ID 与集合中的 ID 一致 */
       // propItemConfig.id = propID;
-      const propItemType = propItemConfig.type;
+      const propItemType = propItemConfig.whichAttr;
 
       if (!this.hasDefaultEntityState) {
         /**
@@ -245,7 +243,7 @@ PropertiesEditorProps, PropertiesEditorState
     const {
       propertiesConfig,
     } = this.props;
-    return propertiesConfig && (!!propertiesConfig.propRefs || !!propertiesConfig.rawProp);
+    return propertiesConfig && (!!propertiesConfig.propItemRefs || !!propertiesConfig.rawPropItems);
   }
 
   propItemRenderer = () => {

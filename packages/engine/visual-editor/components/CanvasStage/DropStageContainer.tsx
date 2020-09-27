@@ -5,21 +5,20 @@ import React from 'react';
 import { useDrop } from 'react-dnd';
 import classnames from 'classnames';
 import {
-  DragItemClass, DropCollectType, EntitiesStateStore,
-  EditorPageEntity
-} from '@engine/visual-editor/types';
+  DragableItemType, DropCollectType,
+} from '@engine/visual-editor/data-structure';
 import { Call } from '@mini-code/base-func';
 
 /**
  * 中央舞台组件的 props
  */
 export interface DropStageProps {
-  onDrop
-  onLeave?: (dragItem: DragItemClass) => void
-  onEnter?: (dragItem: DragItemClass) => void
+  onItemDrop
+  onLeave?: (dragItem: DragableItemType) => void
+  onEnter?: (dragItem: DragableItemType) => void
   /** 触发 onEnter 和 onLeave 的条件 */
-  triggerCondition?: (dragItem: DragItemClass) => boolean
-  onStageClick
+  triggerCondition?: (dragItem: DragableItemType) => boolean
+  onStageClick?: () => void
   style
   className?
   accept
@@ -46,7 +45,7 @@ const DropStageContainer: React.FC<DropStageProps> = ({
   onLeave,
   onEnter,
   triggerCondition,
-  onDrop,
+  onItemDrop,
   style,
   className,
   accept,
@@ -74,13 +73,13 @@ const DropStageContainer: React.FC<DropStageProps> = ({
     isOver,
     isOverCurrent,
     canDrop
-  }, drop] = useDrop<DragItemClass, void, DropCollectType>({
+  }, drop] = useDrop<DragableItemType, void, DropCollectType>({
     accept,
     drop: (dropOptions) => {
-      const { dragItemClass, type } = dropOptions;
+      const { dragableWidgetType, type } = dropOptions;
       if (isOverCurrent) {
-        const _dragItemClass = { ...dragItemClass };
-        onDrop(_dragItemClass, dropOptions);
+        const _dragableItemDef = { ...dragableWidgetType };
+        onItemDrop(_dragableItemDef, dropOptions);
 
         // 2. 在画布中释放后设置为 false
         __isEntered = false;

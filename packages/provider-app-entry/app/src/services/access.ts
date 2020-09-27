@@ -1,4 +1,4 @@
-import { TypeOfIUBDSL } from '@iub-dsl/types';
+import { TypeOfIUBDSL } from '@iub-dsl/definition';
 
 const LoadPage = (pageID): Promise<TypeOfIUBDSL> => {
   return new Promise((resolve, reject) => {

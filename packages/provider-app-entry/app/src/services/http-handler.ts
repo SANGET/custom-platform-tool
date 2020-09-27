@@ -8,10 +8,6 @@ import { message as AntdMessage } from 'antd';
 
 import { setDefaultParams, clearDefaultParams, onNavigate } from "multiple-page-routing";
 
-const defaultApiUrl = 'http://192.168.14.140:6090';
-
-const apiUrl = process.env.REACT_APP_API_URL || defaultApiUrl;
-
 /**
  * 后端返回的数据结构
  */
@@ -23,8 +19,17 @@ export interface ResStruct {
 }
 
 const urlPrefix = 'paas';
+let baseReqUrl = '';
 
-const baseReqUrl = resolveUrl(apiUrl, urlPrefix);
+/**
+ * 设置请求平台服务的 api 地址
+ */
+export const setPlatformApiUrl = (platformApiUrl: string) => {
+  baseReqUrl = resolveUrl(platformApiUrl, urlPrefix);
+  $R.setConfig({
+    baseUrl: baseReqUrl
+  });
+};
 
 /**
  * 根据业务扩展的 http 请求工具的类型
@@ -34,23 +39,23 @@ export interface RExtend extends RequestClass {
 }
 
 const $R = new RequestClass<ResStruct>({
-  baseUrl: `${baseReqUrl}`
+  // baseUrl: `${baseReqUrl}`
 }) as RExtend;
 
 /**
  * URL 管理器，根据实际业务需求设置 URL
  */
 class UrlManager {
-  currRent = ''
+  currLessee = ''
 
   currApp = ''
 
   /** 登录后需要设置 */
-  setRent = (rent: string) => {
+  setLessee = (lessee: string) => {
     setDefaultParams({
-      rent
+      lessee
     });
-    this.currRent = rent;
+    this.currLessee = lessee;
     this.setRequestBaseUrl();
   }
 
@@ -67,7 +72,7 @@ class UrlManager {
   /** 登出的时候需要设置 */
   reset = () => {
     this.currApp = '';
-    this.currRent = '';
+    this.currLessee = '';
     /** 清除默认 params */
     clearDefaultParams();
     $R.setConfig({
@@ -76,7 +81,7 @@ class UrlManager {
   }
 
   getUrl = () => {
-    return resolveUrl(baseReqUrl, this.currRent, this.currApp);
+    return resolveUrl(baseReqUrl, this.currLessee, this.currApp);
   }
 
   setRequestBaseUrl = () => {
@@ -177,9 +182,6 @@ export type $Request = typeof $R
 
 declare global {
   const $R_P: typeof $R;
-}
-
-declare global {
   interface Window {
     /** Request helper for Provider app，简写 R_P，$ 是全局变量前缀, 生产工具的 HTTP 请求助手 */
     $R_P: $Request;

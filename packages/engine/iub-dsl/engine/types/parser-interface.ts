@@ -2,10 +2,8 @@
  * 解析器通用的 interface
  */
 
-import { TypeOfIUBDSL } from "@iub-dsl/types";
-import { ComponentElement } from '@iub-dsl/types/component/collection';
-import { ActionFlow } from '@iub-dsl/types/actions/action-collection';
-import { RequestAPIOfIUBDSL } from "./request-types";
+import { TypeOfIUBDSL } from "@iub-dsl/definition";
+import { ComponentElement } from '@iub-dsl/definition/component/collection';
 
 // TODO: 设计 context
 export interface ContextOfIUBDSL {
@@ -13,7 +11,7 @@ export interface ContextOfIUBDSL {
   /** 验证 UI 是否可用 */
   authUI: (UIID: string) => boolean;
   /** 远端通讯模块 */
-  requestAPI: RequestAPIOfIUBDSL;
+  requestAPI: any;
 }
 
 export interface ParserParamsOfIUBDSL {
@@ -24,6 +22,6 @@ export interface ParserParamsOfIUBDSL {
 
 export interface ParserContextGroup {
   context: ContextOfIUBDSL;
-  bindAction: (actionID: string) => ActionFlow;
+  bindAction: (actionID: string) => any;
   bindComponent: (componentID: string) => ComponentElement;
 }

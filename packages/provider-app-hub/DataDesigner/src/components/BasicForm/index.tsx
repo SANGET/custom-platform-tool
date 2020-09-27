@@ -1,8 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import {
-  Row, Col, Form, Button, Input, Space,Table
+  Row, Col, Form, Button, Input, Space, Table
 } from 'antd';
-import styled from 'styled-components';
 
 import {
   DownOutlined, UpOutlined, PlusOutlined, MinusOutlined
@@ -13,52 +12,7 @@ import {
  */
 import BasicStory from '@provider-app/data-designer/src/components/BasicStory';
 import { renderOperCol } from '@provider-app/data-designer/src/components/BasicEditTable';
-
-const FormStyled = styled.div`
-#basic-form{
-  /* margin:16px 20px 0 20px; */
-}
-
-.ant-row{
-  margin-bottom:16px;
-}
-.search-form{
-  margin:0 !important;
-  .ant-row{
-    margin:0 !important;
-  }
-}
-
-.ant-col.ant-col-18.ant-form-item-control{
-  max-width: 100%; 
-}
-.ant-input-number{
-  width:100%;
-}
-`;
-
-/**
-*搜素表单样式
-*/
-const SearchStyled = styled.div`
-[data-theme='compact'] .ant-advanced-search-form,
-.ant-advanced-search-form {
-  padding: 24px;
-  background: #fbfbfb;
-  border: 1px solid #d9d9d9;
-  border-radius: 2px;
-}
-
-[data-theme='compact'] .ant-advanced-search-form .ant-form-item,
-.ant-advanced-search-form .ant-form-item {
-  display: flex;
-}
-
-[data-theme='compact'] .ant-advanced-search-form .ant-form-item-control-wrapper,
-.ant-advanced-search-form .ant-form-item-control-wrapper {
-  flex: 1;
-}
-`;
+import './index.less';
 
 // padding: '16px 20px'
 /**
@@ -91,7 +45,6 @@ const BasicForm = (props) => {
   } = props;
 
   const listRef = useRef(null);
- 
 
   useEffect(() => {
     // console.log({ isAddEditRow });
@@ -140,83 +93,81 @@ const BasicForm = (props) => {
   const getColor = ({ name, index }) => {
     // console.log(name, index, form.getFieldValue('items'));
     if (form.getFieldValue('items') && form.getFieldValue('items')[index]) {
-      console.log('name',name)
+      console.log('name', name);
       console.log(form.getFieldValue('items')[index][name]);
       if (name === 'renderFontColor') {
-        return form.getFieldValue('items')[index][name]||'#000';
-      }else{
-        return form.getFieldValue('items')[index][name]||'transparent';
+        return form.getFieldValue('items')[index][name] || '#000';
       }
+      return form.getFieldValue('items')[index][name] || 'transparent';
     }
-  }
+  };
 
   const getList = (listItems, addRow?) => {
-
     return (
-    
+
       <Form.List name={listName} >
-       
+
         {
-        (fields, { add, remove }) => {
-          listRef.current = add;
-          console.log(listItems);
-          return (
-            fields.map((field, index) => (
-            
-              <Row
-                gutter={10}
-                key={field.key}
-                style={{ display: 'flex', alignItems: ''}}
-              >
-                {
-                  Object.keys(listItems).map((key) => (
-                    <Col span={5} key={key} >
-                      <Form.Item
-                        {...field}
-                        name={[field.name, key]}
-                        fieldKey={[field.fieldKey, key]}
-                        rules={listItems[key].itemAttr.rules}
-                       
-                      >
-                        <BasicStory
-                          {...listItems[key].compAttr}
-                          onClick={listItems[key].compAttr.onClick ? (e) => { listItems[key].compAttr.onClick(e, index); } : null}
-                          onChange={listItems[key].compAttr.onChange ? (e) => { listItems[key].compAttr.onChange(e, index); } : null}
-                          color={ listItems[key].compAttr.color ? getColor({ name: key, index }) : null}
-                        />
-                      </Form.Item>
-                    </Col>
-                  ))
-                }
-                <Col span={4}>
-                  <Space style={{ marginTop: 6 }}>
-                    <PlusOutlined
-                      onClick={() => {
-                        debugger
-                        add();
-                      }}
-                    />
+          (fields, { add, remove }) => {
+            listRef.current = add;
+            console.log(listItems);
+            return (
+              fields.map((field, index) => (
 
-                    <MinusOutlined
-                      className={index ? 'show' : 'hide'}
-                      onClick={() => {
-                        remove(field.name);
-                      }}
-                    />
-                  </Space>
-                </Col>
+                <Row
+                  gutter={10}
+                  key={field.key}
+                  style={{ display: 'flex', alignItems: '' }}
+                >
+                  {
+                    Object.keys(listItems).map((key) => (
+                      <Col span={5} key={key} >
+                        <Form.Item
+                          {...field}
+                          name={[field.name, key]}
+                          fieldKey={[field.fieldKey, key]}
+                          rules={listItems[key].itemAttr.rules}
 
-              </Row>
-            ))
+                        >
+                          <BasicStory
+                            {...listItems[key].compAttr}
+                            onClick={listItems[key].compAttr.onClick ? (e) => { listItems[key].compAttr.onClick(e, index); } : null}
+                            onChange={listItems[key].compAttr.onChange ? (e) => { listItems[key].compAttr.onChange(e, index); } : null}
+                            color={ listItems[key].compAttr.color ? getColor({ name: key, index }) : null}
+                          />
+                        </Form.Item>
+                      </Col>
+                    ))
+                  }
+                  <Col span={4}>
+                    <Space style={{ marginTop: 6 }}>
+                      <PlusOutlined
+                        onClick={() => {
+                          debugger;
+                          add();
+                        }}
+                      />
 
-          );
-        }}
+                      <MinusOutlined
+                        className={index ? 'show' : 'hide'}
+                        onClick={() => {
+                          remove(field.name);
+                        }}
+                      />
+                    </Space>
+                  </Col>
+
+                </Row>
+              ))
+
+            );
+          }}
       </Form.List>
-      );
+    );
   };
 
   return (
-    <FormStyled >
+    <div className="basic-form">
       <Form
         {...formItemLayout}
         layout={layout}
@@ -231,8 +182,8 @@ const BasicForm = (props) => {
         {props.listItems ? getList(props.listItems) : null}
 
       </Form>
-    </FormStyled>);
-}
+    </div>);
+};
 
 /**
  * 含有折叠功能的高级表单
