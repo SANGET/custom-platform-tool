@@ -24,7 +24,7 @@ export const ManagerTabs: React.FC<IProps> = React.memo((props: IProps) => {
   const {
     tableId, columns, dispatchInfo, references, foreignKeys,
   } = props;
-  const [activeKey, setActiveKey] = useState<string>('references');
+  const [activeKey, setActiveKey] = useState<string>('columns');
   const map = {
     columns: 'columnsValid',
     references: 'referencesValid',
