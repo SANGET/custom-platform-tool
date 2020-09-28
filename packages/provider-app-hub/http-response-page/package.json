@@ -1,0 +1,7 @@
+{
+  "name": "@provider-app/http-response-page",
+  "description": "其他的页面，例如 403 404 503 等",
+  "version": "0.0.1",
+  "author": "SANGET",
+  "license": "MIT"
+}

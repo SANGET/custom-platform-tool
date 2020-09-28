@@ -63,7 +63,7 @@ const Table: React.FC<IProps> = (props: IProps, ref) => {
     if (key === "dictionary") {
       onNavigate({
         type: "PUSH",
-        route: '/DictManage',
+        path: '/DictManage',
       });
     }
   };
@@ -90,7 +90,7 @@ const Table: React.FC<IProps> = (props: IProps, ref) => {
     if (operate === "edit") {
       onNavigate({
         type: "PUSH",
-        route: `/table-info?${id}`,
+        path: `/table-info?${id}`,
         params: { id, title: '编辑表' }
       });
     } else if (operate === "delete") {
