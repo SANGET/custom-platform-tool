@@ -15,7 +15,7 @@ const flatLayoutNode = (layoutNode, parentID?) => {
     
     Object.assign(nodeItem, {
       type: 'componentRef',
-      compType: nodeItem.widgetDef.type,
+      compType: nodeItem?.widgetDef?.type,
       // widgetDef: {
       // ...nodeItem.widgetDef,
       ...nodeItem.propState

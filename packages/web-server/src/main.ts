@@ -10,6 +10,7 @@ export function logger(req, res, next) {
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+  app.setGlobalPrefix('node-web');
   app.use(logger);
   app.enableCors();
   await app.listen(port);

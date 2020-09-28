@@ -3,7 +3,6 @@ import React from "react";
 import produce from 'immer';
 import { VEDispatcher, VisualEditorState } from "@engine/visual-editor/core";
 import { updatePageService } from "@provider-app/services";
-import { ApiSavePage } from "@mock-data/page-designer/mock-api/edit-page";
 import ToolBar from './components/PDToolbar';
 import WidgetPanel from './components/PDWidgetPanel';
 import CanvasStage from './components/PDCanvasStage';
@@ -127,7 +126,6 @@ class PageDesignerApp extends React.Component<VisualEditorAppProps & HY.SubAppSp
   onReleasePage = () => {
     const pageContent = this.getPageContent();
     updatePageService(this.getPageInfo(), pageContent);
-    ApiSavePage(pageContent);
   }
 
   render() {

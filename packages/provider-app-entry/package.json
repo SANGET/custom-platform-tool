@@ -5,8 +5,7 @@
   "types": "index.d.ts",
   "scripts": {
     "start": "cross-env PORT=6679 minictl start",
-    "build": "minictl build && npm run move:dist",
-    "move:dist": "mv ./dist ../"
+    "build": "minictl build"
   },
   "peerDependencies": {
     "react": "^16.13.1",

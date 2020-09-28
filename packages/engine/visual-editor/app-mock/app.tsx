@@ -16,7 +16,7 @@ import {
   getWidgetPanelData,
   getPagePropItems,
   getPropItemData,
-} from "@mock-data/page-designer/mock-data";
+} from "@spec/business-widget/mock-data";
 import { ApiGetPageData, ApiSavePage } from "@mock-data/page-designer/mock-api/edit-page";
 import { EditButton } from "../components/PageMetadataEditor";
 import { wrapPageData } from "../core/utils/wrap-page-data";

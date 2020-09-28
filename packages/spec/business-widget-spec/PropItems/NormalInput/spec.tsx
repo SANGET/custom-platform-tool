@@ -7,7 +7,6 @@ export class NormalInputSpec implements PropItemCompAccessSpec {
   name = 'NormalInput'
 
   render(props, onChangeState) {
-    console.log(props);
     return (
       <Input
         {...props}

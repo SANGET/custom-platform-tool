@@ -8,5 +8,5 @@ mkdir -p ./dist/provider-app
 pwd=$PWD
 
 # 构建所有项目
-cd "$pwd/packages/provider-app-entry/app" && yarn build
+cd "$pwd/packages/provider-app-entry" && yarn build
 #  && mv ./dist/* "$pwd/dist/provider-app"
