@@ -31,6 +31,7 @@
     "no-console": 0,
     "arrow-body-style": 0,
     "class-methods-use-this": 0,
+    "max-len": 0,
     "no-return-assign": 0,
     "import/extensions": 0,
     "no-case-declarations": 0,
