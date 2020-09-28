@@ -15,7 +15,9 @@
     "@infra/react-dev-env-scripts": "^0.0.1"
   },
   "dependencies": {
-    "unistore": "^3.5.2"
+    "@ant-design/icons": "^4.2.2",
+    "unistore": "^3.5.2",
+    "tailwindcss": "^1.8.10"
   },
   "author": "SANGET",
   "license": "MIT",

@@ -1,8 +1,45 @@
 import React, { useState, useEffect } from "react";
+import {
+  BankOutlined, PieChartOutlined, GithubOutlined, PlusOutlined
+} from "@ant-design/icons";
 import { Link, setDefaultParams } from "multiple-page-routing";
 import { GetApplication } from "../apis";
 
 const defaultToRoute = '/page-manager';
+
+const iconGroupTemp = [
+  <GithubOutlined />,
+  <BankOutlined />,
+  <PieChartOutlined />,
+];
+
+const AppTile = ({
+  icon,
+  title,
+  onClick,
+  params,
+  to
+}) => {
+  return (
+    <div
+      className="m-4"
+    >
+      <Link
+        to={to}
+        onClick={onClick}
+        params={params}
+        className="text-gray-700 text-center block px-24 py-6 bg-white shadow-md cursor-pointer"
+      >
+        <div className="app-icon text-6xl">
+          {icon}
+        </div>
+        <div className="app-title py-2">
+          {title}
+        </div>
+      </Link>
+    </div>
+  );
+};
 
 /**
  * 入口大厅
@@ -23,34 +60,35 @@ export const Hall: HY.SubApp = (props) => {
   }, []);
 
   return (
-    <div>
-      <h3>工作台</h3>
-      <ul>
+    <div className="container mx-auto">
+      <div className="text-3xl px-2 py-4 font-bold">我的应用</div>
+      <div className="flex flex-row">
         {
-          appData && appData.map(((data) => {
+          appData && appData.map(((data, idx) => {
             const { appShortNameEn, id, appCode } = data;
             return (
-              <li
+              <AppTile
                 key={id}
-              >
-                <Link
-                  to={defaultToRoute}
-                  onClick={(e) => {
-                    setDefaultParams({
-                      app: appCode
-                    });
-                  }}
-                  params={{
+                icon={iconGroupTemp[idx]}
+                title={appShortNameEn}
+                onClick={(e) => {
+                  setDefaultParams({
                     app: appCode
-                  }}
-                >
-                  {appShortNameEn}
-                </Link>
-              </li>
+                  });
+                }}
+                to={defaultToRoute}
+                params={{
+                  app: appCode
+                }}
+              />
             );
           }))
         }
-      </ul>
+        <AppTile
+          icon={<PlusOutlined />}
+          title="添加应用"
+        />
+      </div>
     </div>
   );
 };

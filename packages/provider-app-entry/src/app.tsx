@@ -169,11 +169,11 @@ export default class App extends RouterMultiple<AppContainerProps, AppContainerS
     } = this.state;
 
     return (
-      <div id="provider_app_container">
+      <div id="provider_app_container" className="bg-gray-100">
         {
           ready ? (
             <>
-              <header className="header layout a-i-c a-c-c">
+              <header className="header flex items-center content-center">
                 <Logo
                   onClick={(e) => {
                     this.closeAll();
