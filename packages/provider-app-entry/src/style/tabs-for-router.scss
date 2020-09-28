@@ -24,7 +24,9 @@
   .close-btn {
     background-color: transparent;
     position: absolute;
-    top: 0;
+    // top: 0;
+    transform: translateY(30%);
     right: 0;
+    color: #777;
   }
 }

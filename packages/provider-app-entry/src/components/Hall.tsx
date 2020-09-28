@@ -23,15 +23,16 @@ export const Hall: HY.SubApp = (props) => {
   }, []);
 
   return (
-    <div>
-      <h3>工作台</h3>
-      <ul>
+    <div className="container mx-auto">
+      <h3>我的工作台</h3>
+      <div className="flex flex-row bg-gray-200">
         {
           appData && appData.map(((data) => {
             const { appShortNameEn, id, appCode } = data;
             return (
-              <li
+              <div
                 key={id}
+                className="text-gray-700 text-center bg-gray-400 px-4 py-2 m-2"
               >
                 <Link
                   to={defaultToRoute}
@@ -46,11 +47,11 @@ export const Hall: HY.SubApp = (props) => {
                 >
                   {appShortNameEn}
                 </Link>
-              </li>
+              </div>
             );
           }))
         }
-      </ul>
+      </div>
     </div>
   );
 };
