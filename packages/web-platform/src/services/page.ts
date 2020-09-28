@@ -5,7 +5,7 @@ import request from '@/utils/request';
  * @param params
  */
 export async function queryPageData(params: API.IPageDataParams) {
-  return request<API.IPageDataType>('/web/page-data', {
+  return request<API.IPageDataType>('/node-web/page-data', {
     method: 'GET',
     params,
   });
