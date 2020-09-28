@@ -17,6 +17,7 @@ import MenuExtra from '@/components/MenuExtra';
 import TabsContainer from '@/components/TabsContainer';
 import { parsePathToOpenKeys, getQueryByParams } from '@/utils/utils';
 import { MODE_PREVIEW } from '@/constant';
+import styles from './styles.less';
 
 export interface IBasicLayoutProps extends ProLayoutProps {
   settings: Settings;
@@ -249,7 +250,9 @@ class BasicLayout extends React.PureComponent<IBasicLayoutProps, IBaseLayoutStat
         }}
       >
         <TabsContainer children={this.props.children} />
-        {this.props.children}
+        <div className={styles.container} >
+          {this.props.children}
+        </div>
       </ProLayout >
 
     );
