@@ -45,8 +45,12 @@ const MenusModel: IMenusModel = {
       const list: any[] = construct(payload, {
         attribute: {
           page: ROUTER_SUFFIX
+        },
+        mapping: {
+          pageId: "pageLink"
         }
       });
+      console.dir(list);
       state.list = [...state.list, ...list];
       return state;
     },
