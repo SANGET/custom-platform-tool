@@ -1,12 +1,9 @@
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 import request from "umi-request";
+import HOSTENV from '@/utils/env';
 
 const getHostEnv = async () => {
   const json = await request(`/config.json?${new Date().getTime()}`);
-  console.dir(json);
-  window.HOST = json;
+  HOSTENV.set(json);
 };
 getHostEnv();
-// const HOST = require(`../public/config.json`);
-// request();
-// window.HOST = HOST;
