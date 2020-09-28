@@ -46,7 +46,7 @@ const Link: React.SFC<LinkProps> = ({
         } else {
           onNavigate({
             type: "PUSH",
-            route: to,
+            path: to,
             params,
           });
         }

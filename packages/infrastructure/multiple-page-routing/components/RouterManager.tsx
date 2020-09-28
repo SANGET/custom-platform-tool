@@ -1,15 +1,15 @@
 import React, { Component } from "react";
 import produce from "immer";
 
-import { getUrlParams, UrlParamsRes } from "@mini-code/request/url-resolve";
+import { getUrlParams } from "@mini-code/request/url-resolve";
 import { Call } from "@mini-code/base-func";
 
+import { resolvePath } from "@provider-app/config/router";
 import {
   history,
   wrapPushUrl,
   pushToHistory,
   replaceHistory,
-  getRouteKey,
   onNavigate,
 } from "../utils";
 
@@ -66,25 +66,25 @@ class MultipleRouterManager<
   P extends RouterHelperProps,
   S extends RouterState
 > extends Component<P, S> {
-  history = history;
+  history = history
 
-  wrapPushUrl = wrapPushUrl;
+  wrapPushUrl = wrapPushUrl
 
-  pushToHistory = pushToHistory;
+  pushToHistory = pushToHistory
 
-  onNavigate = onNavigate;
+  onNavigate = onNavigate
 
-  getUrlParams = getUrlParams;
+  getUrlParams = getUrlParams
 
-  unlisten;
+  unlisten
 
-  defaultPath: string | null = null;
+  defaultPath: string | null = null
 
-  handlePop!: () => void;
+  handlePop!: () => void
 
-  handlePush!: () => void;
+  handlePush!: () => void
 
-  handleHistoryChange!: (pageID) => void;
+  handleHistoryChange!: (activeRoute: string) => void
 
   location = history.location
 
@@ -104,20 +104,27 @@ class MultipleRouterManager<
     this.initRoute();
   }
 
-  changeRoute = (route: string, params) => {
+  redirect = () => {
+
+  }
+
+  changeRoute = (path: string, params) => {
     onNavigate({
       type: "PUSH",
-      route,
+      path,
       params,
     });
   };
 
-  setLocation = (location) => {
+  setLocation = (location: typeof history.location, extend = {}) => {
+    const { hash } = location;
+    const pagePath = resolvePath(hash);
     const params = getAllUrlParams();
     this.location = produce(location, (draft) => {
       return {
         ...draft,
-        ...params
+        ...params,
+        pagePath
       };
     });
   }
@@ -132,16 +139,14 @@ class MultipleRouterManager<
         break;
     }
     const { hash, state = {} } = location;
-    // const activeRoute = resolvePath(hash)[0];
-    const params = getAllUrlParams();
-    const activeRoute = params[getRouteKey()];
-    const nextRouterState = state.nextRouters;
+    const pagePath = resolvePath(hash);
+    const nextRouterState = state.nextRoutersFromState;
 
-    this.setLocation(location);
-    this.selectTab(activeRoute, nextRouterState);
+    this.setLocation(location, { pagePath });
+    this.selectTab(pagePath, nextRouterState);
 
     // hook 函数
-    Call(this.handleHistoryChange, activeRoute);
+    Call(this.handleHistoryChange, pagePath);
   };
 
   closeAll = () => {
@@ -180,14 +185,15 @@ class MultipleRouterManager<
     //   params: nextRouterInfo,
     //   nextRouters: nextState
     // });
-    const config = {
-      type: "PUSH",
-      route: nextActiveRoute,
-      params: nextRouterParams.params,
-      nextRouters: nextState,
-    };
+
     // pushToHistory(wrapPushUrl(config), config);
-    onNavigate(config);
+    onNavigate({
+      type: "PUSH",
+      path: nextActiveRoute,
+      params: nextRouterParams.params,
+      // 给关闭当前 tab 候使用的 route state
+      nextRoutersFromState: nextState,
+    });
 
     return nextState;
   };
@@ -236,24 +242,27 @@ class MultipleRouterManager<
   initRoute = () => {
     // let initRoute = resolvePath(location.hash)[0];
     const { defaultPath } = this;
+    // console.log(this.location);
+    const { pagePath } = this.location;
+    console.log(pagePath);
     const initRouteInfo = getUrlParams(undefined, undefined, true);
-    const initRoute = initRouteInfo[getRouteKey()];
+    const initRoute = pagePath;
 
     defaultPath
       && onNavigate({
         type: "PUSH",
-        route: defaultPath,
+        path: defaultPath,
       });
     initRoute
       && onNavigate({
         type: "PUSH",
-        route: initRoute,
+        path: initRoute,
         params: initRouteInfo
       });
     // if (!initRoute && defaultPath) {
     //   onNavigate({
     //     type: 'PUSH',
-    //     route: defaultPath
+    //     path: defaultPath
     //   });
     // } else {
     //   this.selectTab(initRoute);

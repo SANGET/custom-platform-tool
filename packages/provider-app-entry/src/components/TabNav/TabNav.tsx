@@ -9,7 +9,7 @@ export const TabNav = ({
 }) => {
   return (
     <div
-      className="tabs-for-multiple-router"
+      className="tabs-for-multiple-router bg-gray-200"
     >
       {
         routers.map((route, idx) => {
@@ -19,7 +19,7 @@ export const TabNav = ({
           return (
             <div
               key={route}
-              className="tab-item"
+              className={`tab-item${activeRoute === route ? ' active bg-gray-100' : ''}`}
             >
 
               <Link

@@ -22,11 +22,17 @@ import TableStructure from "@provider-app/table-structure/app";
 
 // export default Router;
 
-interface RouterConfigType {
-  [routeName: string]: {
-    component: HY.SubApp | HY.SubAppHOC
-    title: string
-  }
+export interface RouteItemType {
+  component: HY.SubApp | HY.SubAppHOC
+  title: string
+}
+
+export interface RedirectRouteType {
+  redirect: string
+}
+
+export interface RouterConfigType {
+  [routeName: string]: RouteItemType | RedirectRouteType
 }
 
 const RouterConfig: RouterConfigType = {
@@ -61,7 +67,7 @@ const RouterConfig: RouterConfigType = {
  * @param path
  */
 export const resolvePath = (path) => {
-  return path.split('?')[0];
+  return path.split('?')[0].replace('#', '');
 };
 
 /**
@@ -70,7 +76,7 @@ export const resolvePath = (path) => {
  */
 export const getRouteName = (path) => {
   const routeName = RouterConfig[resolvePath(path)]?.title;
-  if (!routeName) console.error(`请注意，没找到注册的路由信息 ${path}`);
+  if (!routeName) console.warn(`请注意，没找到注册的路由信息 ${path}`);
   return routeName;
 };
 

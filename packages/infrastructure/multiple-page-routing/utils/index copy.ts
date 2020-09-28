@@ -13,10 +13,8 @@ export interface NavigateConfig {
   params?: NavParams
   /** 路由类型 */
   type: 'PUSH' | 'GO_BACK' | 'LINK' | 'POP'
-  /** 需要跳转的路由，废弃的，需要换成 path */
-  route?: string
-  /** pathname */
-  path: string
+  /** 需要跳转的路由 */
+  route: string
   /** 是否使用默认的 params，会在 url 中加入 */
   useDefaultParams?: boolean
 }
@@ -37,15 +35,15 @@ export const getRouteKey = () => ROUTE_KEY;
 /**
  * push to history
  */
-export const pushToHistory = (url: string, historyState?) => {
-  history.push(url.replace(/\/\//g, "/"), historyState);
+export const pushToHistory = (url: string, params?) => {
+  history.push(url.replace(/\/\//g, "/"), params);
 };
 
 /**
  * replace history
  */
-export const replaceHistory = (url: string, historyState?) => {
-  history.replace(url.replace(/\/\//g, "/"), historyState);
+export const replaceHistory = (url: string, params?) => {
+  history.replace(url.replace(/\/\//g, "/"), params);
 };
 
 let _defaultParams = {};
@@ -68,18 +66,18 @@ export const setDefaultParams = (
  * 包装通过 push 方式的 url 格式
  */
 export const wrapPushUrl = (pushConfig: NavigateConfig) => {
-  // const { href, hash } = window.location;
-  // const targetHash = hash.replace("#/", "").split("?")[0];
-  const { path, params, useDefaultParams = true } = pushConfig;
+  const { href, hash } = window.location;
+  const targetHash = hash.replace("#/", "").split("?")[0];
+  const { route, params, useDefaultParams = true } = pushConfig;
   let result = urlParamsToQuery({
     params: Object.assign({}, params,
-      // {
-      //   [ROUTE_KEY]: path
-      // }
-      useDefaultParams && _defaultParams,),
+      useDefaultParams && _defaultParams,
+      {
+        [ROUTE_KEY]: route
+      }),
     toBase64: true,
   });
-  result = `${path}${result.replace(/&$/g, "")}`;
+  result = `${targetHash}${result.replace(/&$/g, "")}`;
   return result;
 };
 
@@ -99,10 +97,9 @@ export const onNavigate: OnNavigate = (config) => {
   if (!config) {
     throw Error('需要传入 config，请检查调用');
   }
-  const { path } = config;
-  if (!path) return;
   const { location } = history;
   const nextConfig = produce(config, (draft) => {
+    // eslint-disable-next-line no-param-reassign
     draft.from = location;
   });
   const { type } = nextConfig;

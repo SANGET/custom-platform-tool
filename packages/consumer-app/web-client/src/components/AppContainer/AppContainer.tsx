@@ -1,7 +1,7 @@
 import React from "react";
 
 import {
-  RouterMultiple,
+  MultipleRouterManager,
   Link,
   defaultState as defaultRouteState,
   RouterState,
@@ -33,7 +33,7 @@ const pageAuthCache = {};
 
 const appContext = {};
 
-export class AppContainer extends RouterMultiple<AppContainerProps, AppContainerState> {
+export class AppContainer extends MultipleRouterManager<AppContainerProps, AppContainerState> {
   state: AppContainerState = defaultRouteState;
 
   constructor(props) {

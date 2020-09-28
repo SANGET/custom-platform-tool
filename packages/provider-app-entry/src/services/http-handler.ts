@@ -150,10 +150,10 @@ function handleRes(resData) {
     case 'A0300':
       // console.log(resData);
       // 处理没找到应用的业务逻辑
-      AntdMessage.error(msg);
+      // AntdMessage.error(msg);
       onNavigate({
         type: 'PUSH',
-        route: '',
+        path: '/login',
         useDefaultParams: false
       });
       break;
@@ -188,4 +188,16 @@ declare global {
   }
 }
 
-window.$R_P = $R;
+/**
+ * 定义不可被更改的 $R_P 属性
+ */
+Object.defineProperties(window, {
+  $R_P: {
+    get() {
+      return $R;
+    },
+    set() {
+      return false;
+    }
+  }
+});
