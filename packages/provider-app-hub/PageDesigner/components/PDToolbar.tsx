@@ -1,5 +1,6 @@
 import React from 'react';
-import { Button } from '@infra/ui';
+import { Button, ShowModal } from '@infra/ui';
+import { getPreviewUrl } from '@provider-app/config/getPreviewUrl';
 
 import { EditButton } from "./PDPageMetadataEditor/EditButton";
 
@@ -9,6 +10,7 @@ interface ToolbarCustomProps {
 
 const ToolbarCustom: React.FC<ToolbarCustomProps> = ({
   onReleasePage,
+  location
 }) => {
   return (
     <div>
@@ -25,6 +27,23 @@ const ToolbarCustom: React.FC<ToolbarCustomProps> = ({
           hola
           className="mr10"
           onClick={(e) => {
+            ShowModal({
+              title: 'PC 预览',
+              modalType: 'side',
+              position: 'bottom',
+              maxHeightable: false,
+              children: () => {
+                const previewUrl = getPreviewUrl(location);
+                return (
+                  <div style={{
+                    height: '90vh'
+                  }}
+                  >
+                    <iframe src={previewUrl} width="100%" height="100%" frameBorder="0" />
+                  </div>
+                );
+              }
+            });
           }}
         >
           PC 预览
@@ -33,6 +52,21 @@ const ToolbarCustom: React.FC<ToolbarCustomProps> = ({
           hola
           className="mr10"
           onClick={(e) => {
+            ShowModal({
+              title: 'Mobile 预览',
+              width: 500,
+              children: () => {
+                const previewUrl = getPreviewUrl(location);
+                return (
+                  <div style={{
+                    height: '70vh',
+                  }}
+                  >
+                    <iframe src={previewUrl} width="100%" height="100%" frameBorder="0" />
+                  </div>
+                );
+              }
+            });
           }}
         >
           手机预览

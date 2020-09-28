@@ -1,5 +1,6 @@
 import React from 'react';
 import { CloseModal, ShowModal } from '@infra/ui';
+import { PlusOutlined } from '@ant-design/icons';
 import { DataSourceBinder } from "./DataSourceBinder";
 
 export const DataSourceSelector = ({
@@ -7,9 +8,11 @@ export const DataSourceSelector = ({
   datasources
 }) => {
   return (
-    <div>
-      数据源
-      <span
+    <div className="flex items-center">
+      <span>
+        数据源
+      </span>
+      <PlusOutlined
         onClick={(e) => {
           const modalID = ShowModal({
             title: '添加数据源',
@@ -18,7 +21,7 @@ export const DataSourceSelector = ({
                 <DataSourceBinder
                   bindedDataSources={datasources}
                   onSubmit={(submitData) => {
-                    // console.log(submitData);
+                  // console.log(submitData);
                     onAddDataSource(submitData);
                     CloseModal(modalID);
                   }}
@@ -27,9 +30,7 @@ export const DataSourceSelector = ({
             }
           });
         }}
-      >
-        +
-      </span>
+      />
     </div>
   );
 };

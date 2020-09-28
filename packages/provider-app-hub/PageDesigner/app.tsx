@@ -13,6 +13,7 @@ import {
 } from "./services";
 
 import './style';
+import { LoadingTip } from "./components/Loading";
 // import { VisualEditorStore } from "@engine/visual-editor/core/store";
 
 interface VisualEditorAppProps extends VisualEditorState {
@@ -149,9 +150,9 @@ class PageDesignerApp extends React.Component<VisualEditorAppProps & HY.SubAppSp
     const { id: activeEntityID, entity: activeEntity } = selectedInfo;
 
     return appContext.ready ? (
-      <div className="visual-app">
+      <div className="visual-app bg-white">
         <header className="app-header">
-          <ToolBar onReleasePage={this.onReleasePage}/>
+          <ToolBar onReleasePage={this.onReleasePage} location={location} />
         </header>
         <div className="app-content">
           <div
@@ -202,10 +203,7 @@ class PageDesignerApp extends React.Component<VisualEditorAppProps & HY.SubAppSp
         </div>
       </div>
     ) : (
-      // TODO: 优化样式
-      <div>
-        Loading data
-      </div>
+      <LoadingTip />
     );
   }
 }
