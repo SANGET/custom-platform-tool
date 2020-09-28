@@ -1,6 +1,6 @@
 import React from 'react';
 import Editor, { PropertiesEditorProps } from '@engine/visual-editor/components/PropertiesEditor';
-import { PropItemRenderer } from './PropItemRenderer';
+import { PropItemRenderer } from './PDPropItemRenderer';
 
 interface PropsEditorProps extends PropertiesEditorProps {
   customConfig?: any

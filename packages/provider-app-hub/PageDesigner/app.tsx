@@ -4,10 +4,10 @@ import produce from 'immer';
 import { VEDispatcher, VisualEditorState } from "@engine/visual-editor/core";
 import { updatePageService } from "@provider-app/services";
 import { ApiSavePage } from "@mock-data/page-designer/mock-api/edit-page";
-import ToolBar from './components/Toolbar';
-import WidgetPanel from './components/WidgetPanel';
-import CanvasStage from './components/CanvasStage';
-import PropertiesEditor from './components/PropertiesEditor';
+import ToolBar from './components/PDToolbar';
+import WidgetPanel from './components/PDWidgetPanel';
+import CanvasStage from './components/PDCanvasStage';
+import PropertiesEditor from './components/PDPropertiesEditor';
 import { wrapPageData } from "./utils";
 import {
   getFEDynamicData, getPageContentWithDatasource
