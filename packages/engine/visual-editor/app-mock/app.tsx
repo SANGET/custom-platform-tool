@@ -16,7 +16,7 @@ import {
   getWidgetPanelData,
   getPagePropItems,
   getPropItemData,
-} from "@mock-data/page-designer/mock-data";
+} from "@spec/business-widget/mock-data";
 import { ApiGetPageData, ApiSavePage } from "@mock-data/page-designer/mock-api/edit-page";
 import { EditButton } from "../components/PageMetadataEditor";
 import { wrapPageData } from "../core/utils/wrap-page-data";
@@ -25,6 +25,7 @@ import Style from './style';
 
 import '../style/index.scss';
 import { FrameLayout } from "../components/LayoutFrame";
+import { PropItemRenderer } from "./PropItemRenderer";
 
 interface VisualEditorAppProps extends VisualEditorState {
   dispatcher: VEDispatcher
@@ -157,6 +158,7 @@ const VisualEditorApp: React.FC<VisualEditorAppProps> = (props) => {
               <PropertiesEditor
                 key={activeEntityID}
                 propItemData={appContext.propItemData}
+                propItemRenderer={(_props) => <PropItemRenderer {..._props} />}
                 propertiesConfig={appContext?.compClassCollection[activeEntity?._classID]?.bindPropItems}
                 selectedEntity={activeEntity}
                 defaultEntityState={activeEntity.propState}

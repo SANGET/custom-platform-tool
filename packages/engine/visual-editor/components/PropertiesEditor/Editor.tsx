@@ -8,7 +8,6 @@ import {
   WidgetEntity, WidgetEntityState, PropItemType,
   WidgetBindPropItemsType,
 } from '../../data-structure';
-import { PropItemRenderer as PropItemRendererDefault } from './PropItemRenderer';
 import { extractPropConfig } from './extractPropConfig';
 import { entityStateMergeRule } from './entityStateMergeRule';
 import { PropItemRendererProps } from './types';
@@ -35,7 +34,7 @@ export interface PropertiesEditorProps {
   /** 初始化实例 */
   initEntityState: InitEntityStateOfEditor
   /** 每个属性项的渲染器 */
-  propItemRenderer?: (props: PropItemRendererProps) => JSX.Element
+  propItemRenderer: (props: PropItemRendererProps) => JSX.Element
 }
 
 const debounce = new Debounce();
@@ -136,12 +135,6 @@ PropertiesEditorProps, PropertiesEditorState
     return bindPropItems;
   }
 
-  defaultPropItemRenderer = (props) => {
-    return (
-      <PropItemRendererDefault {...props} />
-    );
-  }
-
   /**
    * 渲染每个属性项
    */
@@ -149,7 +142,7 @@ PropertiesEditorProps, PropertiesEditorState
     const {
       selectedEntity,
       propItemData,
-      propItemRenderer = this.defaultPropItemRenderer
+      propItemRenderer
     } = this.props;
     const { entityState } = this.state;
     // const { bindPropItems } = selectedEntity;
@@ -212,7 +205,7 @@ PropertiesEditorProps, PropertiesEditorState
           {
             propItemRenderer({
               propItemValue: activeState,
-              onChange: (nextValue, propConfigRes) => {
+              onChange: (nextValue) => {
                 /**
                  * 性能优化部分
                  */
@@ -222,7 +215,7 @@ PropertiesEditorProps, PropertiesEditorState
                 /**
                  * 更新数据
                  */
-                this.updateEntityStateForSelf(propConfigRes, nextValue);
+                this.updateEntityStateForSelf(propItemConfig, nextValue);
 
                 debounce.exec(() => {
                   this.props.updateEntityState(this.state.entityState);

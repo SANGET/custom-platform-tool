@@ -3,17 +3,17 @@ import React from "react";
 import produce from 'immer';
 import { VEDispatcher, VisualEditorState } from "@engine/visual-editor/core";
 import { updatePageService } from "@provider-app/services";
-import { ApiSavePage } from "@mock-data/page-designer/mock-api/edit-page";
-import ToolBar from './components/Toolbar';
-import WidgetPanel from './components/WidgetPanel';
-import CanvasStage from './components/CanvasStage';
-import PropertiesEditor from './components/PropertiesEditor';
+import ToolBar from './components/PDToolbar';
+import WidgetPanel from './components/PDWidgetPanel';
+import CanvasStage from './components/PDCanvasStage';
+import PropertiesEditor from './components/PDPropertiesEditor';
 import { wrapPageData } from "./utils";
 import {
   getFEDynamicData, getPageContentWithDatasource
 } from "./services";
 
 import './style';
+import { LoadingTip } from "./components/Loading";
 // import { VisualEditorStore } from "@engine/visual-editor/core/store";
 
 interface VisualEditorAppProps extends VisualEditorState {
@@ -127,7 +127,6 @@ class PageDesignerApp extends React.Component<VisualEditorAppProps & HY.SubAppSp
   onReleasePage = () => {
     const pageContent = this.getPageContent();
     updatePageService(this.getPageInfo(), pageContent);
-    ApiSavePage(pageContent);
   }
 
   render() {
@@ -151,9 +150,9 @@ class PageDesignerApp extends React.Component<VisualEditorAppProps & HY.SubAppSp
     const { id: activeEntityID, entity: activeEntity } = selectedInfo;
 
     return appContext.ready ? (
-      <div className="visual-app">
+      <div className="visual-app bg-white">
         <header className="app-header">
-          <ToolBar onReleasePage={this.onReleasePage}/>
+          <ToolBar onReleasePage={this.onReleasePage} location={location} />
         </header>
         <div className="app-content">
           <div
@@ -204,10 +203,7 @@ class PageDesignerApp extends React.Component<VisualEditorAppProps & HY.SubAppSp
         </div>
       </div>
     ) : (
-      // TODO: 优化样式
-      <div>
-        Loading data
-      </div>
+      <LoadingTip />
     );
   }
 }

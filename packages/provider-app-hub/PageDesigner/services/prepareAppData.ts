@@ -2,7 +2,7 @@ import {
   getWidgetDefinitionData, getWidgetPanelData,
   getPagePropItems, getPropItemData,
   getPropPanelData,
-} from "@mock-data/page-designer/mock-data";
+} from "@spec/business-widget/mock-data";
 import { getPageDetailService } from "@provider-app/services";
 // import { getDataSourcePanelConfig } from "../components/DataSource";
 import { extraDatasources } from "./datasource";

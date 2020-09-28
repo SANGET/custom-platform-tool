@@ -90,7 +90,7 @@ const Table: React.FC<IProps> = (props: IProps, ref) => {
     if (operate === "edit") {
       onNavigate({
         type: "PUSH",
-        route: '/data_designer/edit_struct',
+        route: `/table-info?${id}`,
         params: { id, title: '编辑表' }
       });
     } else if (operate === "delete") {

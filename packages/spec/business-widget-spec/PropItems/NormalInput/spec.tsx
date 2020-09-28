@@ -6,9 +6,14 @@ import { PropItemCompAccessSpec } from '../../interfaces';
 export class NormalInputSpec implements PropItemCompAccessSpec {
   name = 'NormalInput'
 
-  render(props) {
+  render(value, onChangeState) {
     return (
-      <Input {...props} />
+      <Input
+        value={value}
+        onChange={(val) => {
+          onChangeState(val);
+        }}
+      />
     );
   }
 }

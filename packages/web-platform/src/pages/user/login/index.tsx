@@ -2,7 +2,7 @@
 import React from 'react';
 import { connect, Dispatch, history } from 'umi';
 import {
-  Alert, Form, Input, Button
+  Alert, Form, Input, Button,
 } from 'antd';
 import { LockTwoTone, UserOutlined } from '@ant-design/icons';
 
@@ -80,36 +80,38 @@ const Login: React.FC<ILoginProps> = (props) => {
       {message && (
         <LoginMessage content={message} />
       )}
-      <Form
-        onFinish={onFinish}
-      >
-        <Form.Item
-          name="username"
-          rules={[{
-            required: true,
-            message: '请填写用户名'
-          }]}
+      <div className={styles["form-container"]}>
+        <Form
+          onFinish={onFinish}
         >
-          <Input
-            size="large" prefix={<UserOutlined style={{
-              color: '#1890ff',
-            }}
-            />}
-          />
-        </Form.Item>
-        <Form.Item
-          name="password"
-          rules={[{
-            required: true,
-            message: '请输入密码'
-          }]}
-        >
-          <Input.Password size="large" prefix={<LockTwoTone />} />
-        </Form.Item>
-        <Form.Item>
-          <Button type="primary" htmlType="submit" loading={submitting}>登录</Button>
-        </Form.Item>
-      </Form>
+          <Form.Item
+            name="username"
+            rules={[{
+              required: true,
+              message: '请填写用户名'
+            }]}
+          >
+            <Input
+              size="large" prefix={<UserOutlined style={{
+                color: '#1890ff',
+              }}
+              />}
+            />
+          </Form.Item>
+          <Form.Item
+            name="password"
+            rules={[{
+              required: true,
+              message: '请输入密码'
+            }]}
+          >
+            <Input.Password size="large" prefix={<LockTwoTone />} />
+          </Form.Item>
+          <Form.Item>
+            <Button type="primary" size="large" className={styles['submit-btn']} htmlType="submit" loading={submitting}>登录</Button>
+          </Form.Item>
+        </Form>
+      </div>
     </div>
   );
 };

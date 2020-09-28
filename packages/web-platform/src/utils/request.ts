@@ -5,6 +5,7 @@
 import { extend } from 'umi-request';
 import { notification } from 'antd';
 import store from 'store';
+import HOSTENV from './env';
 
 const codeMessage = {
   200: '服务器成功返回请求的数据。',
@@ -50,10 +51,26 @@ const errorHandler = (error: { response: Response }): Response => {
  */
 const request = extend({
   errorHandler, // 默认错误处理
-  credentials: 'include', // 默认请求是否带上cookie
+  credentials: 'same-origin', // 默认请求是否带上cookie
   headers: {
     Authorization: `Bearer ${store.get("token")}`
-  }
+  },
 });
-
+/** request 拦截器
+ * 根据不同URL 前缀来添加host 地址
+ */
+request.interceptors.request.use((url, options) => {
+  const completeUrl = urlAddPrefix(url);
+  return {
+    url: completeUrl,
+    options: { ...options },
+  };
+});
+/** 根据url 来组装对应的host */
+const urlAddPrefix = (url: string): string => {
+  const host = HOSTENV.get();
+  const pre = url.split("/").filter((item) => item);
+  const prefix = pre[0].toLocaleUpperCase();
+  return host[prefix] + url;
+};
 export default request;

@@ -1,3 +1,4 @@
+import { ChangeEntityState } from "@spec/business-widget";
 import { PropItemType } from "../../data-structure";
 
 /**
@@ -8,5 +9,5 @@ export interface PropItemRendererProps {
   /** 属性项的值 */
   propItemValue
   /** 属性项的 onChange 回调 */
-  onChange: (value: any, propItem: PropItemType) => void
+  onChange: ChangeEntityState
 }

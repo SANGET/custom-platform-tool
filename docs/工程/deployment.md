@@ -51,15 +51,15 @@ yarn
 
 ### 5.2. 前端静态资源
 
-环境配置文件是 `{部署目录}/public/config.json` ，由 docker 启动时动态指定。
+环境配置文件是 `{部署目录}/config.json` ，由 docker 启动时动态指定。
 
 #### 5.2.1. 构建配置平台前端
 
 ```bash
-yarn build:provider-app
+yarn build:provider-app-entry
 ```
 
-构建后文件输出到：`/项目目录/packages/provider-app-entry/app/build`
+构建后文件输出到：`/项目目录/packages/provider-app-entry/app/dist`
 
 #### 5.2.2. 构建应用平台前端
 
@@ -76,11 +76,10 @@ yarn build:web-platform
 #### 5.3.1. 构建
 
 ```bash
-cd ./web-server
-npm run build
+yarn build:web-server
 ```
 
-将构建后的文件输出到目录 `{目录}web-server/dist` 之中，然后使用 `pm2` 进程守卫来启动程序：
+将构建后的文件输出到目录 `/项目目录/packages/web-server/dist` 之中，然后使用 `pm2` 进程守卫来启动程序：
 
 ```bash
 pm2 start {目录}web-server/dist/main.js

@@ -144,6 +144,7 @@ module.exports = {
     "/node_modules/",
     "/scripts/",
     "/web-server",
+    "spec.tsx",
     "/.bak/",
   ],
 
