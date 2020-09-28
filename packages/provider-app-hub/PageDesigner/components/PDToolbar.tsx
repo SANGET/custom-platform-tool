@@ -1,7 +1,7 @@
 import React from 'react';
 import { Button } from '@infra/ui';
 
-import { EditButton } from "./PageMetadataEditor/EditButton";
+import { EditButton } from "./PDPageMetadataEditor/EditButton";
 
 interface ToolbarCustomProps {
   onReleasePage?: () => void

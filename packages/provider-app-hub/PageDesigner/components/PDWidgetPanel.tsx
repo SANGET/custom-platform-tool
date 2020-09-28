@@ -4,7 +4,7 @@ import DragItemComp from '@engine/visual-editor/spec/DragItemComp';
 import { DragableItemTypes } from '@engine/visual-editor/spec';
 import { Tab, Tabs } from '@infra/ui';
 import { GroupItemsRender, PanelItemsGroup } from '@engine/visual-editor/components/GroupPanel';
-import { DataSourceDragItem, DataSourceSelector } from './DataSource';
+import { DataSourceDragItem, DataSourceSelector } from './PDDataSource';
 
 export interface PageDesignerComponentPanelProps {
   datasources
