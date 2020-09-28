@@ -1,5 +1,5 @@
 {
-  "BASE_AUTH_HOST": "localhost:8000",
-  "BASE_WEB_HOST": "localhost:8000",
-  "BASE_HOST": "localhost:8000"
+  "AUTH": "http://localhost:8000",
+  "NODE-WEB": "http://10.11.6.193:3000",
+  "API": "http://localhost:8000"
 }
