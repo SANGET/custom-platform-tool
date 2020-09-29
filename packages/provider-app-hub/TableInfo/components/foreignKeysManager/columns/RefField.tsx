@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Form, Select } from 'antd';
 import { FormInstance } from 'antd/lib/form';
 
@@ -21,7 +21,7 @@ interface IProps {
   label?: string
   handleChange?: (param: {fieldSize: number, name: string, fieldType: string})=>void
 }
-export const RefField: React.FC<IProps> = (props: IProps) => {
+const RefField: React.FC<IProps> = (props: IProps) => {
   const {
     form, text, record, code, name, label, handleChange
   } = props;
@@ -45,6 +45,9 @@ export const RefField: React.FC<IProps> = (props: IProps) => {
     });
   };
 
+  useEffect(() => {
+    editable && getMenusData();
+  }, [editable]);
   const handleValueChange = (value) => {
     const {
       [COLUMNS_KEY.FIELDSIZE]: fieldSize,
