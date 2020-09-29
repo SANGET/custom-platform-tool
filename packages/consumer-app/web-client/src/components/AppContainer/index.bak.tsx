@@ -89,7 +89,7 @@ class AppContainer extends MultipleRouterManager<AppContainerProps, AppContainer
 
   render() {
     const {
-      routers, routerInfo, activeRouteIdx, activeRoute,
+      routers, routerSnapshot, activeRouteIdx, activeRoute,
       navStore, ready
     } = this.state;
     const { children } = this.props;
@@ -129,8 +129,8 @@ class AppContainer extends MultipleRouterManager<AppContainerProps, AppContainer
               </div>
               <div className="pages-container">
                 {
-                  Object.keys(routerInfo).map((pageID, idx) => {
-                    const pageItemInfo = routerInfo[pageID];
+                  Object.keys(routerSnapshot).map((pageID, idx) => {
+                    const pageItemInfo = routerSnapshot[pageID];
                     const currPage = pageCache[pageID];
                     const pageAuthInfo = pageAuthCache[pageID];
                     const isShow = pageID === activeRoute;
