@@ -16,7 +16,7 @@ const Container: React.FC<IContainerProps> = (props) => {
   } = query;
   useEffect(() => {
     getPageData();
-  }, []);
+  }, [query]);
   const getPageData = async () => {
     if (pageId) {
       const res = await queryPageData({

@@ -152,11 +152,12 @@ const TabsModel: ITabsModel = {
     },
     /** 点击tabs 更新  */
     updata(state: ITabsModelState = inintState, { payload }): ITabsModelState {
+      const queryLink = getQueryByParams(["mode", "app", "lessee"]);
       const findTab = state.list.find((tab) => tab.menuId === payload) as ITabsItem;
       const {
-        path, menuId, mode, app, lessee, pageId
+        path, menuId, pageId
       } = findTab;
-      const link = `${path}?menuId=${menuId}&mode=${mode}&app=${app}&lessee=${lessee}&pageId=${pageId}`;
+      const link = `${path}?menuId=${menuId}&${queryLink}&pageId=${pageId}`;
       history.push(link);
       state.activeKey = payload;
       return state;
