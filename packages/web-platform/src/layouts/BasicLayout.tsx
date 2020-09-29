@@ -73,9 +73,9 @@ class BasicLayout extends React.PureComponent<IBasicLayoutProps, IBaseLayoutStat
       dispatch({
         type: "menus/addPreViewMenu",
         payload: {
-          // id: "preview",
+          id: "preview",
           page: "/page",
-          path: "/preview",
+          path: "preview",
           name: "预览",
           menuId: "preview",
           pageId
@@ -87,7 +87,7 @@ class BasicLayout extends React.PureComponent<IBasicLayoutProps, IBaseLayoutStat
           path: "/page",
           title: "预览",
           closable: true,
-          menuId: "/preview",
+          menuId: "preview",
           pageId
         }
       });
