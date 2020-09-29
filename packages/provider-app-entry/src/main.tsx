@@ -7,6 +7,7 @@ import React from "react";
 import { Provider, connect } from "unistore/react";
 
 import AuthSelector from "@infra/auth-selector/selector";
+import { redirectToRoot } from "multiple-page-routing";
 import {
   authStore, authActions, AuthStore, AuthActionsTypes, AuthStoreState
 } from "./auth/actions";
@@ -57,7 +58,9 @@ type LoginFilterProps = AuthStoreState
 
 class LoginFilter extends React.Component<LoginFilterProps> {
   componentDidMount = () => {
-    this.props.autoLogin();
+    const { autoLogin, isLogin } = this.props;
+    if (!isLogin) redirectToRoot();
+    autoLogin();
     // Call(window.OnLuanched);
     removeLoadingBG();
   }

@@ -1,14 +1,14 @@
+import { LogoutOutlined } from '@ant-design/icons';
 import React from 'react';
 
 export const UserStatusbar = ({
   logout
 }) => {
   return (
-    <div
+    <LogoutOutlined
       onClick={logout}
-      className="user-statusbar p10 text-red-500"
-    >
-      退出登录
-    </div>
+      title="退出登录"
+      className="user-statusbar ps20"
+    />
   );
 };
