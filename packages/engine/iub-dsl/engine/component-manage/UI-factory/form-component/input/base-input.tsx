@@ -48,6 +48,7 @@ export const BaseInputFactory: React.FC<BaseInputProps> = React.memo(
 
     return (
       <Input
+        style={{ width: 300 }}
         defaultValue={value}
         // value={value}
         // value={normalInputVal}
