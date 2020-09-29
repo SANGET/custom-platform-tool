@@ -23,7 +23,9 @@ const fromItemCompName = AllUI.BaseInput;
  * @param param0 FormItemProps
  */
 const FormItemFactory: React.FC<FormItemProps & {id: string}> = (
-  { id, children, ...ohterProps }
+  {
+    id, children, label, ...ohterProps
+  }
 ) => {
   /** 下面三步确保props全部正确可用 */
   const allPropsKey = Object.keys(ohterProps);
@@ -34,6 +36,7 @@ const FormItemFactory: React.FC<FormItemProps & {id: string}> = (
   return (
     <Form.Item
       key={id}
+      label={<span style={{ color: '#339' }}>{label}</span>} // TODO: 新组件
       {...actualProps}
     >
       {children}

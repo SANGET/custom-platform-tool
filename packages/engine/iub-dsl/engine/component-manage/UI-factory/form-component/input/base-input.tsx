@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Input } from 'antd';
 import { BaseInputProps, InputProps } from './i-base-input';
 import { assertPropsKey, basePickPropsCstr, basePropsMapCstr } from '../../utils';
@@ -13,7 +13,8 @@ import { AllUI } from '../../types';
  */
 export const baseInputPropsMapList = {
   unit: 'suffix',
-  placeholder: 'placeholder'
+  placeholder: 'placeholder',
+  value: 'value,'
 };
 export const baseInputPropsKes = Object.keys(baseInputPropsMapList);
 
@@ -38,11 +39,22 @@ export const BaseInputFactory: React.FC<BaseInputProps> = React.memo(
     const actualProps: InputProps = baseInputPropsMap(ohterProps, canUsePropsKey);
     /** 必要的断言 */
     assertPropsKey(id, allPropsKey, canUsePropsKey);
+
+    console.log(value);
+
+    /** TODO: 个人觉得应该为受控组件, 怎么修改都应该是外部确定的 */
+    // const [normalInputVal, setnormalInputVal] = useState(value || '');
+    // useEffect(() => {
+    //   setnormalInputVal(value);
+    // }, [value]);
+
     return (
       <Input
         value={value}
+        // value={normalInputVal}
         key={id}
         onChange={(e) => {
+          // setnormalInputVal(e.target.value);
           onChange?.(e);
         }}
         {...actualProps}

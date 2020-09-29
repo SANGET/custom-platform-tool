@@ -1,29 +1,87 @@
+import React, {
+  useState, useEffect, useMemo, useLayoutEffect
+} from 'react';
+
 export const asyncResolve = (resVal, time = 1) => new Promise((resolve, reject) => {
   const timer = setTimeout(() => {
     resolve(resVal);
     clearTimeout(timer);
   }, time * 1000);
 });
+interface PropHandle {
+  (props: any, { result: any }): any
+}
+const originPropHandle: PropHandle = (props, { result }) => {
+  const { key, val } = props;
+  result[key] = val; // TODO
+  return { [key]: val };
+};
+
+const originPropsListHandle = (
+  propsMapList: any[],
+  { propHandle }, // options
+  context
+) => {
+  const l = propsMapList.length;
+  for (let i = 0; i < l; i++) {
+    propHandle(propsMapList[i], context);
+  }
+};
+
+export const useCompProps = (propsMap) => {
+  /** 额外代码 */
+  const aopContext = {
+    asyncHandle: [] as Promise<any>[],
+    asyncNum: 0,
+  };
+  const context = {
+    result: {}
+  };
+  /** 额外代码 */
+  const enhancePropHandle = propHandleWrap(originPropHandle, aopContext);
+
+  originPropsListHandle(propsMap, { propHandle: enhancePropHandle }, context);
+
+  const [tempCompProps, setCompProps] = useState(context.result || {});
+
+  /** 额外代码 - 观察变化的 */
+  useEffect(() => {
+    aopContext.asyncHandle.forEach((promise) => promise.then((newProps) => {
+      setCompProps({
+        ...tempCompProps,
+        ...newProps
+      });
+    }));
+  }, []);
+
+  return {
+    compProps: useMemo(() => {
+      return tempCompProps;
+    }, [tempCompProps]),
+    setCompProps
+  };
+};
 
 const propHandleWrap = (originHandle, context, options?) => {
   /** 拦截的前置处理 */
 
   /** 调用时候的函数 */
-  return ({ key, val }) => {
+  return ({ key, val }, ctx) => {
     /** 仅处理某个参数 */
 
+    // TODO: 正常不应该影响input的渲染「待查到问题优化」
     if (key === 'label' && Math.random() > 0.3) {
-      context.async.push(asyncResolve(
+      context.asyncHandle.push(asyncResolve(
         originHandle({
           key, val: '异步文本'
-        })
+        }, ctx)
       ));
     }
 
     /** 处理完的参数 */
 
     /** 真实处理 */
-    const handelerRes = originHandle({ key, val });
+    const handelerRes = originHandle({ key, val }, ctx);
 
     return handelerRes;
   };
@@ -36,51 +94,3 @@ const propHandleWrap = (originHandle, context, options?) => {
  * 1. 对propHandle处理的增强
  * 2. 与之对应需要在, 赋值的时候, 实现对增强结果的监听
  */
-export const handlePropsList = (list) => {
-  /** 测试代码: 最大调用方实现 */
-  const ctx = {
-    async: [] as Promise<any>[],
-    needAsync: 0,
-  };
-  let result = {};
-  const propHandle = ({ key, val }) => {
-    return { [key]: val };
-  };
-  // async 是针对propHandle的ctx字段
-  const enhancePropHandle = propHandleWrap(propHandle, ctx); // wrap定义ctx至少有什么
-
-  const resultPropsHandle = (props) => {
-    const propRes = enhancePropHandle(props);
-    result = {
-      ...result,
-      ...propRes
-    };
-    // 增强部分、在这一层可以知道路径
-    /** 测试代码: 这部分代码应该由最外层调用方实现 */
-    if (ctx.async.length > ctx.needAsync) {
-      ctx.async[ctx.async.length - 1].then((newRes) => {
-        result = {
-          ...result,
-          ...newRes,
-        };
-        console.log(result);
-      });
-      ctx.needAsync++;
-    }
-  };
-
-  const actralPropHandle = resultPropsHandle;
-
-  const propsMapListHandle = (
-    propsMapList: any[]
-  ) => {
-    const l = propsMapList.length;
-    for (let i = 0; i < l; i++) {
-      actralPropHandle(propsMapList[i]);
-    }
-  };
-
-  propsMapListHandle(list);
-
-  return result;
-};
