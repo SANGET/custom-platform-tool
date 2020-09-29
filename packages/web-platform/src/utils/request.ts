@@ -69,6 +69,7 @@ request.interceptors.request.use((url, options) => {
 /** 根据url 来组装对应的host */
 const urlAddPrefix = (url: string): string => {
   const host = HOSTENV.get();
+  if (!host) return url;
   const pre = url.split("/").filter((item) => item);
   const prefix = pre[0].toLocaleUpperCase();
   return host[prefix] + url;
