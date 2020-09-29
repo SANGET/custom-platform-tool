@@ -21,14 +21,14 @@ export const FormInputComp: React.FC<FormInputCompProps> = (props) => {
   } = props;
   return (
     <div>
-      <span
+      <div
         style={{
           color: labelColor
         }}
       >
         {title}
-      </span>
-      <Input value={value} />
+      </div>
+      <Input value={value} style={{ width: 300 }} />
     </div>
   );
 };

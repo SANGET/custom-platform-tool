@@ -7,6 +7,7 @@ const fromWrapCompName = AllUI.BaseInput;
 const FromWrapFactory: React.FC<FormProps> = ({ children, ...props }) => {
   return (
     <Form
+      layout="vertical"
       {...props}
     >
       {children}

@@ -4,7 +4,7 @@ import {
   translateRefTablesToSelectMenus, translateRefFieldsToSelectMenus
 } from '../../service';
 import {
-  IReference, FormInstance, IReferenceShowKey
+  FormInstance, IReferenceShowKey, IEditableRecord
 } from '../../interface';
 import { DATATYPE } from './constant';
 import { columnEditConfig } from './columnConfig';
@@ -16,7 +16,7 @@ import { columnEditConfig } from './columnConfig';
  * @param dataIndex 当前字段名
  */
 export const canColumnEdit = (
-  record: IReference, formTmpl: FormInstance, dataIndex: IReferenceShowKey
+  record: IEditableRecord, formTmpl: FormInstance, dataIndex: IReferenceShowKey
 ): boolean => {
   const canRowEdit = record?.editable;
   /** 非编辑行无需考虑 */

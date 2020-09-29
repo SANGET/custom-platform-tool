@@ -1,7 +1,7 @@
 import React from 'react';
 
 import {
-  RouterMultiple, Link,
+  MultipleRouterManager, Link,
   defaultState as defaultRouteState,
   RouterState, RouterHelperProps
 } from 'multiple-page-routing';
@@ -30,7 +30,7 @@ const pageAuthCache = {};
 
 const appContext = {};
 
-class AppContainer extends RouterMultiple<AppContainerProps, AppContainerState> {
+class AppContainer extends MultipleRouterManager<AppContainerProps, AppContainerState> {
   state: AppContainerState = defaultRouteState
 
   constructor(props) {
@@ -89,7 +89,7 @@ class AppContainer extends RouterMultiple<AppContainerProps, AppContainerState> 
 
   render() {
     const {
-      routers, routerInfo, activeRouteIdx, activeRoute,
+      routers, routerSnapshot, activeRouteIdx, activeRoute,
       navStore, ready
     } = this.state;
     const { children } = this.props;
@@ -129,8 +129,8 @@ class AppContainer extends RouterMultiple<AppContainerProps, AppContainerState> 
               </div>
               <div className="pages-container">
                 {
-                  Object.keys(routerInfo).map((pageID, idx) => {
-                    const pageItemInfo = routerInfo[pageID];
+                  Object.keys(routerSnapshot).map((pageID, idx) => {
+                    const pageItemInfo = routerSnapshot[pageID];
                     const currPage = pageCache[pageID];
                     const pageAuthInfo = pageAuthCache[pageID];
                     const isShow = pageID === activeRoute;

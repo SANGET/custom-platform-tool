@@ -1,9 +1,17 @@
+import { GoogleOutlined } from '@ant-design/icons';
 import React from 'react';
 
 export const Logo = (props) => {
   return (
     <div {...props}>
-      <h3 style={{ margin: 0, color: 'white' }} className="ps20">物联管理应用平台</h3>
+      <div
+        className="ps20 text-xl flex items-center"
+      >
+        <GoogleOutlined />
+        <span>
+        自定义工具 3.0
+        </span>
+      </div>
     </div>
   );
 };

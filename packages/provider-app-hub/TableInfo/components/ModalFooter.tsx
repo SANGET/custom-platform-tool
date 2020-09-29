@@ -4,13 +4,13 @@ import { Row, Col, Button } from 'antd';
 interface IProps {
   onCancel: ()=>void
   onOk: ()=>void
-  okText: string
-  cancelText: string
+  okText?: string
+  cancelText?: string
 }
 /**
  * 弹窗底部栏组件（确定，取消）
  */
-export const ModalFooter: React.FC<IProps> = React.memo((props: IProps): ReactElement => {
+export const ModalFooter: React.FC<IProps> = React.memo((props: IProps) => {
   const {
     onCancel, onOk, okText = "确定", cancelText = "取消"
   } = props;

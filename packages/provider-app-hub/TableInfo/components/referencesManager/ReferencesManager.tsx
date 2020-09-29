@@ -1,6 +1,6 @@
 import React, { useReducer } from 'react';
 import {
-  Table, Descriptions, Button, Row, Form
+  Table, Descriptions, Button, Row, Form, Col
 } from 'antd';
 import {
   BUTTON_TYPE, BUTTON_SIZE, REFERENCES_KEY, SPECIES
@@ -97,10 +97,10 @@ export const ReferencesManager: React.FC<IProps> = React.memo((props: IProps) =>
   };
   /** 行点击操作 */
   const handleRowClick = (formTmpl: FormInstance, record: IReference, index: number) => {
-    const { editingIndex } = referencesInfo;
-    dispatchReferences({ type: 'pushSelectedRowKey', name: record?.[REFERENCES_KEY?.ID] });
-    if (index === editingIndex) return;
-    saveRow(formTmpl);
+    const editingIndex = referencesInfo?.editingIndex;
+    saveRow(formTmpl).then((canIClick) => {
+      (canIClick || editingIndex === index) && dispatchReferences({ type: 'pushSelectedRowKey', name: record?.[REFERENCES_KEY?.ID] });
+    });
   };
   /** 行失焦操作 */
   const handleBlur = (rowKey: string) => {
@@ -178,6 +178,19 @@ export const ReferencesManager: React.FC<IProps> = React.memo((props: IProps) =>
       );
     });
   };
+
+  /**
+   * 关联字段变更时，存储字段类型，字段长度，字段名称
+   * @param refField
+   */
+  const handleRefFieldChange = (refField) => {
+    const { fieldType, fieldSize, fieldName } = refField || {};
+    form.setFieldsValue({
+      [REFERENCES_KEY?.REFFIELDTYPE]: fieldType,
+      [REFERENCES_KEY?.REFFIELDSIZE]: fieldSize,
+      [REFERENCES_KEY?.REFFIELDNAME]: fieldName
+    });
+  };
   /**
    * 字段配置数据
   */
@@ -236,6 +249,7 @@ export const ReferencesManager: React.FC<IProps> = React.memo((props: IProps) =>
           form = {form}
           name='关联字段'
           code = {REFERENCES_KEY?.REFFIELDCODE}
+          handleChange = {handleRefFieldChange}
         />
       )
     },
@@ -278,27 +292,30 @@ export const ReferencesManager: React.FC<IProps> = React.memo((props: IProps) =>
           </>
         }
       />
-      <Form form={form}>
-        <Table
-          columns = {tableColumns}
-          dataSource = { references }
-          scroll={{ y: 359, x: '100vh' }}
-          rowKey={(record) => record?.[REFERENCES_KEY?.ID]}
-          pagination = {false}
-          rowSelection = {{
-            type: 'radio',
-            hideSelectAll: true,
-            selectedRowKeys: referencesInfo?.selectedRowKeys || []
-          }}
-          onRow={(record: IReference, index: number) => {
-            return {
-              onBlur: (event) => { handleBlur(record?.[REFERENCES_KEY?.ID]); },
-              onDoubleClick: (event) => { handleRowDoubleClick(form, record, index); },
-              onClick: (event) => { handleRowClick(form, record, index); }
-            };
-          }}
-        />
-      </Form>
+      <Col span={24}>
+        <Form form={form}>
+          <Table
+            columns = {tableColumns}
+            dataSource = { references }
+            scroll={{ x: '100%' }}
+            rowKey={(record) => record?.[REFERENCES_KEY?.ID]}
+            pagination = {false}
+            rowSelection = {{
+              type: 'radio',
+              hideSelectAll: true,
+              fixed: true,
+              selectedRowKeys: referencesInfo?.selectedRowKeys || []
+            }}
+            onRow={(record: IReference, index: number) => {
+              return {
+                onBlur: (event) => { handleBlur(record?.[REFERENCES_KEY?.ID]); },
+                onDoubleClick: (event) => { handleRowDoubleClick(form, record, index); },
+                onClick: (event) => { handleRowClick(form, record, index); }
+              };
+            }}
+          />
+        </Form>
+      </Col>
     </Row>
   );
 });

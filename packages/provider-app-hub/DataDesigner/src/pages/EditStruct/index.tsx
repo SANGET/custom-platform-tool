@@ -63,7 +63,7 @@ const EditStruct: HY.SubApp = (props) => {
     setSelectedTags([tag]);
     onNavigate({
       type: "PUSH",
-      route: tag.id
+      path: tag.id
     });
   };
 
@@ -226,7 +226,7 @@ const EditStruct: HY.SubApp = (props) => {
               // onNavigate({
               //   type: "PUSH",
               //   params: { title: '表结构管理' },
-              //   route: '/TableStruct'
+              //   path: '/TableStruct'
               // });
             } else {
               Msg.error(msg);

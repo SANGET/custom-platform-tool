@@ -1,6 +1,6 @@
 import React, { useReducer } from 'react';
 import {
-  Table, Descriptions, Button, Row, Form
+  Table, Descriptions, Button, Row, Form, Col
 } from 'antd';
 
 import { KeyOutlined } from '@ant-design/icons';
@@ -13,7 +13,7 @@ import {
   Name, Code, FieldType, FieldSize, DataType, DecimalSize, Required, Unique, PinyinConvert, Dict
 } from './columns';
 import { CreateModal } from '../CreateModel';
-import { ChooseDict } from './modal';
+import { ChooseDict, CreateReference, CreateForeignKey } from './modal';
 import RenderText from '../RenderText';
 import { ITableColumn } from '../../interface';
 import {
@@ -39,12 +39,14 @@ export const ColumnsManager: React.FC<IProps> = React.memo((props: IProps) => {
     editingKey: '',
     /** 是否显示字典弹窗 */
     visibleChooseDictModal: false,
+    /** 是否显示字典弹窗 */
+    visibleCreateReferenceModal: false,
     /** 数据类型下拉项 */
     dataTypeMenu: DATATYPEMENU[FIELDTYPE.STRING],
     /** 长度的输入，默认值和最大长度 */
     fieldSizeRegular: FIELDSIZEREGULAR[FIELDTYPE.STRING],
     /** 字典 */
-    dictId: '',
+    dictIds: '',
     /** 默认显示业务字段 */
     showSYSSpecies: false
   });
@@ -98,7 +100,7 @@ export const ColumnsManager: React.FC<IProps> = React.memo((props: IProps) => {
   };
   /** 保存编辑行数据 */
   const saveRow = async (formTmpl: FormInstance) => {
-    const { editingKey } = columnsInfo;
+    const editingKey = columnsInfo?.editingKey;
     if (editingKey === '') return true;
     const index = getIndexByEditingKey(editingKey, columns);
     try {
@@ -124,7 +126,7 @@ export const ColumnsManager: React.FC<IProps> = React.memo((props: IProps) => {
   };
   /** 行的双击操作 */
   const handleRowDoubleClick = (formTmpl: FormInstance, record: ITableColumn) => {
-    let { editingKey } = columnsInfo;
+    let editingKey = columnsInfo?.editingKey;
     if (record?.[COLUMNS_KEY?.ID] === editingKey) return;
     saveRow(formTmpl).then((canIEdit) => {
       if (!canIEdit) return;
@@ -136,10 +138,11 @@ export const ColumnsManager: React.FC<IProps> = React.memo((props: IProps) => {
     });
   };
   const handleRowClick = (formTmpl: FormInstance, record: ITableColumn) => {
-    const { editingKey } = columnsInfo;
-    dispatchColumns({ type: 'pushSelectedRowKey', name: record?.[COLUMNS_KEY.ID] });
-    if (record?.[COLUMNS_KEY?.ID] === editingKey) return;
-    saveRow(formTmpl);
+    // const editingKey = columnsInfo?.editingKey;
+    // if (record?.[COLUMNS_KEY?.ID] === editingKey) return;
+    saveRow(formTmpl).then((canIClick) => {
+      canIClick && dispatchColumns({ type: 'pushSelectedRowKey', name: record?.[COLUMNS_KEY.ID] });
+    });
   };
   /** 行失焦操作 */
   const handleBlur = (rowKey: string) => {
@@ -151,9 +154,9 @@ export const ColumnsManager: React.FC<IProps> = React.memo((props: IProps) => {
     const id = `${new Date().valueOf()}`;
     const row: ITableColumn = {
       [COLUMNS_KEY.ID]: id,
-      [COLUMNS_KEY.NAME]: '',
-      [COLUMNS_KEY.CODE]: '',
-      [COLUMNS_KEY.FIELDTYPE]: FIELDTYPE.STRING,
+      [COLUMNS_KEY.NAME]: obj?.[COLUMNS_KEY.NAME] || '',
+      [COLUMNS_KEY.CODE]: obj?.[COLUMNS_KEY.CODE] || '',
+      [COLUMNS_KEY.FIELDTYPE]: obj?.[COLUMNS_KEY.FIELDTYPE] || FIELDTYPE.STRING,
       [COLUMNS_KEY.DATATYPE]: obj?.[COLUMNS_KEY.DATATYPE] || DATATYPE.NORMAL,
       [COLUMNS_KEY.FIELDSIZE]: FIELDSIZEREGULAR.STRING.DEFAULT,
       [COLUMNS_KEY.REQUIRED]: false,
@@ -183,6 +186,7 @@ export const ColumnsManager: React.FC<IProps> = React.memo((props: IProps) => {
       name: { columnsValid: false }
     });
     setRecordToForm(form, row);
+    return id;
   };
   /** +字段 */
   const handleCreatRow = () => {
@@ -201,18 +205,82 @@ export const ColumnsManager: React.FC<IProps> = React.memo((props: IProps) => {
     });
   };
   /** +字典字段，选择字典，后续 */
-  const handleChooseDictOk = (id: string, name: string) => {
-    (columnsInfo.editingKey === '' && createRow({
+  const handleChooseDictOk = (id: string[], name: string[]) => {
+    columnsInfo.editingKey === '' ? createRow({
       [COLUMNS_KEY.DATATYPE]: DATATYPE.DICT,
-      [COLUMNS_KEY.DICTIONARYFOREIGN]: id,
-      [COLUMNS_KEY.DICTIONARYFOREIGNCN]: name,
-    })) || (form.setFieldsValue({
-      [COLUMNS_KEY.DICTIONARYFOREIGNCN]: name,
-      [COLUMNS_KEY.DICTIONARYFOREIGN]: id,
+      [COLUMNS_KEY.DICTIONARYFOREIGN]: id?.join(','),
+      [COLUMNS_KEY.DICTIONARYFOREIGNCN]: name?.join(',')
+    }) : (form.setFieldsValue({
+      [COLUMNS_KEY.DICTIONARYFOREIGN]: id?.join(','),
+      [COLUMNS_KEY.DICTIONARYFOREIGNCN]: name?.join(',')
     }));
     dispatchColumns({
       type: 'setVisibleChooseDictModal',
       name: false
+    });
+  };
+  /** +引用字段 */
+  const handleCreateReference = () => {
+    saveRow(form).then((canICreateReference) => {
+      canICreateReference && dispatchColumns({
+        type: 'setVisibleCreateReferenceModal',
+        name: true
+      });
+    });
+  };
+  /** +引用字段回调 */
+  const handleCreateReferenceOk = (data) => {
+    dispatchColumns({ type: 'setVisibleCreateReferenceModal' });
+    const fieldId = createRow({
+      [COLUMNS_KEY.NAME]: data?.refFieldName,
+      [COLUMNS_KEY.CODE]: data?.refFieldCode,
+      [COLUMNS_KEY.FIELDTYPE]: data?.refFieldType,
+      [COLUMNS_KEY.DATATYPE]: DATATYPE.QUOTE,
+      [COLUMNS_KEY.FIELDSIZE]: data?.refFieldSize,
+    });
+    dispatchInfo({
+      type: 'unShiftReference',
+      name: {
+        fieldId,
+        fieldCode: data?.refFieldCode,
+        refTableCode: data?.refTableCode,
+        refFieldCode: data?.refFieldCode,
+        refFieldType: data?.refFieldType,
+        refFieldSize: data?.refFieldSize,
+        refDisplayFieldCode: data?.refDisplayFieldCode
+      }
+    });
+  };
+  /** +引用字段 */
+  const handleCreateForeignKey = () => {
+    saveRow(form).then((canICreateForeignKey) => {
+      canICreateForeignKey && dispatchColumns({
+        type: 'setVisibleCreateForeignKeyModal',
+        name: true
+      });
+    });
+  };
+  /** +引用字段回调 */
+  const handleCreateForeignKeyOk = (data) => {
+    dispatchColumns({ type: 'setVisibleCreateForeignKeyModal' });
+    const fieldId = createRow({
+      [COLUMNS_KEY.NAME]: data?.refFieldName,
+      [COLUMNS_KEY.CODE]: data?.refFieldCode,
+      [COLUMNS_KEY.FIELDTYPE]: data?.refFieldType,
+      [COLUMNS_KEY.DATATYPE]: DATATYPE.FK,
+      [COLUMNS_KEY.FIELDSIZE]: data?.refFieldSize,
+    });
+    dispatchInfo({
+      type: 'unShiftForeignKey',
+      name: {
+        fieldId,
+        fieldCode: data?.refFieldCode,
+        refTableCode: data?.refTableCode,
+        refFieldCode: data?.refFieldCode,
+        refFieldType: data?.refFieldType,
+        refFieldSize: data?.refFieldSize,
+        refDisplayFieldCode: data?.refDisplayFieldCode
+      }
     });
   };
   /** 复制 */
@@ -223,19 +291,25 @@ export const ColumnsManager: React.FC<IProps> = React.memo((props: IProps) => {
       const selectedRecord = selectedKey
         ? columns.filter((item) => item?.[COLUMNS_KEY.ID] === selectedKey)[0] : columns[0];
       const {
-        name, code
+        name, code, fieldType
       } = selectedRecord;
+      const id = `${new Date().valueOf()}`;
       const newRecord = {
-        ...selectedRecord, name: `${name}1`, code: `${code}1`, editable: true, createCustomed: true, id: `${new Date().valueOf()}`, species: SPECIES.BIS
+        ...selectedRecord, name: `${name}1`, code: `${code}1`, editable: true, createdCustomed: true, id, species: SPECIES.BIS
       };
       dispatchInfo({
         type: 'unShiftColumn',
         name: newRecord
       });
       setRecordToForm(form, newRecord);
+
       dispatchColumns({
-        type: 'changeEditingIndex',
-        name: 0
+        type: 'allIn',
+        name: {
+          editingKey: id,
+          dataTypeMenu: DATATYPEMENU?.[fieldType],
+          selectedRowKeys: [id]
+        }
       });
     });
   };
@@ -250,7 +324,7 @@ export const ColumnsManager: React.FC<IProps> = React.memo((props: IProps) => {
         dispatchColumns({ type: 'allIn', name: { selectedRowKeys: [], editingKey: '' } });
         dispatchInfo({
           type: 'changeInfo',
-          name: { columnsValid: false }
+          name: { columnsValid: true }
         });
       },
     });
@@ -305,7 +379,7 @@ export const ColumnsManager: React.FC<IProps> = React.memo((props: IProps) => {
   };
   const columnShowConfig = [
     {
-      title: '序号', width: 120, key: COLUMNS_KEY.INDEX, render: (text, record, index) => { return `${index + 1}`; }
+      title: '序号', width: 60, key: COLUMNS_KEY.INDEX, render: (text, record, index) => { return `${index + 1}`; }
     },
     {
       title: '字段名称',
@@ -408,7 +482,7 @@ export const ColumnsManager: React.FC<IProps> = React.memo((props: IProps) => {
       title: '唯一',
       key: COLUMNS_KEY.UNIQUE,
       dataIndex: COLUMNS_KEY.UNIQUE,
-      width: 120,
+      width: 100,
       render: (text, record) => (
         <Unique
           text = {text}
@@ -421,7 +495,7 @@ export const ColumnsManager: React.FC<IProps> = React.memo((props: IProps) => {
       title: '字典',
       key: COLUMNS_KEY.DICTIONARYFOREIGNCN,
       dataIndex: COLUMNS_KEY.DICTIONARYFOREIGNCN,
-      width: 120,
+      width: 100,
       render: (text, record) => {
         return < Dict
           dispatchColumns = { dispatchColumns }
@@ -465,6 +539,7 @@ export const ColumnsManager: React.FC<IProps> = React.memo((props: IProps) => {
     {
       title: ' ',
       key: 'index',
+      width: 60,
       render: (text, record) => {
         let dataType = record?.[COLUMNS_KEY.DATATYPE];
         if (record.editable) {
@@ -503,16 +578,18 @@ export const ColumnsManager: React.FC<IProps> = React.memo((props: IProps) => {
                 type={BUTTON_TYPE.PRIMARY}
                 size={BUTTON_SIZE.SMALL}
                 disabled={columnsInfo?.editingKey !== ''}
+                onClick={handleCreateReference}
               >+引用字段</Button>
               <Button
                 type={BUTTON_TYPE.PRIMARY}
                 size={BUTTON_SIZE.SMALL}
                 disabled={columnsInfo?.editingKey !== ''}
+                onClick={handleCreateForeignKey}
               >+外键字段</Button>
               <Button
                 type={BUTTON_TYPE.PRIMARY}
                 size={BUTTON_SIZE.SMALL}
-                disabled={columnsInfo?.editingKey !== ''}
+                disabled={columnsInfo?.editingKey !== '' || columnsInfo?.selectedRowKeys?.length === 0}
                 onClick={handleCopy}
               >复制</Button>
               <Button
@@ -531,26 +608,30 @@ export const ColumnsManager: React.FC<IProps> = React.memo((props: IProps) => {
               >{columnsInfo?.showSYSSpecies ? '隐藏' : '显示'}系统字段</Button></>
           }
         />
-        <Form form={form}>
-          <Table
-            columns = {columnShowConfig}
-            dataSource = { filterDataSource(columns, columnsInfo?.showSYSSpecies) }
-            scroll={{ y: 359, x: '100vh' }}
-            rowKey={(record) => record?.[COLUMNS_KEY.ID]}
-            pagination = {false}
-            rowSelection = {{
-              type: 'radio',
-              selectedRowKeys: columnsInfo?.selectedRowKeys || []
-            }}
-            onRow={(record: ITableColumn, index: number) => {
-              return {
-                onBlur: (event) => { handleBlur(record?.[COLUMNS_KEY?.ID]); },
-                onDoubleClick: (event) => { handleRowDoubleClick(form, record); },
-                onClick: (event) => { handleRowClick(form, record); }
-              };
-            }}
-          />
-        </Form>
+        <Col span={24}>
+          <Form form={form}>
+            <Table
+              columns = {columnShowConfig}
+              dataSource = { filterDataSource(columns, columnsInfo?.showSYSSpecies) }
+              scroll={{ x: '100%' }}
+              rowKey={(record) => record?.[COLUMNS_KEY.ID]}
+              pagination = {false}
+              rowSelection = {{
+                type: 'radio',
+                selectedRowKeys: columnsInfo?.selectedRowKeys || [],
+                hideSelectAll: true,
+                fixed: true
+              }}
+              onRow={(record: ITableColumn, index: number) => {
+                return {
+                  onBlur: (event) => { handleBlur(record?.[COLUMNS_KEY?.ID]); },
+                  onDoubleClick: (event) => { handleRowDoubleClick(form, record); },
+                  onClick: (event) => { handleRowClick(form, record); }
+                };
+              }}
+            />
+          </Form>
+        </Col>
       </Row>
       <CreateModal
         title="选择字典"
@@ -558,9 +639,30 @@ export const ColumnsManager: React.FC<IProps> = React.memo((props: IProps) => {
         onCancel={() => dispatchColumns({ type: 'setVisibleChooseDictModal' })}
       >
         <ChooseDict
-          dictId = {columnsInfo?.dictId}
+          dictIds = {columnsInfo?.dictIds}
           onOk={handleChooseDictOk}
           onCancel={() => dispatchColumns({ type: 'setVisibleChooseDictModal' })}
+        />
+      </CreateModal>
+      <CreateModal
+        title="引用字段设置"
+        modalVisible={columnsInfo?.visibleCreateReferenceModal}
+        onCancel={() => dispatchColumns({ type: 'setVisibleCreateReferenceModal' })}
+      >
+        <CreateReference
+          onOk={handleCreateReferenceOk}
+          onCancel={() => dispatchColumns({ type: 'setVisibleCreateReferenceModal' })}
+        />
+      </CreateModal>
+
+      <CreateModal
+        title="外键字段设置"
+        modalVisible={columnsInfo?.visibleCreateForeignKeyModal}
+        onCancel={() => dispatchColumns({ type: 'setVisibleForeignKeyModal' })}
+      >
+        <CreateForeignKey
+          onOk={handleCreateForeignKeyOk}
+          onCancel={() => dispatchColumns({ type: 'setVisibleForeignKeyModal' })}
         />
       </CreateModal>
     </>

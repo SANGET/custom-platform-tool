@@ -4,22 +4,22 @@ import {
 } from 'multiple-page-routing';
 
 export const TabNav = ({
-  routers, routerInfo, activeRoute, getRouteName,
+  routers, routerSnapshot, activeRoute, getRouteName,
   onClose
 }) => {
   return (
     <div
-      className="tabs-for-multiple-router"
+      className="tabs-for-multiple-router bg-gray-200"
     >
       {
         routers.map((route, idx) => {
-          const { params: routeInfoParams } = routerInfo[route];
+          const { params: routeInfoParams } = routerSnapshot[route];
           const { title, key, closable } = routeInfoParams;
           const _title = title || getRouteName(route) || `${route}_未设置 title`;
           return (
             <div
               key={route}
-              className="tab-item"
+              className={`tab-item${activeRoute === route ? ' active bg-gray-100' : ''}`}
             >
 
               <Link

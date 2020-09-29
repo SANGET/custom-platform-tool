@@ -77,7 +77,7 @@ export const Nav = (props) => {
             const { title, path } = item;
             onNavigate({
               type: 'PUSH',
-              route: path,
+              path,
               params: {
                 title,
               }

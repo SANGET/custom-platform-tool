@@ -6,7 +6,7 @@ export class DropdownSelectorSpec implements BusinessWidgetAccessSpec {
   name = 'DropdownSelector'
 
   render(widgetState) {
-    console.log(widgetState);
+    // console.log(widgetState);
     return (
       <DropdownSelectorComp {...widgetState} />
     );

@@ -9,6 +9,12 @@
 
   .tab-item {
     position: relative;
+    &:hover {
+      .close-btn {
+        // display: block;
+        visibility: visible;
+      }
+    }
   }
 
   .tab-item-btn {
@@ -24,7 +30,11 @@
   .close-btn {
     background-color: transparent;
     position: absolute;
-    top: 0;
+    // top: 0;
+    transform: translateY(30%);
     right: 0;
+    color: #777;
+    visibility: hidden;
+    // display: none;
   }
 }

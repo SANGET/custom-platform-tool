@@ -100,6 +100,7 @@ const schemasAnalysis = (originSchemas: Schemas): SchemasAnalysisRes => {
   const schemasAnalysisRes = initAnalysis();
   // TODO: 类型问题
   const parseContext: ParseBaseOptions & SchemasAnalysisExtralCtx = {
+    /** TODO: 名词 */
     foundationParser: (ctx: SchemasAnalysisCtx<FoundationTypeSchemas>) => {
       /** 基础数据类型分析 */
       foundationAnalysis(schemasAnalysisRes, ctx);

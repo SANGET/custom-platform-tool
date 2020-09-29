@@ -171,7 +171,7 @@ const authActions: AuthActions = (store) => ({
     store.setState({
       logouting: true
     });
-    await AUTH_APIS.logout();
+    // await AUTH_APIS.logout();
     store.setState({
       ...defaultAuthStore,
       isLogin: false,

@@ -26,7 +26,7 @@ const loadChild = (
 ) => {
   /** 处理找不到页面 */
   if (!Child) {
-    console.error(`没找到对应的页面 ${props.pagePath}`);
+    console.warn(`没找到对应的页面 ${props.pagePath}`);
     return (
       <div>404</div>
     );
@@ -50,8 +50,8 @@ const loadChild = (
  */
 export const PageContainer = (props: PageContainerProps) => {
   const {
-    pagePath, pageAuthInfo, appContext, id,
-    className, ChildComp, location,
+    pagePath, pageAuthInfo, appContext,
+    ChildComp, location,
     ...otherProps
   } = props;
   const pageChildProps = {

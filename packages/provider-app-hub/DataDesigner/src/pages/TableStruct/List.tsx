@@ -73,7 +73,7 @@ const List = (props) => {
           console.log(row, 'row1234143432434343');
           onNavigate({
             type: "PUSH",
-            route: '/data_designer/edit_struct',
+            path: '/data_designer/edit_struct',
             params: { id: row.id, title: '编辑表' }
           });
           // History.push({ pathname: `/EditStruct/${row.id}`, state: { id: row.id } });

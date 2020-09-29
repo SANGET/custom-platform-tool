@@ -3,6 +3,7 @@ import React from "react";
 import produce from 'immer';
 import { VEDispatcher, VisualEditorState } from "@engine/visual-editor/core";
 import { updatePageService } from "@provider-app/services";
+import { LoadingTip } from "@hy/loading-tip";
 import ToolBar from './components/PDToolbar';
 import WidgetPanel from './components/PDWidgetPanel';
 import CanvasStage from './components/PDCanvasStage';
@@ -149,11 +150,14 @@ class PageDesignerApp extends React.Component<VisualEditorAppProps & HY.SubAppSp
     const { id: activeEntityID, entity: activeEntity } = selectedInfo;
 
     return appContext.ready ? (
-      <div className="visual-app">
+      <div className="visual-app bg-white">
         <header className="app-header">
-          <ToolBar onReleasePage={this.onReleasePage}/>
+          <ToolBar onReleasePage={this.onReleasePage} location={location} />
         </header>
-        <div className="app-content">
+        <div
+          className="app-content"
+          // style={{ top: 0 }}
+        >
           <div
             className="comp-panel"
           >
@@ -166,6 +170,7 @@ class PageDesignerApp extends React.Component<VisualEditorAppProps & HY.SubAppSp
           </div>
           <div
             className="canvas-container"
+            style={{ height: '100%' }}
           >
             <CanvasStage
               selectedInfo={selectedInfo}
@@ -202,10 +207,7 @@ class PageDesignerApp extends React.Component<VisualEditorAppProps & HY.SubAppSp
         </div>
       </div>
     ) : (
-      // TODO: 优化样式
-      <div>
-        Loading data
-      </div>
+      <LoadingTip />
     );
   }
 }

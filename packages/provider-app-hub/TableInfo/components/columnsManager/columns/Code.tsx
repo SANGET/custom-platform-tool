@@ -1,11 +1,10 @@
 import React from 'react';
 import { Form, Input } from 'antd';
 import { FormInstance } from 'antd/lib/form';
+import { ITableColumn } from '@provider-app/table-info/interface';
 import { COLUMNS_KEY, REPLUS } from '../constant';
 import { canColumnEdit } from '../service';
 import RenderText from '../../RenderText';
-
-import { ITableColumn } from '../../../interface';
 
 interface IProps {
   text: string
