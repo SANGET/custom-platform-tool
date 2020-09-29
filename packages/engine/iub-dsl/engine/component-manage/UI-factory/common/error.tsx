@@ -31,8 +31,8 @@ const ErrorFactory = ({
   return (
     <Result
       style={{ padding: 10 }}
-      icon={<SmileOutlined style={{ fontSize: 40 }} rotate={180} />}
-      subTitle='哎呀组件找不到丫!'
+      // icon={<SmileOutlined style={{ fontSize: 40 }} rotate={180} />}
+      subTitle='widget not found'
     />
   );
 };

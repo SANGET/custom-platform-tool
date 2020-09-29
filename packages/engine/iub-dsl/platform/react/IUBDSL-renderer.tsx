@@ -52,7 +52,7 @@ const IUBDSLRenderer = React.memo<{dsl: any}>(({ dsl }) => {
   const { pageID } = dsl;
   if (typeof pageID !== 'string') {
     // dsl = tempDsl;
-    return <ErrorRenderer msg='页面IUB-DSL数据有误!'/>;
+    return <ErrorRenderer msg='IUB-DSL Data Error'/>;
   }
   // 临时添加schemas
   // dsl.schemas = testSchemas;
@@ -65,7 +65,7 @@ const IUBDSLRenderer = React.memo<{dsl: any}>(({ dsl }) => {
     }
   } catch (e) {
     console.error(e);
-    return <ErrorRenderer msg='解析错误?'/>;
+    return <ErrorRenderer msg='IUB-DSLEngine Parser Error?'/>;
   }
 
   if (dslParseRes) {
