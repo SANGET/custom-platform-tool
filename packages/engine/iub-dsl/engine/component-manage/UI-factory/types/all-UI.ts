@@ -3,6 +3,6 @@ export enum AllUI {
   BaseInput = 'BaseInput',
   FormItem = 'FormItem',
   FromWrap = 'FromWrap',
-  Error = 'Error',
+  WidgetError = 'WidgetError',
   NormalTable = 'NormalTable'
 }

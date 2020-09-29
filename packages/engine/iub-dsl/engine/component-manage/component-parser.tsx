@@ -25,7 +25,7 @@ const compParseScheduler = (id, confItem, options): ActualRenderInfo[] => {
       return normalTableParser(id, confItem, options);
     default:
       return [{
-        compTag: AllUI.Error,
+        compTag: AllUI.WidgetError,
         mark: id,
         propsKeys: [],
         propsMap: [],

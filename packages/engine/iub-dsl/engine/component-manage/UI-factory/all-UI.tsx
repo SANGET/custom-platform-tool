@@ -19,7 +19,7 @@ const allWidgetList = {
   [AllUI.Tootip]: TootipFactory,
   // [AllUI.Tootip]: AuthTootipFactory,
   [AllUI.BaseInput]: BaseInputFactory,
-  [AllUI.Error]: ErrorFactory,
+  [AllUI.WidgetError]: ErrorFactory,
   [AllUI.NormalTable]: TableFactory
 };
 

@@ -46,7 +46,7 @@ const actualRenderInfoRenderer = (
       case AllUI.FormItem:
         compProps = useCompProps(propsMap)?.compProps || {};
         break;
-      case AllUI.Error:
+      case AllUI.WidgetError:
       default:
         compProps = useCompProps(propsMap)?.compProps || {};
         break;

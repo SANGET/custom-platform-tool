@@ -9,7 +9,7 @@ export enum AllComponentType {
   TreeSelector = "TreeSelector",
   NormalTable = "NormalTable",
   Button = "Button",
-  Error = "Error"
+  WidgetError = "WidgetError"
 }
 
 export interface BaseForm {

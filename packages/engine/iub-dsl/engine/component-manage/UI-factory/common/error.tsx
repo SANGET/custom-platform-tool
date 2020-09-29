@@ -15,7 +15,7 @@ const pickBaseInputPropsKey = basePickPropsCstr(errorPropsKes);
 
 const baseInpitPropsMap = basePropsMapCstr<any>(errorPropsMapList);
 
-export const errorCompName = AllUI.Error;
+export const errorCompName = AllUI.WidgetError;
 
 const ErrorFactory = ({
   id, children, tipContent, ...ohterProps
