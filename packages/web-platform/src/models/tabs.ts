@@ -1,6 +1,6 @@
 import { Reducer, history } from 'umi';
-import { ROUTER_SUFFIX } from '@/constant';
 import { getQueryByParams } from '@/utils/utils';
+import { stringify } from 'querystring';
 
 export enum TAB_TYPE {
   /** 动态菜单获取的界面 */
@@ -24,11 +24,15 @@ export interface ITabsItem {
   /** 对应路由地址 */
   path: string;
   /** 类型判断 主要区分首页和动态加载的路由 */
-  page: TAB_TYPE;
   /** tabs 是否可以关闭 */
   closable?: boolean;
 
   pageId?: string;
+  /** 菜单ID */
+  menuId?: string;
+  mode?: string;
+  app?: string;
+  lessee?: string;
 
 }
 export interface ITabsModelState {
@@ -59,8 +63,8 @@ const inintState: ITabsModelState = {
   list: [{
     title: "首页",
     path: "/dashboard",
-    page: TAB_TYPE.BUILT_IN,
-    closable: false
+    closable: false,
+    menuId: "/dashboard"
   }],
   activeKey: "/dashboard",
   maxTabs: 8,
@@ -80,43 +84,48 @@ const TabsModel: ITabsModel = {
     /** 新增tabs 主要是点击菜单 */
     add(state: ITabsModelState = inintState, { payload }): ITabsModelState {
       const {
-        title, path, closable = true, pageId
+        title, path, closable = true, pageId, menuId, mode, app, lessee
       } = payload;
-      const { activeKey, list } = state;
-      const findSameTab = list.find((tab) => tab.path === path);
-      const page = history.location.pathname === ROUTER_SUFFIX ? TAB_TYPE.PAGE : TAB_TYPE.BUILT_IN;
-      if (state.list.length === state.maxTabs) {
-        const findCurrent: number = list.findIndex((tab) => tab.path === activeKey);
-        if (!findSameTab) {
-          list[findCurrent] = {
-            title, path, page, closable, pageId
-          };
-        }
+      const { list } = state;
+      const findSameTab = list.find((tab) => tab.menuId === menuId);
+      // 如果 tabs 达到最大值,新打开的menu 覆盖最后一个tabs
+      if (!findSameTab && state.list.length === state.maxTabs) {
+        list[state.maxTabs - 1] = {
+          title, path, menuId, closable, pageId, mode, app, lessee
+        };
       } else if (!findSameTab) {
         list.push({
-          title, path, page, closable, pageId
+          title, path, menuId, closable, pageId, mode, app, lessee
         });
+      } else {
+        const findIndex = list.findIndex((tab) => tab.menuId === menuId);
+        list[findIndex] = {
+          ...payload,
+          ...list[findIndex],
+        };
       }
-      state.activeKey = path;
+      state.activeKey = menuId;
       state.list = list;
       return state;
     },
     /** 关闭tabs  */
     remove(state: ITabsModelState = inintState, { payload }): ITabsModelState {
-      const index = state.list.findIndex((tab) => tab.path === payload);
-      const filterTabs = state.list.filter((tab) => tab.path !== payload);
+      const index = state.list.findIndex((tab) => tab.menuId === payload);
+      const filterTabs = state.list.filter((tab) => tab.menuId !== payload);
       const currentIndex = index > 0 ? index - 1 : 0;
       state.list = filterTabs;
-      const queryLink = getQueryByParams(["mode", "app", "lessee"]);
-      if (filterTabs.length > 0) {
-        const { path, pageId } = filterTabs[currentIndex];
-        state.activeKey = path || "";
-        if (filterTabs[currentIndex].page === TAB_TYPE.PAGE) {
-          history.push(`${ROUTER_SUFFIX}?path=${state.activeKey}&${queryLink}&pageId=${pageId}`);
-        } else {
-          history.push(`${state.activeKey}?${queryLink}`);
-        }
-      }
+      const {
+        menuId, pageId, path, mode, app, lessee
+      } = filterTabs[currentIndex];
+      state.activeKey = menuId || "";
+      const queryString = stringify({
+        path: state.activeKey,
+        mode,
+        app,
+        lessee,
+        pageId
+      });
+      history.push(`${path}?${queryString}`);
       return state;
     },
     /** tabs 右侧操作栏关闭事件 */
@@ -129,18 +138,26 @@ const TabsModel: ITabsModel = {
           history.push(`${state.activeKey}?${queryLink}`);
         }
       } else if (payload === TABS_OPERATION.CLOSE_OTHER_PAGE) {
-        const filterList = state.list.filter((item) => item.path === state.activeKey);
+        const filterList = state.list.filter((item) => item.menuId === state.activeKey);
         state.list = [...inintState.list, ...filterList];
       } else if (payload === TABS_OPERATION.CLOSE_PREVIOUS_PAGE) {
-        const filterList = state.list.filter((item) => item.path !== state.activeKey);
+        const filterList = state.list.filter((item) => item.menuId !== state.activeKey);
+        const findIndex = state.list.findIndex((item) => item.menuId === state.activeKey);
         state.list = filterList;
-        state.activeKey = inintState.activeKey;
-        history.push(`${state.activeKey}?${queryLink}`);
+        const { path, menuId } = filterList[findIndex - 1];
+        state.activeKey = menuId || "";
+        history.push(`${path}?${queryLink}`);
       }
       return state;
     },
     /** 点击tabs 更新  */
     updata(state: ITabsModelState = inintState, { payload }): ITabsModelState {
+      const findTab = state.list.find((tab) => tab.menuId === payload) as ITabsItem;
+      const {
+        path, menuId, mode, app, lessee, pageId
+      } = findTab;
+      const link = `${path}?menuId=${menuId}&mode=${mode}&app=${app}&lessee=${lessee}&pageId=${pageId}`;
+      history.push(link);
       state.activeKey = payload;
       return state;
     },

@@ -21,30 +21,32 @@ export const getQueryByParams = (params: string[]) => {
   return result;
 };
 
-export const parsePathToOpenKeys = (path: string) => {
-  const openKeys: string[] = [];
-  path.split("/").reduce((previousValue, currentValue) => {
-    if (currentValue) {
-      openKeys.push(`${previousValue}/${currentValue}`);
-      return `${previousValue}/${currentValue}`;
-    }
-    return "";
-  }, '');
-  return openKeys;
-};
+// export const parsePathToOpenKeys = (path: string) => {
+//   const openKeys: string[] = [];
+//   path.split("/").reduce((previousValue, currentValue) => {
+//     if (currentValue) {
+//       openKeys.push(`${previousValue}/${currentValue}`);
+//       return `${previousValue}/${currentValue}`;
+//     }
+//     return "";
+//   }, '');
+//   return openKeys;
+// };
 
 interface INode {
   id?: string;
   pid?: string;
-  children?: string;
+  children?: INode;
 }
 interface IConfig {
-  id?: string
-  pid?: string
-  children?: string
+  id?: string;
+  pid?: string;
+  children?: IConfig;
 
   mapping?: any;
   attribute?: any;
+
+  // [key: string]: string | number | undefined;
 
 }
 /**
