@@ -11,16 +11,17 @@ import {
 import { queryTablesList } from '../../../api';
 import RenderText from '../../RenderText';
 
-import { IReference, ISELECTSMENU } from '../../../interface';
+import { IEditableRecord, ISELECTSMENU } from '../../../interface';
 
 interface IProps {
   text: string
-  record: IReference
   form: FormInstance
+  record: IEditableRecord
+  label?: string
 }
 export const RefTableCode: React.FC<IProps> = (props: IProps) => {
   const {
-    form, text, record
+    form, text, record, label
   } = props;
   const editable = canColumnEdit(record, form, REFERENCES_KEY?.REFTABLECODE);
   const [options, setOptions] = useState<ISELECTSMENU[]>([]);
@@ -29,7 +30,8 @@ export const RefTableCode: React.FC<IProps> = (props: IProps) => {
       queryTablesList().then((res) => {
         /** 如果接口没有提供提示信息 */
         if (!res?.msg) {
-          return openNotification(NOTIFICATION_TYPE?.ERROR, API_ERROR_MSG?.ALLOWDELETE);
+          openNotification(NOTIFICATION_TYPE?.ERROR, API_ERROR_MSG?.ALLOWDELETE);
+          return;
         }
         setOptions(translateRefTablesToSelectMenus(res?.result?.data));
       });
@@ -53,6 +55,7 @@ export const RefTableCode: React.FC<IProps> = (props: IProps) => {
   return editable ? (
     <Form.Item
       name={REFERENCES_KEY?.REFTABLECODE}
+      label = {label}
       rules={[
         { required: true, message: '必填' },
       ]}

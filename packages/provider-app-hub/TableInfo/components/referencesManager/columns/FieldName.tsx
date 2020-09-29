@@ -8,11 +8,11 @@ import {
 import { canColumnEdit, getlabelByMenue, filterOptionsForChoose } from '../service';
 import RenderText from '../../RenderText';
 
-import { IReference, ISELECTSMENU } from '../../../interface';
+import { IReference, ISELECTSMENU, IEditableRecord } from '../../../interface';
 
 interface IProps {
   text: string
-  record: IReference
+  record: IEditableRecord
   form: FormInstance
   options:ISELECTSMENU[]
   references: IReference[]
