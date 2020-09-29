@@ -31,6 +31,8 @@ export interface RouterSnapshot {
     params: RouteParams
     /** 当前路径的快照 */
     pathSnapshot: string
+    /** pathname */
+    pathname: string
   };
 }
 
@@ -211,9 +213,11 @@ class MultipleRouterManager<
       const nextRouterInfo = { ...routerSnapshot };
       const currParams = getAllUrlParams();
       const pathSnapshot = window.location.hash;
+      const pathname = resolvePagePathWithSeperator(pathSnapshot);
       nextRouterInfo[activeRoute] = {
         ...(nextRouterInfo[activeRoute] || {}),
         pathSnapshot,
+        pathname,
         params: currParams,
       };
       let activeIdx = currComIdx;

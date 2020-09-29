@@ -16,20 +16,20 @@ export const DataSourceDragItem: React.FC<DataSourceDragItemProps> = ({
         Array.isArray(datasources) && datasources.map((datasourceItem) => {
           const { name: dName, columns } = datasourceItem;
           return (
-            <div className="group" key={dName}>
-              <div className="title">{dName}</div>
-              <ul>
+            <div className="group p-2" key={dName}>
+              <div className="title font-bold text-md">{dName}</div>
+              <div className="list p-2">
                 {
                   columns.map((column) => {
                     const { name: colName, id, dataType } = column;
                     return (
-                      <li className="col-item" key={id}>
+                      <div className="col-item text-gray-600" key={id}>
                         {colName}
-                      </li>
+                      </div>
                     );
                   })
                 }
-              </ul>
+              </div>
             </div>
           );
         })

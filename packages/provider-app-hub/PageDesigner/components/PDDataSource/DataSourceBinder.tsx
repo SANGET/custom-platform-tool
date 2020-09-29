@@ -70,7 +70,7 @@ const getItem = (dataSource, ids: string[]) => {
   return res;
 };
 
-const useTableSelection = (defaultValue = []): [any, (selection) => void] => {
+const useTableSelection = (defaultValue: string[] = []): [any, (selection) => void] => {
   const [selection, setSelection] = useState(defaultValue);
   return [selection, setSelection];
 };
@@ -106,6 +106,7 @@ export const DataSourceBinder: React.FC<DataSourceBinderProps> = (props) => {
     <div className="data-source-binder p20">
       <Table
         rowKey="id"
+        size="small"
         onChange={(pagination) => {
           // console.log(pagination);
           getTableList({

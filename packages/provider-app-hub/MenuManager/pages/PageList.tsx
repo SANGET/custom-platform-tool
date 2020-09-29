@@ -87,9 +87,8 @@ const PageList: React.FC = (props) => {
       }
     });
   }, []);
-  console.log(listData);
   return (
-    <div className="container mx-auto">
+    <div className="menu-list-data">
       <div className="pu10">
         <Button
           onClick={(e) => {

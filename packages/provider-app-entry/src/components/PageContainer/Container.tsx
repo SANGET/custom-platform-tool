@@ -50,8 +50,8 @@ const loadChild = (
  */
 export const PageContainer = (props: PageContainerProps) => {
   const {
-    pagePath, pageAuthInfo, appContext, id,
-    className, ChildComp, location,
+    pagePath, pageAuthInfo, appContext,
+    ChildComp, location,
     ...otherProps
   } = props;
   const pageChildProps = {
