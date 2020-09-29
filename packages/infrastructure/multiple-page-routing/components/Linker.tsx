@@ -1,20 +1,22 @@
 import React from "react";
 
-import { getUrlParams } from "@mini-code/request/url-resolve";
 import { Call, IsUrl } from "@mini-code/base-func";
 import classnames from 'classnames';
 
-import { getRouteKey, onNavigate, NavParams } from "../utils";
+import {
+  onNavigate, NavParams, NavigateConfig, getPathname
+} from "../utils";
 
 export interface LinkProps {
   /** 将要导航到的路由 */
-  to: string;
-  className?: string;
+  to: string
+  pathExtend?: NavigateConfig['pathExtend']
+  className?: string
   /** 是否激活 */
-  isActive?: boolean;
-  onClick?: React.DOMAttributes<HTMLSpanElement>['onClick'];
+  isActive?: boolean
+  onClick?: React.DOMAttributes<HTMLSpanElement>['onClick']
   /** 作为 query string 的导航参数，例如 { ID: 123, name: alex } -> ID=123&name=alex */
-  params?: NavParams;
+  params?: NavParams
 }
 
 /**
@@ -22,14 +24,15 @@ export interface LinkProps {
  */
 const Link: React.SFC<LinkProps> = ({
   to,
+  pathExtend,
   className,
   isActive,
   children,
   onClick,
   params,
 }) => {
-  const activeRoute = getUrlParams(undefined, undefined, true)[getRouteKey()];
-  const _isActive = typeof isActive != "undefined" ? isActive : activeRoute === to;
+  const activeRoute = getPathname();
+  const _isActive = typeof isActive !== "undefined" ? isActive : activeRoute === to;
 
   const classes = classnames(
     _isActive && 'active',
@@ -47,6 +50,7 @@ const Link: React.SFC<LinkProps> = ({
           onNavigate({
             type: "PUSH",
             path: to,
+            pathExtend,
             params,
           });
         }
