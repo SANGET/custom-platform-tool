@@ -28,7 +28,7 @@ export interface IBasicLayoutProps extends ProLayoutProps {
 
   loadingMenu?: boolean;
 
-  menuData?: IMenuItem[];
+  menuData: IMenuItem[];
   originalMeunData?: IMenuItem[];
   tabsData?: ITabsItem[];
   activeKey?: string;
@@ -244,7 +244,6 @@ class BasicLayout extends React.PureComponent<IBasicLayoutProps, IBaseLayoutStat
       menuData, settings, activeKey
     } = this.props;
     const { openKeys } = this.state;
-    console.dir(activeKey);
     return (
       <ProLayout
         menuHeaderRender={false}
@@ -292,7 +291,7 @@ export default connect(({
   global, settings, menus, loading, tabs
 }: ConnectState) => ({
   collapsed: global.collapsed,
-  menuData: menus.list || [],
+  menuData: menus.list,
   originalMeunData: menus.original || [],
   tabsData: tabs.list || [],
   activeKey: tabs.activeKey,

@@ -50,7 +50,7 @@ class AvatarDropdown extends React.Component<GlobalHeaderRightProps> {
             <span className={styles.name}>浩云科技</span>
           </div>
         </Card> */}
-        <Menu.Divider />
+        {/* <Menu.Divider /> */}
         <Menu.Item key="logout">
           <LogoutOutlined />
           退出登录

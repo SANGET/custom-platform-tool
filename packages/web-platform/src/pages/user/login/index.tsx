@@ -11,12 +11,14 @@ import { ConnectState } from '@/models/connect';
 import { CLIENT_TYPE } from '@/services/login';
 import { ILoginModelState } from '@/models/login';
 import { getPageQuery, getQueryByParams } from '@/utils/utils';
+import { IDefaultSettings } from 'config/defaultSettings';
 import styles from './style.less';
 
 interface ILoginProps {
   dispatch: Dispatch;
   userLogin: ILoginModelState;
   submitting?: boolean;
+  settings: IDefaultSettings;
 }
 
 const LoginMessage: React.FC<{
@@ -36,7 +38,7 @@ interface ILoginParamsType {
   password: string;
 }
 const Login: React.FC<ILoginProps> = (props) => {
-  const { submitting, userLogin: { message } } = props;
+  const { submitting, userLogin: { message }, settings } = props;
 
   const onFinish = async (values: ILoginParamsType) => {
     const { dispatch } = props;
@@ -75,12 +77,14 @@ const Login: React.FC<ILoginProps> = (props) => {
     }
     history.replace(redirect || '/?${queryLink');
   };
+
   return (
     <div className={styles.main}>
-      {message && (
+      {/* {message && (
         <LoginMessage content={message} />
-      )}
+      )} */}
       <div className={styles["form-container"]}>
+        <div className={styles.title}> {settings.title}</div>
         <Form
           onFinish={onFinish}
         >
@@ -115,7 +119,8 @@ const Login: React.FC<ILoginProps> = (props) => {
     </div>
   );
 };
-export default connect(({ login, loading }: ConnectState) => ({
+export default connect(({ login, loading, settings }: ConnectState) => ({
   userLogin: login,
+  settings,
   submitting: loading.effects['login/login'],
 }))(Login);
