@@ -1,5 +1,5 @@
 {
   "AUTH": "http://localhost:8000",
-  "NODE-WEB": "http://10.11.6.193:3000",
+  "NODE-WEB": "http://10.11.6.193:4000",
   "API": "http://localhost:8000"
 }

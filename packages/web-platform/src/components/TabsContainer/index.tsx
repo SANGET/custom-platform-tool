@@ -29,16 +29,12 @@ const TabsContainer: React.FC<ITabsContainerProps> = (props): React.ReactElement
   const {
     activeKey, tabsData, dispatch
   } = props;
-  const queryLink = getQueryByParams(["mode", "app", "lessee"]);
   const handleTabChange = (key: string) => {
     if (key === props.activeKey) return;
-    const tab = tabsData.find((item) => item.path === key);
-    const link = tab?.page === TAB_TYPE.PAGE ? `${ROUTER_SUFFIX}?path=${key}&${queryLink}&pageId=${tab?.pageId}` : `${key}?${queryLink}`;
     dispatch({
       type: "tabs/updata",
       payload: key
     });
-    history.push(link);
   };
   const handleEdit = (targetKey: React.MouseEvent | React.KeyboardEvent | string, action: 'add' | 'remove') => {
     if (action === EDIT_STATUS.REMOVE) {
@@ -81,7 +77,7 @@ const TabsContainer: React.FC<ITabsContainerProps> = (props): React.ReactElement
     >
       {
         tabsData?.map((item) => (
-          <TabPane tab={item.title} key={item.path} closable={item.closable}>
+          <TabPane tab={item.title} key={item.menuId} closable={item.closable}>
           </TabPane>
         ))
       }

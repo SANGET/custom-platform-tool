@@ -3,8 +3,20 @@ import { queryMenuList } from '@/services/menu';
 import { construct } from '@/utils/utils';
 import { ROUTER_SUFFIX, MODE_PREVIEW } from '@/constant';
 
+interface IMenuItem {
+  id?: string;
+  name?: string;
+  path?: string;
+  icon?: string;
+  pid?: string;
+
+  children?: IMenuItem;
+
+  // [key: string]: string | number;
+}
 export interface IMenusModelState {
-  list: any[];
+  list: IMenuItem[];
+  original: IMenuItem[]
 }
 
 export interface IMenusModel {
@@ -21,6 +33,7 @@ export interface IMenusModel {
 }
 const inintState = {
   list: [],
+  original: []
 };
 const MenusModel: IMenusModel = {
   namespace: 'menus',
@@ -42,20 +55,21 @@ const MenusModel: IMenusModel = {
 
   reducers: {
     setMeunList(state: IMenusModelState = inintState, { payload }): IMenusModelState {
-      const list: any[] = construct(payload, {
+      const tempData = JSON.parse(JSON.stringify(payload));
+      const list: IMenuItem[] = construct(tempData, {
         attribute: {
           page: ROUTER_SUFFIX
         },
         mapping: {
-          pageId: "pageLink"
+          pageId: "pageLink",
         }
       });
-      console.dir(list);
       state.list = [...state.list, ...list];
+      state.original = payload;
       return state;
     },
     addPreViewMenu(state: IMenusModelState = inintState, { payload }): IMenusModelState {
-      const findMenu = state.list.find((item) => item.path === MODE_PREVIEW);
+      const findMenu = state.list.find((item) => item.id === MODE_PREVIEW);
       if (!findMenu) {
         state.list.push(payload);
       }
