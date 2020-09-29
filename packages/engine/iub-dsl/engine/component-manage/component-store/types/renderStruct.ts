@@ -25,7 +25,8 @@ interface ChildrenStruct {
 
 /** 基础渲染结构 */
 type BaseRenderStruct = {
-  type: 'BaseRenderStruct'
+  type: 'BaseRenderStruct',
+  requireRender?: boolean
 } & PubRenderStructInfo
 
 /** 同一层渲染的结构 */

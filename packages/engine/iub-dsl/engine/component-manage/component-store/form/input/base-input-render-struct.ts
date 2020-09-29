@@ -1,4 +1,4 @@
-import { AllUI } from "../../../UI-factory/types/all-UI";
+import { AllUI } from "@iub-dsl/engine/component-manage/UI-factory/types";
 import {
   FullRenderStruct, ActualRenderInfo, BaseRenderStruct, CommonRenderStructParser
 } from "../../types/renderStruct";
@@ -37,6 +37,7 @@ export const genBaseInputFullRenderStruct = () => {
               type: 'BaseRenderStruct',
               compTag: AllUI.BaseInput,
               canUseProps: baseInputPropsKes,
+              requireRender: true,
               canSkip: false,
             }
           ]

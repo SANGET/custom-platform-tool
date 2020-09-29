@@ -65,7 +65,7 @@ const genBaseRenderStruct = (
   } = context;
 
   const {
-    canUseProps, compTag, canSkip
+    canUseProps, compTag, canSkip, requireRender
   } = structItem;
 
   const mark = `${baseMark}-${compTag}${index}`;
@@ -77,7 +77,10 @@ const genBaseRenderStruct = (
   } else {
     console.log('没有渲染tip: ', mark);
   }
-  if (compPropsMapList.length) {
+  // const newContext = {
+  //   ...context
+  // };
+  if (compPropsMapList.length || requireRender) {
     const newActualRenderInfo = [];
     const renderInfoItem: ActualRenderInfo = {
       compTag,
