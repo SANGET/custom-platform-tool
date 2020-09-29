@@ -3,10 +3,10 @@ import React, { useEffect, useReducer } from 'react';
 import {
   Form
 } from 'antd';
-import { getTableInfo } from './api';
+import { getTableInfo, updateTableInfo } from './api';
 import { openNotification, infoReducer, getUrlParams } from './service';
 import {
-  NOTIFICATION_TYPE, API_ERROR_MSG, API_SUCESS_CODE
+  NOTIFICATION_TYPE, API_ERROR_MSG, API_SUCESS_CODE, TABLE_TYPE
 } from './constant';
 import {
   InfoForm, SaveOrCancel, RelatedPageTags, ManagerTabs
@@ -33,9 +33,10 @@ const construcColumns = (columns: ITableColumnFromApi[]): ITableColumn[] => {
 const construcInfo = (result: ITableInfoFromApi): ITableInfo => {
   const {
     name, code, type, moduleId, auxTable, columns, references, foreignKeys, id,
-    relationTables: relatedPages
+    relationTables: relatedPages, species
   } = result || {};
   const mainTableName = auxTable?.parentTable?.name;
+  const mainTableCode = auxTable?.parentTable?.code;
   return {
     tableId: id,
     name,
@@ -46,8 +47,69 @@ const construcInfo = (result: ITableInfoFromApi): ITableInfo => {
     relatedPages,
     columns: construcColumns(columns),
     references,
-    foreignKeys
+    foreignKeys,
+    species,
+    mainTableCode
   };
+};
+const canFormSave = async (form) => {
+  try {
+    await form.validateFields();
+    return true;
+  } catch (e) {
+    return false;
+  }
+};
+const getFormData = (form) => {
+  return form.getFieldsValue([
+    'name', 'code', 'type', 'moduleId', 'mainTableName', 'maxLevel'
+  ]);
+};
+const getListData = (info) => {
+  const {
+    columns, references, foreignKeys, tableId
+  } = info;
+  return {
+    columns, references, foreignKeys, tableId
+  };
+};
+const getExtraTableConfigByType = (type, maxLevel, mainTableCode) => {
+  if (type === TABLE_TYPE.TREE) {
+    return { maxLevel };
+  }
+  if (type === TABLE_TYPE.AUX_TABLE) {
+    return { mainTableCode };
+  }
+};
+const getUpdateParam = (form, info) => {
+  /** 头部表单数据 */
+  const {
+    name, code, type, moduleId, maxLevel
+  } = getFormData(form);
+  /** tabs 布局中栏数据 */
+  const {
+    columns, references, foreignKeys, tableId, mainTableCode
+  } = getListData(info);
+  const extraConfig = getExtraTableConfigByType(type, maxLevel, mainTableCode);
+  return {
+    name,
+    code,
+    type,
+    moduleId,
+    id: tableId,
+    columns,
+    references,
+    foreignKeys,
+    ...extraConfig
+  };
+};
+const updateTable = (param) => {
+  console.log(param);
+  updateTableInfo(param).then((res) => {
+    const type = res?.code === API_SUCESS_CODE.GETTABLEINFO
+      ? NOTIFICATION_TYPE.SUCCESS : NOTIFICATION_TYPE.ERROR;
+    openNotification(type, res?.msg || API_ERROR_MSG?.GETTABLEINFO);
+  });
 };
 interface IProps {
 
@@ -72,18 +134,24 @@ const TableInfo : React.FC<IProps> = (props: IProps) => {
     /** 外键管理的校验结果 */
     foreignKeysValid: true,
     /** 表id */
-    tableId: ''
+    tableId: '',
+    /** 分类 */
+    species: '',
+    /** tab中的编辑中的行唯一标识 */
+    editingKey: '',
+    /** 主表编码 */
+    mainTableCode: ''
   });
   /** 进行数据存储 */
   const storeInfo = (dataTmpl: ITableInfo): void => {
     const {
-      name, code, type, moduleId, mainTableName,
+      name, code, type, moduleId, mainTableName, mainTableCode,
       relatedPages, columns, references, foreignKeys, tableId
     } = dataTmpl;
     dispatchInfo({
       type: 'changeInfo',
       name: {
-        relatedPages, columns, references, foreignKeys, tableId
+        relatedPages, columns, references, foreignKeys, tableId, mainTableCode
       }
     });
     form?.setFieldsValue({
@@ -95,8 +163,8 @@ const TableInfo : React.FC<IProps> = (props: IProps) => {
     const id = getUrlParams('id', undefined, true);
     getTableInfo(id)?.then((res):void => {
       /** 接口有误则返回提示 */
-      if (res?.code !== API_SUCESS_CODE?.GETTABLEINFO) {
-        openNotification(NOTIFICATION_TYPE?.ERROR, res?.msg || API_ERROR_MSG?.GETTABLEINFO);
+      if (res?.code !== API_SUCESS_CODE.GETTABLEINFO) {
+        openNotification(NOTIFICATION_TYPE.ERROR, res?.msg || API_ERROR_MSG?.GETTABLEINFO);
         return;
       }
       /** 进行数据转换 */
@@ -105,9 +173,21 @@ const TableInfo : React.FC<IProps> = (props: IProps) => {
       storeInfo(dataTmpl);
     });
   }, []);
+  /**
+   * 保存整表配置
+   */
+  const handleSave = () => {
+    canFormSave(form).then((canISave) => {
+      if (!canISave) return;
+      const { editingKey } = info;
+      if (editingKey !== '') return;
+      const param = getUpdateParam(form, info);
+      updateTable(param);
+    });
+  };
   return (
     <>
-      <SaveOrCancel />
+      <SaveOrCancel canISave={info.editingKey === ''} handleSave={handleSave} />
       <InfoForm
         form={form}
       />
