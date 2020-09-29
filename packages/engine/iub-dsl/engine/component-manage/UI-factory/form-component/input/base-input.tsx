@@ -40,8 +40,6 @@ export const BaseInputFactory: React.FC<BaseInputProps> = React.memo(
     /** 必要的断言 */
     assertPropsKey(id, allPropsKey, canUsePropsKey);
 
-    console.log(value);
-
     /** TODO: 个人觉得应该为受控组件, 怎么修改都应该是外部确定的 */
     // const [normalInputVal, setnormalInputVal] = useState(value || '');
     // useEffect(() => {
@@ -50,7 +48,8 @@ export const BaseInputFactory: React.FC<BaseInputProps> = React.memo(
 
     return (
       <Input
-        value={value}
+        defaultValue={value}
+        // value={value}
         // value={normalInputVal}
         key={id}
         onChange={(e) => {

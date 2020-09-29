@@ -34,27 +34,27 @@ const IUBDSLRuntimeContainer = React.memo<{dslParseRes: any}>(({ dslParseRes }) 
   console.log(schemasParseRes);
 
   // const [state, setstate] = useState('嘻嘻哈哈');
-  const useIUBStore = useMemo(() => createIUBStore(schemasParseRes), [],);
-
-  const { getPageState, updatePageState } = useIUBStore();
   const ctx = {
   };
+  // const useIUBStore = useMemo(() => createIUBStore(schemasParseRes), [],);
 
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      updatePageState({
-        a: 'b',
-      });
-      setTimeout(() => {
-        updatePageState({
-          c: 'bdd',
-        });
-      }, 2000);
-    }, 2000);
-    return () => {
-      clearTimeout(timer);
-    };
-  }, []);
+  // const { getPageState, updatePageState } = useIUBStore();
+
+  // useEffect(() => {
+  //   const timer = setTimeout(() => {
+  //     updatePageState({
+  //       a: 'b',
+  //     });
+  //     setTimeout(() => {
+  //       updatePageState({
+  //         c: 'bdd',
+  //       });
+  //     }, 2000);
+  //   }, 2000);
+  //   return () => {
+  //     clearTimeout(timer);
+  //   };
+  // }, []);
 
   // const { content = [], type: pageType } = layoutContent;
 
@@ -68,11 +68,6 @@ const IUBDSLRuntimeContainer = React.memo<{dslParseRes: any}>(({ dslParseRes }) 
 
   return (
     <DefaultCtx.Provider value={ctx}>
-      <pre>
-        {
-          JSON.stringify(getPageState(), null, 2)
-        }
-      </pre>
       <FromWrapFactory>
         <LayoutRenderer
           layoutNode={actualRenderComponentList}

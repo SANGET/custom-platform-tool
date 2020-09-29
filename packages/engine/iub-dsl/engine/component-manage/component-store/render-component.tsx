@@ -83,17 +83,17 @@ const useFormInputPops = (propsMap) => {
   const { compProps, setCompProps } = useCompProps(propsMap);
 
   /** 测试内容 */
-  useEffect(() => {
-    let timer;
-    if (Math.random() > 0.3) {
-      timer = setTimeout(() => {
-        setCompProps({ ...compProps, value: '后端获取的内容~~~', placeholder: '异步内容!!~~~~!!' });
-      }, 5000);
-    }
-    return () => {
-      clearTimeout(timer);
-    };
-  }, []);
+  // useEffect(() => {
+  //   let timer;
+  //   if (Math.random() > 0.3) {
+  //     timer = setTimeout(() => {
+  //       setCompProps({ ...compProps, value: '后端获取的内容~~~', placeholder: '异步内容!!~~~~!!' });
+  //     }, 5000);
+  //   }
+  //   return () => {
+  //     clearTimeout(timer);
+  //   };
+  // }, []);
 
   return { compProps, setCompProps };
 };

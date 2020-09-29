@@ -41,7 +41,7 @@ const IUBDSLParser = ({ dsl }) => {
     if (componentsCollection[key].compType === AllComponentType.FormInput) {
       componentsCollection[key] = {
         ...componentsCollection[key],
-        ...addConf(key, i)
+        // ...addConf(key, i)
       };
       schemas[`${key}${i}`] = {
         fieldMapping: "tableId1.fieldId1",
@@ -92,12 +92,13 @@ export default IUBDSLParser;
 const tempFnCompTransform = (compInfo, i) => {
   return {
     ...compInfo,
+    label: compInfo.title,
     compCode: compInfo.id,
     compId: compInfo.id,
-    unit: '单位',
-    placeholder: '请输入内容?',
+    // unit: '单位',
+    // placeholder: '请输入内容?',
     // value: '文本框内容',
-    tipContent: `${compInfo.title}Tip:${i}`,
+    // tipContent: `${compInfo.title}Tip:${i}`,
   };
 };
 

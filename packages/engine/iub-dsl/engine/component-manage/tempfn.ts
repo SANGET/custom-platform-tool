@@ -45,14 +45,14 @@ export const useCompProps = (propsMap) => {
   const [tempCompProps, setCompProps] = useState(context.result || {});
 
   /** 额外代码 - 观察变化的 */
-  useEffect(() => {
-    aopContext.asyncHandle.forEach((promise) => promise.then((newProps) => {
-      setCompProps({
-        ...tempCompProps,
-        ...newProps
-      });
-    }));
-  }, []);
+  // useEffect(() => {
+  //   aopContext.asyncHandle.forEach((promise) => promise.then((newProps) => {
+  //     setCompProps({
+  //       ...tempCompProps,
+  //       ...newProps
+  //     });
+  //   }));
+  // }, []);
 
   return {
     compProps: useMemo(() => {
@@ -70,13 +70,13 @@ const propHandleWrap = (originHandle, context, options?) => {
     /** 仅处理某个参数 */
 
     // TODO: 正常不应该影响input的渲染「待查到问题优化」
-    if (key === 'label' && Math.random() > 0.3) {
-      context.asyncHandle.push(asyncResolve(
-        originHandle({
-          key, val: '异步文本'
-        }, ctx)
-      ));
-    }
+    // if (key === 'label' && Math.random() > 0.3) {
+    //   context.asyncHandle.push(asyncResolve(
+    //     originHandle({
+    //       key, val: '异步文本'
+    //     }, ctx)
+    //   ));
+    // }
 
     /** 处理完的参数 */
 

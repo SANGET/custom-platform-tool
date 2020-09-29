@@ -51,8 +51,8 @@ const tempDsl = {
 const IUBDSLRenderer = React.memo<{dsl: any}>(({ dsl }) => {
   const { pageID } = dsl;
   if (typeof pageID !== 'string') {
-    dsl = tempDsl;
-    // return <ErrorRenderer msg='页面IUB-DSL数据有误!'/>;
+    // dsl = tempDsl;
+    return <ErrorRenderer msg='页面IUB-DSL数据有误!'/>;
   }
   // 临时添加schemas
   // dsl.schemas = testSchemas;
