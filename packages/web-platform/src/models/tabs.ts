@@ -146,9 +146,9 @@ const TabsModel: ITabsModel = {
         const filterList = state.list.filter((item) => item.menuId !== state.activeKey);
         const findIndex = state.list.findIndex((item) => item.menuId === state.activeKey);
         state.list = filterList;
-        const { path, menuId } = filterList[findIndex - 1];
+        const { path, menuId, pageId } = filterList[findIndex - 1];
         state.activeKey = menuId || "";
-        history.push(`${path}?${queryLink}`);
+        history.push(`${path}?menuId=${menuId}&${queryLink}&pageId=${pageId}`);
       }
       return state;
     },
