@@ -11,16 +11,17 @@ import {
 import { queryTablesList } from '../../../api';
 import RenderText from '../../RenderText';
 
-import { IForeignKey, ISELECTSMENU } from '../../../interface';
+import { IEditableRecord, ISELECTSMENU } from '../../../interface';
 
 interface IProps {
   text: string
-  record: IForeignKey
+  record: IEditableRecord
   form: FormInstance
+  label?: string
 }
 export const RefTableCode: React.FC<IProps> = (props: IProps) => {
   const {
-    form, text, record
+    form, text, record, label
   } = props;
   const editable = canColumnEdit(record, form, FOREIGNKEYS_KEY?.REFTABLECODE);
   const [options, setOptions] = useState<ISELECTSMENU[]>([]);
@@ -54,6 +55,7 @@ export const RefTableCode: React.FC<IProps> = (props: IProps) => {
   return editable ? (
     <Form.Item
       name={FOREIGNKEYS_KEY?.REFTABLECODE}
+      label = {label}
       rules={[
         { required: true, message: '必填' },
       ]}

@@ -25,7 +25,7 @@ const columnReducer = (state, action) => {
       return { ...state, editingKey: action?.name };
     case 'pushSelectedRowKey':
       let selectedRowKeys = [action?.name];
-      if (state.selectedRowKeys.includes(action?.name)) {
+      if (state?.selectedRowKeys?.includes(action?.name)) {
         selectedRowKeys = [];
       }
       return { ...state, selectedRowKeys };
@@ -33,6 +33,10 @@ const columnReducer = (state, action) => {
       return { ...state, ...action?.name };
     case 'setVisibleChooseDictModal':
       return { ...state, visibleChooseDictModal: action?.name || false };
+    case 'setVisibleCreateReferenceModal':
+      return { ...state, visibleCreateReferenceModal: action?.name || false };
+    case 'setVisibleCreateForeignKeyModal':
+      return { ...state, visibleCreateForeignKeyModal: action?.name || false };
     case 'changeShowSysSpecies':
       return { ...state, showSYSSpecies: action?.name };
   }

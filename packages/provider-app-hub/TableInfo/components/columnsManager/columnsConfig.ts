@@ -2,6 +2,10 @@ import {
   COLUMNS_KEY, SPECIES, FIELDTYPE, DATATYPE
 } from './constant';
 import { isRecordCustomed } from './service';
+
+const isRecordBis = (species) => {
+  return ![SPECIES.SYS, SPECIES.SYS_TMPL, SPECIES.BIS_TMPL].includes(species);
+};
 /** 列是否可编辑映射 */
 const columnEditConfig = {
   /** 字段名称 */
@@ -17,13 +21,14 @@ const columnEditConfig = {
   /** 字段类型 */
   [COLUMNS_KEY.FIELDTYPE]: (form) => {
     /** 非用户自定义生成的字段允许修改字段类型 */
-    const flag = ![SPECIES.SYS, SPECIES.SYS_TMPL, SPECIES.BIS_TMPL].includes(form.getFieldValue(COLUMNS_KEY.SPECIES));
+    const flag = isRecordBis(form.getFieldValue(COLUMNS_KEY.SPECIES))
+    && ![DATATYPE.QUOTE, DATATYPE.FK].includes(form.getFieldValue(COLUMNS_KEY.DATATYPE));
     return flag;
   },
   /** 数据类型 */
   [COLUMNS_KEY.DATATYPE]: (form) => {
     /** 系统生成的字段不允许改动 */
-    const flag = ![SPECIES.SYS, SPECIES.SYS_TMPL, SPECIES.BIS_TMPL].includes(form.getFieldValue(COLUMNS_KEY.SPECIES));
+    const flag = isRecordBis(form.getFieldValue(COLUMNS_KEY.SPECIES));
     return flag;
   },
   /** 长度 */
@@ -32,7 +37,7 @@ const columnEditConfig = {
     const fieldType = form.getFieldValue(COLUMNS_KEY.FIELDTYPE);
     const dataType = form.getFieldValue(COLUMNS_KEY.DATATYPE);
     /** 非自动生成的业务字段允许修改长度 */
-    const flag = ![SPECIES.SYS, SPECIES.SYS_TMPL, SPECIES.BIS_TMPL].includes(species)
+    const flag = isRecordBis(species)
     /** 字段类型为字符串，且数据类型为 图片，视频，音频，文件时，不允许改动 */
     && !(
       ([FIELDTYPE.STRING].includes(fieldType)
@@ -53,7 +58,6 @@ const columnEditConfig = {
   },
   /** 必填 */
   [COLUMNS_KEY.REQUIRED]: (form) => {
-    console.log(form.getFieldValue(COLUMNS_KEY.SPECIES));
     /** 系统生成的字段不允许改动 */
     return ![SPECIES.SYS, SPECIES.SYS_TMPL].includes(form.getFieldValue(COLUMNS_KEY.SPECIES));
   },

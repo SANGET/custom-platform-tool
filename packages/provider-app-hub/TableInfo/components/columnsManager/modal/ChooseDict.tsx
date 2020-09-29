@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useReducer } from 'react';
 import {
   Input, Table, message
 } from 'antd';
@@ -9,69 +9,132 @@ import { ModalFooter } from '../../ModalFooter';
 const { Search } = Input;
 
 interface IProps {
-  onOk: (id: string, name: string) => void;
+  onOk: (id: string[], name: string[]) => void;
   onCancel: () => void;
-  dictId: string
+  dictIds: string[]
 }
 interface IDict {
   id: string,
   name: string
 }
+const dictReducer = (state, action) => {
+  if (action.type === 'changeSome') {
+    return { ...state, ...action.name };
+  }
+};
+interface ISelectedRow {
+  id: string
+  name: string
+}
+/**
+ * 用于实时的数据比对
+ * @param arr
+ */
+const translateArrToMap = (arr: ISelectedRow[]) => {
+  const obj = {};
+  arr.forEach((item) => {
+    const { id, name } = item;
+    obj[id] = name;
+  });
+  return obj;
+};
+const translateMapToArr = (obj, order: string[]): ISelectedRow[] => {
+  return order.map((item) => {
+    return { id: item, name: obj?.[item] };
+  });
+};
+const getNameNyId = (menu: ISelectedRow[], id: string) => {
+  return menu.filter((item) => item.id === id)?.[0]?.name;
+};
 const ChooseDict: React.FC<IProps> = (props: IProps) => {
-  const { onOk, onCancel, dictId } = props;
-  const [dictObj, setDictObj] = useState({ id: '', name: '' });
-  const [offset, setMenuSize] = useState(1);
-  const [size, setMenuPage] = useState(10);
-  const [menuTotal, setMenuTotal] = useState(0);
-  const [name, setDictName] = useState('');
-  const [dictMenu, setDictMenu] = useState<IDict[]>([]);
-  const rowKeysDefault = dictId ? [dictId] : [];
-  const [selectedRowKeys, setSelectedRowKeys] = useState(rowKeysDefault);
+  const { onOk, onCancel, dictIds } = props;
+  const type = 'radio';
+  const [state, setState] = useReducer(dictReducer, {
+    selectedIds: dictIds || [],
+    offset: 1,
+    size: 10,
+    total: 0,
+    searchName: '',
+    menu: [],
+    selectedRows: []
+  });
+  /** 进行列表数据获取 */
   const getMenuList = async () => {
+    const { searchName: name, offset, size } = state;
     const res = await GetDictList({ name, offset, size });
     /** 提示信息 */
     if (res?.code !== API_SUCESS_CODE.GETTABLEINFO) {
-      return message[NOTIFICATION_TYPE.ERROR](res?.msg || API_ERROR_MSG.GETTABLEINFO);
+      message[NOTIFICATION_TYPE.ERROR](res?.msg || API_ERROR_MSG.GETTABLEINFO);
+      return;
     }
     /** 设置数据 */
-    setDictMenu(res?.result?.data);
-    /** 设置总行数 */
-    return setMenuTotal(res?.result?.total);
+    setState({
+      type: 'changeSome',
+      name: {
+        menu: res?.result?.data,
+        total: res?.result?.total
+      }
+    });
   };
   useEffect(() => {
     getMenuList();
   }, []);
 
   const handleOk = () => {
-    const id = dictObj?.id;
-    const dictName = dictObj?.name;
-    if (!id) {
+    if ([0, undefined, null].includes(state?.selectedIds?.length)) {
       return message?.[NOTIFICATION_TYPE.WARNING]('请选择一行数据');
     }
-    return onOk && onOk(id, dictName);
+    return onOk && onOk(state?.selectedIds, state?.selectedRows?.map((item) => item.name));
   };
   const handleCancel = () => {
     onCancel && onCancel();
   };
   const handleChangePage = (page, pageSize) => {
-    setMenuPage(page);
-    setMenuSize(pageSize);
+    setState({
+      type: 'changeSome',
+      name: {
+        offset: page,
+        size: pageSize
+      }
+    });
     getMenuList();
   };
-  const handleRowSelect = (selectedRowKeysTmpl) => {
-    setSelectedRowKeys(selectedRowKeysTmpl);
+
+  const handleRowSelect = (selectedIdsTmpl) => {
+    const selectedObj = translateArrToMap(state?.selectedRows);
+    selectedIdsTmpl.forEach((item) => {
+      selectedObj[item] = selectedObj?.[item] || getNameNyId(state.menu, item);
+    });
+    const selectedRows = translateMapToArr(selectedObj, selectedIdsTmpl);
+    setState({ type: 'changeSome', name: { selectedIds: selectedIdsTmpl, selectedRows } });
+  };
+
+  const handleRowClick = (selectedIdTmpl: string) => {
+    const selectedIdsTmpl1 = state?.selectedIds;
+    const index = selectedIdsTmpl1?.indexOf(selectedIdTmpl);
+    const selectedIdsTmpl2 = index === -1
+      ? [...selectedIdsTmpl1, selectedIdTmpl]
+      : [...selectedIdsTmpl1?.slice(0, index), ...selectedIdsTmpl1?.slice(index + 1)];
+    handleRowSelect(selectedIdsTmpl2);
+  };
+
+  const handleSearch = (value) => {
+    setState({
+      type: 'changeSome',
+      name: {
+        searchName: value,
+      }
+    });
+    getMenuList();
   };
   return (
     <>
       <Search
         placeholder="请输入字典名称"
-        onSearch={(value) => {
-          setDictName(value);
-          getMenuList();
-        }}
+        onSearch={handleSearch}
       />
       <Table
-        dataSource={dictMenu}
+        dataSource={state.menu}
         columns={[
           { title: '序号', render: (text, record, index) => { return `${index + 1}`; } },
           { title: '字典名称', dataIndex: 'name' },
@@ -81,28 +144,23 @@ const ChooseDict: React.FC<IProps> = (props: IProps) => {
         rowKey={(record) => record.id}
         onRow={(record) => {
           return {
-            onClick: () => {
-              handleRowSelect([record?.id]);
-              setDictObj({ id: record?.id, name: record?.name });
-            }
+            onClick: () => { handleRowClick(record?.id); }
           };
         }}
         pagination={{
           pageSizeOptions: ['10', '20', '30', '40', '50', '100'],
-          total: menuTotal,
+          total: state.total,
           onChange: handleChangePage,
           onShowSizeChange: handleChangePage
         }}
         rowSelection={{
-          selectedRowKeys,
-          onChange: handleRowSelect,
-          type: 'radio',
-          hideSelectAll: true,
-          renderCell: () => { return null; }
+          selectedRowKeys: state.selectedIds,
+          onChange: ((selectedId) => handleRowSelect(selectedId)),
+          type,
         }}
       />
       <ModalFooter
-        onOk={handleOk}
+        onOk={() => { handleOk(); }}
         onCancel={handleCancel}
       />
     </>
