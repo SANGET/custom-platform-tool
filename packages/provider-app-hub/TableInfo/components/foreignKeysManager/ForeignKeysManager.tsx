@@ -303,6 +303,7 @@ export const ForeignKeysManager: React.FC<IProps> = React.memo((props: IProps) =
             pagination = {false}
             rowSelection = {{
               type: 'radio',
+              fixed: true,
               hideSelectAll: true,
               selectedRowKeys: foreignKeysInfo?.selectedRowKeys || []
             }}

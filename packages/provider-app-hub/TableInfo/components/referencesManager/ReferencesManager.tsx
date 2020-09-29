@@ -303,6 +303,7 @@ export const ReferencesManager: React.FC<IProps> = React.memo((props: IProps) =>
             rowSelection = {{
               type: 'radio',
               hideSelectAll: true,
+              fixed: true,
               selectedRowKeys: referencesInfo?.selectedRowKeys || []
             }}
             onRow={(record: IReference, index: number) => {
