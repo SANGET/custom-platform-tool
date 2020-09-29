@@ -379,7 +379,7 @@ export const ColumnsManager: React.FC<IProps> = React.memo((props: IProps) => {
   };
   const columnShowConfig = [
     {
-      title: '序号', fix: 'left', width: 60, key: COLUMNS_KEY.INDEX, render: (text, record, index) => { return `${index + 1}`; }
+      title: '序号', width: 60, key: COLUMNS_KEY.INDEX, render: (text, record, index) => { return `${index + 1}`; }
     },
     {
       title: '字段名称',
@@ -482,7 +482,7 @@ export const ColumnsManager: React.FC<IProps> = React.memo((props: IProps) => {
       title: '唯一',
       key: COLUMNS_KEY.UNIQUE,
       dataIndex: COLUMNS_KEY.UNIQUE,
-      width: 120,
+      width: 100,
       render: (text, record) => (
         <Unique
           text = {text}
@@ -495,7 +495,7 @@ export const ColumnsManager: React.FC<IProps> = React.memo((props: IProps) => {
       title: '字典',
       key: COLUMNS_KEY.DICTIONARYFOREIGNCN,
       dataIndex: COLUMNS_KEY.DICTIONARYFOREIGNCN,
-      width: 120,
+      width: 100,
       render: (text, record) => {
         return < Dict
           dispatchColumns = { dispatchColumns }
@@ -539,6 +539,7 @@ export const ColumnsManager: React.FC<IProps> = React.memo((props: IProps) => {
     {
       title: ' ',
       key: 'index',
+      width: 60,
       render: (text, record) => {
         let dataType = record?.[COLUMNS_KEY.DATATYPE];
         if (record.editable) {
@@ -612,7 +613,7 @@ export const ColumnsManager: React.FC<IProps> = React.memo((props: IProps) => {
             <Table
               columns = {columnShowConfig}
               dataSource = { filterDataSource(columns, columnsInfo?.showSYSSpecies) }
-              scroll={{ x: true }}
+              scroll={{ x: '100%' }}
               rowKey={(record) => record?.[COLUMNS_KEY.ID]}
               pagination = {false}
               rowSelection = {{

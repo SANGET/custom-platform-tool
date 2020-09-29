@@ -298,7 +298,7 @@ export const ForeignKeysManager: React.FC<IProps> = React.memo((props: IProps) =
           <Table
             columns = {tableColumns}
             dataSource = { foreignKeys }
-            scroll={{ x: true }}
+            scroll={{ x: '100%' }}
             rowKey={(record) => record?.[FOREIGNKEYS_KEY?.ID]}
             pagination = {false}
             rowSelection = {{
