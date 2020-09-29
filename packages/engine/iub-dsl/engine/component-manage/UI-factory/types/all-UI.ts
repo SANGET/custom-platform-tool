@@ -4,4 +4,5 @@ export enum AllUI {
   FormItem = 'FormItem',
   FromWrap = 'FromWrap',
   Error = 'Error',
+  NormalTable = 'NormalTable'
 }
