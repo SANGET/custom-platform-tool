@@ -41,7 +41,7 @@ class AvatarDropdown extends React.Component<GlobalHeaderRightProps> {
     } = this.props;
     const menuHeaderDropdown = (
       <Menu className={styles.menu} selectedKeys={[]} onClick={this.onMenuClick}>
-        <Card
+        {/* <Card
           title="账户信息"
           bordered={false}
         >
@@ -49,7 +49,7 @@ class AvatarDropdown extends React.Component<GlobalHeaderRightProps> {
             <span className={styles.title}>所在部门</span>
             <span className={styles.name}>浩云科技</span>
           </div>
-        </Card>
+        </Card> */}
         <Menu.Divider />
         <Menu.Item key="logout">
           <LogoutOutlined />
