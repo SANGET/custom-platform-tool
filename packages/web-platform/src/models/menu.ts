@@ -3,12 +3,12 @@ import { queryMenuList } from '@/services/menu';
 import { construct } from '@/utils/utils';
 import { ROUTER_SUFFIX, MODE_PREVIEW } from '@/constant';
 
-interface IMenuItem {
-  id?: string;
-  name?: string;
-  path?: string;
+export interface IMenuItem {
+  id: string;
+  name: string;
+  pageLink?: string;
   icon?: string;
-  pid?: string;
+  pid: string;
 
   children?: IMenuItem;
 
