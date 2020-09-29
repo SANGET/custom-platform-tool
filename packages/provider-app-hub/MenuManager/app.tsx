@@ -1,7 +1,12 @@
 import React from "react";
+import MenuList from "./pages/PageList";
 
-const App = () => {
-  return <div>菜单管理</div>;
+const App: HY.SubApp = (props) => {
+  return (
+    <div className="page-list-container">
+      <MenuList />
+    </div>
+  );
 };
 
 export default App;

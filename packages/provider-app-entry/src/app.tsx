@@ -1,16 +1,19 @@
 import React from "react";
 
 import {
-  RouterMultiple, Link,
+  MultipleRouterManager, Link,
   defaultState as defaultRouteState,
-  RouterState, RouterHelperProps, onNavigate
+  RouterState, RouterHelperProps, onNavigate,
+  resolvePagePathWithSeperator
 } from 'multiple-page-routing';
 
 /** 获取路由配置 */
-import router, { getRouteName, resolvePath } from '@provider-app/config/router';
+import { Dashboard } from "@provider-app/dashboard/main";
+import Router, { getRouteName } from '@provider-app/config/router';
+import { LoadingTip } from "@hy/loading-tip";
 
 import {
-  Hall,
+  // Hall,
   PageContainer, Nav, TabNav, Logo, UserStatusbar
 } from './components';
 
@@ -39,7 +42,7 @@ const setReqUrlByApp = (app) => {
   }
 };
 
-export default class App extends RouterMultiple<AppContainerProps, AppContainerState> {
+export default class App extends MultipleRouterManager<AppContainerProps, AppContainerState> {
   state: AppContainerState = defaultRouteState
 
   constructor(props) {
@@ -83,9 +86,14 @@ export default class App extends RouterMultiple<AppContainerProps, AppContainerS
     const { logging } = this.props;
   }
 
-  handleHistoryChange = () => {
+  handleHistoryChange = (activeRoute) => {
     setReqUrlByApp(this.location.app);
+    // console.log(this.state.activeRoute);
   }
+
+  getRouteItem = (pathname) => Router[pathname]
+
+  hasPage = () => this.state.routers.length > 0
 
   appContext = {
     history: this.history,
@@ -94,24 +102,23 @@ export default class App extends RouterMultiple<AppContainerProps, AppContainerS
 
   renderPages = () => {
     const {
-      routers, routerInfo, activeRoute,
+      routers, routerSnapshot, activeRoute,
     } = this.state;
+    // console.log(this.state);
 
-    const hasPage = routers.length > 0;
-
-    return hasPage ? (
+    return (
       <div className="pages-container">
         {
-          Object.keys(routerInfo).map((pagePath, idx) => {
-            const pageItemInfo = routerInfo[pagePath];
+          Object.keys(routerSnapshot).map((pagePath, idx) => {
+            const pageItemInfo = routerSnapshot[pagePath];
             const pageAuthInfo = pageAuthCache[pagePath];
             const isShow = pagePath === activeRoute;
-            const pageKey = pagePath;
+            const pageKey = pageItemInfo.pathSnapshot;
 
             /**
              * 从路由配置中找到 pagePath 对应的页面
              */
-            const routeConfig = router[resolvePath(pagePath)];
+            const routeConfig = this.getRouteItem(resolvePagePathWithSeperator(pagePath));
             const C = routeConfig?.component;
 
             return (
@@ -132,11 +139,6 @@ export default class App extends RouterMultiple<AppContainerProps, AppContainerS
           })
         }
       </div>
-    ) : (
-      <Hall
-        location={this.location}
-        onNavigate={this.onNavigate}
-      />
     );
   }
 
@@ -147,14 +149,13 @@ export default class App extends RouterMultiple<AppContainerProps, AppContainerS
    */
   renderNav = () => {
     const {
-      routers, routerInfo, activeRoute,
       navMenu, ready,
     } = this.state;
     /**
      * 是否选择了应用，必须选择应用后才现实菜单
      */
-    const selectedApp = routers.length > 0;
-    return selectedApp ? (
+    const isShowMainNav = this.hasPage();
+    return isShowMainNav ? (
       <Nav
         navConfig={navMenu}
       />
@@ -164,9 +165,11 @@ export default class App extends RouterMultiple<AppContainerProps, AppContainerS
   render() {
     const { logout } = this.props;
     const {
-      routers, routerInfo, activeRoute,
+      routers, routerSnapshot, activeRoute,
       navMenu, ready,
     } = this.state;
+
+    const hasPage = this.hasPage();
 
     return (
       <div id="provider_app_container" className="bg-gray-100">
@@ -181,24 +184,35 @@ export default class App extends RouterMultiple<AppContainerProps, AppContainerS
                 />
                 {this.renderNav()}
                 <span className="flex"></span>
-                <ToApp location={this.location} />
+                {
+                  // 需要选择应用后才进入应用
+                  hasPage && <ToApp location={this.location} />
+                }
                 <UserStatusbar logout={logout} />
               </header>
               <div id="provider_app_content">
-                <TabNav
-                  onClose={(idx) => {
-                    this.closeTab(idx);
-                  }}
-                  routers={routers}
-                  routerInfo={routerInfo}
-                  activeRoute={activeRoute}
-                  getRouteName={getRouteName}
-                />
-                {this.renderPages()}
+                {
+                  !hasPage ? (
+                    <Dashboard {...this.appContext} />
+                  ) : (
+                    <>
+                      <TabNav
+                        onClose={(idx) => {
+                          this.closeTab(idx);
+                        }}
+                        routers={routers}
+                        routerSnapshot={routerSnapshot}
+                        activeRoute={activeRoute}
+                        getRouteName={getRouteName}
+                      />
+                      {this.renderPages()}
+                    </>
+                  )
+                }
               </div>
             </>
           ) : (
-            <div>Loading</div>
+            <LoadingTip />
           )
         }
       </div>

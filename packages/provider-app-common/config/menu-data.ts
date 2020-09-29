@@ -53,10 +53,24 @@ export const ProviderAppMenuData: MenuDataType[] = [
             title: '其他数据源',
             id: '23',
             icon: '',
-            path: '/page-manager',
+            // path: '/page-manager',
           }
         ]
       },
+    ]
+  },
+  {
+    title: '系统管理',
+    icon: '',
+    id: '3213123',
+    // path: '/menu-manager',
+    children: [
+      {
+        title: '菜单管理',
+        id: '1415rwqtqr',
+        icon: '',
+        path: '/menu-manager'
+      }
     ]
   },
 ];
