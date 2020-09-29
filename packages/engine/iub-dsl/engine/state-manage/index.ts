@@ -1,1 +1,1 @@
-export * from './stateManage';
+export * from './state-manage';

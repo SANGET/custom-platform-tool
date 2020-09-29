@@ -1,6 +1,6 @@
 import { ElementBasic } from "@engine/layout-renderer/types";
 import {
-  Selector, TreeSelector, Table, Button, Input
+  Selector, TreeSelector, Table, Button, AllComponentType, FormInput
 } from "./components";
 import { CommonObjStruct } from "../public";
 
@@ -40,7 +40,7 @@ interface Events {
   onFocus?: ActionTypes;
 }
 
-export type ComponentType = Selector | Input | TreeSelector | Table | Button
+export type ComponentType = Selector | FormInput | TreeSelector | Table | Button
 /**
  * 组件元素，行为载体
  */
@@ -54,12 +54,12 @@ export interface ComponentElement extends ElementBasic {
   actions?: Events;
 
   /** UI隔离的唯一标示 */
-  componentType: string | 'Input'; // TODO
+  compType: AllComponentType; // TODO
   // schemasMapping: string;
 
   /** 静态的props或style */
-  staticProps?: CommonObjStruct;
-  staticStyle?: CommonObjStruct;
+  // staticProps?: CommonObjStruct;
+  // staticStyle?: CommonObjStruct;
 
   // ! ⬆TODO:
 

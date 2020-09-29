@@ -3,6 +3,13 @@ import {
 } from "../types/renderStruct";
 import { pickCanUseCompPropsKey, genCompPropsMapList } from "./props-parser";
 
+const tempCode = (compTag) => {
+  if (compTag === 'Tootip') {
+    return Math.random() > 0.3;
+  }
+  return true;
+};
+
 const arrayRenderStructParser = (...args) => {};
 
 /**
@@ -58,14 +65,22 @@ const genBaseRenderStruct = (
   } = context;
 
   const {
-    canUseProps, compTag, canSkip
+    canUseProps, compTag, canSkip, requireRender
   } = structItem;
 
   const mark = `${baseMark}-${compTag}${index}`;
   const usePropsKeys = pickCanUseCompPropsKey(canUseProps)(allConfKey);
-  const compPropsMapList: CompPropsMap[] = genCompPropsMapList(usePropsKeys, originConf);
-
-  if (compPropsMapList.length) {
+  /** 演示临时代码 */
+  let compPropsMapList: CompPropsMap[] = [];
+  if (tempCode(compTag)) {
+    compPropsMapList = genCompPropsMapList(usePropsKeys, originConf);
+  } else {
+    console.log('没有渲染tip: ', mark);
+  }
+  // const newContext = {
+  //   ...context
+  // };
+  if (compPropsMapList.length || requireRender) {
     const newActualRenderInfo = [];
     const renderInfoItem: ActualRenderInfo = {
       compTag,
@@ -89,6 +104,8 @@ const genChildrenRenderStruct = <T extends FullRenderStruct>(
   context,
   { index }: { index: number }
 ) => {
+  /** e.g.条件处理引擎处理, 是否渲染子级结构 */
+
   const { children } = structItem;
 
   if (children?.length) {

@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { ActualRenderInfo } from "./types/renderStruct";
 import { AllUI } from "../UI-factory/types";
-import { handlePropsList } from "../tempfn";
+import { useCompProps } from "../tempfn";
 
 /**
  * 渲染list结构的组件
@@ -36,14 +36,19 @@ const actualRenderInfoRenderer = (
       compTag, mark, renderStruct, propsKeys, propsMap
     } = actualRenderInfo;
     const Comp = getWidget(compTag);
+    // useInputCompProps(propsMap);
     let compProps;
     switch (compTag) {
       case AllUI.BaseInput:
+        // compProps = useInputCompProps(propsMap)?.compProps || {};
         compProps = useFormInputPops(propsMap)?.compProps || {};
         break;
-      case AllUI.Error:
+      case AllUI.FormItem:
+        compProps = useCompProps(propsMap)?.compProps || {};
+        break;
+      case AllUI.WidgetError:
       default:
-        compProps = useDefaultCompProps(propsMap)?.compProps || {};
+        compProps = useCompProps(propsMap)?.compProps || {};
         break;
     }
 
@@ -75,39 +80,28 @@ const actualRenderInfoRenderer = (
  * @param propsMap 传入组件的属性的处理
  */
 const useFormInputPops = (propsMap) => {
-  const { compProps, setCompProps } = useDefaultCompProps(propsMap);
+  const { compProps, setCompProps } = useCompProps(propsMap);
 
   /** 测试内容 */
-  useEffect(() => {
-    let timer;
-    if (Math.random() > 0.3) {
-      timer = setTimeout(() => {
-        setCompProps({ ...compProps, placeholder: '异步内容!!~~~~!!' });
-      }, 2000);
-    }
-    return () => {
-      clearTimeout(timer);
-    };
-  }, []);
+  // useEffect(() => {
+  //   let timer;
+  //   if (Math.random() > 0.3) {
+  //     timer = setTimeout(() => {
+  //       setCompProps({ ...compProps, value: '后端获取的内容~~~', placeholder: '异步内容!!~~~~!!' });
+  //     }, 5000);
+  //   }
+  //   return () => {
+  //     clearTimeout(timer);
+  //   };
+  // }, []);
 
   return { compProps, setCompProps };
 };
 
 /**
- * 处理默认属性的hooks 「此函数临时放在此处」
- * @param propsMap 传入组件的属性的处理
- */
-const useDefaultCompProps = (propsMap) => {
-  const [tempCompProps, setCompProps] = useState(handlePropsList(propsMap));
-  return {
-    compProps: useMemo(() => {
-      return tempCompProps;
-    }, [tempCompProps]),
-    setCompProps
-  };
-};
-
-/** 渲染前锁定阶段 */
+ * 渲染前锁定阶段
+ * 锁定应该是parsecontext
+ *  */
 const RenderComp = (getWidget) => {
   return (actualRenderInfo: ActualRenderInfo[]) => {
     /** 渲染前锁定阶段 -- End */

@@ -3,6 +3,7 @@ import { history } from 'umi';
 import { Skeleton, Result } from 'antd';
 import { queryPageData } from "@/services/page";
 import { IUBDSLRenderer } from '@iub-dsl/platform/react';
+import './index.less';
 
 interface IContainerProps {
 

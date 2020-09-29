@@ -15,7 +15,7 @@ const pickBaseInputPropsKey = basePickPropsCstr(errorPropsKes);
 
 const baseInpitPropsMap = basePropsMapCstr<any>(errorPropsMapList);
 
-export const errorCompName = AllUI.Error;
+export const errorCompName = AllUI.WidgetError;
 
 const ErrorFactory = ({
   id, children, tipContent, ...ohterProps
@@ -30,8 +30,9 @@ const ErrorFactory = ({
   assertPropsKey(id, allPropsKey, canUsePropsKey);
   return (
     <Result
-      icon={<SmileOutlined rotate={180} />}
-      title="哎呀组件找不到丫!"
+      style={{ padding: 10 }}
+      // icon={<SmileOutlined style={{ fontSize: 40 }} rotate={180} />}
+      subTitle='widget not found'
     />
   );
 };

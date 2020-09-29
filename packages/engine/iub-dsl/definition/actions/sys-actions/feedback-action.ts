@@ -1,4 +1,4 @@
-import { BasicActionConf } from ".";
+import { BasicActionConf } from "..";
 
 type FeedBackStatus = 'success' | 'faile'
 

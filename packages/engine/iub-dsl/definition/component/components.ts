@@ -7,9 +7,9 @@ export enum AllComponentType {
   FormInput = "FormInput",
   Selector = "Selector",
   TreeSelector = "TreeSelector",
-  Table = "Table",
+  NormalTable = "NormalTable",
   Button = "Button",
-  Error = "Error"
+  WidgetError = "WidgetError"
 }
 
 export interface BaseForm {
@@ -45,7 +45,7 @@ export interface TreeSelector extends BaseForm {
 
 export interface Table {
   key: string;
-  type: AllComponentType.Table;
+  type: AllComponentType.NormalTable;
   dataSource: {};
 }
 

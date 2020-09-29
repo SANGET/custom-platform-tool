@@ -1,7 +1,7 @@
 import React, { Fragment } from 'react';
 
 import {
-  TootipFactory,
+  TootipFactory, TableFactory,
   BaseInputFactory, FormItemFactory,
   ErrorFactory
 } from '.';
@@ -16,10 +16,11 @@ const AuthTootipFactory = ({ children, ...props }) => {
 
 const allWidgetList = {
   [AllUI.FormItem]: FormItemFactory,
-  // [AllUI.Tootip]: TootipFactory,
-  [AllUI.Tootip]: AuthTootipFactory,
+  [AllUI.Tootip]: TootipFactory,
+  // [AllUI.Tootip]: AuthTootipFactory,
   [AllUI.BaseInput]: BaseInputFactory,
-  [AllUI.Error]: ErrorFactory
+  [AllUI.WidgetError]: ErrorFactory,
+  [AllUI.NormalTable]: TableFactory
 };
 
 /** uitls: 获取真实组件 */

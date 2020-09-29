@@ -1,6 +1,7 @@
 import { ApbFunction } from "../../apb-dsl";
 import {
-  CollectionType, Condition, BasicActionConf, ApbActionFn, DataQuoteRelationRef
+  CollectionType, Condition, BasicActionConf, DataQuoteRelationRef
+  // ApbActionFn
 } from "..";
 import { ActionsFlow } from "./action-flow";
 
@@ -93,7 +94,7 @@ export interface ApbAction extends BasicActionConf {
   };
   /** 库表操作可以执行的额外动作 */
   actionList?: {
-    [actionId: string]: ApbActionFn;
+    // [actionId: string]: ApbActionFn;
   };
 
   flow: ActionsFlow;
