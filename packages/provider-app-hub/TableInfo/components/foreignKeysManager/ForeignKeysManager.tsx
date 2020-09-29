@@ -12,7 +12,9 @@ import {
 import {
   foreignKeyReducer, translateColumnsToOptions, getRowKeysEditable, deleteConfirm
 } from './service';
-import { FieldName, RefTableCode, RefField } from './columns';
+import {
+  FieldName, RefTableCode, RefField, StrategyRender
+} from './columns';
 import RenderText from '../RenderText';
 
 interface Item {
@@ -266,6 +268,32 @@ export const ForeignKeysManager: React.FC<IProps> = React.memo((props: IProps) =
           form = {form}
           name='显示字段'
           code = {FOREIGNKEYS_KEY?.REFDISPLAYCODE}
+        />
+      )
+    },
+    {
+      title: '外键约束（删除时）',
+      key: FOREIGNKEYS_KEY?.DELETESTRATEGY,
+      dataIndex: FOREIGNKEYS_KEY?.DELETESTRATEGY,
+      width: 120,
+      render: (text, record) => (
+        <StrategyRender
+          name={FOREIGNKEYS_KEY.DELETESTRATEGY}
+          text = {text}
+          record={record}
+        />
+      )
+    },
+    {
+      title: '外键约束（更新时）',
+      key: FOREIGNKEYS_KEY?.UPDATESTRATEGY,
+      dataIndex: FOREIGNKEYS_KEY?.UPDATESTRATEGY,
+      width: 120,
+      render: (text, record) => (
+        <StrategyRender
+          name={FOREIGNKEYS_KEY.UPDATESTRATEGY}
+          text = {text}
+          record = {record}
         />
       )
     }

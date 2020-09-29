@@ -244,6 +244,7 @@ export const ColumnsManager: React.FC<IProps> = React.memo((props: IProps) => {
         fieldId,
         fieldCode: data?.refFieldCode,
         refTableCode: data?.refTableCode,
+        refTableId: data?.refTableId,
         refFieldCode: data?.refFieldCode,
         refFieldType: data?.refFieldType,
         refFieldSize: data?.refFieldSize,
@@ -274,12 +275,14 @@ export const ColumnsManager: React.FC<IProps> = React.memo((props: IProps) => {
       type: 'unShiftForeignKey',
       name: {
         fieldId,
-        fieldCode: data?.refFieldCode,
-        refTableCode: data?.refTableCode,
-        refFieldCode: data?.refFieldCode,
-        refFieldType: data?.refFieldType,
-        refFieldSize: data?.refFieldSize,
-        refDisplayFieldCode: data?.refDisplayFieldCode
+        fieldCode: data.refFieldCode,
+        refTableCode: data.refTableCode,
+        refFieldCode: data.refFieldCode,
+        refFieldType: data.refFieldType,
+        refFieldSize: data.refFieldSize,
+        refDisplayFieldCode: data.refDisplayFieldCode,
+        updateStrategy: data.updateStrategy,
+        deleteStrategy: data.deleteStrategy
       }
     });
   };

@@ -1,8 +1,6 @@
 import React from 'react';
-import {
-  Form
-} from 'antd';
-import { RefTableCode, RefField } from '@provider-app/table-info/components/foreignKeysManager/columns';
+import { Form } from 'antd';
+import { RefTableCode, RefField, StrategyRender } from '@provider-app/table-info/components/foreignKeysManager/columns';
 import { FOREIGNKEYS_KEY } from '@provider-app/table-info/components/foreignKeysManager/constant';
 import { ModalFooter } from '../../ModalFooter';
 import { FormInstance } from '../interface';
@@ -21,16 +19,18 @@ const CreateForeignKey: React.FC<IProps> = (props: IProps) => {
   const record = { editable: true };
 
   const layout = {
-    labelCol: { span: 4 },
-    wrapperCol: { span: 20 },
+    labelCol: { span: 6 },
+    wrapperCol: { span: 18 },
   };
 
   const handleOk = async (formTmpl: FormInstance) => {
     try {
       await formTmpl.validateFields();
       const data = formTmpl.getFieldsValue([
-        FOREIGNKEYS_KEY.REFTABLECODE, FOREIGNKEYS_KEY.REFFIELDCODE, FOREIGNKEYS_KEY.REFDISPLAYCODE,
-        FOREIGNKEYS_KEY.REFFIELDSIZE, FOREIGNKEYS_KEY.REFFIELDTYPE, FOREIGNKEYS_KEY.REFFIELDNAME
+        FOREIGNKEYS_KEY.REFTABLECODE, FOREIGNKEYS_KEY.REFFIELDCODE, FOREIGNKEYS_KEY.REGTABLEID,
+        FOREIGNKEYS_KEY.REFDISPLAYCODE,
+        FOREIGNKEYS_KEY.REFFIELDSIZE, FOREIGNKEYS_KEY.REFFIELDTYPE, FOREIGNKEYS_KEY.REFFIELDNAME,
+        FOREIGNKEYS_KEY.UPDATESTRATEGY, FOREIGNKEYS_KEY.DELETESTRATEGY
       ]);
       onOk && onOk(data);
     } catch (e) {
@@ -68,6 +68,8 @@ const CreateForeignKey: React.FC<IProps> = (props: IProps) => {
         name="显示字段"
         code={FOREIGNKEYS_KEY.REFDISPLAYCODE}
       />
+      <StrategyRender record = {record} label="外键约束（删除时）" name={FOREIGNKEYS_KEY.DELETESTRATEGY}/>
+      <StrategyRender record = {record} label="外键约束（更新时）" name={FOREIGNKEYS_KEY.UPDATESTRATEGY}/>
       <ModalFooter
         onOk={() => { handleOk(form); }}
         onCancel={() => { handleCancel(); }}

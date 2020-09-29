@@ -13,6 +13,7 @@ export enum FOREIGNKEYS_KEY {
   'FIELDNAME' = 'fieldName',
   'FIELDCODE' = 'fieldCode',
   'REFTABLECODE' = 'refTableCode',
+  'REGTABLEID' = 'refTableId',
   'REFTABLEID' = 'refTableId',
   'REFFIELDCODE' = 'refFieldCode',
   'REFFIELDTYPE' = 'refFieldType',
