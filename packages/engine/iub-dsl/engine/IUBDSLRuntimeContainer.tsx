@@ -1,36 +1,60 @@
 /* eslint-disable no-param-reassign */
-import React, { useState, useEffect, useMemo } from 'react';
+import React, {
+  useEffect, useMemo
+} from 'react';
 import { LayoutRenderer } from '@engine/layout-renderer';
 import { RenderComp } from './component-manage/component-store/render-component';
 import { getWidget } from './component-manage/UI-factory/all-UI';
 import { FromWrapFactory } from './component-manage/UI-factory';
+import { createIUBStore } from './state-manage';
 
+const getFullInitStruct = (baseStruct) => {
+  return Object.keys(baseStruct).reduce((result, key) => {
+    if (typeof baseStruct[key] === 'string') {
+      result[key] = baseStruct[key];
+    } else if (Array.isArray(baseStruct[key])) {
+      result[key] = [];
+    } else {
+      result[key] = getFullInitStruct(baseStruct[key]);
+    }
+    return result;
+  }, {});
+};
+
+// useState<S>(initialState: ): [S, Dispatch<SetStateAction<S>>];
 export const DefaultCtx = React.createContext({});
 
 const IUBDSLRuntimeContainer = React.memo<{dslParseRes: any}>(({ dslParseRes }) => {
   const {
     layoutContent, componentParseRes, getCompParseInfo,
     schemas, mappingEntity,
-    getSchemasInitValue,
-    originSchemas,
-    renderComponentKeys
+    renderComponentKeys,
+    schemasParseRes,
   } = dslParseRes;
+  console.log(schemasParseRes);
 
-  const [state, setstate] = useState('嘻嘻哈哈');
+  // const [state, setstate] = useState('嘻嘻哈哈');
+  const useIUBStore = useMemo(() => createIUBStore(schemasParseRes), [],);
 
+  const { getPageState, updatePageState } = useIUBStore();
   const ctx = {
-    state
   };
 
-  // useEffect(() => {
-  //   const timer = setTimeout(() => {
-  //     setstate('呵呵嘻嘻');
-  //     console.log('更新了全局数据');
-  //   }, 2000);
-  //   return () => {
-  //     clearTimeout(timer);
-  //   };
-  // }, []);
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      updatePageState({
+        a: 'b',
+      });
+      setTimeout(() => {
+        updatePageState({
+          c: 'bdd',
+        });
+      }, 2000);
+    }, 2000);
+    return () => {
+      clearTimeout(timer);
+    };
+  }, []);
 
   // const { content = [], type: pageType } = layoutContent;
 
@@ -44,6 +68,11 @@ const IUBDSLRuntimeContainer = React.memo<{dslParseRes: any}>(({ dslParseRes }) 
 
   return (
     <DefaultCtx.Provider value={ctx}>
+      <pre>
+        {
+          JSON.stringify(getPageState(), null, 2)
+        }
+      </pre>
       <FromWrapFactory>
         <LayoutRenderer
           layoutNode={actualRenderComponentList}
@@ -51,7 +80,7 @@ const IUBDSLRuntimeContainer = React.memo<{dslParseRes: any}>(({ dslParseRes }) 
             const { id: compId, Comp } = layoutNodeItem;
 
             /** 可以额外添加属性, 例如权限控制的属性传入 */
-            return <Comp key={compId} extral={'扩展props'} unit={state} />;
+            return <Comp key={compId} extral={'扩展props'} />;
           }}
           RootRender={(child) => {
             return (<div>
