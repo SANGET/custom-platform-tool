@@ -34,9 +34,9 @@ export async function queryTablesList() {
 }
 
 /** 更新表配置 */
-export async function updateTableInfo(params) {
+export async function updateTableInfo(data) {
   return await $R_P.put({
     url: `/data/v1/tables/`,
-    params
+    data
   });
 }

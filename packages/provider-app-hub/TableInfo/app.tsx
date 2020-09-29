@@ -67,10 +67,10 @@ const getFormData = (form) => {
 };
 const getListData = (info) => {
   const {
-    columns, references, foreignKeys, tableId
+    columns, references, foreignKeys, tableId, species, mainTableCode
   } = info;
   return {
-    columns, references, foreignKeys, tableId
+    columns, references, foreignKeys, tableId, species, mainTableCode
   };
 };
 const getExtraTableConfigByType = (type, maxLevel, mainTableCode) => {
@@ -88,7 +88,7 @@ const getUpdateParam = (form, info) => {
   } = getFormData(form);
   /** tabs 布局中栏数据 */
   const {
-    columns, references, foreignKeys, tableId, mainTableCode
+    columns, references, foreignKeys, tableId, mainTableCode, species
   } = getListData(info);
   const extraConfig = getExtraTableConfigByType(type, maxLevel, mainTableCode);
   return {
@@ -100,11 +100,11 @@ const getUpdateParam = (form, info) => {
     columns,
     references,
     foreignKeys,
+    species,
     ...extraConfig
   };
 };
 const updateTable = (param) => {
-  console.log(param);
   updateTableInfo(param).then((res) => {
     const type = res?.code === API_SUCESS_CODE.GETTABLEINFO
       ? NOTIFICATION_TYPE.SUCCESS : NOTIFICATION_TYPE.ERROR;
@@ -146,12 +146,12 @@ const TableInfo : React.FC<IProps> = (props: IProps) => {
   const storeInfo = (dataTmpl: ITableInfo): void => {
     const {
       name, code, type, moduleId, mainTableName, mainTableCode,
-      relatedPages, columns, references, foreignKeys, tableId
+      relatedPages, columns, references, foreignKeys, tableId, species
     } = dataTmpl;
     dispatchInfo({
       type: 'changeInfo',
       name: {
-        relatedPages, columns, references, foreignKeys, tableId, mainTableCode
+        relatedPages, columns, references, foreignKeys, tableId, mainTableCode, species
       }
     });
     form?.setFieldsValue({
