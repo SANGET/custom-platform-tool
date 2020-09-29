@@ -30,7 +30,7 @@ const MenusModel: IMenusModel = {
   effects: {
     * getMenu({ payload }, { call, put }) {
       const response = yield call(queryMenuList, payload);
-      if (response.code === 0) {
+      if (response?.code === 0) {
         yield put({
           type: 'setMeunList',
           payload: response.result,

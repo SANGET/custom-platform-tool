@@ -41,7 +41,7 @@ class BasicLayout extends React.PureComponent<IBasicLayoutProps, IBaseLayoutStat
   public async componentDidMount() {
     this.setPreviewMenuAndTabs();
     const res = await this.getMenu();
-    if (res.code === 0) {
+    if (res?.code === 0) {
       this.setDefaultTabs(res.result || []);
       this.setInintopenKeys();
     }
