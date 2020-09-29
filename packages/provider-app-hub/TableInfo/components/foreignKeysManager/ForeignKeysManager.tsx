@@ -10,7 +10,7 @@ import {
   IForeignKey, ITableColumn, FormInstance, ISpecies
 } from '../../interface';
 import {
-  foreignKeyReducer, translateColumnsToOptions, getRowKeysEditable, deleteConfirm
+  foreignKeyReducer, translateColumnsToOptions, getRowKeysEditable, deleteConfirm, getIndexByEditingKey
 } from './service';
 import {
   FieldName, RefTableCode, RefField, StrategyRender
@@ -32,7 +32,7 @@ export const ForeignKeysManager: React.FC<IProps> = React.memo((props: IProps) =
     /** 选中行列表 */
     selectedRowKeys: [],
     /** 编辑行的索引 */
-    editingIndex: -1,
+    editingKey: '',
     refFieldOptions: []
   });
   const [form] = Form.useForm();
@@ -40,44 +40,45 @@ export const ForeignKeysManager: React.FC<IProps> = React.memo((props: IProps) =
   /** 对form表单设值，当前时刻有且仅有一行数据可列入表单编辑 */
   const setRecordToForm = (formTmpl: FormInstance, record: IForeignKey) => {
     const {
-      fieldCode, refTableCode, refFieldCode, refDisplayFieldCode, species
+      fieldCode, refTableCode, refFieldCode, refDisplayFieldCode, species, updateStrategy, deleteStrategy
     } = record;
     formTmpl.setFieldsValue({
-      fieldCode, refTableCode, refFieldCode, refDisplayFieldCode, species
+      fieldCode, refTableCode, refFieldCode, refDisplayFieldCode, species, updateStrategy, deleteStrategy
     });
     return true;
   };
   /** 将表单数据提回记录，当前时刻有且仅有一行数据可从表单列入 */
   const getRecordFromForm = (formTmpl: FormInstance): IForeignKey => {
     const {
-      FIELDNAME, FIELDCODE, REFTABLECODE, REFFIELDCODE, REFDISPLAYCODE
+      FIELDNAME, FIELDCODE, REFTABLECODE, REFFIELDCODE, REFDISPLAYCODE, UPDATESTRATEGY, DELETESTRATEGY
     } = FOREIGNKEYS_KEY;
     const recordNew = formTmpl.getFieldsValue([
-      FIELDNAME, FIELDCODE, REFTABLECODE, REFFIELDCODE, REFDISPLAYCODE
+      FIELDNAME, FIELDCODE, REFTABLECODE, REFFIELDCODE, REFDISPLAYCODE, UPDATESTRATEGY, DELETESTRATEGY
     ]);
     return recordNew;
   };
   /** 更改数据 */
-  const dispatchColumnsAndEditingIndex = (foreignKeysTmpl, editingIndex) => {
+  const dispatchColumnsAndEditingKey = (foreignKeysTmpl, editingKey) => {
     dispatchInfo({
       type: 'editForeignKeys',
       name: foreignKeysTmpl
     });
     dispatchForeignKeys({
-      type: 'changeEditingIndex',
-      name: editingIndex
+      type: 'changeEditingKey',
+      name: editingKey
     });
   };
   /** 保存编辑行数据 */
   const saveRow = async (formTmpl: FormInstance) => {
-    const { editingIndex } = foreignKeysInfo;
-    if (editingIndex < 0) return true;
+    const { editingKey } = foreignKeysInfo;
+    if (editingKey === '') return true;
     try {
       await formTmpl.validateFields();
       const record = getRecordFromForm(formTmpl);
-      dispatchColumnsAndEditingIndex({
-        [editingIndex]: {
-          ...foreignKeys?.[editingIndex], ...record, editable: false
+      const index = getIndexByEditingKey(editingKey, foreignKeys);
+      dispatchColumnsAndEditingKey({
+        [index]: {
+          ...foreignKeys?.[index], ...record, editable: false
         }
       }, -1);
       return true;
@@ -87,8 +88,8 @@ export const ForeignKeysManager: React.FC<IProps> = React.memo((props: IProps) =
   };
   /** 行的双击操作，转为可编辑状态 */
   const handleRowDoubleClick = (formTmpl: FormInstance, record: IForeignKey, index: number) => {
-    const editingIndex = foreignKeysInfo?.editingIndex;
-    if (index === editingIndex || ![ISpecies.BIS].includes(record?.[FOREIGNKEYS_KEY?.SPECIES])) {
+    const { editingKey } = foreignKeysInfo;
+    if (record.id === editingKey) {
       // handleBlur(formTmpl, record);
       return;
     }
@@ -96,14 +97,14 @@ export const ForeignKeysManager: React.FC<IProps> = React.memo((props: IProps) =
       if (!canIEdit) return;
       setRecordToForm(formTmpl, record);
       const columnsTmpl = { [index]: { editable: true } };
-      dispatchColumnsAndEditingIndex(columnsTmpl, index);
+      dispatchColumnsAndEditingKey(columnsTmpl, record.id);
     });
   };
   /** 行点击操作 */
   const handleRowClick = (formTmpl: FormInstance, record: IForeignKey, index: number) => {
-    const editingIndex = foreignKeysInfo?.editingIndex;
+    const editingKey = foreignKeysInfo?.editingKey;
     saveRow(formTmpl).then((canIClick) => {
-      (canIClick || editingIndex === index) && dispatchForeignKeys({ type: 'pushSelectedRowKey', name: record?.[FOREIGNKEYS_KEY?.ID] });
+      (canIClick || editingKey === record.id) && dispatchForeignKeys({ type: 'pushSelectedRowKey', name: record?.[FOREIGNKEYS_KEY?.ID] });
     });
   };
   /** 行失焦操作 */
@@ -133,7 +134,7 @@ export const ForeignKeysManager: React.FC<IProps> = React.memo((props: IProps) =
     dispatchForeignKeys({
       type: 'allIn',
       name: {
-        editingIndex: 0,
+        editingKey: '',
         selectedRowKeys: [id]
       }
     });
@@ -273,27 +274,31 @@ export const ForeignKeysManager: React.FC<IProps> = React.memo((props: IProps) =
     },
     {
       title: '外键约束（删除时）',
-      key: FOREIGNKEYS_KEY?.DELETESTRATEGY,
-      dataIndex: FOREIGNKEYS_KEY?.DELETESTRATEGY,
+      key: FOREIGNKEYS_KEY.DELETESTRATEGY,
+      dataIndex: FOREIGNKEYS_KEY.DELETESTRATEGY,
       width: 120,
       render: (text, record) => (
         <StrategyRender
-          name={FOREIGNKEYS_KEY.DELETESTRATEGY}
+          name="外键约束（删除时）"
+          code={FOREIGNKEYS_KEY.DELETESTRATEGY}
           text = {text}
           record={record}
+          form={form}
         />
       )
     },
     {
       title: '外键约束（更新时）',
-      key: FOREIGNKEYS_KEY?.UPDATESTRATEGY,
-      dataIndex: FOREIGNKEYS_KEY?.UPDATESTRATEGY,
+      key: FOREIGNKEYS_KEY.UPDATESTRATEGY,
+      dataIndex: FOREIGNKEYS_KEY.UPDATESTRATEGY,
       width: 120,
       render: (text, record) => (
         <StrategyRender
-          name={FOREIGNKEYS_KEY.UPDATESTRATEGY}
+          name="外键约束（更新时）"
+          code={FOREIGNKEYS_KEY.UPDATESTRATEGY}
           text = {text}
           record = {record}
+          form={form}
         />
       )
     }
@@ -307,7 +312,7 @@ export const ForeignKeysManager: React.FC<IProps> = React.memo((props: IProps) =
             <Button
               type={BUTTON_TYPE?.PRIMARY}
               size={BUTTON_SIZE?.SMALL}
-              disabled={foreignKeysInfo?.editingIndex > -1}
+              disabled={foreignKeysInfo?.editingKey !== ''}
               onClick={handleCreatRow}
             >新增</Button>
             <Button

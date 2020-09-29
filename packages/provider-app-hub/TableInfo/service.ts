@@ -18,8 +18,8 @@ export function openNotification(type: IStatus, msg = "", description = "") {
 }
 
 /** 根据下拉项数据和当前值获取显示数据 */
-export const getlabelByMenue = (menu: ISELECTSMENU[], key: string): string => {
-  return menu?.filter((item) => item?.key === key)?.[0]?.label || '';
+export const getlabelByMenue = (menu: ISELECTSMENU[], key?: string): string => {
+  return key ? (menu?.filter((item) => item?.key === key)?.[0]?.label || '') : '';
 };
 
 /** 判断是否为用户当次创建的记录 */
@@ -78,7 +78,7 @@ export const infoReducer = (state, action) => {
       const { foreignKeys } = state || {};
       const foreignKeysTmpl = JSON?.parse(JSON?.stringify(foreignKeys));
       for (const key in action?.name) {
-        foreignKeys[key] = { ...foreignKeys?.[key], ...action?.name?.[key] };
+        foreignKeysTmpl[key] = { ...foreignKeys?.[key], ...action?.name?.[key] };
       }
       return {
         ...state,

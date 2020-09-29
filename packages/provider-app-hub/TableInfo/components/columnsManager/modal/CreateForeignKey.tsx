@@ -68,8 +68,8 @@ const CreateForeignKey: React.FC<IProps> = (props: IProps) => {
         name="显示字段"
         code={FOREIGNKEYS_KEY.REFDISPLAYCODE}
       />
-      <StrategyRender record = {record} label="外键约束（删除时）" name={FOREIGNKEYS_KEY.DELETESTRATEGY}/>
-      <StrategyRender record = {record} label="外键约束（更新时）" name={FOREIGNKEYS_KEY.UPDATESTRATEGY}/>
+      <StrategyRender record = {record} label="外键约束（删除时）" code={FOREIGNKEYS_KEY.DELETESTRATEGY}/>
+      <StrategyRender record = {record} label="外键约束（更新时）" code={FOREIGNKEYS_KEY.UPDATESTRATEGY}/>
       <ModalFooter
         onOk={() => { handleOk(form); }}
         onCancel={() => { handleCancel(); }}
