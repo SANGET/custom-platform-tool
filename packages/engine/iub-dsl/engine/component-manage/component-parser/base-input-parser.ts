@@ -1,4 +1,4 @@
-import { baseInputCompParser as defaultInputParser } from "../component-store/form/input/base-input-parser";
+import { baseInputCompParser as defaultInputParser } from "../component-store";
 import { globalInputConf, globalDefaultOptions } from "../../conf";
 
 /**
