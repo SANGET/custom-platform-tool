@@ -106,7 +106,7 @@ const PageList: React.FC = (props) => {
     });
   }, []);
   return (
-    <div className="container mx-auto">
+    <div className="page-list-data">
       <div className="pu10">
         <Button
           onClick={(e) => {

@@ -1,4 +1,5 @@
 @import './deer-ui/index.scss';
+@import './layout.scss';
 
 .app-nav {
   // background-color: $themeColor;
@@ -11,4 +12,17 @@
   .link-btn {
     color: inherit;
   }
+}
+
+#table-info,
+#page-manager,
+#menu-manager,
+#page-manager,
+#DictManage {
+  margin: 0 auto;
+  width: 100%;
+  min-width: 990px;
+  max-width: 1290px;
+  // background-color: #FFF;
+  padding: 20px;
 }

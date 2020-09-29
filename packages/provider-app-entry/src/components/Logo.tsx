@@ -5,7 +5,7 @@ export const Logo = (props) => {
   return (
     <div {...props}>
       <div
-        className="ps20 text-white text-xl flex items-center"
+        className="ps20 text-xl flex items-center"
       >
         <GoogleOutlined />
         <span>

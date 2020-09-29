@@ -20,8 +20,8 @@ export const ToApp = ({
     >
       <a
         href={getPreviewUrl()}
+        className="text-gray-600"
         target="_blank"
-        style={{ color: "white" }}
       >
         进入应用系统
       </a>

@@ -93,7 +93,8 @@ export default class App extends MultipleRouterManager<AppContainerProps, AppCon
 
   getRouteItem = (pathname) => Router[pathname]
 
-  hasPage = () => this.state.routers.length > 0
+  /** 是否进入了应用 */
+  isEntryApp = () => this.state.routers.length > 0
 
   appContext = {
     history: this.history,
@@ -113,7 +114,8 @@ export default class App extends MultipleRouterManager<AppContainerProps, AppCon
             const pageItemInfo = routerSnapshot[pagePath];
             const pageAuthInfo = pageAuthCache[pagePath];
             const isShow = pagePath === activeRoute;
-            const pageKey = pageItemInfo.pathSnapshot;
+            const { pathname, pathSnapshot: pageKey } = pageItemInfo;
+            const pageDOMID = pathname.replace('/', '');
 
             /**
              * 从路由配置中找到 pagePath 对应的页面
@@ -129,6 +131,7 @@ export default class App extends MultipleRouterManager<AppContainerProps, AppCon
                 location={this.location}
                 className="page"
                 key={pageKey}
+                id={pageDOMID}
                 style={{
                   display: isShow ? 'block' : 'none'
                 }}
@@ -154,7 +157,7 @@ export default class App extends MultipleRouterManager<AppContainerProps, AppCon
     /**
      * 是否选择了应用，必须选择应用后才现实菜单
      */
-    const isShowMainNav = this.hasPage();
+    const isShowMainNav = this.isEntryApp();
     return isShowMainNav ? (
       <Nav
         navConfig={navMenu}
@@ -169,14 +172,17 @@ export default class App extends MultipleRouterManager<AppContainerProps, AppCon
       navMenu, ready,
     } = this.state;
 
-    const hasPage = this.hasPage();
+    const isEntryApp = this.isEntryApp();
 
     return (
       <div id="provider_app_container" className="bg-gray-100">
         {
           ready ? (
             <>
-              <header className="header flex items-center content-center">
+              <header
+                id="provider_app_header"
+                className={`provider-app-header flex items-center content-center shadow ${isEntryApp ? 'has-app' : ''}`}
+              >
                 <Logo
                   onClick={(e) => {
                     this.closeAll();
@@ -186,13 +192,13 @@ export default class App extends MultipleRouterManager<AppContainerProps, AppCon
                 <span className="flex"></span>
                 {
                   // 需要选择应用后才进入应用
-                  hasPage && <ToApp location={this.location} />
+                  isEntryApp && <ToApp location={this.location} />
                 }
                 <UserStatusbar logout={logout} />
               </header>
               <div id="provider_app_content">
                 {
-                  !hasPage ? (
+                  !isEntryApp ? (
                     <Dashboard {...this.appContext} />
                   ) : (
                     <>

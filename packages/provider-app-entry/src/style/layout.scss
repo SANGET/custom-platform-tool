@@ -7,14 +7,20 @@ $provider-nav-tabbar-height: 38px;
   right: 0;
   left: 0;
   bottom: 0;
-  .header {
+  .provider-app-header {
     position: absolute;
     top: 0;
     right: 0;
     left: 0;
     height: $provider-header-height;
-    background-color: $themeColor;
-    color: #FFF;
+    // background-color: $themeColor;
+    color: #333;
+    transition: background 0.3s ease;
+    z-index: 11;
+    &.has-app {
+      // color: #FFF;
+      // background-color: $themeColor;
+    }
   }
   .pages-container {
     position: absolute;
