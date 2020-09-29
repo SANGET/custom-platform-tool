@@ -4,7 +4,7 @@ import {
 } from 'multiple-page-routing';
 
 export const TabNav = ({
-  routers, routerInfo, activeRoute, getRouteName,
+  routers, routerSnapshot, activeRoute, getRouteName,
   onClose
 }) => {
   return (
@@ -13,7 +13,7 @@ export const TabNav = ({
     >
       {
         routers.map((route, idx) => {
-          const { params: routeInfoParams } = routerInfo[route];
+          const { params: routeInfoParams } = routerSnapshot[route];
           const { title, key, closable } = routeInfoParams;
           const _title = title || getRouteName(route) || `${route}_未设置 title`;
           return (

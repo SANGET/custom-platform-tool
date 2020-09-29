@@ -63,7 +63,7 @@ const mockData = {
  * 1. 设置默认的路由为 app
  */
 export const Dashboard: HY.SubApp = (props) => {
-  const [appData, setAppData] = useState([mockData]);
+  const [appData, setAppData] = useState([]);
 
   useEffect(() => {
     /** 设置 app 为空，因为还未选择 app */

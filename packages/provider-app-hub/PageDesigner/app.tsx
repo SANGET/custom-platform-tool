@@ -3,6 +3,7 @@ import React from "react";
 import produce from 'immer';
 import { VEDispatcher, VisualEditorState } from "@engine/visual-editor/core";
 import { updatePageService } from "@provider-app/services";
+import { LoadingTip } from "@hy/loading-tip";
 import ToolBar from './components/PDToolbar';
 import WidgetPanel from './components/PDWidgetPanel';
 import CanvasStage from './components/PDCanvasStage';
@@ -13,7 +14,6 @@ import {
 } from "./services";
 
 import './style';
-import { LoadingTip } from "./components/Loading";
 // import { VisualEditorStore } from "@engine/visual-editor/core/store";
 
 interface VisualEditorAppProps extends VisualEditorState {
@@ -104,20 +104,20 @@ class PageDesignerApp extends React.Component<VisualEditorAppProps & HY.SubAppSp
     /** 并发获取初始化数据 */
     const [dynamicData, remotePageData] = await Promise.all([
       getFEDynamicData(),
-      // getPageContentWithDatasource(pageID)
+      getPageContentWithDatasource(pageID)
     ]);
-    // const {
-    //   datasources, pageContent, pageDataRes
-    // } = remotePageData;
+    const {
+      datasources, pageContent, pageDataRes
+    } = remotePageData;
 
     /** 准备初始化数据 */
     const initData = produce(dynamicData, (draftInitData) => {
-      // draftInitData.pageContent = pageContent;
-      // draftInitData.payload = {
-      //   pageDataRes,
-      //   // 填入 datasources
-      //   datasources,
-      // };
+      draftInitData.pageContent = pageContent;
+      draftInitData.payload = {
+        pageDataRes,
+        // 填入 datasources
+        datasources,
+      };
       return draftInitData;
     });
 
@@ -154,7 +154,10 @@ class PageDesignerApp extends React.Component<VisualEditorAppProps & HY.SubAppSp
         <header className="app-header">
           <ToolBar onReleasePage={this.onReleasePage} location={location} />
         </header>
-        <div className="app-content">
+        <div
+          className="app-content"
+          // style={{ top: 0 }}
+        >
           <div
             className="comp-panel"
           >
@@ -167,6 +170,7 @@ class PageDesignerApp extends React.Component<VisualEditorAppProps & HY.SubAppSp
           </div>
           <div
             className="canvas-container"
+            style={{ height: '100%' }}
           >
             <CanvasStage
               selectedInfo={selectedInfo}

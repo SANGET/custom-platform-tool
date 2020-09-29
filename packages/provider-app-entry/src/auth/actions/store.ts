@@ -41,8 +41,8 @@ const defaultAuthStore: AuthStore = {
   autoLoging: !!getPrevLoginToken(),
   logging: false,
   logouting: false,
-  isLogin: !!getPrevLoginToken(),
-  // isLogin: process.env.NODE_ENV === 'development',
+  // isLogin: !!getPrevLoginToken(),
+  isLogin: process.env.NODE_ENV === 'development',
   prevLoginRes: {},
   token: "",
   // menuStore: NAV_MENU_CONFIG

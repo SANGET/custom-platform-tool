@@ -90,8 +90,9 @@ const Table: React.FC<IProps> = (props: IProps, ref) => {
     if (operate === "edit") {
       onNavigate({
         type: "PUSH",
-        path: `/table-info?${id}`,
-        params: { id, title: '编辑表' }
+        path: `/table-info`,
+        pathExtend: id,
+        params: { id, title: `编辑表_${name}` }
       });
     } else if (operate === "delete") {
       checkBeforeDelete(id);

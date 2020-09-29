@@ -3,12 +3,14 @@ import React from "react";
 import {
   MultipleRouterManager, Link,
   defaultState as defaultRouteState,
-  RouterState, RouterHelperProps, onNavigate
+  RouterState, RouterHelperProps, onNavigate,
+  resolvePagePathWithSeperator
 } from 'multiple-page-routing';
 
 /** 获取路由配置 */
 import { Dashboard } from "@provider-app/dashboard/main";
-import Router, { getRouteName, resolvePath } from '@provider-app/config/router';
+import Router, { getRouteName } from '@provider-app/config/router';
+import { LoadingTip } from "@hy/loading-tip";
 
 import {
   // Hall,
@@ -100,23 +102,23 @@ export default class App extends MultipleRouterManager<AppContainerProps, AppCon
 
   renderPages = () => {
     const {
-      routers, routerInfo, activeRoute,
+      routers, routerSnapshot, activeRoute,
     } = this.state;
     // console.log(this.state);
 
     return (
-      <div className="pages-container container mx-auto py-2 px-4">
+      <div className="pages-container">
         {
-          Object.keys(routerInfo).map((pagePath, idx) => {
-            const pageItemInfo = routerInfo[pagePath];
+          Object.keys(routerSnapshot).map((pagePath, idx) => {
+            const pageItemInfo = routerSnapshot[pagePath];
             const pageAuthInfo = pageAuthCache[pagePath];
             const isShow = pagePath === activeRoute;
-            const pageKey = pagePath;
+            const pageKey = pageItemInfo.pathSnapshot;
 
             /**
              * 从路由配置中找到 pagePath 对应的页面
              */
-            const routeConfig = this.getRouteItem(resolvePath(pagePath));
+            const routeConfig = this.getRouteItem(resolvePagePathWithSeperator(pagePath));
             const C = routeConfig?.component;
 
             return (
@@ -163,7 +165,7 @@ export default class App extends MultipleRouterManager<AppContainerProps, AppCon
   render() {
     const { logout } = this.props;
     const {
-      routers, routerInfo, activeRoute,
+      routers, routerSnapshot, activeRoute,
       navMenu, ready,
     } = this.state;
 
@@ -199,7 +201,7 @@ export default class App extends MultipleRouterManager<AppContainerProps, AppCon
                           this.closeTab(idx);
                         }}
                         routers={routers}
-                        routerInfo={routerInfo}
+                        routerSnapshot={routerSnapshot}
                         activeRoute={activeRoute}
                         getRouteName={getRouteName}
                       />
@@ -210,7 +212,7 @@ export default class App extends MultipleRouterManager<AppContainerProps, AppCon
               </div>
             </>
           ) : (
-            <div>Loading</div>
+            <LoadingTip />
           )
         }
       </div>

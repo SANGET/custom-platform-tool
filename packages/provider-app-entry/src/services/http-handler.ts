@@ -150,12 +150,12 @@ function handleRes(resData) {
     case 'A0300':
       // console.log(resData);
       // 处理没找到应用的业务逻辑
-      // AntdMessage.error(msg);
-      onNavigate({
-        type: 'PUSH',
-        path: '/login',
-        useDefaultParams: false
-      });
+      AntdMessage.error(msg);
+      // onNavigate({
+      //   type: 'PUSH',
+      //   path: '/login',
+      //   useDefaultParams: false
+      // });
       break;
     default:
       AntdMessage.error(msg);

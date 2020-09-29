@@ -4,12 +4,8 @@ import { Button, Table } from "antd";
 import { ColumnsType } from "antd/lib/table";
 import { CloseModal, ShowModal } from "@infra/ui";
 import dayjs from "dayjs";
-import { delPageServices, getPageListServices } from "../services/apis";
+import { delMenuServices, getMenuListServices } from "../services/apis";
 import { CreatePage } from "./CreatePage";
-
-const pageTypeMenu = {
-  2: '页面'
-};
 
 const getListColumns = ({
   onDel
@@ -26,17 +22,6 @@ const getListColumns = ({
     title: '页面名称'
   },
   {
-    key: 'type',
-    dataIndex: 'type',
-    title: '页面类型',
-    render: (text) => pageTypeMenu[text]
-  },
-  {
-    key: 'belongToMenuId',
-    dataIndex: 'belongToMenuId',
-    title: '归属模块'
-  },
-  {
     key: 'gmtCreate',
     dataIndex: 'gmtCreate',
     title: '创建时间',
@@ -48,21 +33,18 @@ const getListColumns = ({
     render: (text, { id, name }) => {
       return (
         <>
-          <Link
-            to='/page-designer'
-            pathExtend={id}
+          {/* <Link
             params={{
               title: name,
-              /** 必须要的页面 id */
               pageID: id
             }}
           >
             编辑
-          </Link>
+          </Link> */}
           <span
             className="link-btn ml10"
             onClick={(e) => {
-              delPageServices(id).then(() => {
+              delMenuServices(id).then(() => {
                 onDel();
               });
             }}
@@ -83,10 +65,10 @@ const mockData = {
 };
 
 const usePageList: UseListData = () => {
-  const [listData, setPageList] = useState([mockData]);
+  const [listData, setListData] = useState([]);
   const getListData = () => {
-    getPageListServices().then((pageListRes) => {
-      setPageList(pageListRes?.result?.data);
+    getMenuListServices().then((pageListRes) => {
+      setListData(pageListRes?.result);
     });
   };
   useEffect(() => {
@@ -105,6 +87,7 @@ const PageList: React.FC = (props) => {
       }
     });
   }, []);
+  console.log(listData);
   return (
     <div className="container mx-auto">
       <div className="pu10">
@@ -112,7 +95,7 @@ const PageList: React.FC = (props) => {
           onClick={(e) => {
           // console.log('asd');
             const modalID = ShowModal({
-              title: '创建页面',
+              title: '创建菜单',
               width: 700,
               children: () => {
                 return (
@@ -129,7 +112,7 @@ const PageList: React.FC = (props) => {
             });
           }}
         >
-        创建页面
+        创建菜单
         </Button>
       </div>
       <Table
