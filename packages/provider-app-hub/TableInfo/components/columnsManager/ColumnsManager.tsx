@@ -1,6 +1,6 @@
 import React, { useReducer } from 'react';
 import {
-  Table, Descriptions, Button, Row, Form
+  Table, Descriptions, Button, Row, Form, Col
 } from 'antd';
 
 import { KeyOutlined } from '@ant-design/icons';
@@ -379,7 +379,7 @@ export const ColumnsManager: React.FC<IProps> = React.memo((props: IProps) => {
   };
   const columnShowConfig = [
     {
-      title: '序号', width: 120, key: COLUMNS_KEY.INDEX, render: (text, record, index) => { return `${index + 1}`; }
+      title: '序号', fix: 'left', width: 60, key: COLUMNS_KEY.INDEX, render: (text, record, index) => { return `${index + 1}`; }
     },
     {
       title: '字段名称',
@@ -607,26 +607,30 @@ export const ColumnsManager: React.FC<IProps> = React.memo((props: IProps) => {
               >{columnsInfo?.showSYSSpecies ? '隐藏' : '显示'}系统字段</Button></>
           }
         />
-        <Form form={form}>
-          <Table
-            columns = {columnShowConfig}
-            dataSource = { filterDataSource(columns, columnsInfo?.showSYSSpecies) }
-            scroll={{ y: 359, x: '100vh' }}
-            rowKey={(record) => record?.[COLUMNS_KEY.ID]}
-            pagination = {false}
-            rowSelection = {{
-              type: 'radio',
-              selectedRowKeys: columnsInfo?.selectedRowKeys || []
-            }}
-            onRow={(record: ITableColumn, index: number) => {
-              return {
-                onBlur: (event) => { handleBlur(record?.[COLUMNS_KEY?.ID]); },
-                onDoubleClick: (event) => { handleRowDoubleClick(form, record); },
-                onClick: (event) => { handleRowClick(form, record); }
-              };
-            }}
-          />
-        </Form>
+        <Col span={24}>
+          <Form form={form}>
+            <Table
+              columns = {columnShowConfig}
+              dataSource = { filterDataSource(columns, columnsInfo?.showSYSSpecies) }
+              scroll={{ x: true }}
+              rowKey={(record) => record?.[COLUMNS_KEY.ID]}
+              pagination = {false}
+              rowSelection = {{
+                type: 'radio',
+                selectedRowKeys: columnsInfo?.selectedRowKeys || [],
+                hideSelectAll: true,
+                fixed: true
+              }}
+              onRow={(record: ITableColumn, index: number) => {
+                return {
+                  onBlur: (event) => { handleBlur(record?.[COLUMNS_KEY?.ID]); },
+                  onDoubleClick: (event) => { handleRowDoubleClick(form, record); },
+                  onClick: (event) => { handleRowClick(form, record); }
+                };
+              }}
+            />
+          </Form>
+        </Col>
       </Row>
       <CreateModal
         title="选择字典"

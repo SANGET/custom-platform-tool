@@ -1,6 +1,6 @@
 import React, { useReducer } from 'react';
 import {
-  Table, Descriptions, Button, Row, Form
+  Table, Descriptions, Button, Row, Form, Col
 } from 'antd';
 import {
   BUTTON_TYPE, BUTTON_SIZE, REFERENCES_KEY, SPECIES
@@ -292,27 +292,29 @@ export const ReferencesManager: React.FC<IProps> = React.memo((props: IProps) =>
           </>
         }
       />
-      <Form form={form}>
-        <Table
-          columns = {tableColumns}
-          dataSource = { references }
-          scroll={{ y: 359, x: '100vh' }}
-          rowKey={(record) => record?.[REFERENCES_KEY?.ID]}
-          pagination = {false}
-          rowSelection = {{
-            type: 'radio',
-            hideSelectAll: true,
-            selectedRowKeys: referencesInfo?.selectedRowKeys || []
-          }}
-          onRow={(record: IReference, index: number) => {
-            return {
-              onBlur: (event) => { handleBlur(record?.[REFERENCES_KEY?.ID]); },
-              onDoubleClick: (event) => { handleRowDoubleClick(form, record, index); },
-              onClick: (event) => { handleRowClick(form, record, index); }
-            };
-          }}
-        />
-      </Form>
+      <Col span={24}>
+        <Form form={form}>
+          <Table
+            columns = {tableColumns}
+            dataSource = { references }
+            scroll={{ x: true }}
+            rowKey={(record) => record?.[REFERENCES_KEY?.ID]}
+            pagination = {false}
+            rowSelection = {{
+              type: 'radio',
+              hideSelectAll: true,
+              selectedRowKeys: referencesInfo?.selectedRowKeys || []
+            }}
+            onRow={(record: IReference, index: number) => {
+              return {
+                onBlur: (event) => { handleBlur(record?.[REFERENCES_KEY?.ID]); },
+                onDoubleClick: (event) => { handleRowDoubleClick(form, record, index); },
+                onClick: (event) => { handleRowClick(form, record, index); }
+              };
+            }}
+          />
+        </Form>
+      </Col>
     </Row>
   );
 });
