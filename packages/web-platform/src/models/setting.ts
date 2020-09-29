@@ -1,4 +1,5 @@
 import { Reducer } from 'umi';
+import store from 'store';
 import defaultSettings, { IDefaultSettings } from '../../config/defaultSettings';
 
 export interface ISettingModel {
@@ -18,11 +19,10 @@ const updateColorWeak: (colorWeak: boolean) => void = (colorWeak) => {
 
 const SettingModel: ISettingModel = {
   namespace: 'settings',
-  state: defaultSettings,
+  state: Object.assign({}, defaultSettings, { title: store.get("appName") }),
   reducers: {
     changeSetting(state = defaultSettings, { payload }) {
       const { colorWeak, contentWidth } = payload;
-
       if (state.contentWidth !== contentWidth && window.dispatchEvent) {
         window.dispatchEvent(new Event('resize'));
       }

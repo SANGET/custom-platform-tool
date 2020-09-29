@@ -1,12 +1,13 @@
 import React from 'react';
 import { PageLoading } from '@ant-design/pro-layout';
 import {
-  Redirect, connect, Dispatch
+  Redirect, connect, Dispatch, history
 } from 'umi';
 import { stringify } from 'querystring';
 import { ConnectState } from '@/models/connect';
 import { IUserModelState } from '@/models/user';
 import { getQueryByParams } from '@/utils/utils';
+import store from 'store';
 
 interface SecurityLayoutProps {
   loading?: boolean;
@@ -24,10 +25,23 @@ class SecurityLayout extends React.PureComponent<SecurityLayoutProps, SecurityLa
   };
 
   componentDidMount() {
+    const { dispatch } = this.props;
+    const { query } = history.location;
+    const { appName } = query;
+    // @TODO 暂时这么写
+    if (appName) {
+      store.set("appName", appName);
+      dispatch({
+        type: 'settings/changeSetting',
+        payload: {
+          title: appName
+        }
+      });
+    }
     this.setState({
       isReady: true,
     });
-    const { dispatch } = this.props;
+
     if (dispatch) {
       dispatch({
         type: 'user/fetchCurrent',
