@@ -105,6 +105,9 @@ const schemasAnalysis = (originSchemas: Schemas): SchemasAnalysisRes => {
       /** 基础数据类型分析 */
       foundationAnalysis(schemasAnalysisRes, ctx);
 
+      if (ctx.key === 'entity_250') {
+        debugger;
+      }
       parseContext.tempStruct[ctx.key] = ''; // 上下文临时结构赋值
     },
     complexStructParser: (ctx: SchemasAnalysisCtx<ComplexTypeSchemas>) => {
