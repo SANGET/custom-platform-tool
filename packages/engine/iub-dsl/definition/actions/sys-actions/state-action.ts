@@ -1,4 +1,4 @@
-import { BasicActionConf } from ".";
+import { BasicActionConf } from "..";
 
 // 改变页面运行时状态 [可对应: 回填、输入、赋值给控件、联动的动作的赋值部分]
 const testStruct = {
