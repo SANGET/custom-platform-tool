@@ -97,10 +97,10 @@ export const ReferencesManager: React.FC<IProps> = React.memo((props: IProps) =>
   };
   /** 行点击操作 */
   const handleRowClick = (formTmpl: FormInstance, record: IReference, index: number) => {
-    const { editingIndex } = referencesInfo;
-    dispatchReferences({ type: 'pushSelectedRowKey', name: record?.[REFERENCES_KEY?.ID] });
-    if (index === editingIndex) return;
-    saveRow(formTmpl);
+    const editingIndex = referencesInfo?.editingIndex;
+    saveRow(formTmpl).then((canIClick) => {
+      (canIClick || editingIndex === index) && dispatchReferences({ type: 'pushSelectedRowKey', name: record?.[REFERENCES_KEY?.ID] });
+    });
   };
   /** 行失焦操作 */
   const handleBlur = (rowKey: string) => {
@@ -178,6 +178,19 @@ export const ReferencesManager: React.FC<IProps> = React.memo((props: IProps) =>
       );
     });
   };
+
+  /**
+   * 关联字段变更时，存储字段类型，字段长度，字段名称
+   * @param refField
+   */
+  const handleRefFieldChange = (refField) => {
+    const { fieldType, fieldSize, fieldName } = refField || {};
+    form.setFieldsValue({
+      [REFERENCES_KEY?.REFFIELDTYPE]: fieldType,
+      [REFERENCES_KEY?.REFFIELDSIZE]: fieldSize,
+      [REFERENCES_KEY?.REFFIELDNAME]: fieldName
+    });
+  };
   /**
    * 字段配置数据
   */
@@ -236,6 +249,7 @@ export const ReferencesManager: React.FC<IProps> = React.memo((props: IProps) =>
           form = {form}
           name='关联字段'
           code = {REFERENCES_KEY?.REFFIELDCODE}
+          handleChange = {handleRefFieldChange}
         />
       )
     },

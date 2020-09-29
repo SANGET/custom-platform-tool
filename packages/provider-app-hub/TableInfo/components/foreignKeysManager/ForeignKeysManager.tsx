@@ -6,7 +6,9 @@ import {
   BUTTON_TYPE, BUTTON_SIZE, FOREIGNKEYS_KEY, SPECIES
 } from './constant';
 
-import { IForeignKey, ITableColumn, FormInstance } from '../../interface';
+import {
+  IForeignKey, ITableColumn, FormInstance, ISpecies
+} from '../../interface';
 import {
   foreignKeyReducer, translateColumnsToOptions, getRowKeysEditable, deleteConfirm
 } from './service';
@@ -83,8 +85,8 @@ export const ForeignKeysManager: React.FC<IProps> = React.memo((props: IProps) =
   };
   /** 行的双击操作，转为可编辑状态 */
   const handleRowDoubleClick = (formTmpl: FormInstance, record: IForeignKey, index: number) => {
-    const { editingIndex } = foreignKeysInfo;
-    if (index === editingIndex) {
+    const editingIndex = foreignKeysInfo?.editingIndex;
+    if (index === editingIndex || ![ISpecies.BIS].includes(record?.[FOREIGNKEYS_KEY?.SPECIES])) {
       // handleBlur(formTmpl, record);
       return;
     }
@@ -97,10 +99,10 @@ export const ForeignKeysManager: React.FC<IProps> = React.memo((props: IProps) =
   };
   /** 行点击操作 */
   const handleRowClick = (formTmpl: FormInstance, record: IForeignKey, index: number) => {
-    const { editingIndex } = foreignKeysInfo;
-    dispatchForeignKeys({ type: 'pushSelectedRowKey', name: record?.[FOREIGNKEYS_KEY?.ID] });
-    if (index === editingIndex) return;
-    saveRow(formTmpl);
+    const editingIndex = foreignKeysInfo?.editingIndex;
+    saveRow(formTmpl).then((canIClick) => {
+      (canIClick || editingIndex === index) && dispatchForeignKeys({ type: 'pushSelectedRowKey', name: record?.[FOREIGNKEYS_KEY?.ID] });
+    });
   };
   /** 行失焦操作 */
   const handleBlur = (rowKey: string) => {
@@ -179,6 +181,18 @@ export const ForeignKeysManager: React.FC<IProps> = React.memo((props: IProps) =
     });
   };
   /**
+   * 关联字段变更时，存储字段类型，字段长度，字段名称
+   * @param refField
+   */
+  const handleRefFieldChange = (refField) => {
+    const { fieldType, fieldSize, fieldName } = refField || {};
+    form.setFieldsValue({
+      [FOREIGNKEYS_KEY.REFFIELDTYPE]: fieldType,
+      [FOREIGNKEYS_KEY.REFFIELDSIZE]: fieldSize,
+      [FOREIGNKEYS_KEY.REFFIELDNAME]: fieldName
+    });
+  };
+  /**
    * 字段配置数据
   */
   const tableColumns = [
@@ -236,6 +250,7 @@ export const ForeignKeysManager: React.FC<IProps> = React.memo((props: IProps) =
           form = {form}
           name='关联字段'
           code = {FOREIGNKEYS_KEY?.REFFIELDCODE}
+          handleChange = {handleRefFieldChange}
         />
       )
     },
