@@ -9,7 +9,7 @@ import {
 } from '../constant';
 
 import { IEditableRecord, ISELECTSMENU, IForeignKeyShowKey } from '../../../interface';
-import { getTableInfo } from '../../../api';
+import { getTableInfo, queryTablesList } from '../../../api';
 import { ITableColumn } from '../../columnsManager/interface';
 
 interface IProps {
@@ -29,19 +29,26 @@ const RefField: React.FC<IProps> = (props: IProps) => {
   const [fieldOptions, setFieldOptions] = useState<ITableColumn[]>([]);
   const editable = canColumnEdit(record, form, code);
   const getMenusData = () => {
-    const id = form.getFieldValue(FOREIGNKEYS_KEY?.REFTABLEID);
-    if (!id) {
+    const refTablecode = form.getFieldValue(FOREIGNKEYS_KEY?.REFTABLECODE);
+    if (!refTablecode) {
       setOptions([]);
       return;
     }
-    getTableInfo(id).then((res) => {
-    /** 如果接口没有提供提示信息 */
+    queryTablesList().then((res) => {
+      /** 如果接口没有提供提示信息 */
       if (!res?.msg) {
         return openNotification(NOTIFICATION_TYPE?.ERROR, API_ERROR_MSG?.ALLOWDELETE);
       }
-      setFieldOptions(res?.result?.columns);
-      const fieldSelectOptions = translateRefFieldsToSelectMenus(res?.result?.columns);
-      setOptions(fieldSelectOptions);
+      const id = res.result.data?.filter((item) => item.code === refTablecode)[0]?.id;
+      getTableInfo(id).then((res) => {
+        /** 如果接口没有提供提示信息 */
+        if (!res?.msg) {
+          return openNotification(NOTIFICATION_TYPE?.ERROR, API_ERROR_MSG?.ALLOWDELETE);
+        }
+        setFieldOptions(res?.result?.columns);
+        const fieldSelectOptions = translateRefFieldsToSelectMenus(res?.result?.columns);
+        setOptions(fieldSelectOptions);
+      });
     });
   };
 
