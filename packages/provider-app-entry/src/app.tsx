@@ -4,7 +4,7 @@ import {
   MultipleRouterManager, Link,
   defaultState as defaultRouteState,
   RouterState, RouterHelperProps, onNavigate,
-  resolvePagePathWithSeperator
+  resolvePagePathWithSeperator, redirectToRoot
 } from 'multiple-page-routing';
 
 /** 获取路由配置 */
@@ -61,7 +61,7 @@ export default class App extends MultipleRouterManager<AppContainerProps, AppCon
     const initRouteInfo = this.getUrlParams(undefined, undefined, true);
     const appParams = initRouteInfo.app;
     if (!appParams) {
-      this.history.replace('/');
+      redirectToRoot();
     } else {
       setReqUrlByApp(appParams);
       this.initRoute();
@@ -181,7 +181,7 @@ export default class App extends MultipleRouterManager<AppContainerProps, AppCon
             <>
               <header
                 id="provider_app_header"
-                className={`provider-app-header flex items-center content-center shadow ${isEntryApp ? 'has-app' : ''}`}
+                className={`provider-app-header bg-white flex items-center content-center shadow ${isEntryApp ? 'has-app' : ''}`}
               >
                 <Logo
                   onClick={(e) => {

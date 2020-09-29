@@ -35,6 +35,7 @@ const ToolbarCustom: React.FC<ToolbarCustomProps> = ({
             maxHeightable: false,
             children: () => {
               const previewUrl = getPreviewUrl(location);
+              console.log(previewUrl);
               return (
                 <div style={{
                   height: '90vh'

@@ -27,6 +27,11 @@ export interface NavigateConfig {
 export const history = createBrowserHistory();
 
 /**
+ * 回到根路由路径
+ */
+export const redirectToRoot = () => history.replace('/');
+
+/**
  * push to history
  */
 export const pushToHistory = (url: string, historyState?) => {
