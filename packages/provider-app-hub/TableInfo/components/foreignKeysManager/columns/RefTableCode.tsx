@@ -19,7 +19,7 @@ interface IProps {
   form: FormInstance
   label?: string
 }
-export const RefTableCode: React.FC<IProps> = (props: IProps) => {
+const RefTableCode: React.FC<IProps> = (props: IProps) => {
   const {
     form, text, record, label
   } = props;
@@ -36,7 +36,7 @@ export const RefTableCode: React.FC<IProps> = (props: IProps) => {
         setOptions(translateRefTablesToSelectMenus(res?.result?.data));
       });
     }
-  }, []);
+  }, [editable]);
   const getTableIdByTableCode = (code) => {
     if (!code && !Array.isArray(options)) return '';
     return options.filter((item) => item.value === code)?.[0]?.key || '';

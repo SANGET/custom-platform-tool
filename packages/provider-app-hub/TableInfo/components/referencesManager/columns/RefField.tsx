@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Form, Select } from 'antd';
 import { FormInstance } from 'antd/lib/form';
 
@@ -46,7 +46,9 @@ export const RefField: React.FC<IProps> = (props: IProps) => {
       setOptions(fieldSelectOptions);
     });
   };
-
+  useEffect(() => {
+    editable && getMenusData();
+  }, [editable]);
   const handleValueChange = (value) => {
     const {
       [COLUMNS_KEY.FIELDSIZE]: fieldSize,
