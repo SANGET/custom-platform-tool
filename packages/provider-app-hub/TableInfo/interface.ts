@@ -168,6 +168,7 @@ export interface ITableInfoPlus {
   code: string
   type: ITableType
   moduleId: string
+  species: string
 }
 export interface ITableInfoFromApi extends ITableInfoPlus {
   id: string
@@ -180,6 +181,7 @@ export interface ITableInfoFromApi extends ITableInfoPlus {
 }
 export interface ITableInfo extends ITableInfoPlus {
   mainTableName?: string
+  mainTableCode?: string
   maxLevel?: number
   references: IReference[]
   foreignKeys: IForeignKey[]

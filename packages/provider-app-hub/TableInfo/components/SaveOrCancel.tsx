@@ -2,13 +2,12 @@ import React from 'react';
 import { Button, Col, Row } from 'antd';
 
 interface IProps {
+  canISave: boolean
+  handleSave:()=>void
 }
 /** 头部栏的确定、取消按钮 */
 export const SaveOrCancel: React.FC<IProps> = React.memo((props: IProps) => {
-  /** 点击确定 */
-  const handleSave = () => {
-
-  };
+  const { canISave, handleSave } = props;
   /** 点击取消 */
   const handleCancel = () => {
 
@@ -19,7 +18,8 @@ export const SaveOrCancel: React.FC<IProps> = React.memo((props: IProps) => {
         <Button
           type="primary"
           onClick={handleSave}
-        >确定</Button>
+          disabled={!canISave}
+        >保存</Button>
         <Button htmlType="button" onClick={handleCancel}>
         取消</Button>
       </Col>
