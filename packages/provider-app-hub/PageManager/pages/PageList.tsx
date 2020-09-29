@@ -11,7 +11,9 @@ const pageTypeMenu = {
   2: '页面'
 };
 
-const pageListColumns: ColumnsType = [
+const getListColumns = ({
+  onDel
+}): ColumnsType => [
   {
     key: 'index',
     dataIndex: 'index',
@@ -47,7 +49,8 @@ const pageListColumns: ColumnsType = [
       return (
         <>
           <Link
-            to={`/page-designer?${id}`}
+            to='/page-designer'
+            pathExtend={id}
             params={{
               title: name,
               /** 必须要的页面 id */
@@ -59,7 +62,9 @@ const pageListColumns: ColumnsType = [
           <span
             className="link-btn ml10"
             onClick={(e) => {
-              delPageServices(id);
+              delPageServices(id).then(() => {
+                onDel();
+              });
             }}
           >
             删除
@@ -70,23 +75,36 @@ const pageListColumns: ColumnsType = [
   },
 ];
 
-type UsePageList = () => [any[], () => void]
+type UseListData = () => [any[], () => void]
 
-const usePageList: UsePageList = () => {
-  const [pageList, setPageList] = useState([]);
-  const getPageList = () => {
+const mockData = {
+  id: '123',
+  name: '321'
+};
+
+const usePageList: UseListData = () => {
+  const [listData, setPageList] = useState([mockData]);
+  const getListData = () => {
     getPageListServices().then((pageListRes) => {
       setPageList(pageListRes?.result?.data);
     });
   };
   useEffect(() => {
-    getPageList();
+    getListData();
   }, []);
-  return [pageList, getPageList];
+  return [listData, getListData];
 };
 
 const PageList: React.FC = (props) => {
-  const [pageList, getPageList] = usePageList();
+  const [listData, getListData] = usePageList();
+  const ListColumns = React.useMemo(() => {
+    return getListColumns({
+      onDel: () => {
+        console.log('del');
+        getListData();
+      }
+    });
+  }, []);
   return (
     <div className="container mx-auto">
       <div className="pu10">
@@ -102,7 +120,7 @@ const PageList: React.FC = (props) => {
                     <CreatePage
                       onSuccess={(e) => {
                         CloseModal(modalID);
-                        getPageList();
+                        getListData();
                       }}
                     />
                   </div>
@@ -115,9 +133,9 @@ const PageList: React.FC = (props) => {
         </Button>
       </div>
       <Table
-        dataSource={pageList}
+        dataSource={listData}
         rowKey={'id'}
-        columns={pageListColumns}
+        columns={ListColumns}
       />
     </div>
   );

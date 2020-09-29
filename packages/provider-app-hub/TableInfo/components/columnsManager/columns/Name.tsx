@@ -16,7 +16,6 @@ export const Name: React.FC<IProps> = (props: IProps) => {
   const {
     text, record, form
   } = props;
-  console.log(record);
   const editable = canColumnEdit(record, form, COLUMNS_KEY.NAME);
   const isCustomed = isRecordCustomed(record);
   /**

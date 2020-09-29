@@ -70,7 +70,7 @@ class LoginFilter extends React.Component<LoginFilterProps> {
         {...this.props}
         backgroundImage="url(./images/bg/bg_3.jpg)"
         btnGColor="red"
-        logo={() => <h3>admin-dashboard</h3>}
+        logo={() => <div className="font-bold text-2xl py-2">自定义平台 3.0</div>}
         isLogin={isLogin}
         formOptions={loginFormOptions}
       >

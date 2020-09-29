@@ -1,6 +1,6 @@
 import React from 'react';
 import {
-  Tag, Button
+  Form, Input
 } from 'antd';
 import { FormInstance } from 'antd/lib/form';
 import { COLUMNS_KEY } from '../constant';
@@ -20,24 +20,27 @@ const Dict: React.FC<IProps> = (props: IProps) => {
     text, record, form, dispatchColumns
   } = props;
   const editable = canColumnEdit(record, form, COLUMNS_KEY.DICTIONARYFOREIGN);
-  const handleClick = () => {
+  const handleClick = (e) => {
     const {
       [COLUMNS_KEY.DICTIONARYFOREIGN]: id
     } = form.getFieldsValue([COLUMNS_KEY.DICTIONARYFOREIGNCN, COLUMNS_KEY.DICTIONARYFOREIGN]);
     dispatchColumns({
-      type: 'allin',
+      type: 'allIn',
       name: {
-        dictId: id,
+        dictIds: id?.split(','),
         visibleChooseDictModal: true
       }
     });
+    e?.stopPropagation();
   };
   return editable ? (
-    <Tag>
-      <Button type = "link" onClick={handleClick}>{form.getFieldValue(COLUMNS_KEY.DICTIONARYFOREIGNCN)}</Button>
-    </Tag>
-    // </Form.Item>
-
+    <Form.Item name={COLUMNS_KEY.DICTIONARYFOREIGNCN}>
+      <Input
+        className="pointer"
+        onClick={handleClick} readOnly
+        title={form.getFieldValue(COLUMNS_KEY.DICTIONARYFOREIGNCN)}
+      />
+    </Form.Item>
   ) : <RenderText text={text}/>;
 };
 export default React.memo(Dict);

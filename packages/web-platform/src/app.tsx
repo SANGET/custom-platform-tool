@@ -6,4 +6,15 @@ const getHostEnv = async () => {
   const json = await request(`/config.json?${new Date().getTime()}`);
   HOSTENV.set(json);
 };
-getHostEnv();
+export const dva = {
+  config: {
+    onError(err) {
+      err.preventDefault();
+    },
+  },
+};
+
+export async function render(oldRender) {
+  await getHostEnv();
+  oldRender();
+}

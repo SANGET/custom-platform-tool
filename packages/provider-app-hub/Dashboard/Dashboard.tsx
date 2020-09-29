@@ -3,7 +3,7 @@ import {
   BankOutlined, PieChartOutlined, GithubOutlined, PlusOutlined
 } from "@ant-design/icons";
 import { Link, setDefaultParams } from "multiple-page-routing";
-import { GetApplication } from "../apis";
+import { GetApplication } from "@provider-app/services";
 
 const defaultToRoute = '/page-manager';
 
@@ -13,13 +13,21 @@ const iconGroupTemp = [
   <PieChartOutlined />,
 ];
 
+interface AppTileProps {
+  icon
+  title
+  onClick?
+  params?
+  to?
+}
+
 const AppTile = ({
   icon,
   title,
   onClick,
   params,
   to
-}) => {
+}: AppTileProps) => {
   return (
     <div
       className="m-4"
@@ -41,6 +49,12 @@ const AppTile = ({
   );
 };
 
+const mockData = {
+  id: '123',
+  appCode: '31',
+  appShortNameEn: '测试应用'
+};
+
 /**
  * 入口大厅
  *
@@ -48,7 +62,7 @@ const AppTile = ({
  *
  * 1. 设置默认的路由为 app
  */
-export const Hall: HY.SubApp = (props) => {
+export const Dashboard: HY.SubApp = (props) => {
   const [appData, setAppData] = useState([]);
 
   useEffect(() => {
@@ -85,6 +99,7 @@ export const Hall: HY.SubApp = (props) => {
           }))
         }
         <AppTile
+          // to="/page-manager"
           icon={<PlusOutlined />}
           title="添加应用"
         />

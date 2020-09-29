@@ -89,7 +89,7 @@ const UserModel: IUserModel = {
   effects: {
     * fetchCurrent({ payload }, { call, put }) {
       const response = yield call(queryCurrent);
-      if (response.code === 0) {
+      if (response?.code === 0) {
         yield put({
           type: 'setCurrentUser',
           payload: response.result,

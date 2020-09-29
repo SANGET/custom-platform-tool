@@ -75,5 +75,5 @@ export const SPECIES = {
 };
 
 export const DATATYPESTR = 'dataType';
-export const FIELDCODE = 'fieldType';
+export const FIELDCODE = 'fieldCode';
 export const QUOTE = 'QUOTE';

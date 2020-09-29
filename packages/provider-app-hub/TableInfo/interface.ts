@@ -141,6 +141,9 @@ export interface IRef {
   fieldName: string
   refTableCode: string
   refFieldCode: string
+  refFieldName: string
+  refFieldType: IFieldType
+  refFieldSize: number
   refDisplayFieldCode: string
   createdCustomed: boolean
   species: ISpecies
@@ -156,6 +159,9 @@ export interface IForeignKey extends IRef {
 }
 export type IReference = IRef
 
+export interface IEditableRecord {
+  editable: boolean
+}
 /** 整表数据 */
 export interface ITableInfoPlus {
   name: string
