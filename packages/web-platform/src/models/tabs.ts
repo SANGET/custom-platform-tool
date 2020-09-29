@@ -118,14 +118,16 @@ const TabsModel: ITabsModel = {
         menuId, pageId, path, mode, app, lessee
       } = filterTabs[currentIndex];
       state.activeKey = menuId || "";
-      const queryString = stringify({
-        path: state.activeKey,
-        mode,
-        app,
-        lessee,
-        pageId
-      });
-      history.push(`${path}?${queryString}`);
+      const queryLink = getQueryByParams(["mode", "app", "lessee"]);
+      // const queryString = stringify({
+      //   path: state.activeKey,
+      //   mode,
+      //   app,
+      //   lessee,
+      //   pageId
+      // });
+      const link = `${path}?menuId=${menuId}&${queryLink}&pageId=${pageId}`;
+      history.push(link);
       return state;
     },
     /** tabs 右侧操作栏关闭事件 */
