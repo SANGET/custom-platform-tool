@@ -5,6 +5,7 @@ import {
   IStatus, ISELECTSMENU, ITableColumn, IRef, FormInstance, ITableColumnFromApi
 } from './interface';
 import { DATATYPESTR, FIELDCODE } from './constant';
+import { FIELDTYPE } from './components/columnsManager/constant';
 
 export { getUrlParams, contructTree };
 const { confirm } = Modal;
@@ -231,11 +232,13 @@ export const translateRefTablesToSelectMenus = (tables:ITable[]): ISELECTSMENU[]
  */
 export const translateRefFieldsToSelectMenus = (fields: ITableColumnFromApi[]):ISELECTSMENU[] => {
   if (!Array.isArray(fields)) return [];
-  return fields.map((item) => {
-    return {
-      key: item?.code,
-      value: item?.code,
-      label: item?.name
-    };
-  });
+  return fields
+    .filter((item) => item.fieldType !== FIELDTYPE.TEXT)
+    .map((item) => {
+      return {
+        key: item?.code,
+        value: item?.code,
+        label: item?.name
+      };
+    });
 };
