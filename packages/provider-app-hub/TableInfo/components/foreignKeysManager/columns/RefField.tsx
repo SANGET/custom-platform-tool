@@ -5,7 +5,7 @@ import { FormInstance } from 'antd/lib/form';
 import { canColumnEdit, openNotification, translateRefFieldsToSelectMenus } from '../service';
 import RenderText from '../../RenderText';
 import {
-  FOREIGNKEYS_KEY, NOTIFICATION_TYPE, API_ERROR_MSG, COLUMNS_KEY
+  FOREIGNKEYS_KEY, NOTIFICATION_TYPE, API_ERROR_MSG, COLUMNS_KEY, API_SUCESS_CODE
 } from '../constant';
 
 import { IEditableRecord, ISELECTSMENU, IForeignKeyShowKey } from '../../../interface';
@@ -39,11 +39,12 @@ const RefField: React.FC<IProps> = (props: IProps) => {
       if (!res?.msg) {
         return openNotification(NOTIFICATION_TYPE?.ERROR, API_ERROR_MSG?.ALLOWDELETE);
       }
-      const id = res.result.data?.filter((item) => item.code === refTablecode)[0]?.id;
+      const id = res?.result?.data?.filter((item) => item.code === refTablecode)[0]?.id;
       getTableInfo(id).then((res) => {
-        /** 如果接口没有提供提示信息 */
-        if (!res?.msg) {
-          return openNotification(NOTIFICATION_TYPE?.ERROR, API_ERROR_MSG?.ALLOWDELETE);
+        /** 接口有误则返回提示 */
+        if (res?.code !== API_SUCESS_CODE.GETTABLEINFO) {
+          openNotification(NOTIFICATION_TYPE.ERROR, res?.msg || API_ERROR_MSG?.GETTABLEINFO);
+          return;
         }
         setFieldOptions(res?.result?.columns);
         const fieldSelectOptions = translateRefFieldsToSelectMenus(res?.result?.columns);
