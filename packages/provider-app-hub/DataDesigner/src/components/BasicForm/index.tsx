@@ -143,7 +143,6 @@ const BasicForm = (props) => {
                     <Space style={{ marginTop: 6 }}>
                       <PlusOutlined
                         onClick={() => {
-                          debugger;
                           add();
                         }}
                       />

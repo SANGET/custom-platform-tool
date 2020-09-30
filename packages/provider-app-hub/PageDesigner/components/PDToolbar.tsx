@@ -14,7 +14,7 @@ const ToolbarCustom: React.FC<ToolbarCustomProps> = ({
 }) => {
   return (
     <div className="flex items-center px-2" style={{ height: '100%' }}>
-      <span className="text-gray-500">新手教程，敬请期待</span>
+      <span className="text-gray-500">新手教程制作中，敬请期待</span>
       <span className="flex"></span>
       {/* <EditButton
           className="mr10"

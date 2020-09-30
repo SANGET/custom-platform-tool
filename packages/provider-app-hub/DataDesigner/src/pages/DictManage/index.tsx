@@ -82,14 +82,12 @@ const DictManage = ({ isModal = false }) => {
     {
       text: '编辑',
       onClick: (row) => {
-        debugger;
         /**
         * 获取详情
         */
         getDetail({
           id: row.id,
           cb: (row) => {
-            debugger;
             // console.log(row);
             setModalConfig({
               title: '编辑字典', visible: true, isSub: false, isAddEditRow: false
@@ -454,7 +452,6 @@ const DictManage = ({ isModal = false }) => {
   const getDetail = ({ id, cb }) => {
     // return await Http.get(`/data/v1/dictionary/${id}`);
     setTableLoading({ tip: "正在加载数据...", spinning: true });
-    debugger;
     GetDictDeatil(id).then((res) => {
       cb && cb(res.result);
     }).finally(() => {
