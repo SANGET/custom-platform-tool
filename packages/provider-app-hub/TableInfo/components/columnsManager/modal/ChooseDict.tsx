@@ -9,13 +9,9 @@ import { ModalFooter } from '../../ModalFooter';
 const { Search } = Input;
 
 interface IProps {
-  onOk: (id: string[], name: string[]) => void;
+  onOk: (code: string[], name: string[]) => void;
   onCancel: () => void;
   dictIds: string[]
-}
-interface IDict {
-  id: string,
-  name: string
 }
 const dictReducer = (state, action) => {
   if (action.type === 'changeSome') {
@@ -23,7 +19,7 @@ const dictReducer = (state, action) => {
   }
 };
 interface ISelectedRow {
-  id: string
+  code: string
   name: string
 }
 /**
@@ -33,18 +29,18 @@ interface ISelectedRow {
 const translateArrToMap = (arr: ISelectedRow[]) => {
   const obj = {};
   arr.forEach((item) => {
-    const { id, name } = item;
-    obj[id] = name;
+    const { code, name } = item;
+    obj[code] = name;
   });
   return obj;
 };
 const translateMapToArr = (obj, order: string[]): ISelectedRow[] => {
   return order.map((item) => {
-    return { id: item, name: obj?.[item] };
+    return { code: item, name: obj?.[item] };
   });
 };
-const getNameNyId = (menu: ISelectedRow[], id: string) => {
-  return menu.filter((item) => item.id === id)?.[0]?.name;
+const getNameNyId = (menu: ISelectedRow[], code: string) => {
+  return menu.filter((item) => item.code === code)?.[0]?.name;
 };
 const ChooseDict: React.FC<IProps> = (props: IProps) => {
   const { onOk, onCancel, dictIds } = props;
@@ -141,10 +137,10 @@ const ChooseDict: React.FC<IProps> = (props: IProps) => {
           { title: '字典描述', dataIndex: 'description', render: (text) => { return text || '--'; } }
         ]}
         scroll={{ y: 320 }}
-        rowKey={(record) => record.id}
+        rowKey={(record) => record.code}
         onRow={(record) => {
           return {
-            onClick: () => { handleRowClick(record?.id); }
+            onClick: () => { handleRowClick(record?.code); }
           };
         }}
         pagination={{

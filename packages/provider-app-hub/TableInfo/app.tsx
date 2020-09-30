@@ -75,11 +75,46 @@ const getListData = (info) => {
 };
 const getExtraTableConfigByType = (type, maxLevel, mainTableCode) => {
   if (type === TABLE_TYPE.TREE) {
-    return { maxLevel };
+    return { treeTable: { maxLevel } };
   }
   if (type === TABLE_TYPE.AUX_TABLE) {
-    return { mainTableCode };
+    return { auxTable: { mainTableCode } };
   }
+  return {};
+};
+const construcColumnsForSave = (columns) => {
+  return columns.map((item) => {
+    const {
+      id, name, code, fieldType, dataType, fieldSize, decimalSize, required, unique, pinyinConvert, regular, dictionaryForeign, species
+    } = item;
+    const fieldProperty = {
+      required, unique, pinyinConvent: pinyinConvert, regular
+    };
+    const dictionaryForeignTmpl = dictionaryForeign ? { dictionaryForeign: { refTableCode: dictionaryForeign, refFieldCode: 'code', refDisplayFieldCode: 'name' } } : {};
+    return {
+      id, name, code, fieldType, dataType, fieldSize, decimalSize, species, fieldProperty, ...dictionaryForeignTmpl
+    };
+  });
+};
+const constructReferences = (references) => {
+  return references.map((item, index) => {
+    const {
+      id, fieldCode, refTableCode, refFieldCode, refDisplayFieldCode, sequence
+    } = item;
+    return {
+      id, fieldCode, refTableCode, refFieldCode, refDisplayFieldCode, sequence: sequence || index
+    };
+  });
+};
+const constructForeignKeys = (foreignKeys) => {
+  return foreignKeys.map((item, index) => {
+    const {
+      id, fieldCode, refTableCode, refFieldCode, refDisplayFieldCode, sequence, deleteStrategy, updateStrategy
+    } = item;
+    return {
+      id, fieldCode, refTableCode, refFieldCode, refDisplayFieldCode, sequence: sequence || index, deleteStrategy, updateStrategy
+    };
+  });
 };
 const getUpdateParam = (form, info) => {
   /** 头部表单数据 */
@@ -97,9 +132,9 @@ const getUpdateParam = (form, info) => {
     type,
     moduleId,
     id: tableId,
-    columns,
-    references,
-    foreignKeys,
+    columns: construcColumnsForSave(columns),
+    references: constructReferences(references),
+    foreignKeys: constructForeignKeys(foreignKeys),
     species,
     ...extraConfig
   };
@@ -154,7 +189,7 @@ const TableInfo : React.FC<IProps> = (props: IProps) => {
         relatedPages, columns, references, foreignKeys, tableId, mainTableCode, species
       }
     });
-    form?.setFieldsValue({
+    form.setFieldsValue({
       name, code, type, moduleId, mainTableName
     });
   };
@@ -171,6 +206,7 @@ const TableInfo : React.FC<IProps> = (props: IProps) => {
       const dataTmpl = construcInfo(res?.result);
       /** 跟新数据 */
       storeInfo(dataTmpl);
+      console.log(form.getFieldsValue(['moduleId', 'mainTableName']));
     });
   }, []);
   /**
