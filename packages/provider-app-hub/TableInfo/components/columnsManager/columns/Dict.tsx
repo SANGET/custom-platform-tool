@@ -22,12 +22,12 @@ const Dict: React.FC<IProps> = (props: IProps) => {
   const editable = canColumnEdit(record, form, COLUMNS_KEY.DICTIONARYFOREIGN);
   const handleClick = (e) => {
     const {
-      [COLUMNS_KEY.DICTIONARYFOREIGN]: id
+      [COLUMNS_KEY.DICTIONARYFOREIGN]: code
     } = form.getFieldsValue([COLUMNS_KEY.DICTIONARYFOREIGNCN, COLUMNS_KEY.DICTIONARYFOREIGN]);
     dispatchColumns({
       type: 'allIn',
       name: {
-        dictIds: id?.split(','),
+        dictIds: code?.split(','),
         visibleChooseDictModal: true
       }
     });

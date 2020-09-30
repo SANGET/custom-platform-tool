@@ -1,15 +1,15 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Form, Select } from 'antd';
 import { FormInstance } from 'antd/lib/form';
 
 import { canColumnEdit, openNotification, translateRefFieldsToSelectMenus } from '../service';
 import RenderText from '../../RenderText';
 import {
-  FOREIGNKEYS_KEY, NOTIFICATION_TYPE, API_ERROR_MSG, COLUMNS_KEY
+  FOREIGNKEYS_KEY, NOTIFICATION_TYPE, API_ERROR_MSG, COLUMNS_KEY, API_SUCESS_CODE
 } from '../constant';
 
 import { IEditableRecord, ISELECTSMENU, IForeignKeyShowKey } from '../../../interface';
-import { getTableInfo } from '../../../api';
+import { getTableInfo, queryTablesList } from '../../../api';
 import { ITableColumn } from '../../columnsManager/interface';
 
 interface IProps {
@@ -21,7 +21,7 @@ interface IProps {
   label?: string
   handleChange?: (param: {fieldSize: number, name: string, fieldType: string})=>void
 }
-export const RefField: React.FC<IProps> = (props: IProps) => {
+const RefField: React.FC<IProps> = (props: IProps) => {
   const {
     form, text, record, code, name, label, handleChange
   } = props;
@@ -29,22 +29,33 @@ export const RefField: React.FC<IProps> = (props: IProps) => {
   const [fieldOptions, setFieldOptions] = useState<ITableColumn[]>([]);
   const editable = canColumnEdit(record, form, code);
   const getMenusData = () => {
-    const id = form.getFieldValue(FOREIGNKEYS_KEY?.REFTABLEID);
-    if (!id) {
+    const refTablecode = form.getFieldValue(FOREIGNKEYS_KEY?.REFTABLECODE);
+    if (!refTablecode) {
       setOptions([]);
       return;
     }
-    getTableInfo(id).then((res) => {
-    /** 如果接口没有提供提示信息 */
+    queryTablesList().then((res) => {
+      /** 如果接口没有提供提示信息 */
       if (!res?.msg) {
         return openNotification(NOTIFICATION_TYPE?.ERROR, API_ERROR_MSG?.ALLOWDELETE);
       }
-      setFieldOptions(res?.result?.columns);
-      const fieldSelectOptions = translateRefFieldsToSelectMenus(res?.result?.columns);
-      setOptions(fieldSelectOptions);
+      const id = res?.result?.data?.filter((item) => item.code === refTablecode)[0]?.id;
+      getTableInfo(id).then((res) => {
+        /** 接口有误则返回提示 */
+        if (res?.code !== API_SUCESS_CODE.GETTABLEINFO) {
+          openNotification(NOTIFICATION_TYPE.ERROR, res?.msg || API_ERROR_MSG?.GETTABLEINFO);
+          return;
+        }
+        setFieldOptions(res?.result?.columns);
+        const fieldSelectOptions = translateRefFieldsToSelectMenus(res?.result?.columns);
+        setOptions(fieldSelectOptions);
+      });
     });
   };
 
+  useEffect(() => {
+    editable && getMenusData();
+  }, [editable]);
   const handleValueChange = (value) => {
     const {
       [COLUMNS_KEY.FIELDSIZE]: fieldSize,

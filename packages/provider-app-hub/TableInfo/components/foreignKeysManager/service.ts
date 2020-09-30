@@ -1,7 +1,7 @@
 import {
   getlabelByMenue, isRecordCustomed, openNotification, getRowKeysEditable, deleteConfirm,
   translateColumnsToOptions as translateColumnsToOptionsPlus, filterOptionsForChoose,
-  translateRefTablesToSelectMenus, translateRefFieldsToSelectMenus
+  translateRefTablesToSelectMenus, translateRefFieldsToSelectMenus, getIndexByEditingKey
 } from '../../service';
 import {
   IEditableRecord, FormInstance, IForeignKeyShowKey
@@ -40,10 +40,10 @@ export const translateColumnsToOptions = (columns) => {
  */
 export const foreignKeyReducer = (state, action) => {
   switch (action?.type) {
-    case 'changeEditingIndex':
+    case 'changeEditingKey':
       return {
         ...state,
-        editingIndex: action?.name
+        editingKey: action?.name
       };
     case 'pushSelectedRowKey':
       let selectedRowKeys = action?.name ? [action?.name] : [];
@@ -60,5 +60,6 @@ export const foreignKeyReducer = (state, action) => {
 
 export {
   getlabelByMenue, isRecordCustomed, openNotification, getRowKeysEditable, deleteConfirm,
-  filterOptionsForChoose, translateRefTablesToSelectMenus, translateRefFieldsToSelectMenus
+  filterOptionsForChoose, translateRefTablesToSelectMenus, translateRefFieldsToSelectMenus,
+  getIndexByEditingKey
 };

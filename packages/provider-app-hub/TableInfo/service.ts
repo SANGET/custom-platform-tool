@@ -5,6 +5,7 @@ import {
   IStatus, ISELECTSMENU, ITableColumn, IRef, FormInstance, ITableColumnFromApi
 } from './interface';
 import { DATATYPESTR, FIELDCODE } from './constant';
+import { FIELDTYPE } from './components/columnsManager/constant';
 
 export { getUrlParams, contructTree };
 const { confirm } = Modal;
@@ -17,8 +18,8 @@ export function openNotification(type: IStatus, msg = "", description = "") {
 }
 
 /** 根据下拉项数据和当前值获取显示数据 */
-export const getlabelByMenue = (menu: ISELECTSMENU[], key: string): string => {
-  return menu?.filter((item) => item?.key === key)?.[0]?.label || '';
+export const getlabelByMenue = (menu: ISELECTSMENU[], key?: string): string => {
+  return key ? (menu?.filter((item) => item?.key === key)?.[0]?.label || '') : '';
 };
 
 /** 判断是否为用户当次创建的记录 */
@@ -77,7 +78,7 @@ export const infoReducer = (state, action) => {
       const { foreignKeys } = state || {};
       const foreignKeysTmpl = JSON?.parse(JSON?.stringify(foreignKeys));
       for (const key in action?.name) {
-        foreignKeys[key] = { ...foreignKeys?.[key], ...action?.name?.[key] };
+        foreignKeysTmpl[key] = { ...foreignKeys?.[key], ...action?.name?.[key] };
       }
       return {
         ...state,
@@ -231,11 +232,13 @@ export const translateRefTablesToSelectMenus = (tables:ITable[]): ISELECTSMENU[]
  */
 export const translateRefFieldsToSelectMenus = (fields: ITableColumnFromApi[]):ISELECTSMENU[] => {
   if (!Array.isArray(fields)) return [];
-  return fields.map((item) => {
-    return {
-      key: item?.code,
-      value: item?.code,
-      label: item?.name
-    };
-  });
+  return fields
+    .filter((item) => item.fieldType !== FIELDTYPE.TEXT)
+    .map((item) => {
+      return {
+        key: item?.code,
+        value: item?.code,
+        label: item?.name
+      };
+    });
 };

@@ -13,6 +13,7 @@ interface IProps {
 const ModuleId: React.FC<IProps> = React.memo((props: IProps) => {
   const { getFieldValue } = props;
   const val = getFieldValue?.('moduleId');
+  console.log(getFieldValue);
   return val ? (
     <Form.Item
       name="moduleId"
@@ -27,6 +28,7 @@ const ModuleId: React.FC<IProps> = React.memo((props: IProps) => {
 const MainTableName: React.FC<IProps> = React.memo((props: IProps) => {
   const { getFieldValue } = props;
   const val = getFieldValue('type');
+  console.log(getFieldValue);
   return val === TABLE_TYPE?.AUX_TABLE ? (
     <Form.Item
       name="mainTableName"
@@ -92,7 +94,17 @@ export const InfoForm: React.FC<IInfoFormProps> = React.memo((props: IInfoFormPr
             noStyle
             shouldUpdate={(prevValues, currentValues) => prevValues?.type !== currentValues?.type}
           >
-            <ModuleId getFieldValue = {form?.getFieldValue}/>
+            {({ getFieldValue }) => {
+              const val = getFieldValue?.('moduleId');
+              return val ? (
+                <Form.Item
+                  name="moduleId"
+                  label="归属模块"
+                >
+                  <ModuleTreeItem initialValue={val}/>
+                </Form.Item>
+              ) : null;
+            }}
           </Form.Item>
         </Col>
         <Col span={5}>
@@ -100,7 +112,16 @@ export const InfoForm: React.FC<IInfoFormProps> = React.memo((props: IInfoFormPr
             noStyle
             shouldUpdate={(prevValues, currentValues) => prevValues?.type !== currentValues?.type}
           >
-            <MainTableName getFieldValue = {form?.getFieldValue}/>
+            {({ getFieldValue }) => {
+              return getFieldValue('type') === TABLE_TYPE?.AUX_TABLE ? (
+                <Form.Item
+                  name="mainTableName"
+                  label="主表名称"
+                >
+                  <Input disabled />
+                </Form.Item>
+              ) : null;
+            }}
           </Form.Item>
         </Col>
       </Row>

@@ -19,7 +19,7 @@ interface IProps {
   index: number
   dispatchInfo:({ type: string, name: any })=>void
 }
-export const FieldName: React.FC<IProps> = (props: IProps) => {
+const FieldName: React.FC<IProps> = (props: IProps) => {
   const {
     form, text, record, options, dispatchInfo, foreignKeys, index
   } = props;

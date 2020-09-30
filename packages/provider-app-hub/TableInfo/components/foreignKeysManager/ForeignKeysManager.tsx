@@ -10,9 +10,11 @@ import {
   IForeignKey, ITableColumn, FormInstance, ISpecies
 } from '../../interface';
 import {
-  foreignKeyReducer, translateColumnsToOptions, getRowKeysEditable, deleteConfirm
+  foreignKeyReducer, translateColumnsToOptions, getRowKeysEditable, deleteConfirm, getIndexByEditingKey
 } from './service';
-import { FieldName, RefTableCode, RefField } from './columns';
+import {
+  FieldName, RefTableCode, RefField, StrategyRender
+} from './columns';
 import RenderText from '../RenderText';
 
 interface Item {
@@ -30,7 +32,7 @@ export const ForeignKeysManager: React.FC<IProps> = React.memo((props: IProps) =
     /** 选中行列表 */
     selectedRowKeys: [],
     /** 编辑行的索引 */
-    editingIndex: -1,
+    editingKey: '',
     refFieldOptions: []
   });
   const [form] = Form.useForm();
@@ -38,46 +40,47 @@ export const ForeignKeysManager: React.FC<IProps> = React.memo((props: IProps) =
   /** 对form表单设值，当前时刻有且仅有一行数据可列入表单编辑 */
   const setRecordToForm = (formTmpl: FormInstance, record: IForeignKey) => {
     const {
-      fieldCode, refTableCode, refFieldCode, refDisplayFieldCode, species
+      fieldCode, refTableCode, refFieldCode, refDisplayFieldCode, species, updateStrategy, deleteStrategy
     } = record;
     formTmpl.setFieldsValue({
-      fieldCode, refTableCode, refFieldCode, refDisplayFieldCode, species
+      fieldCode, refTableCode, refFieldCode, refDisplayFieldCode, species, updateStrategy, deleteStrategy
     });
     return true;
   };
   /** 将表单数据提回记录，当前时刻有且仅有一行数据可从表单列入 */
   const getRecordFromForm = (formTmpl: FormInstance): IForeignKey => {
     const {
-      FIELDNAME, FIELDCODE, REFTABLECODE, REFFIELDCODE, REFDISPLAYCODE
+      FIELDNAME, FIELDCODE, REFTABLECODE, REFFIELDCODE, REFDISPLAYCODE, UPDATESTRATEGY, DELETESTRATEGY
     } = FOREIGNKEYS_KEY;
     const recordNew = formTmpl.getFieldsValue([
-      FIELDNAME, FIELDCODE, REFTABLECODE, REFFIELDCODE, REFDISPLAYCODE
+      FIELDNAME, FIELDCODE, REFTABLECODE, REFFIELDCODE, REFDISPLAYCODE, UPDATESTRATEGY, DELETESTRATEGY
     ]);
     return recordNew;
   };
   /** 更改数据 */
-  const dispatchColumnsAndEditingIndex = (foreignKeysTmpl, editingIndex) => {
+  const dispatchColumnsAndEditingKey = (foreignKeysTmpl, editingKey) => {
     dispatchInfo({
       type: 'editForeignKeys',
       name: foreignKeysTmpl
     });
     dispatchForeignKeys({
-      type: 'changeEditingIndex',
-      name: editingIndex
+      type: 'changeEditingKey',
+      name: editingKey
     });
   };
   /** 保存编辑行数据 */
   const saveRow = async (formTmpl: FormInstance) => {
-    const { editingIndex } = foreignKeysInfo;
-    if (editingIndex < 0) return true;
+    const { editingKey } = foreignKeysInfo;
+    if (editingKey === '') return true;
     try {
       await formTmpl.validateFields();
       const record = getRecordFromForm(formTmpl);
-      dispatchColumnsAndEditingIndex({
-        [editingIndex]: {
-          ...foreignKeys?.[editingIndex], ...record, editable: false
+      const index = getIndexByEditingKey(editingKey, foreignKeys);
+      dispatchColumnsAndEditingKey({
+        [index]: {
+          ...foreignKeys?.[index], ...record, editable: false
         }
-      }, -1);
+      }, '');
       return true;
     } catch (e) {
       return false;
@@ -85,8 +88,8 @@ export const ForeignKeysManager: React.FC<IProps> = React.memo((props: IProps) =
   };
   /** 行的双击操作，转为可编辑状态 */
   const handleRowDoubleClick = (formTmpl: FormInstance, record: IForeignKey, index: number) => {
-    const editingIndex = foreignKeysInfo?.editingIndex;
-    if (index === editingIndex || ![ISpecies.BIS].includes(record?.[FOREIGNKEYS_KEY?.SPECIES])) {
+    const { editingKey } = foreignKeysInfo;
+    if (record.id === editingKey) {
       // handleBlur(formTmpl, record);
       return;
     }
@@ -94,14 +97,14 @@ export const ForeignKeysManager: React.FC<IProps> = React.memo((props: IProps) =
       if (!canIEdit) return;
       setRecordToForm(formTmpl, record);
       const columnsTmpl = { [index]: { editable: true } };
-      dispatchColumnsAndEditingIndex(columnsTmpl, index);
+      dispatchColumnsAndEditingKey(columnsTmpl, record.id);
     });
   };
   /** 行点击操作 */
   const handleRowClick = (formTmpl: FormInstance, record: IForeignKey, index: number) => {
-    const editingIndex = foreignKeysInfo?.editingIndex;
+    const editingKey = foreignKeysInfo?.editingKey;
     saveRow(formTmpl).then((canIClick) => {
-      (canIClick || editingIndex === index) && dispatchForeignKeys({ type: 'pushSelectedRowKey', name: record?.[FOREIGNKEYS_KEY?.ID] });
+      (canIClick || editingKey === record.id) && dispatchForeignKeys({ type: 'pushSelectedRowKey', name: record?.[FOREIGNKEYS_KEY.ID] });
     });
   };
   /** 行失焦操作 */
@@ -114,15 +117,15 @@ export const ForeignKeysManager: React.FC<IProps> = React.memo((props: IProps) =
   const createRow = (obj) => {
     const id = `${new Date().valueOf()}`;
     const row: IForeignKey = {
-      [FOREIGNKEYS_KEY?.ID]: id,
-      [FOREIGNKEYS_KEY?.FIELDNAME]: '',
-      [FOREIGNKEYS_KEY?.FIELDCODE]: '',
-      [FOREIGNKEYS_KEY?.REFTABLECODE]: '',
-      [FOREIGNKEYS_KEY?.REFFIELDCODE]: '',
-      [FOREIGNKEYS_KEY?.REFDISPLAYCODE]: '',
-      [FOREIGNKEYS_KEY?.SPECIES]: SPECIES?.BIS,
-      [FOREIGNKEYS_KEY?.EDITABLE]: true,
-      [FOREIGNKEYS_KEY?.CREATEDCUSTOMED]: true
+      [FOREIGNKEYS_KEY.ID]: id,
+      [FOREIGNKEYS_KEY.FIELDNAME]: '',
+      [FOREIGNKEYS_KEY.FIELDCODE]: '',
+      [FOREIGNKEYS_KEY.REFTABLECODE]: '',
+      [FOREIGNKEYS_KEY.REFFIELDCODE]: '',
+      [FOREIGNKEYS_KEY.REFDISPLAYCODE]: '',
+      [FOREIGNKEYS_KEY.SPECIES]: SPECIES.BIS,
+      [FOREIGNKEYS_KEY.EDITABLE]: true,
+      [FOREIGNKEYS_KEY.CREATEDCUSTOMED]: true
     };
     dispatchInfo({
       type: 'unShiftForeignKey',
@@ -131,7 +134,7 @@ export const ForeignKeysManager: React.FC<IProps> = React.memo((props: IProps) =
     dispatchForeignKeys({
       type: 'allIn',
       name: {
-        editingIndex: 0,
+        editingKey: '',
         selectedRowKeys: [id]
       }
     });
@@ -150,8 +153,8 @@ export const ForeignKeysManager: React.FC<IProps> = React.memo((props: IProps) =
   const handleDelete = () => {
     const selectedKey = foreignKeysInfo?.selectedRowKeys?.[0];
     if (!selectedKey) return;
-    const record = foreignKeys?.filter((item) => item?.[FOREIGNKEYS_KEY?.ID] === selectedKey)?.[0];
-    if (record?.[FOREIGNKEYS_KEY?.CREATEDCUSTOMED]) {
+    const record = foreignKeys?.filter((item) => item?.[FOREIGNKEYS_KEY.ID] === selectedKey)?.[0];
+    if (record?.[FOREIGNKEYS_KEY.CREATEDCUSTOMED]) {
       deleteConfirm({
         onOk: () => {
           dispatchInfo({
@@ -173,10 +176,10 @@ export const ForeignKeysManager: React.FC<IProps> = React.memo((props: IProps) =
     if ((selectedKey?.length || 0) === 0) return true;
     return foreignKeys.some((item:IForeignKey) => {
       /** 跳过没有被选中的数据 */
-      if (!selectedKey.includes(item?.[FOREIGNKEYS_KEY?.ID])) return false;
+      if (!selectedKey.includes(item?.[FOREIGNKEYS_KEY.ID])) return false;
       /** 非系统自动生成的字段才允许删除 */
-      return [SPECIES?.SYS, SPECIES?.SYS_TMPL, SPECIES?.BIS_TMPL].includes(
-        item?.[FOREIGNKEYS_KEY?.SPECIES]
+      return [SPECIES.SYS, SPECIES.SYS_TMPL, SPECIES.BIS_TMPL].includes(
+        item?.[FOREIGNKEYS_KEY.SPECIES]
       );
     });
   };
@@ -197,12 +200,12 @@ export const ForeignKeysManager: React.FC<IProps> = React.memo((props: IProps) =
   */
   const tableColumns = [
     {
-      title: '序号', width: 120, key: FOREIGNKEYS_KEY?.INDEX, render: (text, record, index) => { return `${index + 1}`; }
+      title: '序号', width: 120, key: FOREIGNKEYS_KEY.INDEX, render: (text, record, index) => { return `${index + 1}`; }
     },
     {
       title: '字段名称',
-      key: FOREIGNKEYS_KEY?.FIELDCODE,
-      dataIndex: FOREIGNKEYS_KEY?.FIELDCODE,
+      key: FOREIGNKEYS_KEY.FIELDCODE,
+      dataIndex: FOREIGNKEYS_KEY.FIELDCODE,
       width: 120,
       render: (text, record, index) => (
         <FieldName
@@ -218,8 +221,8 @@ export const ForeignKeysManager: React.FC<IProps> = React.memo((props: IProps) =
     },
     {
       title: '字段编码',
-      key: FOREIGNKEYS_KEY?.FIELDCODE,
-      dataIndex: FOREIGNKEYS_KEY?.FIELDCODE,
+      key: FOREIGNKEYS_KEY.FIELDCODE,
+      dataIndex: FOREIGNKEYS_KEY.FIELDCODE,
       width: 120,
       render: (text, record, index) => (
         <RenderText text={text}/>
@@ -227,8 +230,8 @@ export const ForeignKeysManager: React.FC<IProps> = React.memo((props: IProps) =
     },
     {
       title: '关联表',
-      key: FOREIGNKEYS_KEY?.REFTABLECODE,
-      dataIndex: FOREIGNKEYS_KEY?.REFTABLECODE,
+      key: FOREIGNKEYS_KEY.REFTABLECODE,
+      dataIndex: FOREIGNKEYS_KEY.REFTABLECODE,
       width: 120,
       render: (text, record) => (
         <RefTableCode
@@ -240,8 +243,8 @@ export const ForeignKeysManager: React.FC<IProps> = React.memo((props: IProps) =
     },
     {
       title: '关联字段',
-      key: FOREIGNKEYS_KEY?.REFFIELDCODE,
-      dataIndex: FOREIGNKEYS_KEY?.REFFIELDCODE,
+      key: FOREIGNKEYS_KEY.REFFIELDCODE,
+      dataIndex: FOREIGNKEYS_KEY.REFFIELDCODE,
       width: 120,
       render: (text, record) => (
         <RefField
@@ -249,15 +252,15 @@ export const ForeignKeysManager: React.FC<IProps> = React.memo((props: IProps) =
           record = {record}
           form = {form}
           name='关联字段'
-          code = {FOREIGNKEYS_KEY?.REFFIELDCODE}
+          code = {FOREIGNKEYS_KEY.REFFIELDCODE}
           handleChange = {handleRefFieldChange}
         />
       )
     },
     {
       title: '显示字段',
-      key: FOREIGNKEYS_KEY?.REFDISPLAYCODE,
-      dataIndex: FOREIGNKEYS_KEY?.REFDISPLAYCODE,
+      key: FOREIGNKEYS_KEY.REFDISPLAYCODE,
+      dataIndex: FOREIGNKEYS_KEY.REFDISPLAYCODE,
       width: 120,
       render: (text, record) => (
         <RefField
@@ -265,7 +268,63 @@ export const ForeignKeysManager: React.FC<IProps> = React.memo((props: IProps) =
           record = {record}
           form = {form}
           name='显示字段'
-          code = {FOREIGNKEYS_KEY?.REFDISPLAYCODE}
+          code = {FOREIGNKEYS_KEY.REFDISPLAYCODE}
+        />
+      )
+    },
+    {
+      title: '外键约束（删除时）',
+      key: FOREIGNKEYS_KEY.DELETESTRATEGY,
+      dataIndex: FOREIGNKEYS_KEY.DELETESTRATEGY,
+      width: 120,
+      render: (text, record) => (
+        <StrategyRender
+          name="外键约束（删除时）"
+          code={FOREIGNKEYS_KEY.DELETESTRATEGY}
+          text = {text}
+          record={record}
+          form={form}
+        />
+      )
+    },
+    {
+      title: '外键约束（更新时）',
+      key: FOREIGNKEYS_KEY.UPDATESTRATEGY,
+      dataIndex: FOREIGNKEYS_KEY.UPDATESTRATEGY,
+      width: 120,
+      render: (text, record) => (
+        <StrategyRender
+          name="外键约束（更新时）"
+          code={FOREIGNKEYS_KEY.UPDATESTRATEGY}
+          text = {text}
+          record = {record}
+          form={form}
+        />
+      )
+    },
+    {
+      title: '外键约束（删除时）',
+      key: FOREIGNKEYS_KEY?.DELETESTRATEGY,
+      dataIndex: FOREIGNKEYS_KEY?.DELETESTRATEGY,
+      width: 120,
+      render: (text, record) => (
+        <StrategyRender
+          name={FOREIGNKEYS_KEY.DELETESTRATEGY}
+          text = {text}
+          record={record}
+        />
+      )
+    },
+    {
+      title: '外键约束（更新时）',
+      key: FOREIGNKEYS_KEY?.UPDATESTRATEGY,
+      dataIndex: FOREIGNKEYS_KEY?.UPDATESTRATEGY,
+      width: 120,
+      render: (text, record) => (
+        <StrategyRender
+          name={FOREIGNKEYS_KEY.UPDATESTRATEGY}
+          text = {text}
+          record = {record}
         />
       )
     }
@@ -279,7 +338,7 @@ export const ForeignKeysManager: React.FC<IProps> = React.memo((props: IProps) =
             <Button
               type={BUTTON_TYPE?.PRIMARY}
               size={BUTTON_SIZE?.SMALL}
-              disabled={foreignKeysInfo?.editingIndex > -1}
+              disabled={foreignKeysInfo?.editingKey !== ''}
               onClick={handleCreatRow}
             >新增</Button>
             <Button
@@ -299,7 +358,7 @@ export const ForeignKeysManager: React.FC<IProps> = React.memo((props: IProps) =
             columns = {tableColumns}
             dataSource = { foreignKeys }
             scroll={{ x: '100%' }}
-            rowKey={(record) => record?.[FOREIGNKEYS_KEY?.ID]}
+            rowKey={(record) => record?.[FOREIGNKEYS_KEY.ID]}
             pagination = {false}
             rowSelection = {{
               type: 'radio',
@@ -309,7 +368,7 @@ export const ForeignKeysManager: React.FC<IProps> = React.memo((props: IProps) =
             }}
             onRow={(record: IForeignKey, index: number) => {
               return {
-                onBlur: (event) => { handleBlur(record?.[FOREIGNKEYS_KEY?.ID]); },
+                onBlur: (event) => { handleBlur(record?.[FOREIGNKEYS_KEY.ID]); },
                 onDoubleClick: (event) => { handleRowDoubleClick(form, record, index); },
                 onClick: (event) => { handleRowClick(form, record, index); }
               };

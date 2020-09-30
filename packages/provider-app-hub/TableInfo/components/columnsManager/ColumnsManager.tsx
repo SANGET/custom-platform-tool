@@ -205,13 +205,13 @@ export const ColumnsManager: React.FC<IProps> = React.memo((props: IProps) => {
     });
   };
   /** +字典字段，选择字典，后续 */
-  const handleChooseDictOk = (id: string[], name: string[]) => {
+  const handleChooseDictOk = (code: string[], name: string[]) => {
     columnsInfo.editingKey === '' ? createRow({
       [COLUMNS_KEY.DATATYPE]: DATATYPE.DICT,
       [COLUMNS_KEY.DICTIONARYFOREIGN]: id?.join(','),
       [COLUMNS_KEY.DICTIONARYFOREIGNCN]: name?.join(',')
     }) : (form.setFieldsValue({
-      [COLUMNS_KEY.DICTIONARYFOREIGN]: id?.join(','),
+      [COLUMNS_KEY.DICTIONARYFOREIGN]: code?.join(','),
       [COLUMNS_KEY.DICTIONARYFOREIGNCN]: name?.join(',')
     }));
     dispatchColumns({
@@ -244,6 +244,7 @@ export const ColumnsManager: React.FC<IProps> = React.memo((props: IProps) => {
         fieldId,
         fieldCode: data?.refFieldCode,
         refTableCode: data?.refTableCode,
+        refTableId: data?.refTableId,
         refFieldCode: data?.refFieldCode,
         refFieldType: data?.refFieldType,
         refFieldSize: data?.refFieldSize,
@@ -274,12 +275,14 @@ export const ColumnsManager: React.FC<IProps> = React.memo((props: IProps) => {
       type: 'unShiftForeignKey',
       name: {
         fieldId,
-        fieldCode: data?.refFieldCode,
-        refTableCode: data?.refTableCode,
-        refFieldCode: data?.refFieldCode,
-        refFieldType: data?.refFieldType,
-        refFieldSize: data?.refFieldSize,
-        refDisplayFieldCode: data?.refDisplayFieldCode
+        fieldCode: data.refFieldCode,
+        refTableCode: data.refTableCode,
+        refFieldCode: data.refFieldCode,
+        refFieldType: data.refFieldType,
+        refFieldSize: data.refFieldSize,
+        refDisplayFieldCode: data.refDisplayFieldCode,
+        updateStrategy: data.updateStrategy,
+        deleteStrategy: data.deleteStrategy
       }
     });
   };

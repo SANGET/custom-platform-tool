@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Form, Select } from 'antd';
 import { FormInstance } from 'antd/lib/form';
 import {
-  FOREIGNKEYS_KEY, NOTIFICATION_TYPE, API_ERROR_MSG
+  FOREIGNKEYS_KEY, NOTIFICATION_TYPE, API_ERROR_MSG, API_SUCESS_CODE
 } from '../constant';
 
 import {
@@ -19,7 +19,7 @@ interface IProps {
   form: FormInstance
   label?: string
 }
-export const RefTableCode: React.FC<IProps> = (props: IProps) => {
+const RefTableCode: React.FC<IProps> = (props: IProps) => {
   const {
     form, text, record, label
   } = props;
@@ -29,14 +29,14 @@ export const RefTableCode: React.FC<IProps> = (props: IProps) => {
     if (editable) {
       queryTablesList().then((res) => {
         /** 如果接口没有提供提示信息 */
-        if (!res?.msg) {
-          openNotification(NOTIFICATION_TYPE.ERROR, API_ERROR_MSG.ALLOWDELETE);
+        if (res?.code !== API_SUCESS_CODE.GETTABLEINFO) {
+          openNotification(NOTIFICATION_TYPE.ERROR, res?.msg || API_ERROR_MSG?.GETTABLEINFO);
           return;
         }
         setOptions(translateRefTablesToSelectMenus(res?.result?.data));
       });
     }
-  }, []);
+  }, [editable]);
   const getTableIdByTableCode = (code) => {
     if (!code && !Array.isArray(options)) return '';
     return options.filter((item) => item.value === code)?.[0]?.key || '';
