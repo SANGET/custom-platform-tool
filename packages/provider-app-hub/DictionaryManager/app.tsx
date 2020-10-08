@@ -1,5 +1,6 @@
 import React from "react";
 import DictionaryList from "./components/DictionaryList";
+import "./index.less";
 
 const App: HY.SubApp = (props) => {
   return (
