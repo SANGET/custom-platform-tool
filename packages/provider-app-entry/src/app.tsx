@@ -4,8 +4,9 @@ import {
   MultipleRouterManager, Link,
   defaultState as defaultRouteState,
   RouterState, RouterHelperProps, onNavigate,
-  resolvePagePathWithSeperator, redirectToRoot, setDefaultParams
+  resolvePagePathWithSeperator, redirectToRoot, setDefaultParams, DefaultLocationState
 } from 'multiple-page-routing';
+import { Location } from 'history';
 
 /** 获取路由配置 */
 import { Dashboard } from "@provider-app/dashboard/main";
@@ -50,8 +51,12 @@ export interface AppLocationState {
   pageID: string
 }
 
+export type AppLocationType = Location<AppLocationState> & DefaultLocationState & AppLocationState
+
 export default class App extends MultipleRouterManager<AppContainerProps, AppContainerState, AppLocationState> {
   state: AppContainerState = defaultRouteState
+
+  // appLocation!: AppLocationType
 
   constructor(props) {
     super(props);
@@ -70,11 +75,17 @@ export default class App extends MultipleRouterManager<AppContainerProps, AppCon
    * 初始化路由配置
    */
   initRouteForApp = (nextState) => {
-    const selectedApp = this.appLocation?.app;
+    const { app: selectedApp, appName } = this.appLocation;
     if (!selectedApp) {
       redirectToRoot();
     } else {
+      /** 为 http 请求工具设置 */
       setReqUrlByApp(selectedApp);
+      /** 设置默认的 url，让 url 带上 app 表饰 */
+      setDefaultParams({
+        app: selectedApp,
+        appName
+      });
       this.initRoute();
     }
 
@@ -182,6 +193,7 @@ export default class App extends MultipleRouterManager<AppContainerProps, AppCon
       routers, routerSnapshot, activeRoute,
       navMenu, ready,
     } = this.state;
+    const { appName } = this.appLocation;
 
     const isEntryApp = this.isEntryApp();
 
@@ -195,6 +207,8 @@ export default class App extends MultipleRouterManager<AppContainerProps, AppCon
                 className={`provider-app-header bg-white flex items-center content-center shadow ${isEntryApp ? 'has-app' : ''}`}
               >
                 <Logo
+                  appName={appName}
+                  isEntryApp={isEntryApp}
                   onClick={(e) => {
                     this.closeAll();
                   }}
@@ -211,10 +225,15 @@ export default class App extends MultipleRouterManager<AppContainerProps, AppCon
                 {
                   !isEntryApp ? (
                     <Dashboard
-                      onSelectApp={({ app }) => {
+                      didMount={() => {
+                        /** 设置 app 为空，因为还未选择 app */
+                        $R_P.urlManager.setApp('');
+                      }}
+                      onSelectApp={({ app, appName }) => {
                         setReqUrlByApp(app);
                         setDefaultParams({
                           app,
+                          appName
                         });
                       }}
                     />

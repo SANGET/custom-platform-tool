@@ -3,6 +3,7 @@
  */
 
 import React from 'react';
+import { AppLocationType } from '../../app';
 import { ProviderAppContext } from '../../types';
 
 export interface ProviderPageContext extends ProviderAppContext {
@@ -15,7 +16,7 @@ interface PageContainerProps
   extends React.DetailedHTMLProps<React.HTMLAttributes<HTMLDivElement>, HTMLDivElement> {
   pagePath?: string
   pageAuthInfo?: any
-  appLocation
+  appLocation: AppLocationType
   appContext: ProviderAppContext
   ChildComp: HY.SubApp | HY.SubAppHOC
 }

@@ -56,7 +56,11 @@ const mockData = {
 };
 
 export interface DashboardProps {
-  onSelectApp: (appInfo: { app: string }) => void
+  onSelectApp: (appInfo: {
+    app: string
+    appName: string
+  }) => void
+  didMount?: () => void
 }
 
 /**
@@ -67,12 +71,11 @@ export interface DashboardProps {
  * 1. 设置默认的路由为 app
  */
 export const Dashboard: React.FC<DashboardProps> = (props) => {
-  const { onSelectApp } = props;
+  const { didMount, onSelectApp } = props;
   const [appData, setAppData] = useState([]);
 
   useEffect(() => {
-    /** 设置 app 为空，因为还未选择 app */
-    $R_P.urlManager.setApp('');
+    didMount && didMount();
     GetApplication().then((appResData) => {
       setAppData(appResData.result);
     });
@@ -93,6 +96,7 @@ export const Dashboard: React.FC<DashboardProps> = (props) => {
                 onClick={(e) => {
                   onSelectApp && onSelectApp({
                     app: appCode,
+                    appName: appShortNameEn
                   });
                 }}
                 to={defaultToRoute}
