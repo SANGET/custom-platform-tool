@@ -6,7 +6,7 @@ const defaultAppUrl = 'http://localhost:8000/preview?path=/preview&mode=preview&
 const defaultWebServerUrl = 'http://localhost:3000';
 
 export const ToApp = ({
-  location
+  appLocation
 }) => {
   return (
     <div

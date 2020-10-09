@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import {
   BankOutlined, PieChartOutlined, GithubOutlined, PlusOutlined
 } from "@ant-design/icons";
-import { Link, setDefaultParams } from "multiple-page-routing";
+import { Link } from "multiple-page-routing";
 import { GetApplication } from "@provider-app/services";
 
 const defaultToRoute = '/page-manager';
@@ -55,6 +55,10 @@ const mockData = {
   appShortNameEn: '测试应用'
 };
 
+export interface DashboardProps {
+  onSelectApp: (appInfo: { app: string }) => void
+}
+
 /**
  * 入口大厅
  *
@@ -62,7 +66,8 @@ const mockData = {
  *
  * 1. 设置默认的路由为 app
  */
-export const Dashboard: HY.SubApp = (props) => {
+export const Dashboard: React.FC<DashboardProps> = (props) => {
+  const { onSelectApp } = props;
   const [appData, setAppData] = useState([]);
 
   useEffect(() => {
@@ -86,8 +91,8 @@ export const Dashboard: HY.SubApp = (props) => {
                 icon={iconGroupTemp[idx]}
                 title={appShortNameEn}
                 onClick={(e) => {
-                  setDefaultParams({
-                    app: appCode
+                  onSelectApp && onSelectApp({
+                    app: appCode,
                   });
                 }}
                 to={defaultToRoute}

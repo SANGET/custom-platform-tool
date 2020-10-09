@@ -41,8 +41,8 @@ const defaultAuthStore: AuthStore = {
   autoLoging: !!getPrevLoginToken(),
   logging: false,
   logouting: false,
-  isLogin: !!getPrevLoginToken(),
-  // isLogin: process.env.NODE_ENV === 'development',
+  // isLogin: !!getPrevLoginToken(),
+  isLogin: process.env.NODE_ENV === 'development',
   prevLoginRes: {},
   token: "",
   // menuStore: NAV_MENU_CONFIG
@@ -71,9 +71,14 @@ function onLoginSuccess({ resData, originForm = {} }) {
   const prevLoginRes = resData;
 
   /** TODO: 提取页面需要的信息 */
-  const userInfo = {};
   const { userName } = resData;
-  userInfo.username = userName;
+
+  /**
+   * 提取用户信息
+   */
+  const userInfo = {
+    username: userName
+  };
   // let menuStore = (userInfo.Menus || {}).Child;
   const { token } = resData.loginSuccessInfo || {};
   // delete userInfo['Menus'];
@@ -146,7 +151,10 @@ const authActions: AuthActions = (store) => ({
     store.setState(prevLoginState);
     // }
   },
-  /** 主动登录 */
+
+  /**
+   * 主动登录
+   */
   async login(state, form, onSuccess) {
     $R_P.urlManager.setLessee(form.loginName);
     store.setState({
@@ -166,6 +174,7 @@ const authActions: AuthActions = (store) => ({
       });
     }
   },
+
   /** 主动登出 */
   async logout() {
     store.setState({

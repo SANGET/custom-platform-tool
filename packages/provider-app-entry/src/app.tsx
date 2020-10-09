@@ -4,7 +4,7 @@ import {
   MultipleRouterManager, Link,
   defaultState as defaultRouteState,
   RouterState, RouterHelperProps, onNavigate,
-  resolvePagePathWithSeperator, redirectToRoot
+  resolvePagePathWithSeperator, redirectToRoot, setDefaultParams
 } from 'multiple-page-routing';
 
 /** 获取路由配置 */
@@ -22,7 +22,7 @@ import { AuthStoreState } from "./auth/actions";
 import { GetMenu } from "./apis";
 import { ToApp } from "./components/ToApp";
 
-interface AppContainerState extends RouterState {
+export interface AppContainerState extends RouterState {
   ready?: boolean;
   navMenu?: any[];
   preparingPage?: boolean;
@@ -36,13 +36,21 @@ const pageCache = {};
 const pageAuthCache = {};
 
 const setReqUrlByApp = (app) => {
-  // console.log(this.location);
   if (app) {
     $R_P.urlManager.setApp(app);
   }
 };
 
-export default class App extends MultipleRouterManager<AppContainerProps, AppContainerState> {
+export interface AppLocationState {
+  /** 选择的应用 */
+  app: string
+  /** 登录的租户 */
+  lessee: string
+  /**  */
+  pageID: string
+}
+
+export default class App extends MultipleRouterManager<AppContainerProps, AppContainerState, AppLocationState> {
   state: AppContainerState = defaultRouteState
 
   constructor(props) {
@@ -54,16 +62,19 @@ export default class App extends MultipleRouterManager<AppContainerProps, AppCon
     };
   }
 
+  resolveAppFromUrl = () => {
+
+  }
+
   /**
    * 初始化路由配置
    */
   initRouteForApp = (nextState) => {
-    const initRouteInfo = this.getUrlParams(undefined, undefined, true);
-    const appParams = initRouteInfo.app;
-    if (!appParams) {
+    const selectedApp = this.appLocation?.app;
+    if (!selectedApp) {
       redirectToRoot();
     } else {
-      setReqUrlByApp(appParams);
+      setReqUrlByApp(selectedApp);
       this.initRoute();
     }
 
@@ -86,10 +97,10 @@ export default class App extends MultipleRouterManager<AppContainerProps, AppCon
     const { logging } = this.props;
   }
 
-  handleHistoryChange = (activeRoute) => {
-    setReqUrlByApp(this.location.app);
-    // console.log(this.state.activeRoute);
-  }
+  // handleHistoryChange = (activeRoute) => {
+  //   setReqUrlByApp(this.appLocation.state?.app);
+  //   // console.log(this.state.activeRoute);
+  // }
 
   getRouteItem = (pathname) => Router[pathname]
 
@@ -121,21 +132,21 @@ export default class App extends MultipleRouterManager<AppContainerProps, AppCon
              * 从路由配置中找到 pagePath 对应的页面
              */
             const routeConfig = this.getRouteItem(resolvePagePathWithSeperator(pagePath));
-            const C = routeConfig?.component;
+            const Child = routeConfig?.component;
 
             return (
               <PageContainer
                 pagePath={pagePath}
                 pageAuthInfo={pageAuthInfo}
                 appContext={this.appContext}
-                location={this.location}
+                appLocation={this.appLocation}
                 className="page"
                 key={pageKey}
                 id={pageDOMID}
                 style={{
                   display: isShow ? 'block' : 'none'
                 }}
-                ChildComp={C}
+                ChildComp={Child}
               >
               </PageContainer>
             );
@@ -192,14 +203,21 @@ export default class App extends MultipleRouterManager<AppContainerProps, AppCon
                 <span className="flex"></span>
                 {
                   // 需要选择应用后才进入应用
-                  isEntryApp && <ToApp location={this.location} />
+                  isEntryApp && <ToApp appLocation={this.appLocation} />
                 }
                 <UserStatusbar logout={logout} />
               </header>
               <div id="provider_app_content">
                 {
                   !isEntryApp ? (
-                    <Dashboard {...this.appContext} />
+                    <Dashboard
+                      onSelectApp={({ app }) => {
+                        setReqUrlByApp(app);
+                        setDefaultParams({
+                          app,
+                        });
+                      }}
+                    />
                   ) : (
                     <>
                       <TabNav

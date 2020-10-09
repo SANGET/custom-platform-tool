@@ -6,11 +6,12 @@ import { EditButton } from "./PDPageMetadataEditor/EditButton";
 
 interface ToolbarCustomProps {
   onReleasePage?: () => void
+  appLocation
 }
 
 const ToolbarCustom: React.FC<ToolbarCustomProps> = ({
   onReleasePage,
-  location
+  appLocation
 }) => {
   return (
     <div className="flex items-center px-2" style={{ height: '100%' }}>
@@ -34,7 +35,7 @@ const ToolbarCustom: React.FC<ToolbarCustomProps> = ({
             position: 'bottom',
             maxHeightable: false,
             children: () => {
-              const previewUrl = getPreviewUrl(location);
+              const previewUrl = getPreviewUrl(appLocation);
               console.log(previewUrl);
               return (
                 <div style={{
@@ -59,7 +60,7 @@ const ToolbarCustom: React.FC<ToolbarCustomProps> = ({
             title: 'Mobile 预览',
             width: 500,
             children: () => {
-              const previewUrl = getPreviewUrl(location);
+              const previewUrl = getPreviewUrl(appLocation);
               return (
                 <div style={{
                   height: '70vh',

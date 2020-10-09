@@ -22,9 +22,13 @@ export interface NavigateConfig {
   pathExtend?: string
   /** 是否使用默认的 params，会在 url 中加入 */
   useDefaultParams?: boolean
+  /** 设置 location 的 state */
+  state?: {}
 }
 
-export const history = createBrowserHistory();
+export const history = createBrowserHistory<any>();
+
+// export interface HistoryLocation {}
 
 /**
  * 回到根路由路径
@@ -105,10 +109,15 @@ export const onNavigate: OnNavigate = (config) => {
   const nextConfig = produce(config, (draft) => {
     draft.from = location;
   });
+
+  /** 将 state 和 params 合并到 location 的 state 中 */
+  const { state, params } = nextConfig;
+  const stateForLocation = Object.assign({}, params, state);
+
   const { type } = nextConfig;
   switch (type) {
     case "PUSH":
-      pushToHistory(`#/${wrapPushUrl(nextConfig)}`, nextConfig);
+      pushToHistory(`#/${wrapPushUrl(nextConfig)}`, stateForLocation);
       break;
     case "LINK":
       break;
