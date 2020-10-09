@@ -62,6 +62,7 @@ export const defaultState: RouterState = {
   activeRouteIdx: -1,
   activeRoute: "",
 };
+
 let cachedState = Object.assign({}, defaultState);
 
 const getAllUrlParams = () => {
@@ -159,8 +160,8 @@ class MultipleRouterManager<
     }
     const { hash, state = {} } = location;
     const activePath = resolvePagePath(hash);
-    const nextRouterState = state.nextRoutersFromState;
     this.setLocation(location);
+    const nextRouterState = state.nextRoutersFromState;
     this.selectTab(activePath, nextRouterState);
 
     // hook 函数

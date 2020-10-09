@@ -6,7 +6,7 @@
 import { RequestClass, resolveUrl } from "@mini-code/request";
 import { message as AntdMessage } from 'antd';
 
-import { setDefaultParams, clearDefaultParams } from "multiple-page-routing";
+import { clearDefaultParams } from "multiple-page-routing";
 import { authStore } from "../auth/actions";
 
 /**
@@ -53,19 +53,12 @@ class UrlManager {
 
   /** 登录后需要设置 */
   setLessee = (lessee: string) => {
-    setDefaultParams({
-      lessee
-    });
     this.currLessee = lessee;
     this.setRequestBaseUrl();
   }
 
   /** 选择应用后需要设置 */
   setApp = (app: string) => {
-    /** 设置默认的 url，让 url 带上 app 表饰 */
-    setDefaultParams({
-      app
-    });
     this.currApp = app;
     this.setRequestBaseUrl();
   }
