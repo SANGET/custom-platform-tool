@@ -21,7 +21,7 @@ export const widgetClassDataCollection: WidgetClassDataCollection = {
   'widget-id-2': {
     id: 'con1',
     widgetDef: {
-      type: 'container',
+      type: '',
       // props: {
       //   type: 'flex', // 布局方式
       //   values: {

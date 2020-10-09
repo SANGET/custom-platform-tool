@@ -7,7 +7,7 @@ import PageDesigner from "./app";
 
 const App: HY.SubAppHOC = (props) => {
   const {
-    location, pagePath
+    appLocation, pagePath
   } = props;
   return VisualEditorStoreConnector(PageDesigner, pagePath);
 };

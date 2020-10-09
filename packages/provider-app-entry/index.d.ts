@@ -2,15 +2,15 @@ import { PageDesignerPropItemTypes } from '@provider-app/page-designer/types';
 import { ProviderAppContext } from './src/types';
 
 /**
- * 子应用接入规范
+ * 子应用的 props
  */
-export interface SubAppSpec extends ProviderAppContext {
+export interface ProviderSubAppPropsScope extends ProviderAppContext {
   /** 页面的验证信息 */
   pageAuthInfo
   /** 当前页面的 path */
   pagePath: string
-  /** 当前的 location */
-  location
+  /** 应用的 location */
+  appLocation
 }
 
 interface AppConfig {
@@ -28,12 +28,12 @@ declare global {
 /**
  * 子应用的配型
  */
-type HYSubAppTypeRE = React.ElementType<SubAppSpec>
+type HYSubAppTypeRE = React.ElementType<ProviderSubAppPropsScope>
 
 /**
  * HOC 子应用
  */
-type HYSubAppTypeFE<T> = (props: SubAppSpec) => React.ElementType<T>
+type HYSubAppTypeFE<T> = (props: ProviderSubAppPropsScope) => React.ElementType<T>
 
 /**
  * 向 provider app 注入一些全局校验
@@ -41,7 +41,7 @@ type HYSubAppTypeFE<T> = (props: SubAppSpec) => React.ElementType<T>
 declare global {
   /** HY */
   namespace HY {
-    type SubAppSpec = SubAppSpec
+    type ProviderSubAppProps = ProviderSubAppPropsScope
     /** 通用子应用 */
     type SubApp = HYSubAppTypeRE
     /** HOC 子应用 */

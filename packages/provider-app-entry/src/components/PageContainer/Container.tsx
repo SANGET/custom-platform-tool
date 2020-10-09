@@ -8,21 +8,21 @@ import { ProviderAppContext } from '../../types';
 export interface ProviderPageContext extends ProviderAppContext {
   pagePath
   pageAuthInfo
-  location
+  appLocation
 }
 
 interface PageContainerProps
   extends React.DetailedHTMLProps<React.HTMLAttributes<HTMLDivElement>, HTMLDivElement> {
   pagePath?: string
   pageAuthInfo?: any
-  location
+  appLocation
   appContext: ProviderAppContext
   ChildComp: HY.SubApp | HY.SubAppHOC
 }
 
 const loadChild = (
   Child: HY.SubApp | HY.SubAppHOC,
-  props: HY.SubAppSpec
+  props: HY.ProviderSubAppProps
 ) => {
   /** 处理找不到页面 */
   if (!Child) {
@@ -51,13 +51,13 @@ const loadChild = (
 export const PageContainer = (props: PageContainerProps) => {
   const {
     pagePath, pageAuthInfo, appContext,
-    ChildComp, location,
+    ChildComp, appLocation,
     ...otherProps
   } = props;
   const pageChildProps = {
     pageAuthInfo,
     pagePath,
-    location,
+    appLocation,
     ...appContext
   };
 

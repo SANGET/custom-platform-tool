@@ -68,7 +68,6 @@ export const PageContainer = (props: PageContainerProps) => {
   }
 
   const { name, type } = dsl;
-  debugger;
 
   if (validAuth(pageAuthInfo, dsl.pageID)) {
     // 数据的可用性统一管理  (状态校验: loading、路由鉴权)。

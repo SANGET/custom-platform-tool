@@ -92,9 +92,10 @@ export const PDdragableItemWrapperFac: DragableItemWrapperFac = (
               PropEditor && (
                 /** 自定义编辑器的接口 */
                 <EditBtn
-                  editorRenderer={() => {
+                  editorRenderer={(modalOptions) => {
                     return (
                       <PropEditor
+                        modalOptions={modalOptions}
                         compContext={{
                           entityState
                         }}

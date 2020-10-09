@@ -2,7 +2,7 @@ import React, { FC, useState, useEffect } from 'react';
 /** react路由暴露出来的页面跳转方法 */
 // import { useHistory, Location } from 'react-router-dom';
 import { onNavigate } from 'multiple-page-routing';
-import { getUrlParams } from "@mini-code/request/url-resolve";
+import { getUrlSearchParams } from "@mini-code/request/url-resolve";
 import {
   Tabs, Form, Tag, Row, Col, Button, Input
 } from 'antd';
@@ -126,7 +126,7 @@ const EditStruct: HY.SubApp = (props) => {
     /** 请求左侧树要用到的数据,因为是动态数据,所以每次进入页面都要发请求 */
     fetchSelectTreeData();
     // http:// {ip}:{port}/paas/ {lesseeCode}/{applicationCode}/data/v1/tables/00dd1b16e3a84a6fbeed12a661484eba
-    // const res = getUrlParams(undefined, undefined, true).id;
+    // const res = getUrlSearchParams(undefined, undefined, true).id;
     // console.log(res);
     // const id = window.atob(window.location.hash.split("id=")[1].split("&_R")[0])
     // ReqTableDetail(id).then((res) => {
@@ -143,7 +143,7 @@ const EditStruct: HY.SubApp = (props) => {
     // }
 
     /** 获取表结构列表带过来的行记录id */
-    const { id } = getUrlParams(undefined, undefined, true);
+    const { id } = getUrlSearchParams({ fromBase64: true });
     // console.log({ id });
     /** 发现页面刷新时,从表结构列表通过路由跳转传过来的id会丢失,而redux中的数据,会被存储到localStorage中 */
     /** 如果id丢失,就从localStorage中取缓存的id */

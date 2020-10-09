@@ -1,9 +1,10 @@
 import React, { Component } from "react";
 import produce from "immer";
 
-import { getUrlParams } from "@mini-code/request/url-resolve";
+import { getUrlSearchParams } from "@mini-code/request/url-resolve";
 import { Call } from "@mini-code/base-func";
 
+import { UnregisterCallback, Location } from "history";
 import {
   history,
   wrapPushUrl,
@@ -11,7 +12,8 @@ import {
   replaceHistory,
   onNavigate,
   resolvePagePath,
-  resolvePagePathWithSeperator, getPathname
+  resolvePagePathWithSeperator,
+  getPathname
 } from "../utils";
 
 export interface RouterHelperProps {
@@ -47,6 +49,13 @@ export interface RouterState {
   activeRoute: string;
 }
 
+export interface DefaultLocationState {
+  /** 通过 hash 存储的页面路径 */
+  pagePath?: string
+  /** 通过 hash 存储的页面路径，包含分隔符 */
+  pagePathWithDetail?: string
+}
+
 export const defaultState: RouterState = {
   routers: [],
   routerSnapshot: {},
@@ -56,35 +65,34 @@ export const defaultState: RouterState = {
 let cachedState = Object.assign({}, defaultState);
 
 const getAllUrlParams = () => {
-  const res = getUrlParams(undefined, undefined, true);
+  const res = getUrlSearchParams({
+    fromBase64: true
+  });
   return res;
 };
 
 class MultipleRouterManager<
   P extends RouterHelperProps,
-  S extends RouterState
+  S extends RouterState,
+  L = unknown,
 > extends Component<P, S> {
   history = history
 
-  wrapPushUrl = wrapPushUrl
-
-  pushToHistory = pushToHistory
-
   onNavigate = onNavigate
 
-  getUrlParams = getUrlParams
-
-  unlisten
+  unlisten!: UnregisterCallback
 
   defaultPath: string | null = null
 
-  handlePop!: () => void
+  /** 响应浏览器 pop 的回调 */
+  onPop!: () => void
 
-  handlePush!: () => void
+  /** 响应浏览器 push 的回调 */
+  onPush!: () => void
 
   handleHistoryChange!: (activeRoute: string) => void
 
-  location = history.location
+  appLocation: Location<L> & DefaultLocationState = history.location
 
   constructor(props) {
     super(props);
@@ -92,10 +100,14 @@ class MultipleRouterManager<
     const { cacheState } = props;
 
     if (this.unlisten) this.unlisten();
-    this.unlisten = history.listen(this.handleHistory);
+    this.unlisten = history.listen(this.locationListener);
 
     this.state = cacheState ? cachedState : defaultState;
     this.setLocation(history.location);
+  }
+
+  componentWillUnmount() {
+    this.unlisten();
   }
 
   componentDidMount() {
@@ -114,12 +126,17 @@ class MultipleRouterManager<
     });
   };
 
+  /**
+   * 设置 location 对象，挂载属性
+   * @param location next location
+   * @param extend 给 location 的扩展
+   */
   setLocation = (location: typeof history.location, extend = {}) => {
     const { hash } = location;
     const pagePath = resolvePagePath(hash);
     const pagePathWithDetail = resolvePagePathWithSeperator(hash);
     const params = getAllUrlParams();
-    this.location = produce(location, (draft) => {
+    this.appLocation = produce(location, (draft) => {
       return {
         ...draft,
         ...params,
@@ -129,24 +146,26 @@ class MultipleRouterManager<
     });
   }
 
-  handleHistory = (location, action) => {
+  locationListener = (location, action) => {
+    /** 触发时机在 location 更改完成后 */
+    // setTimeout(() => {
     switch (action) {
       case "POP":
-        Call(this.handlePop);
+        Call(this.onPop);
         break;
       case "PUSH":
-        Call(this.handlePush);
+        Call(this.onPush);
         break;
     }
     const { hash, state = {} } = location;
     const activePath = resolvePagePath(hash);
     const nextRouterState = state.nextRoutersFromState;
-
     this.setLocation(location);
     this.selectTab(activePath, nextRouterState);
 
     // hook 函数
     Call(this.handleHistoryChange, activePath);
+    // });
   };
 
   closeAll = () => {
@@ -163,7 +182,8 @@ class MultipleRouterManager<
     const targetRoute = routers[idx];
     const nextRouters = [...routers].remove(targetRoute);
     const nextRouterInfo = { ...routerSnapshot };
-    delete nextRouterInfo[targetRoute];
+    // delete nextRouterInfo[targetRoute];
+    Reflect.deleteProperty(nextRouterInfo, targetRoute);
     const nextRoutersLen = nextRouters.length - 1;
     const nextActiveIdx = activeRouteIdx > nextRoutersLen ? nextRoutersLen : activeRouteIdx;
     const nextActiveRoute = nextRouters[nextActiveIdx];
@@ -192,7 +212,9 @@ class MultipleRouterManager<
       path: nextActiveRoute,
       params: nextRouterParams.params,
       // 给关闭当前 tab 候使用的 route state
-      nextRoutersFromState: nextState,
+      state: {
+        nextRoutersFromState: nextState,
+      }
     });
 
     return nextState;
@@ -227,7 +249,7 @@ class MultipleRouterManager<
         if (maxRouters && nextRouters.length > maxRouters) {
           const [target, ...other] = nextRouters;
           nextRouters = other;
-          delete nextRouterInfo[target];
+          Reflect.deleteProperty(nextRouterInfo, target);
         }
         activeIdx = nextRouters.length - 1;
       }
@@ -247,8 +269,10 @@ class MultipleRouterManager<
     // let initRoute = resolvePagePath(location.hash)[0];
     const { defaultPath } = this;
     // console.log(this.location);
-    const { pagePath } = this.location;
-    const initRouteInfo = getUrlParams(undefined, undefined, true);
+    const pagePath = resolvePagePath(this.appLocation.hash);
+    const initRouteInfo = getUrlSearchParams({
+      fromBase64: true
+    });
     const initRoute = pagePath;
 
     defaultPath

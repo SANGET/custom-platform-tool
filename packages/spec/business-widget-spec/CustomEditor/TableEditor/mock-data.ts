@@ -1,28 +1,28 @@
 export const columns = [
   {
-    title: 'Name',
+    title: '用户名',
     dataIndex: 'name',
     key: 'name',
   },
   {
-    title: 'Age',
+    title: '年龄',
     dataIndex: 'age',
     key: 'age',
   },
   {
-    title: 'Address',
+    title: '地址',
     dataIndex: 'address',
     key: 'address',
   },
   {
-    title: 'Tags',
+    title: '标签',
     key: 'tags',
     dataIndex: 'tags',
   },
-  {
-    title: 'Action',
-    key: 'action',
-  },
+  // {
+  //   title: 'Action',
+  //   key: 'action',
+  // },
 ];
 
 export const data = [

@@ -38,7 +38,7 @@ import React from "react";
 const SubApp: HY.SubAppHOC = (props) => {
   return () => {
     const {
-      location, pagePath
+      appLocation, pagePath
     } = props;
     return VisualEditorStoreConnector(PageDesigner, pagePath);
   }

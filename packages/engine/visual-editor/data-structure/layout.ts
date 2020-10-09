@@ -1,9 +1,9 @@
-import { ElemNestingInfo } from '@engine/layout-renderer/types';
-import { WidgetEntity } from './core';
+// import { ElemNestingInfo } from '@engine/layout-renderer/types/layout-node-info';
+import { WidgetEntity } from "./widget";
 
-export {
-  ElemNestingInfo
-};
+// export {
+//   ElemNestingInfo
+// };
 
 /**
  * state 的数据结构

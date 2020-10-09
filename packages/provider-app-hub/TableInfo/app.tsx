@@ -4,7 +4,7 @@ import {
   Form
 } from 'antd';
 import { getTableInfo, updateTableInfo } from './api';
-import { openNotification, infoReducer, getUrlParams } from './service';
+import { openNotification, infoReducer, getUrlSearchParams } from './service';
 import {
   NOTIFICATION_TYPE, API_ERROR_MSG, API_SUCESS_CODE, TABLE_TYPE
 } from './constant';
@@ -195,7 +195,10 @@ const TableInfo : React.FC<IProps> = (props: IProps) => {
   };
   /** 初始化时进行数据存储 */
   useEffect(() => {
-    const id = getUrlParams('id', undefined, true);
+    const id = getUrlSearchParams({
+      target: 'id',
+      fromBase64: true
+    });
     getTableInfo(id)?.then((res):void => {
       /** 接口有误则返回提示 */
       if (res?.code !== API_SUCESS_CODE.GETTABLEINFO) {

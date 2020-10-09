@@ -1,5 +1,5 @@
 import { notification, Modal } from 'antd';
-import { getUrlParams } from "@mini-code/request/url-resolve";
+import { getUrlSearchParams } from "@mini-code/request/url-resolve";
 import { construct as contructTree } from '@infra/utils/tools';
 import {
   IStatus, ISELECTSMENU, ITableColumn, IRef, FormInstance, ITableColumnFromApi
@@ -7,7 +7,7 @@ import {
 import { DATATYPESTR, FIELDCODE } from './constant';
 import { FIELDTYPE } from './components/columnsManager/constant';
 
-export { getUrlParams, contructTree };
+export { getUrlSearchParams, contructTree };
 const { confirm } = Modal;
 /** 通用的页面提示方法 */
 export function openNotification(type: IStatus, msg = "", description = "") {

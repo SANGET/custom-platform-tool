@@ -6,7 +6,8 @@
 import { RequestClass, resolveUrl } from "@mini-code/request";
 import { message as AntdMessage } from 'antd';
 
-import { setDefaultParams, clearDefaultParams, onNavigate } from "multiple-page-routing";
+import { setDefaultParams, clearDefaultParams } from "multiple-page-routing";
+import { authStore } from "../auth/actions";
 
 /**
  * 后端返回的数据结构
@@ -135,6 +136,10 @@ const afterRes = (resData) => {
   return resData;
 };
 
+const resetHttpReqHelper = () => {
+  $R_P.urlManager.reset();
+};
+
 /** 使用 $R 的中间件 */
 // $R.use([beforeReq, afterRes]);
 
@@ -151,6 +156,8 @@ function handleRes(resData) {
       // console.log(resData);
       // 处理没找到应用的业务逻辑
       AntdMessage.error(msg);
+      authStore.setState({ isLogin: false });
+      resetHttpReqHelper();
       // onNavigate({
       //   type: 'PUSH',
       //   path: '/login',

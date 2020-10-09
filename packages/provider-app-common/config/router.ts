@@ -26,14 +26,12 @@ import { resolvePagePath } from "multiple-page-routing/utils";
 export interface RouteItemType {
   component: HY.SubApp | HY.SubAppHOC
   title: string
-}
-
-export interface RedirectRouteType {
-  redirect: string
+  /** 是否用于重定向的路由配置 */
+  type?: 'redirect'
 }
 
 export interface RouterConfigType {
-  [routeName: string]: RouteItemType | RedirectRouteType
+  [routeName: string]: RouteItemType
 }
 
 const RouterConfig: RouterConfigType = {

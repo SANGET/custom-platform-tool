@@ -20,7 +20,7 @@ interface VisualEditorAppProps extends VisualEditorState {
   dispatcher: VEDispatcher
 }
 
-class PageDesignerApp extends React.Component<VisualEditorAppProps & HY.SubAppSpec> {
+class PageDesignerApp extends React.Component<VisualEditorAppProps & HY.ProviderSubAppProps> {
   componentDidMount = async () => {
     // 在顶层尝试捕获异常
     try {
@@ -35,8 +35,8 @@ class PageDesignerApp extends React.Component<VisualEditorAppProps & HY.SubAppSp
    * TODO: 优化链路
    */
   onUpdatedDatasource = async (addingData) => {
-    const { appContext, dispatcher, location } = this.props;
-    const { pageID, title } = location;
+    const { appContext, dispatcher, appLocation } = this.props;
+    const { pageID, title } = appLocation;
     const { UpdateAppContext } = dispatcher;
     const pageContent = this.getPageContent();
 
@@ -60,9 +60,9 @@ class PageDesignerApp extends React.Component<VisualEditorAppProps & HY.SubAppSp
 
   getPageInfo = () => {
     const {
-      location,
+      appLocation,
     } = this.props;
-    const { pageID, title } = location;
+    const { pageID, title } = appLocation;
     return {
       id: pageID,
       name: title,
@@ -74,10 +74,9 @@ class PageDesignerApp extends React.Component<VisualEditorAppProps & HY.SubAppSp
     const {
       layoutInfo,
       pageMetadata,
-      location,
+      appLocation,
     } = this.props;
-    // console.log(location);
-    const { pageID } = location;
+    const { pageID } = appLocation;
     const pageContent = wrapPageData({
       id: pageID,
       pageID,
@@ -97,8 +96,8 @@ class PageDesignerApp extends React.Component<VisualEditorAppProps & HY.SubAppSp
    * 4. 将数据准备，调用 InitApp 初始化应用
    */
   perpareInitData = async () => {
-    const { dispatcher, location } = this.props;
-    const { pageID } = location;
+    const { dispatcher, appLocation } = this.props;
+    const { pageID } = appLocation;
     const { InitApp } = dispatcher;
 
     /** 并发获取初始化数据 */
@@ -137,9 +136,9 @@ class PageDesignerApp extends React.Component<VisualEditorAppProps & HY.SubAppSp
       pageMetadata,
       appContext,
       flatLayoutItems,
-      location,
+      appLocation,
     } = this.props;
-    // console.log(location);
+    // console.log(appLocation);
     // console.log(props);
     // 调整整体的数据结构，通过 redux 描述一份完整的{页面数据}
     const {
@@ -152,7 +151,7 @@ class PageDesignerApp extends React.Component<VisualEditorAppProps & HY.SubAppSp
     return appContext.ready ? (
       <div className="visual-app bg-white">
         <header className="app-header">
-          <ToolBar onReleasePage={this.onReleasePage} location={location} />
+          <ToolBar onReleasePage={this.onReleasePage} appLocation={appLocation} />
         </header>
         <div
           className="app-content"

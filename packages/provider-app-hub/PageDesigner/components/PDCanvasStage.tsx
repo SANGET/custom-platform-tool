@@ -4,7 +4,7 @@ import { PDdragableItemWrapperFac } from './PDDragableItemWrapperFac';
 
 const PDCanvasStage = (props) => {
   return (
-    <div>
+    <div style={{ height: '100%' }}>
       <CanvasStage
         dragableItemWrapper={PDdragableItemWrapperFac}
         {...props}

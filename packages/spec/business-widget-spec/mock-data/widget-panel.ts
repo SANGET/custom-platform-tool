@@ -18,12 +18,12 @@ export const widgetPanelData: GroupPanelData = {
         'widget-id-3',
       ]
     },
-    // {
-    //   title: '布局控件',
-    //   items: [
-    //   // 'widget-id-2'
-    //   ]
-    // },
+    {
+      title: '布局控件',
+      items: [
+        'widget-id-2'
+      ]
+    },
   ]
 };
 
