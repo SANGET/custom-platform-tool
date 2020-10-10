@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Input } from 'antd';
-import { BaseInputProps, InputProps } from './i-base-input';
+import { NormalInputProps, InputProps } from './i-base-input';
 import { assertPropsKey, basePickPropsCstr, basePropsMapCstr } from '../../utils';
 import { AllUI } from '../../types';
 
@@ -11,32 +11,33 @@ import { AllUI } from '../../types';
 /**
  * IUB-DSL组件描述上的A属性由真实组件的B属性实现
  */
-export const baseInputPropsMapList = {
+export const normalInputPropsMapList = {
   unit: 'suffix',
   placeholder: 'placeholder',
-  value: 'value,'
+  value: 'value',
+  actions: 'actions'
 };
-export const baseInputPropsKes = Object.keys(baseInputPropsMapList);
+export const normalInputPropsKeys = Object.keys(normalInputPropsMapList);
 
-const pickBaseInputPropsKey = basePickPropsCstr(baseInputPropsKes);
+const pickNormalInputPropsKey = basePickPropsCstr(normalInputPropsKeys);
 
-const baseInputPropsMap = basePropsMapCstr<InputProps>(baseInputPropsMapList);
-export const baseInputCompName = AllUI.BaseInput;
+const normalInputPropsMap = basePropsMapCstr<InputProps>(normalInputPropsMapList);
+export const normalInputCompName = AllUI.NormalInput;
 
 /**
  * 输入框组件的工厂函数,
  * 根据不同的props生产不同的Input
  * 受控的傻瓜组件
- * @param param0 BaseInputProps
+ * @param param0 NormalInputProps
  */
-export const BaseInputFactory: React.FC<BaseInputProps> = React.memo(
+export const NormalInputFactory: React.FC<NormalInputProps> = React.memo(
   ({
     value, onChange, id = '', ...ohterProps
   }) => {
     /** 下面三步确保props全部正确可用 */
     const allPropsKey = Object.keys(ohterProps);
-    const canUsePropsKey = pickBaseInputPropsKey(allPropsKey);
-    const actualProps: InputProps = baseInputPropsMap(ohterProps, canUsePropsKey);
+    const canUsePropsKey = pickNormalInputPropsKey(allPropsKey);
+    const actualProps: InputProps = normalInputPropsMap(ohterProps, canUsePropsKey);
     /** 必要的断言 */
     assertPropsKey(id, allPropsKey, canUsePropsKey);
 
@@ -49,8 +50,8 @@ export const BaseInputFactory: React.FC<BaseInputProps> = React.memo(
     return (
       <Input
         style={{ width: 300 }}
-        defaultValue={value}
-        // value={value}
+        // defaultValue={value}
+        value={value}
         // value={normalInputVal}
         key={id}
         onChange={(e) => {

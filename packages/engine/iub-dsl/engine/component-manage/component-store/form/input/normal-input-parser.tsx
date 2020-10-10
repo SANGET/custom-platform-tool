@@ -1,4 +1,4 @@
-import { baseInputRenderStructParser, genBaseInputFullRenderStruct } from "./base-input-render-struct";
+import { normalInputRenderStructParser, genNormalInputFullRenderStruct } from "./normal-input-render-struct";
 
 /** 表单输入框组件所以配置的keys */
 const getInputCompAllConfKeys = (conf) => Object.keys(conf);
@@ -9,20 +9,21 @@ const getInputCompAllConfKeys = (conf) => Object.keys(conf);
  * @param conf 组件配置
  * @param options 解析选项
  */
-const baseInputCompParser = (id, conf, options) => {
+const normalInputCompParser = (id, conf, widgetParserOptions) => {
   /** 解析阶段 */
   const allConfKey = getInputCompAllConfKeys(conf);
-  const renderInfo = baseInputRenderStructParser(
-    genBaseInputFullRenderStruct(),
+  const renderInfo = normalInputRenderStructParser(
+    genNormalInputFullRenderStruct(),
     {
       baseMark: id,
       allConfKey,
       originConf: conf,
-    }
+    },
+    widgetParserOptions
   );
 
   /** 解析阶段 - end */
   return renderInfo;
 };
 
-export { baseInputCompParser };
+export { normalInputCompParser };

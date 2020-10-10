@@ -1,4 +1,4 @@
-import { baseInputCompParser as defaultInputParser } from "../component-store";
+import { normalInputCompParser as defaultInputParser } from "../component-store";
 import { globalInputConf, globalDefaultOptions } from "../../conf";
 
 /**
@@ -8,7 +8,7 @@ import { globalInputConf, globalDefaultOptions } from "../../conf";
  * @param conf 组件配置
  * @param options 解析选项
  */
-export const baseInputCompParser = (id: string, conf = {}, options = {}) => {
+export const normalInputCompParser = (id: string, conf = {}, options = {}) => {
   return defaultInputParser(id, {
     ...globalInputConf,
     ...conf

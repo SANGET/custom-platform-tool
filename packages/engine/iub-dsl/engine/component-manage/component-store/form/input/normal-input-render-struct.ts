@@ -1,15 +1,15 @@
 import { AllUI } from "@iub-dsl/engine/component-manage/UI-factory/types";
 import {
-  FullRenderStruct, ActualRenderInfo, BaseRenderStruct, CommonRenderStructParser
+  FullRenderStruct, BaseRenderStruct, CommonRenderStructParser, RenderCompInfo, RenderStructInfo
 } from "../../types/renderStruct";
-import { fromItemKes, toolTipPropsKes, baseInputPropsKes } from "../../../UI-factory";
+import { fromItemKes, toolTipPropsKes, normalInputPropsKeys } from "../../../UI-factory";
 import { genRenderStructList } from "../../common/render-struct-parser";
 
 /** 一个表单输入框组件最多可以渲染多少个widget,
  * 1. 最好是一层
  * 2. 有引用关系,拿到数据就知道, 需要配置平台业务配合
  * */
-export const genBaseInputFullRenderStruct = () => {
+export const genNormalInputFullRenderStruct = () => {
   /** TODO: 业务沉淀后再提取公共结构 */
   const baseInutFullRenderStruct: FullRenderStruct[] = [
     {
@@ -35,8 +35,8 @@ export const genBaseInputFullRenderStruct = () => {
           children: [
             {
               type: 'BaseRenderStruct',
-              compTag: AllUI.BaseInput,
-              canUseProps: baseInputPropsKes,
+              compTag: AllUI.NormalInput,
+              canUseProps: normalInputPropsKeys,
               requireRender: true,
               canSkip: false,
             }
@@ -52,23 +52,35 @@ export const genBaseInputFullRenderStruct = () => {
  * 检查最大可渲染的结构, 生成可以直接渲染的配置
  * @params options
  */
-export const baseInputRenderStructParser = (
+export const normalInputRenderStructParser = (
   fullRenderStruct,
-  // TODO: 未确定
-  options: CommonRenderStructParser
-): ActualRenderInfo[] => {
+  widgetConf: CommonRenderStructParser,
+  widgetParserOptions?
+): {
+  // 结构和实际数据分离
+  renderStructInfo: RenderStructInfo[],
+  renderCompInfo: RenderCompInfo
+} => {
   const {
     allConfKey,
     originConf,
     baseMark
-  } = options;
-  const baseInputActualRenderInfo: ActualRenderInfo[] = [];
+  } = widgetConf;
+  const renderStructInfo: RenderStructInfo[] = [];
+  const renderCompInfo: RenderCompInfo = {};
+
   genRenderStructList(fullRenderStruct, {
     allConfKey,
     originConf,
     baseMark,
-    actualRenderInfo: baseInputActualRenderInfo
-  });
+    renderStructInfo,
+    renderCompInfo,
+    index: -1,
+  },
+  widgetParserOptions);
 
-  return baseInputActualRenderInfo;
+  return {
+    renderStructInfo,
+    renderCompInfo
+  };
 };

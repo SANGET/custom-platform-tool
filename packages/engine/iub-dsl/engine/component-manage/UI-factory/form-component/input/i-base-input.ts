@@ -7,7 +7,7 @@ interface InputPropsExtral {
   onChange: ((event: React.ChangeEvent<HTMLInputElement>) => void);
 }
 
-export type BaseInputProps = OmitExtral<InputProps, InputPropsExtral>
+export type NormalInputProps = OmitExtral<InputProps, InputPropsExtral>
 export { InputProps };
 
 //
