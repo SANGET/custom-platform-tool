@@ -28,7 +28,6 @@ export async function getDictionaryListServices(params) {
 }
 
 export async function getListOfDictionaryServices({ id }) {
-  debugger;
   const res = await $R_P.get({
     url: `/data/v1/dictionary/${id}`
   });
@@ -90,3 +89,40 @@ export const delDictionaryServices = (dictionaryId) => {
     });
   });
 };
+
+export async function postDictionary(data) {
+  const res = await $R_P.post('/data/v1/dictionary/', data);
+
+  if (res?.code !== API_SUCESS_CODE.GETTABLEINFO) {
+    // openNotification(NOTIFICATION_TYPE.ERROR, res?.msg || '字典新增失败');
+    return false;
+  }
+  return true;
+}
+export async function editDictionary(data) {
+  const res = await $R_P.put('/data/v1/dictionary/', data);
+
+  if (res?.code !== API_SUCESS_CODE.GETTABLEINFO) {
+    // openNotification(NOTIFICATION_TYPE.ERROR, res?.msg || '字典修改失败');
+    return false;
+  }
+  return true;
+}
+export async function editChildOfDictionary(data) {
+  const res = await $R_P.put('/data/v1/dictionary_value/', data);
+
+  if (res?.code !== API_SUCESS_CODE.GETTABLEINFO) {
+    // openNotification(NOTIFICATION_TYPE.ERROR, res?.msg || '配置子项失败');
+    return false;
+  }
+  return true;
+}
+export async function moveChildOfDictionary(data) {
+  const res = await $R_P.put('/data/v1/dictionary_value/move', data);
+
+  if (res?.code !== API_SUCESS_CODE.GETTABLEINFO) {
+    openNotification(NOTIFICATION_TYPE.ERROR, res?.msg || '更改排序失败');
+    return false;
+  }
+  return true;
+}
