@@ -2,7 +2,7 @@ import React, { Fragment } from 'react';
 
 import {
   TootipFactory, TableFactory,
-  BaseInputFactory, FormItemFactory,
+  NormalInputFactory, FormItemFactory,
   ErrorFactory
 } from '.';
 import { AllUI } from './types';
@@ -18,7 +18,7 @@ const allWidgetList = {
   [AllUI.FormItem]: FormItemFactory,
   [AllUI.Tootip]: TootipFactory,
   // [AllUI.Tootip]: AuthTootipFactory,
-  [AllUI.BaseInput]: BaseInputFactory,
+  [AllUI.NormalInput]: NormalInputFactory,
   [AllUI.WidgetError]: ErrorFactory,
   [AllUI.NormalTable]: TableFactory
 };
@@ -26,5 +26,5 @@ const allWidgetList = {
 /** uitls: 获取真实组件 */
 const getWidget = (
   compTag: AllUI
-) => allWidgetList[compTag];
+): React.FC<any> => allWidgetList[compTag];
 export { getWidget };

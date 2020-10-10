@@ -1,7 +1,9 @@
 import {
-  FullRenderStruct, ActualRenderInfo, BaseRenderStruct, genRenderStructListContext, CompPropsMap
+  FullRenderStruct, BaseRenderStruct, GenRenderStructContext, CompPropsMap, RenderStructInfo
 } from "../types/renderStruct";
-import { pickCanUseCompPropsKey, genCompPropsMapList } from "./props-parser";
+import {
+  pickCanUseCompPropsKey, genCompPropsMapList, genCompPropsMapList3, propContextHandle, propsParser as originPropsParser
+} from "./props-parser";
 
 const tempCode = (compTag) => {
   if (compTag === 'Tootip') {
@@ -21,26 +23,27 @@ const arrayRenderStructParser = (...args) => {};
 
 const genRenderStructList = (
   renderStruct: FullRenderStruct[],
-  context: genRenderStructListContext,
-  options = {},
+  genRenderStructContext: GenRenderStructContext,
+  widgetParserOptions = {},
 ) => {
   const structLength = renderStruct.length;
   for (let i = 0; i < structLength; i++) {
-    genRenderStruct(renderStruct[i], i, context);
+    genRenderStructContext.index = i;
+    genRenderStruct(renderStruct[i], genRenderStructContext, widgetParserOptions);
   }
 };
 
 /** 处理函数可以不一样, 但是传参数和上下文是固定的标准 */
 const genRenderStruct = (
   renderStructItem: FullRenderStruct,
-  index: number,
-  context: genRenderStructListContext,
+  genRenderStructContext: GenRenderStructContext,
+  widgetParserOptions
 ) => {
   switch (renderStructItem.type) {
     case 'BaseRenderStruct':
-      return genBaseRenderStruct(renderStructItem, context, { index });
+      return genBaseRenderStruct(renderStructItem, genRenderStructContext, widgetParserOptions);
     case 'ArrayRenderStruct':
-      return arrayRenderStructParser(renderStructItem, context, { index });
+      return arrayRenderStructParser(renderStructItem, genRenderStructContext, widgetParserOptions);
     default:
       console.error('类型有错');
       return null;
@@ -50,26 +53,54 @@ const genRenderStruct = (
 /**
   * 基础渲染结构的解析器
   * @param structItem BaseRenderStruct
-  * @param context 上下文
+  * @param genRenderStructContext 上下文
   */
 const genBaseRenderStruct = (
   structItem: BaseRenderStruct,
-  context: genRenderStructListContext,
-  { index }: {index: number}
+  genRenderStructContext: GenRenderStructContext,
+  widgetParserOptions
 ) => {
   const {
     baseMark,
     allConfKey,
     originConf,
-    actualRenderInfo
-  } = context;
+    renderCompInfo,
+    renderStructInfo,
+    index
+  } = genRenderStructContext;
 
   const {
     canUseProps, compTag, canSkip, requireRender
   } = structItem;
+  // TODO: 严重问题, ctx透传很深
+  const {
+    parserContext = {}
+  } = widgetParserOptions;
+  let {
+    propsParser = originPropsParser
+  } = parserContext;
+  if (propsParser !== originPropsParser) {
+    propsParser = propsParser(originPropsParser, {
+      getStructItemInfo: (key) => structItem[key] || structItem,
+    });
+  }
 
   const mark = `${baseMark}-${compTag}${index}`;
   const usePropsKeys = pickCanUseCompPropsKey(canUseProps)(allConfKey);
+
+  const propsParseRes = {
+    staticProps: {},
+    dynamicProps: {}
+  };
+
+  genCompPropsMapList3(usePropsKeys, {
+    genPropsMap: (key: string, ctx) => {
+      const conf = originConf[key]; // getConfFn
+      propContextHandle(propsParser(key, conf), ctx);
+    }
+  }, propsParseRes);
+
+  // Old
   /** 演示临时代码 */
   let compPropsMapList: CompPropsMap[] = [];
   if (tempCode(compTag)) {
@@ -77,39 +108,41 @@ const genBaseRenderStruct = (
   } else {
     console.log('没有渲染tip: ', mark);
   }
-  // const newContext = {
-  //   ...context
-  // };
+
   if (compPropsMapList.length || requireRender) {
-    const newActualRenderInfo = [];
-    const renderInfoItem: ActualRenderInfo = {
-      compTag,
+    const childrenStructInfo = [];
+    const renderStructInfoItem: RenderStructInfo = {
       mark,
-      propsKeys: usePropsKeys,
-      propsMap: compPropsMapList,
-      renderStruct: newActualRenderInfo
+      childrenStructInfo
     };
 
-    actualRenderInfo.push(renderInfoItem);
+    renderStructInfo.push(renderStructInfoItem);
 
-    context.baseMark = mark;
-    context.actualRenderInfo = newActualRenderInfo;
+    genRenderStructContext.baseMark = mark;
+    genRenderStructContext.renderStructInfo = childrenStructInfo;
+    renderCompInfo[mark] = {
+      ...propsParseRes,
+      mark,
+      compTag,
+      propsKeys: usePropsKeys,
+      propsMap: compPropsMapList,
+    };
   } else if (!canSkip) return;
 
-  genChildrenRenderStruct<BaseRenderStruct>(structItem, context, { index });
+  genChildrenRenderStruct<BaseRenderStruct>(structItem, genRenderStructContext, widgetParserOptions);
 };
 
 const genChildrenRenderStruct = <T extends FullRenderStruct>(
   structItem: T,
-  context,
-  { index }: { index: number }
+  genRenderStructContext: GenRenderStructContext,
+  widgetParserOptions
 ) => {
   /** e.g.条件处理引擎处理, 是否渲染子级结构 */
 
   const { children } = structItem;
 
   if (children?.length) {
-    genRenderStructList(children, context);
+    genRenderStructList(children, genRenderStructContext, widgetParserOptions);
   }
 };
 

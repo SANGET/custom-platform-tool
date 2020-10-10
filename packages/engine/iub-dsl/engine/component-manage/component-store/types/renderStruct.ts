@@ -39,14 +39,29 @@ type ArrayRenderStruct = {
 /** 所有可以渲染的结构 */
 type FullRenderStruct = (BaseRenderStruct | ArrayRenderStruct) & ChildrenStruct
 
-/** 实际用于渲染的结构规范 */
-type ActualRenderInfo = {
+// /** 实际用于渲染的结构规范 */
+// type ActualRenderInfo = {
+//   compTag: AllUI;
+//   mark: string;
+//   propsMap: CompPropsMap[];
+//   propsKeys: string[];
+//   renderStruct: ActualRenderInfo[];
+// }
+
+type RenderStructInfo = {
+  mark: string;
+  childrenStructInfo: RenderStructInfo[]
+}
+
+export type RenderCompInfoItem = {
   compTag: AllUI;
-  // compTag: string;
   mark: string;
   propsMap: CompPropsMap[];
   propsKeys: string[];
-  renderStruct: ActualRenderInfo[];
+  // dynamicProps, staticProps
+}
+type RenderCompInfo = {
+  [mark: string]: RenderCompInfoItem
 }
 
 interface CommonRenderStructParser {
@@ -55,11 +70,13 @@ interface CommonRenderStructParser {
   baseMark: string;
 }
 
-interface genRenderStructListContext {
+interface GenRenderStructContext {
   allConfKey: string[];
   originConf: any;
   baseMark: string;
-  actualRenderInfo: ActualRenderInfo[];
+  index: number;
+  renderStructInfo: RenderStructInfo[];
+  renderCompInfo: RenderCompInfo
 }
 
 export interface CompPropsMap<T = any> {
@@ -71,9 +88,11 @@ export {
   BaseRenderStruct,
   ArrayRenderStruct,
   FullRenderStruct,
-  ActualRenderInfo,
-  genRenderStructListContext,
-  CommonRenderStructParser
+  // ActualRenderInfo,
+  GenRenderStructContext,
+  CommonRenderStructParser,
+  RenderStructInfo,
+  RenderCompInfo
 };
 
 /**

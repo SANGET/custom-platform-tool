@@ -1,6 +1,6 @@
 import { AllUI } from "@iub-dsl/engine/component-manage/UI-factory/types";
 import {
-  FullRenderStruct, ActualRenderInfo, BaseRenderStruct, CommonRenderStructParser
+  FullRenderStruct, CommonRenderStructParser, RenderStructInfo, RenderCompInfo
 } from "../types";
 import { normalTablePropsKes } from "../../UI-factory";
 import { genRenderStructList } from "../common/render-struct-parser";
@@ -16,6 +16,7 @@ export const genNormalTableFullRenderStruct = () => {
       compTag: AllUI.NormalTable,
       type: 'BaseRenderStruct',
       canSkip: true,
+      requireRender: true,
       /** 某个特定的结构, 所需要的props特定 */
       canUseProps: normalTablePropsKes,
       children: []
@@ -32,19 +33,28 @@ export const normalTableRenderStructParser = (
   fullRenderStruct,
   // TODO: 未确定
   options: CommonRenderStructParser
-): ActualRenderInfo[] => {
+): {
+  // 结构和实际数据分离
+  renderStructInfo: RenderStructInfo[],
+  renderCompInfo: RenderCompInfo
+} => {
   const {
     allConfKey,
     originConf,
     baseMark
   } = options;
-  const normalTableActualRenderInfo: ActualRenderInfo[] = [];
+  const renderStructInfo: RenderStructInfo[] = [];
+  const renderCompInfo: RenderCompInfo = {};
   genRenderStructList(fullRenderStruct, {
     allConfKey,
     originConf,
     baseMark,
-    actualRenderInfo: normalTableActualRenderInfo
+    renderStructInfo,
+    renderCompInfo
   });
 
-  return normalTableActualRenderInfo;
+  return {
+    renderStructInfo,
+    renderCompInfo
+  };
 };
