@@ -3,5 +3,9 @@
   "version": "0.0.1",
   "private": true,
   "author": "LIJIA",
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "react-color":"^2.18.1",
+    "lodash": "4.17.20"
+  }
 }
