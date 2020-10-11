@@ -6,6 +6,7 @@ import {
   TableStruct, DictManage, EditStruct
 } from "@provider-app/data-designer/src/pages";
 import TableInfo from "@provider-app/table-info/app";
+import TableEditor from "@provider-app/table-editor/app";
 import dictionaryManager from "@provider-app/dictionary-manager/app";
 import TableStructure from "@provider-app/table-structure/app";
 /// //////// 数据设计结束
@@ -59,6 +60,10 @@ const RouterConfig: RouterConfigType = {
   '/table-info': {
     title: '编辑表',
     component: TableInfo
+  },
+  '/table-editor': {
+    title: '编辑表',
+    component: TableEditor
   },
 };
 
