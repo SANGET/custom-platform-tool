@@ -63,7 +63,7 @@ const MenusModel: IMenusModel = {
         mapping: {
           pageId: "pageLink",
         }
-      });
+      }) as IMenuItem[];
       state.list = [...state.list, ...list];
       state.original = payload;
       return state;
