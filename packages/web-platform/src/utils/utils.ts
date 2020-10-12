@@ -38,13 +38,16 @@ interface INode {
   pid?: string;
   children?: INode;
 }
+interface IPorps {
+  [key: string]: string;
+}
 interface IConfig {
   id?: string;
   pid?: string;
   children?: IConfig;
 
-  mapping?: any;
-  attribute?: any;
+  mapping?: IPorps;
+  attribute?: IPorps;
 
   // [key: string]: string | number | undefined;
 
@@ -56,11 +59,11 @@ interface IConfig {
  * @param config 配置对象
  */
 export function construct(nodes: INode[], config?: IConfig) {
-  const id = config && config.id || 'id';
-  const pid = config && config.pid || 'pid';
-  const children = config && config.children || 'children';
-  const mapping = config && config.mapping || {};
-  const attribute = config && config.attribute || {};
+  const id = config?.id || 'id';
+  const pid = config?.pid || 'pid';
+  const children = config?.children || 'children';
+  const mapping = config?.mapping || {};
+  const attribute = config?.attribute || {};
 
   const idMap = {};
   const jsonTree: IConfig[] = [];

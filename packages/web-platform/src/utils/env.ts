@@ -1,7 +1,10 @@
+interface IProps {
+  [key: string]: string;
+}
 class HOSTENV {
-  public env = {}
+  public env;
 
-  constructor(props?: any) {
+  constructor(props?: IProps) {
     this.env = props;
   }
 
