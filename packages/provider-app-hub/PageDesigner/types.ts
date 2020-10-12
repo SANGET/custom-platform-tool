@@ -3,7 +3,7 @@
  */
 
 export type PageDesignerPropItemTypes = 'title'
-| 'value'
+| 'defValue'
 | 'labelColor'
 | 'columnCount'
 | 'field'

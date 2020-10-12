@@ -3,9 +3,9 @@
  * 在画布中的 actions
  */
 
+import { ElemNestingInfo } from "@engine/layout-renderer";
 import {
   WidgetEntity,
-  ElemNestingInfo
 } from "../../data-structure";
 
 /**
