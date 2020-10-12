@@ -1,6 +1,7 @@
+import { ElemNestingInfo } from "@engine/layout-renderer";
 import {
   WidgetEntity,
-  WidgetEntityState, ElemNestingInfo
+  WidgetEntityState
 } from "../../data-structure";
 import { SelectEntityState } from "../types";
 

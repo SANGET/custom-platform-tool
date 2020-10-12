@@ -1,5 +1,6 @@
 import React from 'react';
 import { PropItemRendererProps } from '@engine/visual-editor/components/PropertiesEditor/types';
+import * as PropItemComps from '@infra/ui/form';
 import { getPropItem } from '@spec/business-widget';
 import { FXContainer } from './FXContainer';
 import { Unexpect } from '../WidgetRenderer';
@@ -14,32 +15,30 @@ export const PropItemRenderer: React.FC<PropItemRendererProps> = ({
   onChange,
 }) => {
   const {
-    label, propItemCompDef, useFx,
+    label, propItemCompDef, propItemCompRender,
   } = propItemConfig;
-  const { type: propItemCompType, ...propsForComponent } = propItemCompDef;
 
   let Com;
-  const propItemCompConfig = getPropItem(propItemCompType);
-  if (propItemCompConfig.unexpected) {
-    // 处理异常组件
-    Com = <Unexpect />;
-  } else {
-    Com = propItemCompConfig.render(propItemValue, onChange);
+  if (propItemCompRender) {
+    Com = propItemCompRender({
+      onChange,
+      InterComp: PropItemComps,
+      fxHelper: FXContainer
+    });
+  } else if (propItemCompDef) {
+    const { type: propItemCompType, ...propsForComponent } = propItemCompDef;
+    const propItemCompConfig = getPropItem(propItemCompType);
+    if (propItemCompConfig.unexpected) {
+      Com = <Unexpect />;
+    } else {
+      Com = propItemCompConfig.render(propItemValue, onChange);
+    }
   }
-  const fxComp = useFx && (
-    <FXContainer
-      onChange={(val) => {
-        // TODO: 完善 useFx
-        console.log('useFx change:', val);
-      }}
-    />
-  );
   return (
     <div className="mb10">
       <div className="label mb5">{label}</div>
       <div className="content">
         {Com}
-        {fxComp}
       </div>
     </div>
   );

@@ -1,4 +1,5 @@
-import { WidgetEntity, ElemNestingInfo } from "../data-structure";
+import { ElemNestingInfo } from "@engine/layout-renderer";
+import { WidgetEntity } from "../data-structure";
 
 /**
  * 选中的组件实例的数据结构

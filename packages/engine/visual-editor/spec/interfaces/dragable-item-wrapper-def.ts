@@ -2,10 +2,11 @@
  * 可拖拽项包装器的定义
  */
 import {
+  ElemNestingInfo,
   LayoutWrapperContext
 } from '@engine/layout-renderer';
 import { VEDispatcher } from '../../core/actions';
-import { WidgetEntity, WidgetEntityState, ElemNestingInfo } from '../../data-structure';
+import { WidgetEntity, WidgetEntityState } from '../../data-structure';
 
 /**
  * DnD 的回调的 context
