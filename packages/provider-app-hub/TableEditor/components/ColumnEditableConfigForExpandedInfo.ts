@@ -1,9 +1,9 @@
 import {
-  SPECIES, COLUMNS_KEY, DATATYPE, FIELDTYPE
+  SPECIES, COLUMNS_KEY, DATATYPE, FIELDTYPE, FOREIGNKEYS_KEY
 } from '../constants';
 
 const isRecordBis = (species) => {
-  return ![SPECIES.SYS, SPECIES.SYS_TMPL, SPECIES.BIS_TMPL].includes(species);
+  return [SPECIES.BIS].includes(species);
 };
 /** 列是否可编辑映射 */
 const fieldEditableConfig = {
@@ -88,4 +88,33 @@ const fieldEditableConfig = {
     return false;
   }
 };
-export { fieldEditableConfig };
+
+/** 字段的实时可编辑配置 */
+const referenceEditableConfig = {
+  [FOREIGNKEYS_KEY.FIELDNAME]: (form) => {
+    /** 非用户自定义生成的字段允许修改字段名称 */
+    const flag = isRecordBis(form.getFieldValue(FOREIGNKEYS_KEY.SPECIES));
+    return flag;
+  },
+  [FOREIGNKEYS_KEY.FIELDCODE]: () => {
+    return false;
+  },
+  [FOREIGNKEYS_KEY.REFTABLECODE]: (form) => {
+    /** 非用户自定义生成的字段允许修改表名 */
+    const flag = isRecordBis(form.getFieldValue(FOREIGNKEYS_KEY.SPECIES));
+    return flag;
+  },
+  [FOREIGNKEYS_KEY.REFFIELDCODE]: (form) => {
+    return true;
+  },
+  [FOREIGNKEYS_KEY.REFDISPLAYCODE]: (form) => {
+    return true;
+  },
+  [FOREIGNKEYS_KEY.UPDATESTRATEGY]: (form) => {
+    return true;
+  },
+  [FOREIGNKEYS_KEY.DELETESTRATEGY]: (form) => {
+    return true;
+  },
+};
+export { fieldEditableConfig, referenceEditableConfig };

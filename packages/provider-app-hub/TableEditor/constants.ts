@@ -421,5 +421,17 @@ export const MESSAGES = {
   GETMENULIST_FAILED: "查询模块列表数据失败，请联系技术人员",
   GETDICTIONARYLIST_FAILED: "查询字典列表数据失败，请联系技术人员",
   GETTABLELIST_FAILED: "查询表列表数据失败，请联系技术人员",
-  DELETEFIELD_FAILED: "删除字段失败，请联系技术人员"
+  DELETEFIELD_FAILED: "删除字段失败，请联系技术人员",
+  MAY_I_DELETE_REFERENCE: "是否确认删除（已被其他表关联，删除会覆盖原有的关联关系）？",
+  UPDATE_REFERENCE: "已被其他表关联，修改会覆盖原有的关联关系。",
+  DELETE_REFERENCE: "已被其他表关联，删除会覆盖原有的关联关系。",
+  EDITTABLEINFO_FAILED: "保存表数据失败，请联系技术人员",
+  EDITTABLEINFO_SUCCESS: "保存表数据成功"
 };
+
+export const STRATEGY_OPTIONS = [
+  { label: '存在关联不允许操作', key: 'RESTRICT', value: 'RESTRICT' },
+  { label: '级联', key: 'CASCADE', value: 'CASCADE' },
+  { label: '置空', key: 'SET_NULL', value: 'SET_NULL' },
+  { label: '不处理', key: 'NO_ACTION', value: 'NO_ACTION' },
+];

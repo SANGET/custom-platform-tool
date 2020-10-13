@@ -42,9 +42,9 @@ export const translateFieldListToSelectMenus = (fields: ITableColumnFromApi[]):I
     .filter((item) => item.fieldType !== FIELDTYPE.TEXT)
     .map((item) => {
       return {
-        key: item?.code,
-        value: item?.code,
-        label: item?.name
+        key: item.id,
+        value: item.code,
+        label: item.name
       };
     });
 };

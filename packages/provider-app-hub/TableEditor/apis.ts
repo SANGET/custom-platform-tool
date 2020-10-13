@@ -69,3 +69,18 @@ export async function allowedDeleted(params) {
   }
   return [];
 }
+
+/** 保存表数据 */
+export async function editTableInfo(data) {
+  const res = await $R_P.put(
+    `/data/v1/tables/`,
+    data
+  );
+  /** 接口有误则返回提示 */
+  if (res?.code !== API_CODE.SUCCESS) {
+    openNotification(NOTIFICATION_TYPE.ERROR, res?.msg || MESSAGES.EDITTABLEINFO_FAILED);
+    return false;
+  }
+  openNotification(NOTIFICATION_TYPE.SUCCESS, MESSAGES.EDITTABLEINFO_SUCCESS);
+  return true;
+}

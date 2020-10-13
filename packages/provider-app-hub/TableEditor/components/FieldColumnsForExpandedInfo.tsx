@@ -19,25 +19,25 @@ const isFieldEditable = (
   /** 字段名称和字段编码恒可编辑 */
   return fieldEditableConfig[dataIndex]?.(formRef, record) || false;
 };
-const getlabelByMenue = (menu: ISELECTSMENU[], key?: string): string => {
-  return key ? (menu?.filter((item) => item?.key === key)?.[0]?.label || '') : '';
+export const getlabelByMenuList = (menu: ISELECTSMENU[], key?: string): string => {
+  return key ? (menu?.filter((item) => item?.value === key)?.[0]?.label || '') : '';
 };
 interface IRenderTextProps {
   text: string
 }
 /** 通用文本渲染 */
-const RenderText: React.FC<IRenderTextProps> = (props: IRenderTextProps) => {
+export const RenderText: React.FC<IRenderTextProps> = (props: IRenderTextProps) => {
   const { text } = props;
   return (<span title = {text ? text.toString() : undefined}>{text}</span>);
 };
 
 /** 字段名称 */
-interface IName {
+interface ICommonFieldProps {
   formRef: React.RefObject<FormInstance<any>>
   record: ITableColumnInState
   text: string
 }
-class Name extends React.Component<IName> {
+class Name extends React.Component<ICommonFieldProps> {
   shouldComponentUpdate(nextProps) {
     return nextProps.record.editable !== this.props.record.editable;
   }
@@ -88,7 +88,7 @@ class Name extends React.Component<IName> {
   }
 }
 
-const Code: React.FC<IName> = (props: IName) => {
+const Code: React.FC<ICommonFieldProps> = (props: ICommonFieldProps) => {
   const {
     text, record, formRef
   } = props;
@@ -120,7 +120,7 @@ const Code: React.FC<IName> = (props: IName) => {
     </Form.Item>);
   }, [value, record.editable]);
 };
-const FieldType: React.FC<IName> = React.memo((props: IName) => {
+const FieldType: React.FC<ICommonFieldProps> = React.memo((props: ICommonFieldProps) => {
   const {
     formRef, text, record
   } = props;
@@ -153,13 +153,13 @@ const FieldType: React.FC<IName> = React.memo((props: IName) => {
           />
         </Form.Item>
       ) : (
-        <RenderText text={getlabelByMenue(FIELDTYPEMENU, text)}/>
+        <RenderText text={getlabelByMenuList(FIELDTYPEMENU, text)}/>
       );
     }}
   </Form.Item>),
   [record.editable, formRef.current?.getFieldValue(COLUMNS_KEY.FIELDTYPE)]);
 });
-const DataType: React.FC<IName> = React.memo((props: IName) => {
+const DataType: React.FC<ICommonFieldProps> = React.memo((props: ICommonFieldProps) => {
   const {
     record, text, formRef
   } = props;
@@ -185,13 +185,13 @@ const DataType: React.FC<IName> = React.memo((props: IName) => {
           />
         </Form.Item>
       ) : (
-        <RenderText text={getlabelByMenue(DATATYPEMENUFORTEXT, text)}/>
+        <RenderText text={getlabelByMenuList(DATATYPEMENUFORTEXT, text)}/>
       );
     }}
   </Form.Item>),
   [record.editable, formRef.current?.getFieldValue(COLUMNS_KEY.DATATYPE)]);
 });
-const FieldSize: React.FC<IName> = (props: IName) => {
+const FieldSize: React.FC<ICommonFieldProps> = (props: ICommonFieldProps) => {
   const {
     text, record, formRef
   } = props;
@@ -225,7 +225,7 @@ const FieldSize: React.FC<IName> = (props: IName) => {
     </Form.Item>);
   }, [record.editable, formRef.current?.getFieldValue(COLUMNS_KEY.FIELDTYPE)]);
 };
-const DecimalSize: React.FC<IName> = (props: IName) => {
+const DecimalSize: React.FC<ICommonFieldProps> = (props: ICommonFieldProps) => {
   const {
     text, record, formRef
   } = props;
@@ -255,7 +255,7 @@ const DecimalSize: React.FC<IName> = (props: IName) => {
     </Form.Item>);
   }, [record.editable, formRef.current?.getFieldsValue([COLUMNS_KEY.FIELDTYPE, COLUMNS_KEY.DECIMALSIZE])]);
 };
-interface IBooleanSelect extends IName {
+interface IBooleanSelect extends ICommonFieldProps {
   code: ITableColumnShowKey
 }
 const BooleanSelect: React.FC<IBooleanSelect> = (props: IBooleanSelect) => {
@@ -280,13 +280,13 @@ const BooleanSelect: React.FC<IBooleanSelect> = (props: IBooleanSelect) => {
             />
           </Form.Item>
         ) : (
-          <RenderText text={getlabelByMenue(VALUEBOOLEANMENU, text)}/>
+          <RenderText text={getlabelByMenuList(VALUEBOOLEANMENU, text)}/>
         );
       }}
     </Form.Item>);
   }, [record.editable, formRef.current?.getFieldValue(code)]);
 };
-interface IDict extends IName {
+interface IDict extends ICommonFieldProps {
   editDictioary: (dictIds: string[], visibleChooseDictModal: boolean) => void
 }
 const Dict: React.FC<IDict> = (props: IDict) => {
@@ -322,7 +322,7 @@ const Dict: React.FC<IDict> = (props: IDict) => {
     </Form.Item>);
   }, [record.editable, formRef.current?.getFieldValue(COLUMNS_KEY.DICTIONARYFOREIGN)]);
 };
-const IconRenderer: React.FC<IName> = (props: IName) => {
+const IconRenderer: React.FC<ICommonFieldProps> = (props: ICommonFieldProps) => {
   const { formRef, record } = props;
   return React.useMemo(() => {
     return (<Form.Item
@@ -349,7 +349,7 @@ const getFieldColumns = ({
   return [
     {
       title: '序号',
-      width: 60,
+      width: 70,
       key: "index",
       render: (text, record, index) => {
         return `${index + 1}`;
@@ -412,7 +412,7 @@ const getFieldColumns = ({
       title: '长度',
       key: COLUMNS_KEY.FIELDSIZE,
       dataIndex: COLUMNS_KEY.FIELDSIZE,
-      width: 120,
+      width: 110,
       render: (text, record) => (
         <FieldSize
           text = {text}
@@ -425,7 +425,7 @@ const getFieldColumns = ({
       title: '小数点',
       key: COLUMNS_KEY.DECIMALSIZE,
       dataIndex: COLUMNS_KEY.DECIMALSIZE,
-      width: 120,
+      width: 100,
       render: (text, record) => (
         <DecimalSize
           text = {text}
@@ -438,7 +438,7 @@ const getFieldColumns = ({
       title: '必填',
       key: COLUMNS_KEY.REQUIRED,
       dataIndex: COLUMNS_KEY.REQUIRED,
-      width: 120,
+      width: 90,
       render: (text, record) => (
         <BooleanSelect
           text = {text}
@@ -452,7 +452,7 @@ const getFieldColumns = ({
       title: '唯一',
       key: COLUMNS_KEY.UNIQUE,
       dataIndex: COLUMNS_KEY.UNIQUE,
-      width: 100,
+      width: 90,
       render: (text, record) => (
         <BooleanSelect
           text = {text}
@@ -480,7 +480,7 @@ const getFieldColumns = ({
       title: '转换成拼音',
       key: COLUMNS_KEY.PINYINCONVENT,
       dataIndex: COLUMNS_KEY.PINYINCONVENT,
-      width: 120,
+      width: 130,
       render: (text, record) => (
         <BooleanSelect
           text = {text}
@@ -503,7 +503,7 @@ const getFieldColumns = ({
       title: '分类',
       key: COLUMNS_KEY.SPECIES,
       dataIndex: COLUMNS_KEY.SPECIES,
-      width: 120,
+      width: 70,
       render: (text, record) => {
         return <RenderText text={SPECIESCN?.[text]}/>;
       }

@@ -6,7 +6,7 @@ interface IRelatedPageFromApi {
   name: string
 }
 /** 引用 */
-interface IReferenceFromApi {
+export interface IReferenceFromApi {
   id: string
   fieldCode: string
   fieldName: string
@@ -22,7 +22,7 @@ interface IReferenceFromApi {
 }
 /** 外键 */
 type IStrategy = "RESTRICT" | "CASCADE" | "SET_NULL" | "NO_ACTION";
-interface IForeignKeyFromApi extends IReferenceFromApi {
+export interface IForeignKeyFromApi extends IReferenceFromApi {
   deleteStrategy: IStrategy
   updateStrategy: IStrategy
 }
@@ -150,8 +150,6 @@ export interface ITableInfoInState {
   /** 表扩展信息 */
   /** 字段列表 */
   fieldList: ITableColumnInState[],
-  /** 字段列表的选中行唯一标识 */
-  selectedRowKeysInFieldList: string[],
   /** 引用字段列表 */
   referenceList: IReferenceFromApi[],
   /** 外键字段列表 */

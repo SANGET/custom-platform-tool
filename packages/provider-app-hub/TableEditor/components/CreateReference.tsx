@@ -1,19 +1,23 @@
 import React, { useState, useEffect } from 'react';
 import { Form, Select } from 'antd';
 import { FormInstance } from 'antd/lib/form';
+import { DATATYPE, FIELDTYPE } from '@provider-app/table-info/components/columnsManager/constant';
 import { ISELECTSMENU, ITableColumnFromApi } from '../interface';
 import { getTableList, getTableInfo } from '../apis';
 import { translateTableListToSelectMenus, translateFieldListToSelectMenus } from '../service';
-import { REFERENCES_KEY, COLUMNS_KEY, FOREIGNKEYS_KEY } from '../constants';
+import {
+  REFERENCES_KEY, COLUMNS_KEY, FOREIGNKEYS_KEY, STRATEGY_OPTIONS
+} from '../constants';
 import { ModalFooter } from './ChooseDict';
 
 interface IRefTableCode {
-  form: FormInstance
+  form: FormInstance|null
   label: string
+  showLabel?: boolean
 }
-const RefTableCode: React.FC<IRefTableCode> = (props: IRefTableCode) => {
+export const RefTableCode: React.FC<IRefTableCode> = (props: IRefTableCode) => {
   const {
-    form, label
+    form, label, showLabel = false
   } = props;
   const [options, setOptions] = useState<ISELECTSMENU[]>([]);
   useEffect(() => {
@@ -21,25 +25,22 @@ const RefTableCode: React.FC<IRefTableCode> = (props: IRefTableCode) => {
       setOptions(translateTableListToSelectMenus(tableList));
     });
   }, []);
-  const getTableIdByTableCode = (code) => {
-    if (!code && !Array.isArray(options)) return '';
-    return options.filter((item) => item.value === code)?.[0]?.key || '';
-  };
   /**
    * 更改表时，需要同步更新下拉框数据
    * @param value
    */
-  const handleChange = (value) => {
-    form.setFieldsValue({
-      [REFERENCES_KEY?.REFFIELDCODE]: '',
-      [REFERENCES_KEY?.REFDISPLAYCODE]: '',
-      [REFERENCES_KEY?.REFTABLEID]: getTableIdByTableCode(value)
+  const handleChange = (value, option) => {
+    form?.setFieldsValue({
+      [REFERENCES_KEY.REFFIELDCODE]: '',
+      [REFERENCES_KEY.REFDISPLAYCODE]: '',
+      [REFERENCES_KEY.REFTABLEID]: option.key
     });
   };
+  const labelProps = showLabel ? { label } : {};
   return (
     <Form.Item
       name={REFERENCES_KEY?.REFTABLECODE}
-      label = {label}
+      {...labelProps}
       rules={[
         { required: true, message: '必填' },
       ]}
@@ -57,35 +58,46 @@ const RefTableCode: React.FC<IRefTableCode> = (props: IRefTableCode) => {
 interface IRefField extends IRefTableCode{
   code: string
 }
-const RefField: React.FC<IRefField> = (props: IRefField) => {
+export const RefField: React.FC<IRefField> = (props: IRefField) => {
   const {
-    label, form, code
+    label, form, code, showLabel
   } = props;
   const [options, setOptions] = useState<ISELECTSMENU[]>([]);
   const [fieldOptions, setFieldOptions] = useState<ITableColumnFromApi[]>([]);
-  const getMenusData = () => {
-    const id = form.getFieldValue(REFERENCES_KEY.REFTABLEID);
+  const getMenusData = async () => {
+    const code = form.getFieldValue(REFERENCES_KEY.REFTABLECODE);
+
+    if (!code) {
+      setOptions([]);
+      setFieldOptions([]);
+      return;
+    }
+    const tableList = await getTableList();
+    const id = tableList.filter((item) => item.code === code)[0]?.id;
+    // const id = form.getFieldValue(REFERENCES_KEY.REFTABLEID);
     if (!id) {
       setOptions([]);
       setFieldOptions([]);
       return;
     }
     getTableInfo(id).then((res) => {
-      setFieldOptions(res?.columns);
-      const fieldSelectOptions = translateFieldListToSelectMenus(res?.columns);
+      /** 不能让用户选择到超文本的字段，后期由接口处理 */
+      const columns = (res?.columns).filter((item) => item.dataType !== FIELDTYPE.LONG);
+      const fieldSelectOptions = translateFieldListToSelectMenus(columns);
+      setFieldOptions(columns);
       setOptions(fieldSelectOptions);
     });
   };
   useEffect(() => {
     getMenusData();
-  }, [form.getFieldValue('refTableCode')]);
+  }, [form?.getFieldValue('refTableCode')]);
   const handleValueChange = (value) => {
     const {
       [COLUMNS_KEY.FIELDSIZE]: fieldSize,
       [COLUMNS_KEY.FIELDTYPE]: fieldType,
       [COLUMNS_KEY.NAME]: fieldName
     } = fieldOptions.filter((item) => item.code === value)?.[0];
-    form.setFieldsValue({
+    form?.setFieldsValue({
       [`${code}_fieldSize`]: fieldSize,
       [`${code}_fieldType`]: fieldType,
       [`${code}_fieldName`]: fieldName
@@ -94,10 +106,10 @@ const RefField: React.FC<IRefField> = (props: IRefField) => {
   const handleDropdown = (oepn:boolean) => {
     oepn && getMenusData();
   };
-  // return React.useMemo(() => {
+  const labelProps = showLabel ? { label } : {};
   return <Form.Item
     name={code}
-    label = {label}
+    {...labelProps}
     rules={[
       { required: true, message: `${label}必填` },
     ]}
@@ -112,20 +124,15 @@ const RefField: React.FC<IRefField> = (props: IRefField) => {
   </Form.Item>;
   // }, [value, record.editable]);
 };
-const StrategyRenderer: React.FC<IRefField> = (props: IRefField) => {
+export const StrategyRenderer: React.FC<IRefField> = (props: IRefField) => {
   const {
-    label, code, form
+    label, code, showLabel
   } = props;
-
-  const options = [
-    { label: '存在关联不允许操作', key: 'RESTRICT', value: 'RESTRICT' },
-    { label: '级联', key: 'CASCADE', value: 'CASCADE' },
-    { label: '置空', key: 'SET_NULL', value: 'SET_NULL' },
-    { label: '不处理', key: 'NO_ACTION', value: 'NO_ACTION' },
-  ];
+  const labelProps = showLabel ? { label } : {};
   return (
     <Form.Item
-      label={label} name={code}
+      {...labelProps}
+      name={code}
       rules={[
         { required: true, message: `${label}必填` },
       ]}
@@ -133,7 +140,7 @@ const StrategyRenderer: React.FC<IRefField> = (props: IRefField) => {
       <Select
         onClick = {(e) => e.stopPropagation()}
         onBlur = {(e) => e.stopPropagation()}
-        options={options}
+        options={STRATEGY_OPTIONS}
       />
     </Form.Item>
   );
@@ -148,18 +155,16 @@ const CreateReference: React.FC<ICreateReference> = (props: ICreateReference) =>
   const [form] = Form.useForm();
 
   const getLayout = () => {
-    if (type === 'reference') {
-      return {
-        labelCol: { span: 4 },
-        wrapperCol: { span: 20 },
-      };
-    }
     if (type === 'foreignKey') {
       return {
         labelCol: { span: 6 },
         wrapperCol: { span: 18 },
       };
     }
+    return {
+      labelCol: { span: 4 },
+      wrapperCol: { span: 20 },
+    };
   };
   const getFieldList = () => {
     const fieldList = [
@@ -188,20 +193,36 @@ const CreateReference: React.FC<ICreateReference> = (props: ICreateReference) =>
   };
   return (
     <Form form={form} {...getLayout()}>
-      <RefTableCode form={form} label="关联表"/>
+      <RefTableCode
+        showLabel={true}
+        form={form}
+        label="关联表"
+      />
       <RefField
+        showLabel={true}
         form={form}
         label = "关联字段"
         code={REFERENCES_KEY.REFFIELDCODE}
       />
       <RefField
+        showLabel={true}
         form={form}
         label="显示字段"
         code={REFERENCES_KEY.REFDISPLAYCODE}
       />
       {type === 'foreignKey' ? (<>
-        <StrategyRenderer form = {form} label="外键约束（删除时）" code={FOREIGNKEYS_KEY.DELETESTRATEGY}/>
-        <StrategyRenderer form = {form} label="外键约束（更新时）" code={FOREIGNKEYS_KEY.UPDATESTRATEGY}/>
+        <StrategyRenderer
+          showLabel={true}
+          form = {form}
+          label="外键约束（删除时）"
+          code={FOREIGNKEYS_KEY.DELETESTRATEGY}
+        />
+        <StrategyRenderer
+          showLabel={true}
+          form = {form}
+          label="外键约束（更新时）"
+          code={FOREIGNKEYS_KEY.UPDATESTRATEGY}
+        />
       </>) : null}
       <ModalFooter
         onOk={() => { handleOk(form); }}

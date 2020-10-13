@@ -5,9 +5,9 @@ import { Button, Tag, Tabs } from 'antd';
 import { Link } from "multiple-page-routing";
 import lodash from 'lodash';
 import CreateModal from '@provider-app/dictionary-manager/components/CreateModal';
-import { getTableInfo, allowedDeleted } from '../apis';
+import { getTableInfo, allowedDeleted, editTableInfo } from '../apis';
 import {
-  MESSAGES, BUTTON_TYPE, BUTTON_SIZE, COLUMNS_KEY, FIELDSIZEREGULAR, DATATYPE, REFERENCES_KEY, FOREIGNKEYS_KEY, SPECIES
+  TABLE_TYPE, NOTIFICATION_TYPE, MESSAGES, BUTTON_TYPE, BUTTON_SIZE, COLUMNS_KEY, FIELDSIZEREGULAR, DATATYPE, REFERENCES_KEY, FOREIGNKEYS_KEY, SPECIES
 } from '../constants';
 import {
   ITableInfoFromApi, ITableInfoInState, ISpecies, ITableColumnInState
@@ -15,9 +15,10 @@ import {
 import BasicInfoEditor from './BasicInfoEditor';
 import ExpandedInfoEditor from './ExpandedInfoEditor';
 import getFieldColumns from './FieldColumnsForExpandedInfo';
+import { getReferenceColumns, getForeignKeyColumns } from './ReferenceColumnsForExpandedInfo';
 import ChooseDict from './ChooseDict';
 import CreateReference from './CreateReference';
-import { deleteConfirm } from '../service';
+import { deleteConfirm, openNotification } from '../service';
 
 const { TabPane } = Tabs;
 class TableEditor extends React.Component {
@@ -74,12 +75,30 @@ class TableEditor extends React.Component {
   getRecordFromExpandForm = {
     fieldList: () => {
       const {
-        NAME, CODE, FIELDTYPE, DATATYPE, FIELDSIZE, DECIMALSIZE,
-        REQUIRED, UNIQUE, DICTIONARYFOREIGN, PINYINCONVENT, REGULAR, SPECIES
+        NAME, CODE, FIELDTYPE, DATATYPE: DataType, FIELDSIZE, DECIMALSIZE,
+        REQUIRED, UNIQUE, DICTIONARYFOREIGN, PINYINCONVENT, REGULAR, SPECIES: species
       } = COLUMNS_KEY;
       const record = this.expandInfoFormRef.current?.getFieldsValue([
-        NAME, CODE, FIELDTYPE, DATATYPE, FIELDSIZE, DECIMALSIZE, REQUIRED,
-        UNIQUE, DICTIONARYFOREIGN, PINYINCONVENT, REGULAR, SPECIES
+        NAME, CODE, FIELDTYPE, DataType, FIELDSIZE, DECIMALSIZE, REQUIRED,
+        UNIQUE, DICTIONARYFOREIGN, PINYINCONVENT, REGULAR, species
+      ]);
+      return record;
+    },
+    referenceList: () => {
+      const {
+        ID, FIELDCODE, FIELDID, FIELDNAME, REFTABLECODE, REFTABLEID, REFDISPLAYCODE, REFFIELDSIZE, REFFIELDTYPE, REFFIELDCODE
+      } = FOREIGNKEYS_KEY;
+      const record = this.expandInfoFormRef.current?.getFieldsValue([
+        ID, FIELDCODE, FIELDID, FIELDNAME, REFTABLECODE, REFTABLEID, REFDISPLAYCODE, REFFIELDSIZE, REFFIELDTYPE, REFFIELDCODE
+      ]);
+      return record;
+    },
+    foreignKeyList: () => {
+      const {
+        ID, FIELDCODE, FIELDID, FIELDNAME, REFTABLECODE, REFTABLEID, REFDISPLAYCODE, REFFIELDSIZE, REFFIELDTYPE, REFFIELDCODE, UPDATESTRATEGY, DELETESTRATEGY
+      } = FOREIGNKEYS_KEY;
+      const record = this.expandInfoFormRef.current?.getFieldsValue([
+        ID, FIELDCODE, FIELDID, FIELDNAME, REFTABLECODE, REFTABLEID, REFDISPLAYCODE, REFFIELDSIZE, REFFIELDTYPE, REFFIELDCODE, UPDATESTRATEGY, DELETESTRATEGY
       ]);
       return record;
     }
@@ -93,13 +112,25 @@ class TableEditor extends React.Component {
   }
 
   /** 从路径上获取表主键，以获取表详情数据 */
-  getTableId() {
+  getTableId = () => {
     const urlParam = getUrlParams(undefined, undefined, true);
     return urlParam.id;
   }
 
+  constructFieldListFromRequest = (fieldList) => {
+    return fieldList.map((item) => {
+      const {
+        tableName: dictionaryForeignCn,
+        fieldCode: dictionaryForeign
+      } = item.dictionaryForeign || {};
+      return {
+        ...item, ...item.fieldProperty, dictionaryForeign, dictionaryForeignCn
+      };
+    });
+  }
+
   /** 将接口数据设置到 state 上 */
-  constructInfoFromRequest(param: ITableInfoFromApi) {
+  constructInfoFromRequest = (param: ITableInfoFromApi) => {
     const {
       name, code, type, moduleId, auxTable, treeTable, columns, references, foreignKeys, id,
       relationTables: relatedPages, species
@@ -119,8 +150,8 @@ class TableEditor extends React.Component {
         maxLevel,
         species
       },
-      relatedPages: [{ id: '1314492623335071744', name: "测试页面" }],
-      fieldList: columns,
+      relatedPages,
+      fieldList: this.constructFieldListFromRequest(columns),
       /** 引用字段列表 */
       referenceList: references,
       /** 外键字段列表 */
@@ -130,16 +161,121 @@ class TableEditor extends React.Component {
     this.basicInfoFormRef?.current?.setFieldsValue({ ...newState.basicInfo });
   }
 
-  /** 构建保存时所需数据 */
-  constructInfoForSave() {
+  constructFieldListForSave = (fieldList) => {
+    return fieldList.map((item) => {
+      const {
+        id, name, code, fieldType, dataType, fieldSize, decimalSize, required, unique, pinyinConvent, regular, dictionaryForeign, species
+      } = item;
+      const dictionaryForeignTmpl: {
+        dictionaryForeign?: {
+          refTableCode: string,
+          refFieldCode: string,
+          refDisplayFieldCode: string
+        }
+      } = {};
+      if (dictionaryForeign) {
+        dictionaryForeignTmpl.dictionaryForeign = {
+          refTableCode: dictionaryForeign,
+          refFieldCode: 'code',
+          refDisplayFieldCode: 'name'
+        };
+      }
+      return {
+        id,
+        name,
+        code,
+        fieldType,
+        dataType,
+        fieldSize,
+        decimalSize,
+        species,
+        fieldProperty: {
+          required, unique, pinyinConvent, regular
+        },
+        ...dictionaryForeignTmpl
+      };
+    });
+  }
 
+  constructReferenceListForSave = (referencesList) => {
+    return referencesList.map((item, index) => {
+      const {
+        id, fieldCode, refTableCode, refFieldCode, refDisplayFieldCode
+      } = item;
+      return {
+        id, fieldCode, refTableCode, refFieldCode, refDisplayFieldCode, sequence: index + 1
+      };
+    });
+  }
+
+  constructForeignKeyListForSave = (foreignKeyList) => {
+    return foreignKeyList.map((item, index) => {
+      const {
+        id, fieldCode, refTableCode, refFieldCode, refDisplayCode, deleteStrategy, updateStrategy
+      } = item;
+      return {
+        id, fieldCode, refTableCode, refFieldCode, refDisplayCode, sequence: index + 1, deleteStrategy, updateStrategy
+      };
+    });
+  }
+
+  /** 构建保存时所需数据 */
+  constructInfoForSave = () => {
+    const {
+      basicInfo: {
+        tableId: id,
+        tableName: name,
+        tableCode: code,
+        tableType: type,
+        relatedModuleId: moduleId,
+        mainTableCode,
+        maxLevel,
+        species
+      },
+      fieldList,
+      /** 引用字段列表 */
+      referenceList,
+      /** 外键字段列表 */
+      foreignKeyList
+    } = this.state;
+    const relatedTableInfo: {
+      auxTable?: { mainTableCode:string},
+      treeTable?: { maxLevel:number}
+    } = {};
+    if (type === TABLE_TYPE.AUX_TABLE) {
+      relatedTableInfo.auxTable = { mainTableCode };
+    }
+    if (type === TABLE_TYPE.TREE) {
+      relatedTableInfo.treeTable = { maxLevel };
+    }
+    return {
+      id,
+      name,
+      code,
+      type,
+      moduleId,
+      species,
+      columns: this.constructFieldListForSave(fieldList),
+      references: this.constructReferenceListForSave(referenceList),
+      foreignKeys: this.constructForeignKeyListForSave(foreignKeyList),
+      ...relatedTableInfo
+    };
   }
 
   /** 保存数据 */
-  handleSave() {}
+  handleSave = async () => {
+    try {
+      await this.basicInfoFormRef.current?.validateFields();
+      await this.expandInfoFormRef.current?.validateFields();
+      const param = this.constructInfoForSave();
+      editTableInfo(param);
+    } catch (e) {
+      return false;
+    }
+  }
 
   /** 切换tab页 */
-  handelChangeTab(activeAreaInExpandedInfo) {
+  handelChangeTab = (activeAreaInExpandedInfo) => {
     if (this.state.editingKeyInExpandedInfo) return;
     this.setState({ activeAreaInExpandedInfo });
   }
@@ -169,7 +305,8 @@ class TableEditor extends React.Component {
     if (!editingKeyInExpandedInfo) return true;
     try {
       await this.expandInfoFormRef.current?.validateFields();
-      const record = this.getRecordFromExpandForm[activeAreaInExpandedInfo]();
+      const record = this.getRecordFromExpandForm[activeAreaInExpandedInfo]?.();
+      console.log(record);
       const index = this.getIndexByEditingKey();
       this.setState((previousState) => {
         const newList = previousState[activeAreaInExpandedInfo].slice();
@@ -187,7 +324,7 @@ class TableEditor extends React.Component {
   }
 
   /** 获取编辑行的为标识集合 */
-  getRowKeysEditable() {
+  getRowKeysEditable = () => {
     const { activeAreaInExpandedInfo } = this.state;
     return this.state[activeAreaInExpandedInfo]
       .filter((item) => item.editable)
@@ -197,7 +334,7 @@ class TableEditor extends React.Component {
   /** 双击行 */
   doubleClickRow=(record) => {
     const { activeAreaInExpandedInfo } = this.state;
-    const previousList = this.state[activeAreaInExpandedInfo].id;
+    const previousList = this.state[activeAreaInExpandedInfo].slice();
     const index = this.getIndexByRowKey(record.id);
     this.saveRow().then((canIEdit) => {
       if (!canIEdit) return;
@@ -206,7 +343,6 @@ class TableEditor extends React.Component {
         [activeAreaInExpandedInfo]: previousList,
         editingKeyInExpandedInfo: record.id
       });
-      this.expandInfoFormRef.current?.resetFields();
       this.expandInfoFormRef.current?.setFieldsValue(record);
     });
   }
@@ -227,13 +363,29 @@ class TableEditor extends React.Component {
     }, () => {
       this.refs[activeAreaInExpandedInfo]?.setNewSelectedRowKeys(record.id);
     });
-    this.expandInfoFormRef.current?.resetFields();
     this.expandInfoFormRef.current?.setFieldsValue(record);
     return record.id;
   }
 
+  filterFieldListForOptions = () => {
+    const { activeAreaInExpandedInfo, fieldList } = this.state;
+    const dataTypeMap = {
+      referenceList: DATATYPE.QUOTE,
+      foreignKeyList: DATATYPE.FK
+    };
+    return fieldList
+      .filter((item) => item.dataType === dataTypeMap[activeAreaInExpandedInfo])
+      .map((item) => {
+        return {
+          label: item?.name,
+          value: item?.code,
+          key: item?.id
+        };
+      });
+  }
+
   /** 字段列表：构建字段数据 */
-  getNewFieldRecord(recordDefaultValue) {
+  getNewFieldRecord = (recordDefaultValue) => {
     const id = `${new Date().valueOf()}`;
     return {
       [COLUMNS_KEY.ID]: id,
@@ -255,7 +407,7 @@ class TableEditor extends React.Component {
   }
 
   /** 字段列表：新建字段 */
-  createField(recordDefaultValue) {
+  createField = (recordDefaultValue) => {
     const record = this.getNewFieldRecord(recordDefaultValue);
     this.createRow(record);
   }
@@ -290,7 +442,7 @@ class TableEditor extends React.Component {
   }
 
   /** 字段列表：新建引用字段 */
-  createReferenceInFieldList() {
+  createReferenceInFieldList = () => {
     this.setState({
       visibleModalCreateReference: true
     });
@@ -366,14 +518,14 @@ class TableEditor extends React.Component {
   }
 
   /** 字段列表：复制字段 */
-  copyField(selectedRowKeys) {
+  copyField = (selectedRowKeys) => {
     const selectedRowKey = selectedRowKeys[0];
     const record = this.getRecordByRowKey(selectedRowKey);
     this.createField(record);
   }
 
   /** 字段列表：判断字段是否可被删除 */
-  cantFieldDelete(selectedRowKeys) {
+  cantFieldDelete = (selectedRowKeys) => {
     /** 没有选中记录则不允许删除 */
     if ((selectedRowKeys.length || 0) === 0) return true;
     return this.state.fieldList.some((item) => {
@@ -386,6 +538,24 @@ class TableEditor extends React.Component {
     });
   }
 
+  deleteRow = (selectedKey) => {
+    const { editingKeyInExpandedInfo, activeAreaInExpandedInfo } = this.state;
+    const { [activeAreaInExpandedInfo]: dom } = this.refs;
+    const { [activeAreaInExpandedInfo]: listInState } = this.state;
+    dom.resetSelectedRowKeys([]);
+    if (selectedKey === editingKeyInExpandedInfo) {
+      this.setState({
+        [activeAreaInExpandedInfo]: listInState.slice().filter((item) => item.id !== selectedKey),
+        editingKeyInExpandedInfo: ''
+      });
+      this.expandInfoFormRef.current?.resetFields();
+    } else {
+      this.setState({
+        [activeAreaInExpandedInfo]: listInState.slice().filter((item) => item.id !== selectedKey)
+      });
+    }
+  }
+
   /** 字段列表：删除字段的相关提示内容 */
   deleteFieldConfirm = (title, selectedKey: string) => {
     const { editingKeyInExpandedInfo, fieldList: fieldListInState } = this.state;
@@ -393,18 +563,7 @@ class TableEditor extends React.Component {
     deleteConfirm({
       title,
       onOk: () => {
-        fieldList?.resetSelectedRowKeys([]);
-        const newState: {
-          fieldList: ITableColumnInState[],
-          editingKeyInExpandedInfo?: string
-        } = {
-          fieldList: fieldListInState.slice().filter((item) => item.id !== selectedKey)
-        };
-        if (selectedKey === editingKeyInExpandedInfo) {
-          newState.editingKeyInExpandedInfo = '';
-        }
-        this.expandInfoFormRef.current?.resetFields();
-        this.setState(newState);
+        this.deleteRow(selectedKey);
       },
     });
   }
@@ -434,11 +593,21 @@ class TableEditor extends React.Component {
 
   createReference = () => {
     const id = `${new Date().valueOf()}`;
-    this.createRow({ id, createdCustomed: true, species: SPECIES.BIS });
+    this.createRow({
+      id, createdCustomed: true, species: SPECIES.BIS, editable: true
+    });
   }
 
-  deleteReference = () => {
+  deleteReference = (selectedRowKeys) => {
+    openNotification(NOTIFICATION_TYPE.WARNING, MESSAGES.DELETE_REFERENCE);
+    this.deleteRow(selectedRowKeys[0]);
+  }
 
+  blurRowInReferenceList = () => {
+    if (this.state.editingKeyInExpandedInfo !== '') {
+      openNotification(NOTIFICATION_TYPE.WARNING, MESSAGES.UPDATE_REFERENCE);
+    }
+    this.saveRow();
   }
 
   /** 字段列表：切换显示系统字段 */
@@ -452,11 +621,21 @@ class TableEditor extends React.Component {
     const {
       basicInfo, relatedPages, editingKeyInExpandedInfo, showSysFields, activeAreaInExpandedInfo,
       visibleModalChooseDict, dictIdsShowInModal, visibleModalCreateReference, visibleModalCreateForeignKey,
-      fieldList, referenceList
+      fieldList, referenceList, foreignKeyList
     } = this.state;
     const fieldColumns = getFieldColumns({
       formRef: this.expandInfoFormRef,
       editDictioary: this.createDict
+    });
+    const referenceColumns = getReferenceColumns({
+      formRef: this.expandInfoFormRef,
+      fieldOptions: this.filterFieldListForOptions(),
+      list: referenceList
+    });
+    const foreignKeyColumns = getForeignKeyColumns({
+      formRef: this.expandInfoFormRef,
+      fieldOptions: this.filterFieldListForOptions(),
+      list: foreignKeyList
     });
     return (
       <>
@@ -492,9 +671,9 @@ class TableEditor extends React.Component {
             ))}
           </div>
         </div>
-        <Tabs onTabClick={(activeKey) => { this.handelChangeTab(activeKey); }} type="card" style={{ width: "100%" }} activeKey={activeAreaInExpandedInfo}>
+        <Tabs onTabClick={this.handelChangeTab} type="card" style={{ width: "100%" }} activeKey={activeAreaInExpandedInfo}>
           <TabPane tab="表字段" key="fieldList">
-            <ExpandedInfoEditor
+            { activeAreaInExpandedInfo === 'fieldList' ? (<ExpandedInfoEditor
               ref="fieldList"
               formRef={this.expandInfoFormRef}
               title="字段管理"
@@ -513,7 +692,7 @@ class TableEditor extends React.Component {
                       type={BUTTON_TYPE.PRIMARY}
                       size={BUTTON_SIZE.SMALL}
                       disabled={editingKeyInExpandedInfo !== ''}
-                      onClick={this.createDict}
+                      onClick={() => { this.createDict([]); }}
                     >+字典字段</Button>
                     <Button
                       className="mr-2"
@@ -556,81 +735,120 @@ class TableEditor extends React.Component {
               }}
               doubleClickRow={this.doubleClickRow}
               blurRow={this.blurRow}
-              clickRow = {this.saveRow}
+              clickRow = {() => { this.saveRow(); }}
               columns={fieldColumns}
               dataSource={fieldList.filter((item) => {
                 return showSysFields || ![SPECIES.SYS, SPECIES.SYS_TMPL].includes(item.species);
               })}
-            />
+            />) : null }
           </TabPane>
           <TabPane tab="引用表" key="referenceList">
-            <ExpandedInfoEditor
-              ref="referenceList"
-              formRef={this.expandInfoFormRef}
-              title="引用字段管理"
-              actionAreaRenderer={(selectedRowKeys) => {
-                return (
-                  <>
-                    <Button
-                      className="mr-2"
-                      type={BUTTON_TYPE.PRIMARY}
-                      size={BUTTON_SIZE.SMALL}
-                      disabled={editingKeyInExpandedInfo !== ''}
-                      onClick={() => { this.createReference(); }}
-                    >新增</Button>
-                    <Button
-                      className="mr-2"
-                      type={BUTTON_TYPE.PRIMARY}
-                      size={BUTTON_SIZE.SMALL}
-                      disabled={editingKeyInExpandedInfo !== ''}
-                      onClick={() => { this.deleteReference(selectedRowKeys); }}
-                    >删除</Button>
-                  </>
-                );
-              }}
-              doubleClickRow={this.doubleClickRow}
-              blurRow={this.blurRow}
-              clickRow = {this.saveRow}
-              columns={fieldColumns}
-              dataSource={referenceList}
-            />
+            { activeAreaInExpandedInfo === 'referenceList' ? (
+              <ExpandedInfoEditor
+                ref="referenceList"
+                formRef={this.expandInfoFormRef}
+                title="引用字段管理"
+                actionAreaRenderer={(selectedRowKeys) => {
+                  return (
+                    <>
+                      <Button
+                        className="mr-2"
+                        type={BUTTON_TYPE.PRIMARY}
+                        size={BUTTON_SIZE.SMALL}
+                        disabled={editingKeyInExpandedInfo !== ''}
+                        onClick={() => { this.createReference(); }}
+                      >新增</Button>
+                      <Button
+                        className="mr-2"
+                        type={BUTTON_TYPE.PRIMARY}
+                        size={BUTTON_SIZE.SMALL}
+                        disabled={editingKeyInExpandedInfo !== '' || selectedRowKeys.length === 0}
+                        onClick={() => { this.deleteReference(selectedRowKeys); }}
+                      >删除</Button>
+                    </>
+                  );
+                }}
+                doubleClickRow={this.doubleClickRow}
+                blurRow={this.blurRowInReferenceList}
+                clickRow = {() => { this.saveRow(); }}
+                columns={referenceColumns}
+                dataSource={referenceList}
+              />) : null }
           </TabPane>
           <TabPane tab="外键设置" key="foreignKeyList">
+            { activeAreaInExpandedInfo === 'foreignKeyList' ? (
+              <ExpandedInfoEditor
+                ref="foreignKeyList"
+                formRef={this.expandInfoFormRef}
+                title="外键字段管理"
+                actionAreaRenderer={(selectedRowKeys) => {
+                  return (
+                    <>
+                      <Button
+                        className="mr-2"
+                        type={BUTTON_TYPE.PRIMARY}
+                        size={BUTTON_SIZE.SMALL}
+                        disabled={editingKeyInExpandedInfo !== ''}
+                        onClick={() => { this.createReference(); }}
+                      >新增</Button>
+                      <Button
+                        className="mr-2"
+                        type={BUTTON_TYPE.PRIMARY}
+                        size={BUTTON_SIZE.SMALL}
+                        disabled={editingKeyInExpandedInfo !== '' || selectedRowKeys.length === 0}
+                        onClick={() => { this.deleteReference(selectedRowKeys); }}
+                      >删除</Button>
+                    </>
+                  );
+                }}
+                doubleClickRow={this.doubleClickRow}
+                blurRow={this.blurRowInReferenceList}
+                clickRow = {() => { this.saveRow(); }}
+                columns={foreignKeyColumns}
+                dataSource={foreignKeyList}
+              />) : null }
           </TabPane>
         </Tabs>
-        <CreateModal
-          title="选择字典"
-          modalVisible={visibleModalChooseDict}
-          onCancel={() => this.setState({ visibleModalChooseDict: false })}
-        >
-          <ChooseDict
-            selectedRowKeys = {dictIdsShowInModal}
-            onOk={this.chooseDictOk}
+        { visibleModalChooseDict
+          ? (<CreateModal
+            title="选择字典"
+            modalVisible={visibleModalChooseDict}
             onCancel={() => this.setState({ visibleModalChooseDict: false })}
-          />
-        </CreateModal>
-        <CreateModal
-          title="引用字段设置"
-          modalVisible={visibleModalCreateReference}
-          onCancel={() => this.setState({ visibleModalCreateReference: false })}
-        >
-          <CreateReference
-            type="reference"
-            onOk={this.createReferenceOk}
+          >
+            <ChooseDict
+              selectedRowKeys = {dictIdsShowInModal}
+              onOk={this.chooseDictOk}
+              onCancel={() => this.setState({ visibleModalChooseDict: false })}
+            />
+          </CreateModal>)
+          : null }
+        { visibleModalCreateReference
+          ? (<CreateModal
+            title="引用字段设置"
+            modalVisible={visibleModalCreateReference}
             onCancel={() => this.setState({ visibleModalCreateReference: false })}
-          />
-        </CreateModal>
-        <CreateModal
-          title="外键字段设置"
-          modalVisible={visibleModalCreateForeignKey}
-          onCancel={() => this.setState({ visibleModalCreateForeignKey: false })}
-        >
-          <CreateReference
-            type="foreignKey"
-            onOk={this.createForeignKeyOk}
+          >
+            <CreateReference
+              type="reference"
+              onOk={this.createReferenceOk}
+              onCancel={() => this.setState({ visibleModalCreateReference: false })}
+            />
+          </CreateModal>)
+          : null }
+        { visibleModalCreateForeignKey
+          ? (<CreateModal
+            title="外键字段设置"
+            modalVisible={visibleModalCreateForeignKey}
             onCancel={() => this.setState({ visibleModalCreateForeignKey: false })}
-          />
-        </CreateModal>
+          >
+
+            <CreateReference
+              type="foreignKey"
+              onOk={this.createForeignKeyOk}
+              onCancel={() => this.setState({ visibleModalCreateForeignKey: false })}
+            />
+          </CreateModal>)
+          : null }
       </>
     );
   }

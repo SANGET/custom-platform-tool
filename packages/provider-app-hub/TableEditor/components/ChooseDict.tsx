@@ -84,22 +84,22 @@ class ChooseDict extends React.Component<IProps> {
     const { searchName: name, offset, size } = this.state;
     /** 接口对应的offset是指记录偏移位置，不是页偏移量 */
     const res = await GetDictionaryList({ name, offset: (offset - 1) * size, size });
-    console.log(res);
-    console.log("pretendToSetState");
+    console.log(res.data);
+    console.log(typeof (res.total - 0));
     /** 设置数据 */
     this.setState({
       menu: res?.data,
-      total: res?.total
+      total: res?.total - 0
     });
-    console.log("setStateSuccessfully");
   }
 
-  componentWillMount() {
+  componentDidMount() {
     this.getMenuList();
   }
 
-  componentWillUnmount() {
-    console.log("componentUnmount");
+  componentDidCatch(error, errorInfo) {
+    // 你也可以在异常报告设备中打印异常信息
+    console.log(error, errorInfo);
   }
 
   handleOk = () => {

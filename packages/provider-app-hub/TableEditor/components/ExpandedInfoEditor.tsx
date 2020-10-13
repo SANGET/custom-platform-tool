@@ -57,6 +57,7 @@ class ExpandedInfoEditor extends React.Component {
               dataSource={dataSource}
               pagination={false}
               rowKey='id'
+              scroll={{ x: '100%' }}
               rowSelection = {{
                 type: 'radio',
                 selectedRowKeys,
