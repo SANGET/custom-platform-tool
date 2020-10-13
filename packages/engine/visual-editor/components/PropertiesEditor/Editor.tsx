@@ -7,6 +7,8 @@ import { Debounce } from '@mini-code/base-func';
 import {
   WidgetEntity, WidgetEntityState, PropItemType,
   WidgetBindPropItemsType,
+  PropItemsCollection,
+  PropItemCompAccessSpec,
 } from '../../data-structure';
 import { extractPropConfig } from './extractPropConfig';
 import { entityStateMergeRule } from './entityStateMergeRule';
@@ -22,7 +24,7 @@ export interface PropertiesEditorProps {
   /** 选中的 entity */
   propPanelData: PropPanelData
   selectedEntity: WidgetEntity
-  propItemData: any
+  propItemData: PropItemsCollection
   /** 属性项组合配置 */
   propertiesConfig: WidgetBindPropItemsType
   /** 属性编辑器的配置，通过该配置生成有层级结构的属性编辑面板 */
@@ -152,7 +154,7 @@ PropertiesEditorProps, PropertiesEditorState
     && bindPropItems.map((bindProp) => {
       // let propID: string;
       let propOriginConfigItem;
-      let propItemConfig: PropItemType;
+      let propItemConfig: PropItemCompAccessSpec;
       if (typeof bindProp === 'function') {
         propItemConfig = extractPropConfig(bindProp, selectedEntity);
         // propID = propItemConfig.id;
@@ -200,7 +202,7 @@ PropertiesEditorProps, PropertiesEditorState
 
       return (
         <div
-          key={propItemType}
+          key={propItemConfig.id}
         >
           {
             propItemRenderer({

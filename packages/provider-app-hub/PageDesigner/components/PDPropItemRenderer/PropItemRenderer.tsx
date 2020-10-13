@@ -1,7 +1,5 @@
 import React from 'react';
 import { PropItemRendererProps } from '@engine/visual-editor/components/PropertiesEditor/types';
-import * as PropItemComps from '@infra/ui/form';
-import { getPropItem } from '@spec/business-widget';
 import { FXContainer } from './FXContainer';
 import { Unexpect } from '../WidgetRenderer';
 
@@ -14,25 +12,23 @@ export const PropItemRenderer: React.FC<PropItemRendererProps> = ({
   propItemValue,
   onChange,
 }) => {
+  const propItemRenderCtx = {
+    changeEntityState: onChange,
+    widgetEntityState: propItemValue,
+  };
+
   const {
-    label, propItemCompDef, propItemCompRender,
+    label, propItemCompDef,
   } = propItemConfig;
 
+  // const propItemCompConfig = getPropItem(propItemCompType);
+
   let Com;
-  if (propItemCompRender) {
-    Com = propItemCompRender({
-      onChange,
-      InterComp: PropItemComps,
-      fxHelper: FXContainer
-    });
-  } else if (propItemCompDef) {
-    const { type: propItemCompType, ...propsForComponent } = propItemCompDef;
-    const propItemCompConfig = getPropItem(propItemCompType);
-    if (propItemCompConfig.unexpected) {
-      Com = <Unexpect />;
-    } else {
-      Com = propItemCompConfig.render(propItemValue, onChange);
-    }
+  // const { type: propItemCompType, ...propsForComponent } = propItemCompDef;
+  if (!propItemConfig.render) {
+    Com = <Unexpect />;
+  } else {
+    Com = propItemConfig.render(propItemRenderCtx);
   }
   return (
     <div className="mb10">

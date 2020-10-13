@@ -2,7 +2,7 @@
  * 属性项接入标准
  */
 
-import { PropItemType } from "./prop-item";
+import { PropItemCompAccessSpec, PropItemType } from "./prop-item";
 import { WidgetEntity } from "./widget";
 
 /**
@@ -14,5 +14,5 @@ export type PropItemConfig = (entity: WidgetEntity) => PropItemType
  * 属性项集合
  */
 export interface PropItemsCollection {
-  [colID: string]: PropItemConfig
+  [colID: string]: PropItemCompAccessSpec
 }
