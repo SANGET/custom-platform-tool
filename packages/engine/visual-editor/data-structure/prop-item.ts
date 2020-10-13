@@ -1,5 +1,7 @@
 /// //////////////// 属性项 ///////////////////
 
+import { WidgetEntity } from "./widget";
+
 export type PropItemCompRender = ({
   /** 属性的值 */
   propItemValue,
@@ -13,7 +15,7 @@ export type PropItemCompRender = ({
  * 属性项
  * @description 节点含义说明：第一层为描述属性项的元数据，propItemCompDef 节点为描述该属性项中用于交互的组件
  */
-export interface PropItemType {
+export interface PropItemMeta {
   /** 属性项 ID */
   readonly id: string
   /** 属性项显示的 label */
@@ -34,7 +36,7 @@ export interface PropItemType {
   render(ctx: PropItemRenderContext): JSX.Element
 }
 
-export type ChangeEntityState = (value: any) => void
+export type ChangeEntityState = (nextEntityState: WidgetEntity['propState']) => void
 
 export interface PropItemRenderContext {
   /** 组件实例状态 */
@@ -48,4 +50,4 @@ export type PropItemCompAccessSpecCtx = {}
 /**
  * 属性项的组件的接入标准
  */
-export type PropItemCompAccessSpec = (propItemCompAccessSpecCtx: PropItemCompAccessSpecCtx) => PropItemType
+export type PropItemCompAccessSpec = (propItemCompAccessSpecCtx: PropItemCompAccessSpecCtx) => PropItemMeta

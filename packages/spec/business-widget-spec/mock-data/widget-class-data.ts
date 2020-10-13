@@ -1,8 +1,8 @@
-import { WidgetClassDataCollection } from "@engine/visual-editor/data-structure";
+import { WidgetTypeMetadataCollection } from "@engine/visual-editor/data-structure";
 import { CustomComponent } from "./custom-component-demo";
 import { ApiMock } from "./api-mock";
 
-export const widgetClassDataCollection: WidgetClassDataCollection = {
+export const widgetClassDataCollection: WidgetTypeMetadataCollection = {
   'widget-id-1': {
     id: 'widget-id-1',
     label: '文本框',

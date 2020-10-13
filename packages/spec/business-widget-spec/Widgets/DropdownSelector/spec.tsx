@@ -2,8 +2,8 @@ import React from 'react';
 import { DropdownSelectorComp } from '.';
 import { BusinessWidgetAccessSpec } from '../../interfaces';
 
-export class DropdownSelectorSpec implements BusinessWidgetAccessSpec {
-  name = 'DropdownSelector'
+export const DropdownSelector: BusinessWidgetAccessSpec = () => ({
+  name: 'DropdownSelector',
 
   render(widgetState) {
     // console.log(widgetState);
@@ -11,4 +11,4 @@ export class DropdownSelectorSpec implements BusinessWidgetAccessSpec {
       <DropdownSelectorComp {...widgetState} />
     );
   }
-}
+});

@@ -1,10 +1,10 @@
 /* eslint-disable no-param-reassign */
 import produce from 'immer';
-import { WidgetEntityState, PropItemType } from "../../data-structure";
+import { WidgetEntityState, PropItemMeta } from "../../data-structure";
 
 interface EntityStateItemParams {
   value: any,
-  propItemConfig: PropItemType
+  propItemConfig: PropItemMeta
 }
 
 type EntityStateMergeRule = (

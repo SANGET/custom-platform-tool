@@ -5,7 +5,7 @@ import React from 'react';
 import { Input, Button } from '@infra/ui';
 import { Debounce } from '@mini-code/base-func';
 import {
-  WidgetEntity, WidgetEntityState, PropItemType,
+  WidgetEntity, WidgetEntityState, PropItemMeta,
   WidgetBindPropItemsType,
   PropItemsCollection,
   PropItemCompAccessSpec,

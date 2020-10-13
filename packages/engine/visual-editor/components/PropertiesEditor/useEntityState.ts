@@ -1,9 +1,9 @@
 import { useState } from "react";
-import { WidgetEntityState, PropItemType } from "../../data-structure";
+import { WidgetEntityState, PropItemMeta } from "../../data-structure";
 import { entityStateMergeRule } from "./entityStateMergeRule";
 
 export type UpdateEntityStateCallback = (
-  propItemConfig: PropItemType,
+  propItemConfig: PropItemMeta,
   value: any,
 ) => void
 

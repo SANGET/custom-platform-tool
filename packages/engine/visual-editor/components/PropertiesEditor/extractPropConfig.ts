@@ -1,6 +1,6 @@
 import { produce } from "immer";
 import {
-  PropItemType, WidgetEntity,
+  PropItemMeta, WidgetEntity,
   PropItemCompAccessSpec, PageStageEntity
 } from "../../data-structure";
 
@@ -11,7 +11,7 @@ export const extractPropConfig = (
   propItemConfigFunc: PropItemCompAccessSpec,
   entity: WidgetEntity,
   extendProps?
-): PropItemType => {
+): PropItemMeta => {
   if (typeof propItemConfigFunc === 'function') {
     const _entity = produce(entity, (draft) => draft);
     return propItemConfigFunc(_entity);

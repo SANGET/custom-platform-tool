@@ -56,7 +56,7 @@ export const PDdragableItemWrapperFac: DragableItemWrapperFac = (
     const { widgetDef } = currEntity;
 
     // TODO: 调整获取组件的链路，通过远程获取的方式处理
-    const registeredEntity = getWidget(widgetDef.type) || {};
+    const registeredEntity = getWidget(widgetDef.type);
     const { propEditor: PropEditor } = registeredEntity;
     const actionCtx = { entity: currEntity, idx, nestingInfo };
     return (

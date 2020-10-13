@@ -5,11 +5,11 @@ import {
   increaseID,
 } from '@engine/visual-editor/utils';
 import {
-  WidgetClassType, WidgetEntity, TempWidgetEntityType, TEMP_ENTITY_ID
+  WidgetTypeMeta, WidgetEntity, TempWidgetEntityType, TEMP_ENTITY_ID
 } from '../../data-structure';
 
 export type MakeWidgetEntity = (
-  widgetType: WidgetClassType,
+  widgetType: WidgetTypeMeta,
   options?: {
     idCount?: number
     extendEntityID?: string
@@ -21,11 +21,11 @@ export type MakeWidgetEntity = (
  * 实例化 widgetType
  */
 export const makeWidgetEntity: MakeWidgetEntity = (
-  widgetType: WidgetClassType,
+  widgetType: WidgetTypeMeta,
   options = {}
 ) => {
   const {
-    idCount,
+    idCount = 0,
     extendEntityID = '',
     state = 'active'
   } = options;
@@ -44,7 +44,7 @@ export const makeWidgetEntity: MakeWidgetEntity = (
    * 下划线前缀为内部字段，用于表示已经实例化
    */
   const entity = produce(widgetType, (draft) => {
-    delete draft.bindPropItems;
+    Reflect.deleteProperty(draft, 'bindPropItems');
     draft.id = entityID;
     draft._classID = widgetType.id;
     draft._state = state;

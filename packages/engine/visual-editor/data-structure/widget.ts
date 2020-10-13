@@ -51,7 +51,7 @@ export interface BasicWidgetClassType<C> {
 /**
  * 可拖动的组件的 class
  */
-export interface WidgetClassType<C = BasicWidgetType> extends BasicWidgetClassType<C> {
+export interface WidgetTypeMeta<C = BasicWidgetType> extends BasicWidgetClassType<C> {
   id: string
   /** 可以指定组件类被实例化时的 id */
   entityID?: string
@@ -62,7 +62,7 @@ export interface WidgetClassType<C = BasicWidgetType> extends BasicWidgetClassTy
 /**
  * 组件实例信息
  */
-export interface WidgetEntity extends WidgetClassType {
+export interface WidgetEntity extends WidgetTypeMeta {
   /** 实例 id */
   id: string
   /** 子元素 */
@@ -73,7 +73,7 @@ export interface WidgetEntity extends WidgetClassType {
   _state: string
   // _state: 'active' | 'disable'
   /** 实例化后的 class id */
-  _classID: WidgetClassType['id']
+  _classID: WidgetTypeMeta['id']
 }
 
 /**
