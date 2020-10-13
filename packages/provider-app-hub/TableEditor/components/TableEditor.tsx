@@ -146,15 +146,20 @@ class TableEditor extends React.Component {
 
   /** 根据编辑行唯一标识和高亮区域感知编辑行索引 */
   getIndexByEditingKey=() => {
-    const { editingKeyInExpandedInfo, activeAreaInExpandedInfo } = this.state;
-    const index = lodash.findIndex(this.state[activeAreaInExpandedInfo], { id: editingKeyInExpandedInfo });
+    const { editingKeyInExpandedInfo } = this.state;
+    return this.getIndexByRowKey(editingKeyInExpandedInfo);
+  }
+
+  getIndexByRowKey = (rowKey) => {
+    const { activeAreaInExpandedInfo } = this.state;
+    const index = lodash.findIndex(this.state[activeAreaInExpandedInfo], { id: rowKey });
     return index;
   }
 
   /** 根据编辑行唯一标识和高亮区域感知编辑行索引 */
   getRecordByRowKey=(rowKey) => {
     const { activeAreaInExpandedInfo } = this.state;
-    const index = lodash.findIndex(this.state[activeAreaInExpandedInfo], { id: rowKey });
+    const index = this.getIndexByRowKey(rowKey);
     return this.state[activeAreaInExpandedInfo][index];
   }
 
@@ -182,10 +187,49 @@ class TableEditor extends React.Component {
   }
 
   /** 获取编辑行的为标识集合 */
-  getRowKeysEditable(activeArea) {
-    return this.state[activeArea]
+  getRowKeysEditable() {
+    const { activeAreaInExpandedInfo } = this.state;
+    return this.state[activeAreaInExpandedInfo]
       .filter((item) => item.editable)
       .map((item) => item.id);
+  }
+
+  /** 双击行 */
+  doubleClickRow=(record) => {
+    const { activeAreaInExpandedInfo } = this.state;
+    const previousList = this.state[activeAreaInExpandedInfo].id;
+    const index = this.getIndexByRowKey(record.id);
+    this.saveRow().then((canIEdit) => {
+      if (!canIEdit) return;
+      previousList[index] = { ...previousList[index], editable: true };
+      this.setState({
+        [activeAreaInExpandedInfo]: previousList,
+        editingKeyInExpandedInfo: record.id
+      });
+      this.expandInfoFormRef.current?.resetFields();
+      this.expandInfoFormRef.current?.setFieldsValue(record);
+    });
+  }
+
+  /** 行失焦 */
+  blurRow = (record) => {
+    const rowKeysEditable = this.getRowKeysEditable();
+    if (rowKeysEditable.includes(record.id)) return;
+    this.saveRow();
+  }
+
+  createRow = (record) => {
+    const { activeAreaInExpandedInfo } = this.state;
+    const list = this.state[activeAreaInExpandedInfo];
+    this.setState({
+      [activeAreaInExpandedInfo]: [record, ...list],
+      editingKeyInExpandedInfo: record.id
+    }, () => {
+      this.refs[activeAreaInExpandedInfo]?.setNewSelectedRowKeys(record.id);
+    });
+    this.expandInfoFormRef.current?.resetFields();
+    this.expandInfoFormRef.current?.setFieldsValue(record);
+    return record.id;
   }
 
   /** 字段列表：构建字段数据 */
@@ -213,15 +257,7 @@ class TableEditor extends React.Component {
   /** 字段列表：新建字段 */
   createField(recordDefaultValue) {
     const record = this.getNewFieldRecord(recordDefaultValue);
-    this.setState({
-      fieldList: [record, ...this.state.fieldList],
-      editingKeyInExpandedInfo: record.id
-    }, () => {
-      this.refs.fieldList?.setNewSelectedRowKeys(record.id);
-    });
-    this.expandInfoFormRef.current?.resetFields();
-    this.expandInfoFormRef.current?.setFieldsValue(record);
-    return record.id;
+    this.createRow(record);
   }
 
   /** 字段列表：新建字典字段 */
@@ -357,7 +393,7 @@ class TableEditor extends React.Component {
     deleteConfirm({
       title,
       onOk: () => {
-        fieldList?.setNewSelectedRowKeys(selectedKey);
+        fieldList?.resetSelectedRowKeys([]);
         const newState: {
           fieldList: ITableColumnInState[],
           editingKeyInExpandedInfo?: string
@@ -367,11 +403,13 @@ class TableEditor extends React.Component {
         if (selectedKey === editingKeyInExpandedInfo) {
           newState.editingKeyInExpandedInfo = '';
         }
+        this.expandInfoFormRef.current?.resetFields();
         this.setState(newState);
       },
     });
   }
 
+  /** 字段列表；删除字段 */
   deleteField = (selectedRowKeys) => {
     const selectedRowKey = selectedRowKeys[0];
     const record = this.getRecordByRowKey(selectedRowKey);
@@ -394,9 +432,17 @@ class TableEditor extends React.Component {
     });
   }
 
-  /** 字段列表：切换显示系统字段 */
+  createReference = () => {
+    const id = `${new Date().valueOf()}`;
+    this.createRow({ id, createdCustomed: true, species: SPECIES.BIS });
+  }
 
-  toggleShowSysFields() {
+  deleteReference = () => {
+
+  }
+
+  /** 字段列表：切换显示系统字段 */
+  toggleShowSysFields = () => {
     this.setState({
       showSysFields: !this.state.showSysFields
     });
@@ -503,31 +549,14 @@ class TableEditor extends React.Component {
                       type={BUTTON_TYPE.PRIMARY}
                       size={BUTTON_SIZE.SMALL}
                       disabled={editingKeyInExpandedInfo !== ''}
-                      onClick={() => { this.toggleShowSysFields(); }}
+                      onClick={this.toggleShowSysFields}
                     >{showSysFields ? '隐藏' : '显示'}系统字段</Button>
                   </>
                 );
               }}
-              doubleClickRow={(record, index, e) => {
-                this.saveRow().then((canIEdit) => {
-                  if (!canIEdit) return;
-                  const previousFieldList = this.state.fieldList.slice();
-                  previousFieldList[index] = { ...fieldList[index], editable: true };
-                  this.setState({
-                    fieldList: previousFieldList,
-                    editingKeyInExpandedInfo: record.id
-                  });
-                  this.expandInfoFormRef.current?.setFieldsValue(record);
-                });
-              }}
-              blurRow={(record) => {
-                const rowKeysEditable = this.getRowKeysEditable('fieldList');
-                if (rowKeysEditable.includes(record.id)) return;
-                this.saveRow();
-              }}
-              clickRow = {() => {
-                return this.saveRow();
-              }}
+              doubleClickRow={this.doubleClickRow}
+              blurRow={this.blurRow}
+              clickRow = {this.saveRow}
               columns={fieldColumns}
               dataSource={fieldList.filter((item) => {
                 return showSysFields || ![SPECIES.SYS, SPECIES.SYS_TMPL].includes(item.species);
@@ -535,7 +564,36 @@ class TableEditor extends React.Component {
             />
           </TabPane>
           <TabPane tab="引用表" key="referenceList">
-
+            <ExpandedInfoEditor
+              ref="referenceList"
+              formRef={this.expandInfoFormRef}
+              title="引用字段管理"
+              actionAreaRenderer={(selectedRowKeys) => {
+                return (
+                  <>
+                    <Button
+                      className="mr-2"
+                      type={BUTTON_TYPE.PRIMARY}
+                      size={BUTTON_SIZE.SMALL}
+                      disabled={editingKeyInExpandedInfo !== ''}
+                      onClick={() => { this.createReference(); }}
+                    >新增</Button>
+                    <Button
+                      className="mr-2"
+                      type={BUTTON_TYPE.PRIMARY}
+                      size={BUTTON_SIZE.SMALL}
+                      disabled={editingKeyInExpandedInfo !== ''}
+                      onClick={() => { this.deleteReference(selectedRowKeys); }}
+                    >删除</Button>
+                  </>
+                );
+              }}
+              doubleClickRow={this.doubleClickRow}
+              blurRow={this.blurRow}
+              clickRow = {this.saveRow}
+              columns={fieldColumns}
+              dataSource={referenceList}
+            />
           </TabPane>
           <TabPane tab="外键设置" key="foreignKeyList">
           </TabPane>

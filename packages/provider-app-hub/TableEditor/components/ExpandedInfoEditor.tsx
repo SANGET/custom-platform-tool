@@ -26,6 +26,12 @@ class ExpandedInfoEditor extends React.Component {
     });
   }
 
+  resetSelectedRowKeys = (selectedRowKeys: string[]) => {
+    this.setState({
+      selectedRowKeys
+    });
+  }
+
   render() {
     const {
       title, actionAreaRenderer, columns, dataSource,
