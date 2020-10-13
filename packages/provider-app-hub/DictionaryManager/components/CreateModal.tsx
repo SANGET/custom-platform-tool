@@ -7,12 +7,12 @@ interface IProps {
 
   title: string;
   children?: React.ReactElement;
-  width: string
+  width?: string
 }
 
 const CreateModal: React.FC<IProps> = (props) => {
   const {
-    modalVisible, onCancel, title, width
+    modalVisible, onCancel, title, width = '600px'
   } = props;
 
   return (

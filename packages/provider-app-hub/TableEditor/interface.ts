@@ -47,13 +47,13 @@ export enum IDataType {
  * SYS_TMPL(系统元数据,允许修改)
  * BIS_TMPL(业务元数据,禁止删除)）
  * */
-// export enum ISpecies {
-//   SYS = "SYS",
-//   BIS = "BIS",
-//   SYS_TMPL = "SYS_TMPL",
-//   BIS_TMPL="BIS_TMPL"
-// }
-type ISpecies = "SYS" | "BIS" | "SYS_TMPL" | "BIS_TMPL"
+export enum ISpecies {
+  SYS = "SYS",
+  BIS = "BIS",
+  SYS_TMPL = "SYS_TMPL",
+  BIS_TMPL="BIS_TMPL"
+}
+// export type ISpecies = "SYS" | "BIS" | "SYS_TMPL" | "BIS_TMPL"
 /** 表字段信息：字典信息 */
 interface IDictionaryForeign {
   id: string
@@ -71,7 +71,7 @@ interface IFieldProperty {
   pinyinConvent: boolean
 }
 /** 字段 */
-interface ITableColumnFromApi {
+export interface ITableColumnFromApi {
   /** 唯一标识id */
   id: string
   /** 字段名称 */
@@ -115,9 +115,19 @@ export interface ITableInfoFromApi {
   columns: ITableColumnFromApi[]
 }
 
+export interface ITableColumnInState extends ITableColumnFromApi {
+  createdCustomed: boolean
+  editable: boolean
+  dictionary: string
+  dictionaryCn: string
+  pinyinConvent: boolean
+  required: boolean
+  unique: boolean
+}
+
 export interface ITableInfoInState {
   basicInfo: {
-    id: string
+    tableId: string
     /** 表名 */
     tableName: string,
     /** 编码 */
@@ -133,15 +143,38 @@ export interface ITableInfoInState {
     /** 最大层级（表类型为树形表时起作用 */
     maxLevel: number,
     /** 表创建类型 */
-    species: ISpecies
+    species: ISpecies,
   },
   /** 关联页面 */
   relatedPages: IRelatedPageFromApi[],
   /** 表扩展信息 */
   /** 字段列表 */
-  fieldList: ITableColumnFromApi[],
+  fieldList: ITableColumnInState[],
+  /** 字段列表的选中行唯一标识 */
+  selectedRowKeysInFieldList: string[],
   /** 引用字段列表 */
   referenceList: IReferenceFromApi[],
   /** 外键字段列表 */
-  foreignKeyList: IForeignKeyFromApi[]
+  foreignKeyList: IForeignKeyFromApi[],
+  /** 扩展信息中的编辑行标识 */
+  editingKeyInExpandedInfo: string
+  /** 扩展信息中的编辑行所在区域 */
+  activeAreaInExpandedInfo: string
+  /** 是否显示系统字段 */
+  showSysFields: boolean
+  /** 字典弹窗需要回写的字典id数据 */
+
+  dictIdsShowInModal: string[]
+  /** 是否显示字典弹窗 */
+  visibleModalChooseDict: boolean
+  /** 是否显示引用字段弹窗 */
+  visibleModalCreateReference:boolean
+  /** 是否显示引用字段弹窗 */
+  visibleModalCreateForeignKey: boolean
+}
+export type ITableColumnShowKey = "id" | "name" | "code" | "fieldType" | "dataType" | "fieldSize" | "decimalSize" | "species" | "required" | "unique" | "dictionaryForeign"|"pinyinConvent"
+export interface ISELECTSMENU {
+  label: string
+  key: string
+  value: string
 }
