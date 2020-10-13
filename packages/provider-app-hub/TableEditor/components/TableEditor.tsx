@@ -228,7 +228,7 @@ class TableEditor extends React.Component {
   createDict = (dictIdsShowInModal) => {
     this.setState({
       visibleModalChooseDict: true,
-      dictIdsShowInModal
+      dictIdsShowInModal: dictIdsShowInModal || []
     });
   }
 
@@ -404,8 +404,9 @@ class TableEditor extends React.Component {
 
   render() {
     const {
-      basicInfo, relatedPages, editingKeyInExpandedInfo, fieldList, showSysFields, activeAreaInExpandedInfo,
+      basicInfo, relatedPages, editingKeyInExpandedInfo, showSysFields, activeAreaInExpandedInfo,
       visibleModalChooseDict, dictIdsShowInModal, visibleModalCreateReference, visibleModalCreateForeignKey,
+      fieldList, referenceList
     } = this.state;
     const fieldColumns = getFieldColumns({
       formRef: this.expandInfoFormRef,
@@ -450,15 +451,6 @@ class TableEditor extends React.Component {
             <ExpandedInfoEditor
               ref="fieldList"
               formRef={this.expandInfoFormRef}
-              changeValue={(changeValues) => {
-                console.log(changeValues);
-                if (COLUMNS_KEY.DATATYPE in changeValues && changeValues[COLUMNS_KEY.DATATYPE] !== DATATYPE.DICT) {
-                  this.expandInfoFormRef.current?.setFieldsValue({
-                    [COLUMNS_KEY.DICTIONARYFOREIGN]: '',
-                    [COLUMNS_KEY.DICTIONARYFOREIGNCN]: ''
-                  });
-                }
-              }}
               title="字段管理"
               actionAreaRenderer={(selectedRowKeys) => {
                 return (
@@ -543,6 +535,7 @@ class TableEditor extends React.Component {
             />
           </TabPane>
           <TabPane tab="引用表" key="referenceList">
+
           </TabPane>
           <TabPane tab="外键设置" key="foreignKeyList">
           </TabPane>
@@ -553,7 +546,7 @@ class TableEditor extends React.Component {
           onCancel={() => this.setState({ visibleModalChooseDict: false })}
         >
           <ChooseDict
-            dictIds = {dictIdsShowInModal}
+            selectedRowKeys = {dictIdsShowInModal}
             onOk={this.chooseDictOk}
             onCancel={() => this.setState({ visibleModalChooseDict: false })}
           />

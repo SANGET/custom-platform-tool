@@ -40,15 +40,15 @@ export const ModalFooter: React.FC<IModalFooter> = React.memo((props: IModalFoot
 interface IProps {
   onOk: (code: string[], name: string[]) => void;
   onCancel: () => void;
-  dictIds: string[]
+  selectedRowKeys: string[]
 }
 interface ISelectedRow {
   code: string
   name: string
 }
-class ChooseDict extends React.PureComponent<IProps> {
+class ChooseDict extends React.Component<IProps> {
   state = {
-    selectedIds: this.props.dictIds || [],
+    selectedRowKeys: this.props.selectedRowKeys || [],
     offset: 1,
     size: 10,
     total: 0,
@@ -84,26 +84,33 @@ class ChooseDict extends React.PureComponent<IProps> {
     const { searchName: name, offset, size } = this.state;
     /** 接口对应的offset是指记录偏移位置，不是页偏移量 */
     const res = await GetDictionaryList({ name, offset: (offset - 1) * size, size });
+    console.log(res);
+    console.log("pretendToSetState");
     /** 设置数据 */
     this.setState({
       menu: res?.data,
       total: res?.total
     });
+    console.log("setStateSuccessfully");
   }
 
   componentWillMount() {
     this.getMenuList();
   }
 
+  componentWillUnmount() {
+    console.log("componentUnmount");
+  }
+
   handleOk = () => {
     const { onOk } = this.props;
-    const { selectedIds, menu } = this.state;
-    if ([0, undefined, null].includes(this.state.selectedIds.length)) {
+    const { selectedRowKeys, menu } = this.state;
+    if ([0, undefined, null].includes(selectedRowKeys.length)) {
       return message?.[NOTIFICATION_TYPE.WARNING]('请选择一行数据');
     }
     return onOk && onOk(
-      selectedIds,
-      menu.filter((item) => selectedIds.includes(item.code)).map((item) => item.name)
+      selectedRowKeys,
+      menu.filter((item) => selectedRowKeys.includes(item.code)).map((item) => item.name)
     );
   }
 
@@ -121,21 +128,21 @@ class ChooseDict extends React.PureComponent<IProps> {
     });
   }
 
-  handleRowSelect = (selectedIds) => {
+  handleRowSelect = (selectedRowKeys) => {
     this.setState({
-      selectedIds
+      selectedRowKeys
     });
   }
 
-  handleRowClick = (selectedIdTmpl: string) => {
-    const { selectedIds } = this.state;
-    if (!selectedIds.includes(selectedIdTmpl)) {
+  handleRowClick = (selectedRowKeyTmpl: string) => {
+    const { selectedRowKeys } = this.state;
+    if (!selectedRowKeys.includes(selectedRowKeyTmpl)) {
       this.setState({
-        selectedIds: [selectedIdTmpl, ...selectedIds]
+        selectedRowKeys: [selectedRowKeyTmpl, ...selectedRowKeys]
       });
     } else {
       this.setState({
-        selectedIds: lodash.without(selectedIds, selectedIdTmpl)
+        selectedRowKeys: lodash.without(selectedRowKeys, selectedRowKeyTmpl)
       });
     }
   }
@@ -149,13 +156,14 @@ class ChooseDict extends React.PureComponent<IProps> {
   };
 
   render() {
+    const { menu, total, selectedRowKeys } = this.state;
     return (<>
       <Search
         placeholder="请输入字典名称"
         onSearch={this.handleSearch}
       />
       <Table
-        dataSource={this.state.menu}
+        dataSource={menu}
         columns={[
           { title: '序号', render: (text, record, index) => { return `${index + 1}`; } },
           { title: '字典名称', dataIndex: 'name' },
@@ -171,13 +179,13 @@ class ChooseDict extends React.PureComponent<IProps> {
         pagination={{
           showSizeChanger: true,
           pageSizeOptions: ['10', '20', '30', '40', '50', '100'],
-          total: this.state.total,
+          total,
           onChange: this.handleChangePage,
           onShowSizeChange: this.handleChangePage
         }}
         rowSelection={{
-          selectedRowKeys: this.state.selectedIds,
-          onChange: ((selectedId) => this.handleRowSelect(selectedId)),
+          selectedRowKeys,
+          onChange: (this.handleRowSelect),
           type: 'radio',
         }}
       />
