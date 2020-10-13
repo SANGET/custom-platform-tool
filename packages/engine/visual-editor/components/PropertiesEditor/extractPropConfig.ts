@@ -1,19 +1,20 @@
 import { produce } from "immer";
 import {
-  PropItemConfig, WidgetEntity,
-  PropItemType, PageStageEntity
+  PropItemType, WidgetEntity,
+  PropItemCompAccessSpec, PageStageEntity
 } from "../../data-structure";
 
 /**
  * 提取 prop item config
  */
 export const extractPropConfig = (
-  propItemConfigFunc: PropItemConfig,
+  propItemConfigFunc: PropItemCompAccessSpec,
   entity: WidgetEntity,
   extendProps?
 ): PropItemType => {
   if (typeof propItemConfigFunc === 'function') {
-    return Object.assign({}, propItemConfigFunc(produce(entity, (draft) => draft)), extendProps);
+    const _entity = produce(entity, (draft) => draft);
+    return propItemConfigFunc(_entity);
   }
   return propItemConfigFunc;
 };

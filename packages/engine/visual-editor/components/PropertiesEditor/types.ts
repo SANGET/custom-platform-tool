@@ -1,5 +1,4 @@
-import { ChangeEntityState } from "@spec/business-widget";
-import { PropItemType } from "../../data-structure";
+import { ChangeEntityState, PropItemType } from "../../data-structure";
 
 /**
  * 属性项的渲染器标准接口

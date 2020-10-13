@@ -20,6 +20,7 @@ export const FormInputComp: React.FC<FormInputCompProps> = (props) => {
     labelColor,
     defValue,
   } = props;
+
   return (
     <div>
       <div

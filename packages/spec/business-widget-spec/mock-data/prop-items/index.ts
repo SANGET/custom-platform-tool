@@ -1,60 +1,18 @@
 import { PropItemsCollection } from "@engine/visual-editor/data-structure";
+import * as PropItemComps from "../../PropItems";
 import { ApiMock } from "../api-mock";
-import PropValue from './value';
-import PropField from './field';
+
+// const createObj = <T extends (new())>(C: T): T => new C();
 
 /**
  * TODO: 搞清楚属性如何影响组件实例，或者是说组件实例如何根据属性数据进行调整
  */
 export const propItemsCollection: PropItemsCollection = {
-  prop_field: PropField,
-  prop_real_value: PropValue,
-  prop_style_title_color: (entity) => {
-    return {
-      id: 'prop_style_title_color',
-      label: '标题颜色',
-      whichAttr: 'labelColor',
-      propItemCompDef: {
-        type: 'NormalInput'
-      }
-    };
-  },
-  prop_title_value: (entity) => {
-    const { label = '标题' } = entity;
-    return {
-      id: 'prop_title_value',
-      label: '标题',
-      whichAttr: 'title',
-      defaultValue: label,
-      propItemCompDef: {
-        type: 'NormalInput',
-      }
-    };
-  },
-  prop_flex_config: (entity) => {
-    return {
-      id: 'prop_flex_config',
-      label: '列数量',
-      whichAttr: 'columnCount',
-      propItemCompDef: {
-        type: 'DropdownSelector',
-        defaultValue: 1,
-        values: [{
-          text: 1,
-          value: 1
-        }, {
-          text: 2,
-          value: 2
-        }, {
-          text: 3,
-          value: 3
-        }, {
-          text: 4,
-          value: 4
-        }]
-      }
-    };
-  },
+  prop_field: PropItemComps.FieldHelperSpec,
+  prop_real_value: PropItemComps.ValueHelperSpec,
+  prop_style_title_color: PropItemComps.TitleColorHelperSpec,
+  prop_title_value: PropItemComps.TitleHelperSpec,
+  prop_flex_config: PropItemComps.ColumnHelperSpec,
 };
 
 export const getPropItemData = ApiMock(propItemsCollection);

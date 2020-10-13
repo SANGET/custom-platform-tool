@@ -1,10 +1,10 @@
 /// //////////////// 属性项 ///////////////////
 
 export type PropItemCompRender = ({
+  /** 属性的值 */
+  propItemValue,
   /** onChange 事件 */
   onChange,
-  /** 内部组件 */
-  InterComp,
   /** 表达式助手，由属性项自身决定是否使用 */
   fxHelper,
 }) => JSX.Element
@@ -15,20 +15,37 @@ export type PropItemCompRender = ({
  */
 export interface PropItemType {
   /** 属性项 ID */
-  id: string
+  readonly id: string
   /** 属性项显示的 label */
-  label: string
+  readonly label: string
   /** 作用于组件实例的属性，例如 entity[propType] */
-  whichAttr: VEExtention.PropItemTypes
+  readonly whichAttr: string
+  // whichAttr: VEExtention.PropItemTypes
   // /** 属性作用于组件实例的某种属性 */
   // target: string
   /** 默认值 */
   defaultValue?: any
-  /** 直接渲染属性项组件的内容 */
-  propItemCompRender?: PropItemCompRender
   /** 属性项的渲染组件的定义 */
   propItemCompDef?: {
     /** 用于找到具体组件 */
     type: string
   }
+  /** 用于渲染的组件 */
+  render(ctx: PropItemRenderContext): JSX.Element
 }
+
+export type ChangeEntityState = (value: any) => void
+
+export interface PropItemRenderContext {
+  /** 组件实例状态 */
+  widgetEntityState: any
+  /** 更改组件实例状态的接口 */
+  changeEntityState: ChangeEntityState
+}
+
+export type PropItemCompAccessSpecCtx = {}
+
+/**
+ * 属性项的组件的接入标准
+ */
+export type PropItemCompAccessSpec = (propItemCompAccessSpecCtx: PropItemCompAccessSpecCtx) => PropItemType
