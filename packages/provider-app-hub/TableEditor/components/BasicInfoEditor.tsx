@@ -5,7 +5,7 @@ import {
 import { FormInstance } from 'antd/lib/form';
 import { construct as contructTree } from '@infra/utils/tools';
 import { TABLE_TYPE_OPTIONS, TABLE_TYPE, MENUS_TYPE } from '../constants';
-import { queryMenusListService } from '../apis';
+import { getMenuListService } from '../apiAgents';
 
 /** 归属模块 */
 interface IModuleTreeItem {
@@ -22,7 +22,7 @@ class ModuleTreeItem extends React.Component<IModuleTreeItem> {
    * @param name 模糊搜索时的名称
    * */
   getMenusData = async (name = "") => {
-    const menusList = await queryMenusListService({
+    const menusList = await getMenuListService({
       name,
       type: MENUS_TYPE.MODULE,
     });

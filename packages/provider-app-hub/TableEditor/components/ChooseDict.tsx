@@ -3,7 +3,7 @@ import {
   Input, Table, message, Button
 } from 'antd';
 import lodash from 'lodash';
-import { GetDictionaryList } from "../apis";
+import { getDictionaryList } from "../apiAgents";
 import { NOTIFICATION_TYPE } from '../constants';
 
 const { Search } = Input;
@@ -83,7 +83,7 @@ class ChooseDict extends React.Component<IProps> {
   getMenuList = async () => {
     const { searchName: name, offset, size } = this.state;
     /** 接口对应的offset是指记录偏移位置，不是页偏移量 */
-    const res = await GetDictionaryList({ name, offset: (offset - 1) * size, size });
+    const res = await getDictionaryList({ name, offset: (offset - 1) * size, size });
     console.log(res.data);
     console.log(typeof (res.total - 0));
     /** 设置数据 */

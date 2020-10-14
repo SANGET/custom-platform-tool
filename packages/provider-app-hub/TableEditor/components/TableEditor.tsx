@@ -5,7 +5,7 @@ import { Button, Tag, Tabs } from 'antd';
 import { Link } from "multiple-page-routing";
 import lodash from 'lodash';
 import CreateModal from '@provider-app/dictionary-manager/components/CreateModal';
-import { getTableInfo, allowedDeleted, editTableInfo } from '../apis';
+import { getTableInfo, allowedDeleted, editTableInfo } from '../apiAgents';
 import {
   TABLE_TYPE, NOTIFICATION_TYPE, MESSAGES, BUTTON_TYPE, BUTTON_SIZE, COLUMNS_KEY, FIELDSIZEREGULAR, DATATYPE, REFERENCES_KEY, FOREIGNKEYS_KEY, SPECIES
 } from '../constants';
