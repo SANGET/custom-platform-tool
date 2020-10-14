@@ -539,11 +539,13 @@ const DictionaryList: React.FC = (props) => {
             > 搜索</Button>
           </Form.Item>
         </Form>
-        <div className="float-right">
+        <div className="clear-both w-full" style={{ height: '32px' }}>
           <Button
             type = "primary"
+            className="float-right"
             onClick={(e) => {
               const id = `${new Date().valueOf()}`;
+              console.log(111);
               setModalConfig({
                 type: 'changeSome',
                 name: {
