@@ -11,7 +11,7 @@ import CreateModal from "./CreateModal";
 import {
   delDictionaryServices, getDictionaryListServices, getListOfDictionaryServices, getListOfDictionaryChildServices, delChildOfDictionaryServices,
   postDictionary, editDictionary, editChildOfDictionary, moveChildOfDictionary
-} from "../services/apis";
+} from "../services/apiAgents";
 import CreateDictionary from "./CreateDictionary";
 
 /** 过滤弹窗返回的数据 */
