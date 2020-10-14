@@ -1,13 +1,11 @@
 /** dont Overengineering */
 
-import {
-  CommonObjStruct, TypeOfIUBDSL, AllComponentType, FoundationType
-} from "@iub-dsl/definition";
+import { TypeOfIUBDSL } from "@iub-dsl/definition";
 import SchemasParser from "./state-manage/schemas";
 import widgetParser from "./component-manage/widget-parser";
 import { actionsCollectionParser } from "./actions-manage/actions-parser";
 import { isPageState } from "./state-manage";
-import { eventParser, eventPropsHandle } from "./event-manage";
+import { eventPropsHandle } from "./event-manage";
 
 // 全局的页面通信?
 // state贯穿全局, 数据状态贯穿全局
@@ -15,7 +13,23 @@ import { eventParser, eventPropsHandle } from "./event-manage";
 // code、低代码引擎
 // flow, 流程控制?
 
+const extralUpdateStateConfParser = (actionConf, actionConfParseRes, parserContext) => {
+  const { changeTarget } = actionConf;
+  const { actionShouldChangeState, actionShouldGetState } = actionConfParseRes;
+  if (changeTarget) {
+    actionShouldChangeState.push(actionConf.changeTarget);
+  }
+  return actionConfParseRes;
+};
+
+const extralAPBDSLCURDOfConfParser = (actionConf, actionConfParseRes, parserContext) => {
+  const { actionShouldChangeState, actionShouldGetState } = actionConfParseRes;
+  actionShouldGetState.push("@(schemas).entity_25", "@(schemas).entity_26", "@(schemas).entity_28");
+  return actionConfParseRes;
+};
+
 const genIUBDSLParserCtx = (parseRes) => {
+  /** param: 内部暴露功能或参数到外部 */
   const propsParser = (originHandle, ctx?) => {
     const { getStructItemInfo } = ctx;
     return (key, conf) => {
@@ -23,26 +37,40 @@ const genIUBDSLParserCtx = (parseRes) => {
       if (isPageState(conf)) {
         return {
           type: 'dynamicProps',
-          result: originHandle(key, conf)
+          result: originHandle(key, conf),
+          deps: [conf]
         };
       }
 
       if ((
+        // 需要递归
         tempRes = eventPropsHandle(key, conf, {
           compTag: getStructItemInfo('compTag')
         })
       )) {
-        return {
-          type: 'widgetEvent',
-          result: tempRes
-        };
+        return tempRes;
       }
 
       return originHandle(key, conf);
     };
   };
+
+  const actionConfParser = (actionConf, actionConfParseRes, parserContext) => {
+    // isPageState
+    console.log(actionConf);
+
+    switch (actionConf.type) {
+      case 'updateState':
+        return extralUpdateStateConfParser(actionConf, actionConfParseRes, parserContext);
+      case 'APBDSLCURD':
+        return extralAPBDSLCURDOfConfParser(actionConf, actionConfParseRes, parserContext);
+      default:
+        return actionConfParseRes;
+    }
+  };
   return {
-    propsParser
+    propsParser,
+    actionConfParser
   };
 };
 
@@ -92,7 +120,8 @@ const IUBDSLParser = ({ dsl }) => {
   /** 页面模型解析 */
   const schemasParseRes = SchemasParser(schemas);
   /** 每个动作解析成函数「流程将其连起来」 */
-  const parseActionResult = actionsCollectionParser(actionsCollection);
+  const parseActionResult = actionsCollectionParser(actionsCollection, parserContext);
+  console.log(parseActionResult);
 
   parseRes = {
     ...parseRes,

@@ -1,5 +1,4 @@
-import React, { useState, useReducer, useMemo } from 'react';
-// import { IUBDSLParser, IUBDSLRuntimeContainer } from '../../engine';
+import React from 'react';
 import { IUBDSLParser, IUBDSLRuntimeContainer } from '@iub-dsl/engine';
 
 import { FoundationType } from '@iub-dsl/definition';
@@ -11,16 +10,21 @@ const resolvedDsl: {
 
 };
 
+const genOrder = Math.floor(Math.random() * 10000);
+const genAge = Math.floor(Math.random() * 100);
+
 const tempDsl = {
   sysRtCxtInterface: {},
   schemas: {
     entity_25: {
       fieldMapping: "tableId1.fieldId1",
-      type: FoundationType.string
+      type: FoundationType.string,
+      defaultVal: `张三${genOrder}`,
     },
     entity_26: {
       fieldMapping: "tableId1.fieldId1",
-      type: FoundationType.string
+      type: FoundationType.string,
+      defaultVal: `${genOrder}描述信息描述描述描述~@!!~`,
     },
     entity_27: {
       fieldMapping: "tableId1.fieldId1",
@@ -28,7 +32,9 @@ const tempDsl = {
     },
     entity_28: {
       fieldMapping: "tableId1.fieldId1",
-      type: FoundationType.string
+      type: FoundationType.string,
+      defaultVal: `${genAge}`,
+
     },
   },
   metadataCollection: {},
@@ -36,7 +42,7 @@ const tempDsl = {
   componentsCollection: {
     entity_25: {
       id: "entity_25",
-      label: "test文本框1",
+      label: "用户名",
       type: "componentRef",
       compType: "FormInput",
       title: "文本框",
@@ -54,7 +60,7 @@ const tempDsl = {
     },
     entity_26: {
       id: "entity_26",
-      label: "test文本框2",
+      label: "用户描述",
       type: "componentRef",
       compType: "FormInput",
       title: "文本框",
@@ -70,15 +76,12 @@ const tempDsl = {
         }
       }
     },
-    entity_27: {
-      id: "entity_27", label: "表格", type: "componentRef", compType: "NormalTable", title: "文本框"
-    },
     entity_00: {
-      id: "entity_27", label: "输入框", type: "componentRef", compType: "Input", title: "输入框"
+      id: "entity_27", label: "性别", type: "componentRef", compType: "Input", title: "输入框"
     },
     entity_28: {
       id: "entity_28",
-      label: "test文本框3",
+      label: "用户年龄",
       type: "componentRef",
       compType: "FormInput",
       title: "文本框",
@@ -93,6 +96,62 @@ const tempDsl = {
           actionID: `@(actions).entity_28`
         }
       }
+    },
+    entity_01: {
+      id: "entity_01",
+      label: "按钮",
+      type: "componentRef",
+      compType: "Button",
+      title: "按钮",
+      text: '提交',
+      actions: {
+        onClick: {
+          type: 'actionRef',
+          actionID: `@(actions).entity_01`
+        },
+        onChange: {
+          type: 'actionRef',
+          actionID: `@(actions).entity_25`
+        }
+      }
+    },
+    entity_27: {
+      id: "entity_27",
+      label: "表格",
+      type: "componentRef",
+      compType: "NormalTable",
+      title: "文本框",
+      columns: [
+        {
+          title: '姓名',
+          dataIndex: 'name',
+          key: 'name',
+        },
+        {
+          title: '年龄',
+          dataIndex: 'age',
+          key: 'age',
+        },
+        {
+          title: '住址',
+          dataIndex: 'address',
+          key: 'address',
+        },
+      ],
+      dataSource: [
+        {
+          key: '1',
+          name: '胡彦斌',
+          age: 32,
+          address: '西湖区湖底公园1号',
+        },
+        {
+          key: '2',
+          name: '胡彦祖',
+          age: 42,
+          address: '西湖区湖底公园1号',
+        },
+      ]
     },
   },
   actionsCollection: {
@@ -110,6 +169,61 @@ const tempDsl = {
     entity_28: {
       type: 'updateState',
       changeTarget: '@(schemas).entity_28'
+    },
+    entity_01: {
+      type: 'APBDSLCURD',
+      businesscode: '34562',
+      actionList: {
+        apbA1: {
+          type: 'TableInsert',
+          table: 'test_user',
+          fieldMapping: {
+            type: 'dataCollection',
+            collectionType: 'structObject',
+            struct: [
+              {
+                aliasField: 'id',
+                collectField: '$ID()',
+              },
+              {
+                aliasField: 'username',
+                collectField: '@(schemas).entity_25'
+              },
+              {
+                aliasField: 'description',
+                collectField: '@(schemas).entity_26'
+              },
+              {
+                aliasField: 'age',
+                collectField: '@(schemas).entity_28'
+              },
+            ]
+          },
+        }
+      },
+      actionStep: ['apbA1']
+      // type: 'dataCollection',
+      // collectionType: 'structArray',
+      // struct: [
+      //   '@(schemas).entity_25',
+      //   '@(schemas).entity_26',
+      //   '@(schemas).entity_28',
+      // ]
+      // collectionType: 'structObject',
+      // struct: [
+      //   {
+      //     aliasField: 'username',
+      //     collectField: '@(schemas).entity_25'
+      //   },
+      //   {
+      //     aliasField: 'description',
+      //     collectField: '@(schemas).entity_26'
+      //   },
+      //   {
+      //     aliasField: 'age',
+      //     collectField: '@(schemas).entity_28'
+      //   },
+      // ]
     }
   },
   layoutContent: {
@@ -151,7 +265,7 @@ const IUBDSLRenderer = React.memo<{dsl: any}>(({ dsl }) => {
   }
 
   if (dslParseRes) {
-    return <IUBDSLRuntimeContainer dslParseRes={dslParseRes}/>;
+    return <IUBDSLRuntimeContainer dslParseRes={dslParseRes} />;
   }
   return <ErrorRenderer/>;
 },
