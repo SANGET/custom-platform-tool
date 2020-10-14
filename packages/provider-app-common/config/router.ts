@@ -7,7 +7,7 @@ import {
 } from "@provider-app/data-designer/src/pages";
 import TableInfo from "@provider-app/table-info/app";
 import TableEditor from "@provider-app/table-editor/app";
-import dictionaryManager from "@provider-app/dictionary-manager/app";
+import DictionaryManager from "@provider-app/dictionary-manager/app";
 import TableStructure from "@provider-app/table-structure/app";
 /// //////// 数据设计结束
 import { resolvePagePath } from "multiple-page-routing/utils";
@@ -54,7 +54,7 @@ const RouterConfig: RouterConfigType = {
     title: '页面设计'
   },
   '/dictionary-manager': {
-    component: dictionaryManager,
+    component: DictionaryManager,
     title: '字典管理'
   },
   '/table-info': {
