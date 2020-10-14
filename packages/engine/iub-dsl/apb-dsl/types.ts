@@ -55,7 +55,6 @@ export enum ConditionalOperator {
   N_EMPTY = 'not_empty',
   S_WITH = 'start_with',
   S_N_WITH = 'start_not_with'
-
 }
 
 // {

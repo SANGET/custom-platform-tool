@@ -1,13 +1,12 @@
 import { CommonCondition } from "..";
-import { ApbAction } from "./apb-action";
-import { UpdateState, FeedBack } from "./sys-actions";
-import { ActionsFlow } from "./action-flow";
+import { UpdateState, FeedBack, DataCollection } from "./sys-actions";
+import { APBDSLCURD } from './business-actions';
 
 export interface BasicActionConf extends CommonCondition {
   actionName: string;
 }
 
-export type ActionsDef = UpdateState | FeedBack
+export type ActionsDef = UpdateState | FeedBack | DataCollection | APBDSLCURD
 
 /** APB动作得子流程 */
 // export type ApbActionFn = UpdateState | FeedBack
