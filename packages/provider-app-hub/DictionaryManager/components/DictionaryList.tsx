@@ -32,7 +32,7 @@ const filterParamFromModal = (modalParam) => {
 };
 /** 字典子项的字段配置 */
 const getChildListColumns = ({
-  refreshTable, dictionaryId, setModalConfig, childList
+  refreshTable, dictionaryId, setModalConfig, childList, setChildList
 }): ColumnsType => [
   {
     key: 'decorativeIndex',
@@ -129,6 +129,12 @@ const getChildListColumns = ({
                         if (!canIEdit) return;
                         setModalConfig({ type: 'changeSome', name: { modalVisible: false } });
                         refreshTable([decorativeId]);
+                        const previousChildList = childList.slice();
+                        previousChildList[index] = { ...previousChildList[index], children: [] };
+                        setChildList({
+                          type: 'setListOfDictionaryPure',
+                          name: previousChildList
+                        });
                       });
                     }
                   }
@@ -186,6 +192,8 @@ const useListOfDictionary: UseChildsListData = (param) => {
           item.decorativeId = `${id}.${item.id}`;
           return item;
         });
+      case 'setListOfDictionaryPure':
+        return action.name;
       case 'setListOfDictionaryChild':
         const tmpl = JSON.parse(JSON.stringify(state));
         /** id 匹配的数据才进行children并入 */
@@ -239,6 +247,7 @@ const DictionaryChildren: React.FC = (props) => {
     return getChildListColumns({
       childList,
       setModalConfig,
+      setChildList,
       refreshTable: (unExpandKeys) => {
         // getListData({ id });
         const newExpandedDictionaryChildKeys = unExpandKeys.reduce((arr, unExpandedKey) => {
