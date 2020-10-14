@@ -1,5 +1,5 @@
-import { API_SUCESS_CODE, NOTIFICATION_TYPE } from '@provider-app/table-info/constant';
-import { openNotification, deleteConfirm } from '@provider-app/table-info/service';
+import { API_CODE, NOTIFICATION_TYPE } from '@provider-app/table-editor/constants';
+import { openNotification, deleteConfirm } from '@provider-app/table-editor/service';
 import {
   getDictionaryListServices as getDictionaryListServicesApi,
   getListOfDictionaryChildServices as getListOfDictionaryChildServicesApi,
@@ -15,7 +15,7 @@ import { MESSAGE } from '../constants';
 
 export async function getDictionaryListServices(params) {
   const res = await getDictionaryListServicesApi(params);
-  if (res?.code !== API_SUCESS_CODE.GETTABLEINFO) {
+  if (res?.code !== API_CODE.SUCCESS) {
     openNotification(NOTIFICATION_TYPE.ERROR, res?.msg || MESSAGE.GETDICTIONARYLIST_FAILED);
     return { data: [], total: 0 };
   }
@@ -24,7 +24,7 @@ export async function getDictionaryListServices(params) {
 
 export async function getListOfDictionaryServices({ id }) {
   const res = await getListOfDictionaryServicesApi({ id });
-  if (res?.code !== API_SUCESS_CODE.GETTABLEINFO) {
+  if (res?.code !== API_CODE.SUCCESS) {
     openNotification(NOTIFICATION_TYPE.ERROR, res?.msg || MESSAGE.GETLISTOFDICTIONARY_FAILED);
     return [];
   }
@@ -32,7 +32,7 @@ export async function getListOfDictionaryServices({ id }) {
 }
 export async function getListOfDictionaryChildServices(param) {
   const res = await getListOfDictionaryChildServicesApi(param);
-  if (res?.code !== API_SUCESS_CODE.GETTABLEINFO) {
+  if (res?.code !== API_CODE.SUCCESS) {
     openNotification(NOTIFICATION_TYPE.ERROR, res?.msg || MESSAGE.GETLISTOFDICTIONARYCHILD_FAILED);
     return [];
   }
@@ -43,7 +43,7 @@ export const delChildOfDictionaryServices = (param) => {
     deleteConfirm({
       onOk: async () => {
         const res = await delChildOfDictionaryServicesApi(param);
-        if (res?.code !== API_SUCESS_CODE.GETTABLEINFO) {
+        if (res?.code !== API_CODE.SUCCESS) {
           // openNotification(NOTIFICATION_TYPE.ERROR, res?.msg || '删除字典子项失败，请联系技术人员');
           resolve(false);
           return;
@@ -62,7 +62,7 @@ export const delDictionaryServices = (dictionaryId) => {
     deleteConfirm({
       onOk: async () => {
         const res = await delDictionaryServicesApi(dictionaryId);
-        if (res?.code !== API_SUCESS_CODE.GETTABLEINFO) {
+        if (res?.code !== API_CODE.SUCCESS) {
           openNotification(NOTIFICATION_TYPE.ERROR, res?.msg || MESSAGE.DELETEDICTIONARY_FAILED);
           resolve(false);
           return;
@@ -80,7 +80,7 @@ export const delDictionaryServices = (dictionaryId) => {
 export async function postDictionary(data) {
   const res = await postDictionaryApi(data);
 
-  if (res?.code !== API_SUCESS_CODE.GETTABLEINFO) {
+  if (res?.code !== API_CODE.SUCCESS) {
     openNotification(NOTIFICATION_TYPE.ERROR, res?.msg || MESSAGE.ADDDICTIONARY_FAILED);
     return false;
   }
@@ -89,7 +89,7 @@ export async function postDictionary(data) {
 export async function editDictionary(data) {
   const res = await editDictionaryApi(data);
 
-  if (res?.code !== API_SUCESS_CODE.GETTABLEINFO) {
+  if (res?.code !== API_CODE.SUCCESS) {
     // openNotification(NOTIFICATION_TYPE.ERROR, res?.msg || '字典修改失败');
     return false;
   }
@@ -98,7 +98,7 @@ export async function editDictionary(data) {
 export async function editChildOfDictionary(data) {
   const res = await editChildOfDictionaryApi(data);
 
-  if (res?.code !== API_SUCESS_CODE.GETTABLEINFO) {
+  if (res?.code !== API_CODE.SUCCESS) {
     openNotification(NOTIFICATION_TYPE.ERROR, res?.msg || MESSAGE.EDITCHILDOFDICTIONARY_FAILED);
     return false;
   }
@@ -107,7 +107,7 @@ export async function editChildOfDictionary(data) {
 export async function moveChildOfDictionary(data) {
   const res = await moveChildOfDictionaryApi(data);
 
-  if (res?.code !== API_SUCESS_CODE.GETTABLEINFO) {
+  if (res?.code !== API_CODE.SUCCESS) {
     openNotification(NOTIFICATION_TYPE.ERROR, res?.msg || MESSAGE.MOVECHILD_FAILED);
     return false;
   }
