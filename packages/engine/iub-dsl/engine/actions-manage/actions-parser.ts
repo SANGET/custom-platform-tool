@@ -16,14 +16,22 @@
   * 3. 动作执行
   */
 
-import { UpdateState, ActionsDef } from "@iub-dsl/definition/actions";
+import { ActionsDef } from "@iub-dsl/definition/actions";
+import { updateStateAction, dataCollectionAction } from "./sys-actions";
+import { APBDSLCURDAction } from "./business-actions";
 
-export const actionsCollectionParser = (actionCollection: { [actionId: string]: ActionsDef }) => {
+export const actionsCollectionParser = (
+  actionCollection: { [actionId: string]: ActionsDef },
+  parserContext
+) => {
   const actionIds = Object.keys(actionCollection);
 
   const actionParseRes = {};
   actionIds.forEach((key) => {
-    actionParseRes[key] = actionsParserScheduler(actionCollection[key]);
+    actionParseRes[key] = {
+      actionHandle: getActionFn(actionCollection[key]),
+      ...commonActionConfParser(actionCollection[key], parserContext)
+    };
   });
 
   return {
@@ -32,33 +40,29 @@ export const actionsCollectionParser = (actionCollection: { [actionId: string]: 
   };
 };
 
-const actionsParserScheduler = (actionConf: ActionsDef) => {
+const commonActionConfParser = (actionConf, parserContext) => {
+  const actionConfParseRes = {
+    // actionConf, // ! 尽量不要暴露, 因为actionConf会不安全
+    actionShouldChangeState: [],
+    actionShouldGetState: []
+  };
+  const { actionConfParser } = parserContext;
+  if (actionConfParser) {
+    return actionConfParser(actionConf, actionConfParseRes, parserContext);
+  }
+  return actionConfParseRes;
+};
+
+const getActionFn = (actionConf: ActionsDef) => {
   switch (actionConf.type) {
     case 'updateState':
       return updateStateAction(actionConf);
+    case 'dataCollection':
+      return dataCollectionAction(actionConf);
+    case 'APBDSLCURD':
+      return APBDSLCURDAction(actionConf);
     default:
       console.error('err action');
       return () => {};
   }
 };
-
-/**
- * 单个action和多个action
- * 事件触发、标准输入
- * 1. 需要用到标准输入得, 不需要用到标准输入得
- * 2. 配置流程中的上下文的「流程引擎中识别」
- */
-const updateStateAction = (conf: UpdateState) => {
-  // 更新状态动作的配置和定义
-  const { actionName, changeMapping, changeTarget } = conf;
-  if (changeTarget) {
-    return (action, { targetUpdateState }) => {
-      // action, 标准得事件执行上下文, param2 运行时上下文
-      targetUpdateState(changeTarget, action.changeValue);
-    };
-  }
-  return () => {
-  };
-};
-
-// 最重要的问题: 流程和隔离
