@@ -14,6 +14,7 @@
 // type GetList = (params:{name?:string, description?:string, offset?:number, size?:number}) => Promise<GetListResponse>
 import { API_SUCESS_CODE, NOTIFICATION_TYPE, API_ERROR_MSG } from '@provider-app/table-info/constant';
 import { openNotification, deleteConfirm } from '@provider-app/table-info/service';
+import { MESSAGE } from '../constants';
 
 export async function getDictionaryListServices(params) {
   const res = await $R_P.get({
@@ -21,7 +22,7 @@ export async function getDictionaryListServices(params) {
     params
   });
   if (res?.code !== API_SUCESS_CODE.GETTABLEINFO) {
-    openNotification(NOTIFICATION_TYPE.ERROR, res?.msg || '获取字典列表数据失败，，请联系技术人员');
+    openNotification(NOTIFICATION_TYPE.ERROR, res?.msg || MESSAGE.GETDICTIONARYLIST_FAILED);
     return { data: [], total: 0 };
   }
   return res?.result;
@@ -32,7 +33,7 @@ export async function getListOfDictionaryServices({ id }) {
     url: `/data/v1/dictionary/${id}`
   });
   if (res?.code !== API_SUCESS_CODE.GETTABLEINFO) {
-    openNotification(NOTIFICATION_TYPE.ERROR, res?.msg || '获取字典详情数据失败，，请联系技术人员');
+    openNotification(NOTIFICATION_TYPE.ERROR, res?.msg || MESSAGE.GETLISTOFDICTIONARY_FAILED);
     return [];
   }
   return res?.result?.items;
@@ -42,7 +43,7 @@ export async function getListOfDictionaryChildServices({ pid, dictionaryId }) {
     url: `/data/v1/dictionary_value/${dictionaryId}/${pid}`
   });
   if (res?.code !== API_SUCESS_CODE.GETTABLEINFO) {
-    openNotification(NOTIFICATION_TYPE.ERROR, res?.msg || '获取子字典详情数据失败，，请联系技术人员');
+    openNotification(NOTIFICATION_TYPE.ERROR, res?.msg || MESSAGE.GETLISTOFDICTIONARYCHILD_FAILED);
     return [];
   }
   return res?.result;
@@ -59,7 +60,7 @@ export async function delChildOfDictionaryServices({ pid, dictionaryId }) {
           resolve(false);
           return;
         }
-        openNotification(NOTIFICATION_TYPE.SUCCESS, '字典子项删除成功！');
+        openNotification(NOTIFICATION_TYPE.SUCCESS, MESSAGE.DELETECHILDOFDICTIONARY_SUCCESS);
         resolve(true);
       },
       onCancel: () => {
@@ -80,7 +81,7 @@ export const delDictionaryServices = (dictionaryId) => {
           resolve(false);
           return;
         }
-        openNotification(NOTIFICATION_TYPE.SUCCESS, '字典删除成功！');
+        openNotification(NOTIFICATION_TYPE.SUCCESS, MESSAGE.DELETEDICTIONARY_SUCCESS);
         resolve(true);
       },
       onCancel: () => {
@@ -121,7 +122,7 @@ export async function moveChildOfDictionary(data) {
   const res = await $R_P.put('/data/v1/dictionary_value/move', data);
 
   if (res?.code !== API_SUCESS_CODE.GETTABLEINFO) {
-    openNotification(NOTIFICATION_TYPE.ERROR, res?.msg || '更改排序失败');
+    openNotification(NOTIFICATION_TYPE.ERROR, res?.msg || MESSAGE.MOVECHILD_FAILED);
     return false;
   }
   return true;
