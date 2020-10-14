@@ -23,7 +23,7 @@ export interface SchemasAnalysisRes {
  */
 export interface SchemasAnalysisExtralCtx {
   parentPath: string;
-  tempStruct: { [str: string]: string };
+  tempStruct: { [str: string]: any };
 }
 export type SchemasAnalysisCtx<
   T = FoundationTypeSchemas | ComplexTypeSchemas

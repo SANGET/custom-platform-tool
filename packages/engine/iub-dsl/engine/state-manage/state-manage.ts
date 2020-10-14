@@ -19,8 +19,8 @@ type GetParam = string | {
 const getFullInitStruct = (baseStruct: CommonObjStruct) => {
   return Object.keys(baseStruct).reduce((result, key) => {
     if (typeof baseStruct[key] === 'string') {
-      result[key] = key;
-      // result[key] = baseStruct[key];
+      // result[key] = key;
+      result[key] = baseStruct[key];
     } else if (Array.isArray(baseStruct[key])) {
       result[key] = [];
     } else {
@@ -49,42 +49,30 @@ export const createIUBStore = (analysisData: SchemasAnalysisRes) => {
         if (isPageState(strOrStruct)) {
           return LGet(IUBPageStore, pickKeyWord(strOrStruct), '');
         }
-        return '';
+        // console.warn('stateManage: 非schemas描述');
+        // TODO
+        return strOrStruct;
+      }
+      if (Array.isArray(strOrStruct)) {
+        return strOrStruct.map((newStruct) => getPageState(newStruct));
+      }
+      if (typeof strOrStruct === 'object') {
+        const structKeys = Object.keys(strOrStruct);
+        return structKeys.reduce((result, key) => {
+          result[key] = getPageState(strOrStruct[key]);
+          return result;
+        }, {});
       }
       return IUBPageStore;
     };
+    const getWatchDeps = getPageState;
+
     const handleFn = useMemo(() => {
       const targetUpdateState = (target, value) => {
         target = pickKeyWord(target);
         setIUBPageStore({
           [target]: value
         });
-      };
-
-      // const useWatchState = useMemo(() => {
-      //   debugger;
-      //   return (target, handle) => {
-      //     target = pickKeyWord(target);
-      //     handle(getPageState(target));
-      //   };
-      // }, [IUBPageStore]);
-      // const [watchArr, setWatchArr] = useState<any[]>([]);
-      // const watch = useMemo(() => {
-      //   return watchArr.map(({ target }) => IUBPageStore[target]);
-      // }, [watchArr]);
-      // useEffect(() => {
-      //   console.log(watch);
-      //   console.log(JSON.stringify(watchArr));
-      // }, [...watch]);
-
-      const useWatchState = (target, handle) => {
-        target = pickKeyWord(target);
-        // setWatchArr((preArr) => {
-        //   return [...preArr, { target, handle }];
-        // });
-        useEffect(() => {
-          handle(getPageState(target));
-        }, [IUBPageStore[target]]);
       };
 
       const updatePageState = (newState: CommonObjStruct) => {
@@ -96,12 +84,12 @@ export const createIUBStore = (analysisData: SchemasAnalysisRes) => {
         isPageState,
         targetUpdateState,
         pickKeyWord,
-        useWatchState,
       };
     }, []);
 
     return {
       getPageState,
+      getWatchDeps,
       ...handleFn,
       IUBPageStore
     };
