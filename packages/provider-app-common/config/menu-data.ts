@@ -42,7 +42,7 @@ export const ProviderAppMenuData: MenuDataType[] = [
         title: '字典管理',
         id: '22',
         icon: '',
-        path: '/DictManage'
+        path: '/dictionary-manager'
       },
       {
         title: '其他数据源',
