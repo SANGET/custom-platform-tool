@@ -2,7 +2,7 @@ import React, { useState, useReducer, useEffect } from 'react';
 import {
   Form, Input, Table
 } from 'antd';
-import { ModalFooter } from '@provider-app/table-info/components/ModalFooter';
+import { ModalFooter } from '@provider-app/table-editor/components/ChooseDict';
 import { SketchPicker } from 'react-color';
 import CreateModal from './CreateModal';
 
