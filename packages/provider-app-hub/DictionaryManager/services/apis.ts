@@ -77,7 +77,7 @@ export const delDictionaryServices = (dictionaryId) => {
           url: `/data/v1/tables/${dictionaryId}`,
         });
         if (res?.code !== API_SUCESS_CODE.GETTABLEINFO) {
-          // openNotification(NOTIFICATION_TYPE.ERROR, res?.msg || '删除字典失败，请联系技术人员');
+          openNotification(NOTIFICATION_TYPE.ERROR, res?.msg || MESSAGE.DELETEDICTIONARY_FAILED);
           resolve(false);
           return;
         }
@@ -95,7 +95,7 @@ export async function postDictionary(data) {
   const res = await $R_P.post('/data/v1/dictionary/', data);
 
   if (res?.code !== API_SUCESS_CODE.GETTABLEINFO) {
-    // openNotification(NOTIFICATION_TYPE.ERROR, res?.msg || '字典新增失败');
+    openNotification(NOTIFICATION_TYPE.ERROR, res?.msg || MESSAGE.ADDDICTIONARY_FAILED);
     return false;
   }
   return true;
@@ -113,7 +113,7 @@ export async function editChildOfDictionary(data) {
   const res = await $R_P.put('/data/v1/dictionary_value/', data);
 
   if (res?.code !== API_SUCESS_CODE.GETTABLEINFO) {
-    // openNotification(NOTIFICATION_TYPE.ERROR, res?.msg || '配置子项失败');
+    openNotification(NOTIFICATION_TYPE.ERROR, res?.msg || MESSAGE.EDITCHILDOFDICTIONARY_FAILED);
     return false;
   }
   return true;
