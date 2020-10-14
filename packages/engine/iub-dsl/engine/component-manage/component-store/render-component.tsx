@@ -5,11 +5,13 @@ import { RenderCompInfoItem } from "./types/renderStruct";
 import { DefaultCtx } from "../../IUBDSLRuntimeContainer";
 import { AllUI } from "../UI-factory/types";
 
+let casee;
+
 /**
- * 渲染前锁定阶段
- * 锁定应该是parsecontext
- *  */
-const getCompRenderer = (
+ * 生成每个小组件的渲染器
+ * @returns React.FC
+ */
+const genCompRenderFC = (
   getWidget: (compTag: AllUI) => React.FC<any>
 ) => (
   // info: RenderCompInfoItem
@@ -20,27 +22,30 @@ const getCompRenderer = (
   } = info;
   const Comp = getWidget(compTag);
 
-  return ({ children, extralProps: actralExtralProps }) => {
+  // ! 要控制组件是否更新的最好的办法就是生成组件的deep「deep包含有事件的组件」「难」
+  return ({ children, extralProps: actualExtralProps }) => {
     const { useDynamicPropHandle } = useContext(DefaultCtx);
-    const actralDyamicProps = useDynamicPropHandle?.(dynamicProps) || {};
+    const actualDynamicPros = useDynamicPropHandle?.(dynamicProps) || {};
 
     // ! 全局透传的extralProps一改全改:: 谨慎
-    // const actralExtralProps = useMemo(() => {
+    // const actualExtralProps = useMemo(() => {
     //   return extralProps;
     // }, [extralProps]);
-    const actralComp = useMemo(() => {
-      console.log('compReRender: ', mark);
+
+    const renderedComp = useMemo(() => {
+      // console.count(mark);
       return (
         <Comp
+          key={mark}
           {...staticProps}
-          {...actralExtralProps}
-          {...actralDyamicProps}
+          {...actualDynamicPros}
+          {...actualExtralProps}
           children={children}
         />
       );
-    }, [staticProps, actralExtralProps, actralDyamicProps]);
+    }, [children, actualDynamicPros, staticProps, actualExtralProps]);
 
-    return actralComp;
+    return renderedComp;
   };
 };
 
@@ -57,6 +62,6 @@ const widgetRenderer = (rendeInfo: any[]) => {
 };
 
 export {
-  getCompRenderer,
+  genCompRenderFC,
   widgetRenderer
 };

@@ -8,7 +8,8 @@ import { AllUI } from '../types';
  * IUB-DSL组件描述上的A属性由真实组件的B属性实现
  */
 export const normalTablePropsMapList = {
-  columns: 'columns'
+  columns: 'columns',
+  dataSource: 'dataSource'
 };
 export const normalTablePropsKes = Object.keys(normalTablePropsMapList);
 
@@ -19,22 +20,21 @@ const normalTablePropsMap = basePropsMapCstr<any>(normalTablePropsMapList);
 export const normalTableCompName = AllUI.NormalTable;
 
 const TableFactory = ({
-  id, children, columns, ...ohterProps
+  id, children, ...ohterProps
 }) => {
   /** 下面三步确保props全部正确可用 */
   const allPropsKey = Object.keys(ohterProps);
   const canUsePropsKey = pickBaseInputPropsKey(allPropsKey);
   const actualProps = normalTablePropsMap(ohterProps, canUsePropsKey);
+  console.log(actualProps);
+
   /**
    * 必要的断言
    */
-  console.log(actualProps);
-
   assertPropsKey(id, allPropsKey, canUsePropsKey);
   return (
     <NormalTable
-      columns={columns}
-      dataSource={[]}
+      {...actualProps}
     />
   );
 };

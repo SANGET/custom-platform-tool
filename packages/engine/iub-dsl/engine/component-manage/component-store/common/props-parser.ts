@@ -13,6 +13,7 @@ const dynamicType = ['dynamicProps', 'widgetEvent'];
 /** props处理的结果约定 */
 export const propContextHandle = (result, context) => {
   const { type, result: actralResult } = result;
+
   const { staticProps, dynamicProps } = context;
 
   if (dynamicType.includes(type)) {

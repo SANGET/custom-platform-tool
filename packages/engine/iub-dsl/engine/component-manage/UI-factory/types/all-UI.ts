@@ -4,5 +4,6 @@ export enum AllUI {
   FormItem = 'FormItem',
   FromWrap = 'FromWrap',
   WidgetError = 'WidgetError',
-  NormalTable = 'NormalTable'
+  NormalTable = 'NormalTable',
+  NormalButton = 'NormalButton',
 }

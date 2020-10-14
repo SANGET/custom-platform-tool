@@ -7,14 +7,14 @@ import React from "react";
 /**
  * 渲染list结构 「结构渲染」
  */
-export const renderInfoListRenderer = (
-  actualRenderInfo: any[],
-  compList
+export const renderStructInfoListRenderer = (
+  renderStructInfoList: any[],
+  compRendererFCList
 ) => {
   const renderer: any[] = [];
-  const structLength = actualRenderInfo.length;
+  const structLength = renderStructInfoList.length;
   for (let i = 0; i < structLength; i++) {
-    renderer.push(renderInfoRenderer(actualRenderInfo[i], compList));
+    renderer.push(renderStructInfoRenderer(renderStructInfoList[i], compRendererFCList));
   }
   return renderer;
 };
@@ -22,15 +22,15 @@ export const renderInfoListRenderer = (
 /**
  * 渲染单个结构 「结构渲染」
  */
-const renderInfoRenderer = (
-  info,
-  compList
+const renderStructInfoRenderer = (
+  renderStructInfo,
+  compRendererFCList
 ) => {
-  const { mark, childrenStructInfo } = info;
-  const Comp = compList[mark];
+  const { mark, childrenStructInfo } = renderStructInfo;
+  const Comp = compRendererFCList[mark];
 
   const childrens = childrenStructInfo?.length
-    ? renderInfoListRenderer(childrenStructInfo, compList) : undefined;
+    ? renderStructInfoListRenderer(childrenStructInfo, compRendererFCList) : undefined;
 
   return ({ extralProps }) => {
     const actualChild = childrens?.map((Ch, i) => <Ch extralProps={extralProps} key={mark + i}/>);

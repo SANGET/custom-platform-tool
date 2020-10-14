@@ -1,6 +1,3 @@
-import React, {
-  useContext, useState, useMemo, useEffect
-} from 'react';
 import { AllComponentType } from "@iub-dsl/definition";
 import componentConf from './mock';
 import { AllUI } from './UI-factory/types';
@@ -9,6 +6,7 @@ import { RenderStructInfo, RenderCompInfo } from './component-store/types/render
 // TODO:: 引入问题
 import { normalInputCompParser } from './component-parser/normal-input-parser';
 import { normalTableParser } from './component-parser/normal-table-parser';
+import { normalButtonParser } from './component-parser/normal-button-parser';
 
 /**
  * 调度对应的组件解析器进行解析
@@ -25,8 +23,10 @@ const widgetParseScheduler = (id: string, confItem, options): {
   switch (compType) {
     case AllComponentType.FormInput:
       return normalInputCompParser(id, confItem, options);
-    // case AllComponentType.NormalTable:
-      // return normalTableParser(id, confItem, options);
+    case AllComponentType.Button:
+      return normalButtonParser(id, confItem, options);
+    case AllComponentType.NormalTable:
+      return normalTableParser(id, confItem, options);
     default:
       return {
         renderCompInfo: {

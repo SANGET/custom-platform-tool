@@ -2,23 +2,23 @@ import { AllUI } from "@iub-dsl/engine/component-manage/UI-factory/types";
 import {
   FullRenderStruct, CommonRenderStructParser, RenderStructInfo, RenderCompInfo
 } from "../types";
-import { normalTablePropsKes } from "../../UI-factory";
-import { genRenderStructList } from "../common/render-struct-parser";
+import { normalButtonPropsKeys } from "../../UI-factory";
+import { genRenderStructList } from "./render-struct-parser";
 
-export const genNormalTableFullRenderStruct = () => {
+export const genNormalButtonFullRenderStruct = () => {
   /** TODO: 业务沉淀后再提取公共结构 */
-  const normalTableFullRenderStruct: FullRenderStruct[] = [
+  const normalButtonFullRenderStruct: FullRenderStruct[] = [
     {
-      compTag: AllUI.NormalTable,
+      compTag: AllUI.NormalButton,
       type: 'BaseRenderStruct',
       canSkip: true,
       requireRender: true,
       /** 某个特定的结构, 所需要的props特定 */
-      canUseProps: normalTablePropsKes,
+      canUseProps: normalButtonPropsKeys,
       children: []
     }
   ];
-  return normalTableFullRenderStruct;
+  return normalButtonFullRenderStruct;
 };
 
 /**
@@ -48,8 +48,7 @@ export const normalTableRenderStructParser = (
     renderStructInfo,
     renderCompInfo,
     index: -1
-  },
-  widgetParserOptions);
+  }, widgetParserOptions);
 
   return {
     renderStructInfo,

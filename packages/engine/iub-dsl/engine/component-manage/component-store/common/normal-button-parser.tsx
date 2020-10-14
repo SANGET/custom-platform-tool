@@ -1,6 +1,4 @@
-import { normalTableRenderStructParser, genNormalTableFullRenderStruct } from "./normal-table-render-struct";
-
-import { AllUI } from "../../UI-factory/types";
+import { normalTableRenderStructParser, genNormalButtonFullRenderStruct } from "./normal-button-render-struct";
 
 /** 表单输入框组件所以配置的keys */
 const getTableCompAllConfKeys = (conf) => Object.keys(conf);
@@ -9,13 +7,13 @@ const getTableCompAllConfKeys = (conf) => Object.keys(conf);
  * 解析组件入口, 需要merge其他选择
  * @param id 组件唯一ID
  * @param conf 组件配置
- * @param options 解析选项
+ * @param widgetParserOptions 解析选项
  */
-const normalTableParser = (id, conf, widgetParserOptions): any => {
+const normalButtonParser = (id, conf, widgetParserOptions): any => {
   /** 解析阶段 */
   const allConfKey = getTableCompAllConfKeys(conf);
   const renderInfo = normalTableRenderStructParser(
-    genNormalTableFullRenderStruct(),
+    genNormalButtonFullRenderStruct(),
     {
       baseMark: id,
       allConfKey,
@@ -28,4 +26,4 @@ const normalTableParser = (id, conf, widgetParserOptions): any => {
   return renderInfo;
 };
 
-export { normalTableParser };
+export { normalButtonParser };
