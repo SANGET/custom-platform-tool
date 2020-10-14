@@ -27,7 +27,7 @@ export const genEventWrapFnList = (
   const eventWrapFnList = widgetEvent?.map((conf) => {
     const { eventType, eventConf: { type: actionType, actionID }, eventHandle } = conf;
     /** 获取真实使用的动作 */
-    const { actionHandle, actionShouldChangeState, actionShouldGetState } = getActionFn(actionID);
+    const { actionHandle, changeStateToUse, getStateToUse } = getActionFn(actionID);
     /** 获取规范化事件输入的函数 */
     const normalActionHandle = eventHandle(); // param0: 配置
     if (actionType === 'actionRef') {
@@ -37,7 +37,7 @@ export const genEventWrapFnList = (
           actionHandle,
           normalActionHandle
         }),
-        eventDeps: actionShouldGetState // ** 动作解析可以得到
+        eventDeps: getStateToUse // ** 动作解析可以得到
       };
     }
     return false;

@@ -86,6 +86,7 @@ const normalParamFn = (conf: ConditionItemInfo): FnParam => {
     expsValue
   };
 };
+
 const conditionHandleBefore = (
   originHandle: NormalParserFn,
   {
@@ -210,16 +211,13 @@ const conditionListScheduler = (conditionItemList: ConditionItemList, parserCont
   };
 };
 
-const conditionControlRun = (conf: ConditionControl, context) => {
-  const {
-    getConditionFn
-  } = context;
+const conditionControlRun = (conf: ConditionControl, conditionRun) => {
   const { and, or } = conf;
   const validFn = (idOrControl) => {
     if (typeof idOrControl === 'string') {
-      return getConditionFn(idOrControl)();
+      return conditionRun(idOrControl);
     }
-    return conditionControlRun(idOrControl, context);
+    return conditionControlRun(idOrControl, conditionRun);
   };
   let andRes = false;
   if (and && and.length) {
@@ -256,8 +254,10 @@ export const conditionParser = (parserContext, conf: Condition = conditionExampl
     return () => false;
   };
 
+  const conditionRun = (conditionId) => {
+    return getConditionFn(conditionId)();
+  };
+
   console.log(conditionParseRes);
-  return conditionControlRun(conditionControl, {
-    getConditionFn
-  });
+  return conditionControlRun(conditionControl, conditionRun);
 };

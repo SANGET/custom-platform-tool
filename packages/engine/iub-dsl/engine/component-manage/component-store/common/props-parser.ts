@@ -1,5 +1,3 @@
-import { CompPropsMap } from "../types";
-
 /** 提取某个组件可以使用的props */
 const pickCanUseCompPropsKey = (
   canUsePropsKeys: string[]
@@ -33,14 +31,6 @@ const genCompPropsMap = (key, propsConf) => ({ key, val: propsConf });
 
 const propsParser = (key, val) => ({ [key]: val });
 
-/** TODO: 正在解决
- * 1. 仅针对单层处理, 是否缓存处理
- * 2. 公用参数
- * 3. key/value这个标准
- * 4. 包装代理处理
- * 5. 处理完,如何知道使用的时候呢?
- * 6. 像第2层的action呢?
- */
 const genCompPropsMapList = (
   usePropsKeys: string[], conf: any
 ) => usePropsKeys.map((key) => genCompPropsMap(key, conf[key]));

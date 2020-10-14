@@ -1,11 +1,6 @@
-import React, {
-  useEffect, useMemo, useState, useContext
-} from "react";
-import { RenderCompInfoItem } from "./types/renderStruct";
+import React, { useMemo, useContext } from "react";
 import { DefaultCtx } from "../../IUBDSLRuntimeContainer";
 import { AllUI } from "../UI-factory/types";
-
-let casee;
 
 /**
  * 生成每个小组件的渲染器
@@ -22,7 +17,6 @@ const genCompRenderFC = (
   } = info;
   const Comp = getWidget(compTag);
 
-  // ! 要控制组件是否更新的最好的办法就是生成组件的deep「deep包含有事件的组件」「难」
   return ({ children, extralProps: actualExtralProps }) => {
     const { useDynamicPropHandle } = useContext(DefaultCtx);
     const actualDynamicPros = useDynamicPropHandle?.(dynamicProps) || {};

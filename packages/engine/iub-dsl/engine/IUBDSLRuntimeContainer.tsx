@@ -93,7 +93,6 @@ const genRuntimeCtxFn = (dslParseRes, runtimeCtx) => {
     }, [
       propp,
       eventProps
-      // watch 事件 用到的state
     ]);
   };
 
