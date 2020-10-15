@@ -8,27 +8,27 @@ import { Unexpect } from '../WidgetRenderer';
  * 根据属性项的 type 选择对应的组件进行渲染
  */
 export const PropItemRenderer: React.FC<PropItemRendererProps> = ({
-  propItemConfig,
+  propItemMeta,
   propItemValue,
-  onChange,
+  changeEntityState,
 }) => {
   const propItemRenderCtx = {
-    changeEntityState: onChange,
+    changeEntityState,
     widgetEntityState: propItemValue,
   };
 
   const {
     label, propItemCompDef,
-  } = propItemConfig;
+  } = propItemMeta;
 
   // const propItemCompConfig = getPropItem(propItemCompType);
 
   let Com;
   // const { type: propItemCompType, ...propsForComponent } = propItemCompDef;
-  if (!propItemConfig.render) {
+  if (!propItemMeta.render) {
     Com = <Unexpect />;
   } else {
-    Com = propItemConfig.render(propItemRenderCtx);
+    Com = propItemMeta.render(propItemRenderCtx);
   }
   return (
     <div className="mb10">

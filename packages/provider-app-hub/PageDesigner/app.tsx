@@ -190,7 +190,7 @@ class PageDesignerApp extends React.Component<VisualEditorAppProps & HY.Provider
                   key={activeEntityID}
                   propItemData={appContext.propItemData}
                   // eslint-disable-next-line max-len
-                  propertiesConfig={appContext?.compClassCollection[activeEntity?._classID]?.bindPropItems}
+                  widgetBindedPropItemsMeta={appContext?.compClassCollection[activeEntity?._classID]?.bindPropItems}
                   selectedEntity={activeEntity}
                   propPanelData={appContext.propPanelData}
                   defaultEntityState={activeEntity.propState}

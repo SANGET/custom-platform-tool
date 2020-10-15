@@ -9,7 +9,7 @@ export * from './common';
 const CompClassType = '_comp_c_';
 
 /** 属性项 */
-const PropItemType = '_prop_i_';
+const PropItemMeta = '_prop_i_';
 
 /** 特定编辑器 */
 const EditorCompType = '_editor_c_';
@@ -49,7 +49,7 @@ export const getCompEntity = getCompHOC(CompClassType);
 /**
  * 获取组件类
  */
-export const getPropItem = getCompHOC(PropItemType);
+export const getPropItem = getCompHOC(PropItemMeta);
 
 /**
  * 获取组件类
@@ -64,7 +64,7 @@ export const registerCompClass = batchRegister(CompClassType);
 /**
  * 注册属性项
  */
-export const registerPropItem = batchRegister(PropItemType);
+export const registerPropItem = batchRegister(PropItemMeta);
 
 /**
  * 注册属性项

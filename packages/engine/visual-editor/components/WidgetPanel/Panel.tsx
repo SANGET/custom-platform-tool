@@ -7,7 +7,7 @@
 import React from 'react';
 
 import DragItemComp, { DragItemConfig } from '@engine/visual-editor/spec/DragItemComp';
-import { WidgetClassType } from '@engine/visual-editor/data-structure';
+import { WidgetMetadata } from '@engine/visual-editor/data-structure';
 import { DragableItemTypes } from '../../spec';
 import { GroupPanel, GroupPanelData } from '../GroupPanel';
 
@@ -18,9 +18,9 @@ export interface ComponentPanelProps {
   componentPanelConfig: ComponentPanelConfig
   compClassCollection: any
   /** 可拖拽 item 的包装器 interface */
-  itemWrapper?: (item: WidgetClassType) => React.ReactChild
+  itemWrapper?: (item: WidgetMetadata) => React.ReactChild
   /** 控制 DragItemComp 的 drag 配置的 interface，详情参考 react-dnd */
-  getDragItemConfig?: (item: WidgetClassType) => DragItemConfig
+  getDragItemConfig?: (item: WidgetMetadata) => DragItemConfig
   itemRenderer?: (a, b) => JSX.Element
 }
 

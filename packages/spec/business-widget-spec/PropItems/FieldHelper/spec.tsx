@@ -14,7 +14,7 @@ export const FieldHelperSpec: PropItemCompAccessSpec = () => ({
 
   render() {
     return (
-      <div></div>
+      <div>绑定字段</div>
     );
   }
 });

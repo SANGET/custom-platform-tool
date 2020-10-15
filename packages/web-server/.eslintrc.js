@@ -45,16 +45,16 @@ module.exports = {
     "@typescript-eslint/explicit-member-accessibility": 0,
     "@typescript-eslint/explicit-module-boundary-types": 0,
     "@typescript-eslint/no-empty-function": 0,
-    "indent": ["error", 2, {
-      "SwitchCase": 1
+    indent: ["error", 2, {
+      SwitchCase: 1
     }],
-    "semi": ["error", "always"],
+    semi: ["error", "always"],
     "no-unused-vars": [
       1,
       {
-        "vars": "all",
-        "args": "none",
-        "ignoreRestSiblings": false
+        vars: "all",
+        args: "none",
+        ignoreRestSiblings: false
       }
     ],
     "linebreak-style": 0,
@@ -70,7 +70,7 @@ module.exports = {
     "prefer-object-spread": 0,
     "guard-for-in": 0,
     "comma-dangle": 0,
-    "quotes": 0,
+    quotes: 0,
     "class-methods-use-this": 0,
     "no-restricted-syntax": 0,
     "no-return-await": 0,

@@ -16,10 +16,14 @@ export const ValueHelper = ({
   let Comp;
   switch (selectedItem) {
     case 'costomValue':
-      Comp = <Input value={value} onChange={onChange} />;
+      Comp = (
+        <Input value={value} onChange={onChange} />
+      );
       break;
     case 'expression':
-
+      Comp = (
+        <div className="px-4 py-2">点击设置表达式</div>
+      );
       break;
     case 'variable':
 
