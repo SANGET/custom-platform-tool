@@ -33,6 +33,7 @@
     "prefer-object-spread": 0,
     "guard-for-in": 0,
     "comma-dangle": 0,
+    "global-require": 0,
     "quotes": 0,
     "no-return-await": 0,
     "max-classes-per-file": 0,

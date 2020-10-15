@@ -1,32 +1,25 @@
 /* eslint-disable no-param-reassign */
 import produce from 'immer';
-import { WidgetEntityState, PropItemMeta } from "../../data-structure";
-
-interface EntityStateItemParams {
-  value: any
-  propItemMeta: PropItemMeta
-}
-
-type EntityStateMergeRule = (
-  srcEntityState: WidgetEntityState,
-  entityStateItemParams: EntityStateItemParams
-) => WidgetEntityState
+import { WidgetEntityState, NextEntityState } from "../../data-structure";
 
 /**
  * 合并实例状态的规则
  *
+ * TODO: 完善更新链路
+ *
  * @param srcState
  * @param param1
  */
-export const entityStateMergeRule: EntityStateMergeRule = (
-  srcEntityState = {}, entityStateItemParams
-) => {
-  const { value, propItemMeta } = entityStateItemParams;
-  const srcEntityStateCopy = srcEntityState;
-  const { whichAttr } = propItemMeta;
+export const entityStateMergeRule = (
+  srcEntityState: WidgetEntityState = {},
+  entityStateItemParams: NextEntityState[]
+): WidgetEntityState => {
+  const resState = produce(srcEntityState, (darftData) => {
+    entityStateItemParams.forEach((param) => {
+      const { value, attr } = param;
 
-  const resState = produce(srcEntityStateCopy, (darftData) => {
-    darftData[whichAttr] = value || null;
+      darftData[attr] = value || null;
+    });
   });
 
   return resState;

@@ -11,6 +11,8 @@ import {
   PropItemRefs,
   PropItemCompAccessSpec,
   EditAttr,
+  NextEntityStateType,
+  NextEntityState,
 } from '../../data-structure';
 import { takePropItemConfig } from './takePropItemConfig';
 import { entityStateMergeRule } from './entityStateMergeRule';
@@ -44,9 +46,21 @@ export interface PropertiesEditorProps {
 const debounce = new Debounce();
 
 /**
+ * 包装默认值
+ */
+const wrapDefaultValues = (propItemMeta: PropItemMeta): NextEntityState[] => {
+  const { defaultValues, whichAttr } = propItemMeta;
+  const _defaultValues = defaultValues ? whichAttr.map((attr) => ({
+    attr,
+    value: defaultValues[attr],
+  })) : [];
+  return _defaultValues;
+};
+
+/**
  * 设置实例状态的默认值
  */
-class DefaultEntityStateManager {
+class EntityDefaultStateManager {
   private state = {}
 
   getState = () => {
@@ -54,18 +68,15 @@ class DefaultEntityStateManager {
   }
 
   setState = (
-    propItemMeta
+    propItemMeta: PropItemMeta
   ) => {
-    const { defaultValue } = propItemMeta;
-    this.state = entityStateMergeRule(this.state, {
-      propItemMeta,
-      value: defaultValue
-    });
+    const _defaultValues = wrapDefaultValues(propItemMeta);
+    this.state = entityStateMergeRule(this.state, _defaultValues);
     return this.state;
   }
 }
 
-const defaultEntityStateManager = new DefaultEntityStateManager();
+const entityDefaultStateManager = new EntityDefaultStateManager();
 
 interface PropertiesEditorState {
   entityState: WidgetEntityState
@@ -100,7 +111,7 @@ PropertiesEditorProps, PropertiesEditorState
       } = this.props;
 
       /** 这段代码会执行在 render 之后 */
-      const _defaultEntityState = defaultEntityStateManager.getState();
+      const _defaultEntityState = entityDefaultStateManager.getState();
       initEntityState(_defaultEntityState);
 
       this.hasDefaultEntityState = true;
@@ -115,9 +126,10 @@ PropertiesEditorProps, PropertiesEditorState
    *
    * TODO: 做更强的状态管理工具
    */
-  updateEntityStateForSelf = (propItemMeta: PropItemMeta, value) => {
+  updateEntityStateForSelf = (nextValue: NextEntityStateType) => {
     this.setState(({ entityState }) => {
-      const nextState = entityStateMergeRule(entityState, { propItemMeta, value });
+      const _nextValue = Array.isArray(nextValue) ? nextValue : [nextValue];
+      const nextState = entityStateMergeRule(entityState, _nextValue);
       return {
         entityState: nextState
       };
@@ -166,7 +178,13 @@ PropertiesEditorProps, PropertiesEditorState
       // propID = propItemMeta.id;
     } else {
       /** 如果 bindedPropConfig 是 PropItemRefs */
-      const { propID, override } = bindedPropConfig;
+      const { propID, defaultValues } = bindedPropConfig;
+
+      /** 覆盖属性项的定义 */
+      const override = {
+        defaultValues
+      };
+
       propOriginConfigItem = propItemData[propID];
 
       /** 通过传入 entity 来提取 propItemMeta */
@@ -217,7 +235,7 @@ PropertiesEditorProps, PropertiesEditorState
          * !!!设置初始化状态的实例状态初始值
          * 如果没有被初始化，则返回空的组件节点，等待组件属性的值被初始化后再做下一步渲染
          */
-        defaultEntityStateManager.setState(propItemMeta);
+        entityDefaultStateManager.setState(propItemMeta);
         return null;
       }
 
@@ -229,16 +247,17 @@ PropertiesEditorProps, PropertiesEditorState
             propItemRenderer({
               propItemValue: activeState,
               changeEntityState: (nextValue) => {
+                // TODO: 完善 onChange
                 /**
                  * 性能优化
                  */
-                const prevState = activeState;
-                if (nextValue === prevState) return;
+                // const prevState = activeState;
+                // if (nextValue === prevState) return;
 
                 /**
                  * 更新自身的数据
                  */
-                this.updateEntityStateForSelf(propItemMeta, nextValue);
+                this.updateEntityStateForSelf(nextValue);
 
                 /** 延后更新整个应用的数据 */
                 debounce.exec(() => {

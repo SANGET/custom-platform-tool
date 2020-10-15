@@ -6,7 +6,7 @@ export const FieldHelperSpec: PropItemCompAccessSpec = () => ({
 
   label: '列',
 
-  whichAttr: 'field',
+  whichAttr: ['field'],
 
   propItemCompDef: {
     type: 'FieldSelector',

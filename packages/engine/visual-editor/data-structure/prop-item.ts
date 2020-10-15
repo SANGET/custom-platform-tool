@@ -11,7 +11,16 @@ export type PropItemCompRender = ({
   fxHelper,
 }) => JSX.Element
 
-export type ChangeEntityState = (nextEntityState: WidgetEntity['propState']) => void
+export interface NextEntityState {
+  /** 目标属性 */
+  attr: string
+  /** 属性的值 */
+  value: any
+}
+
+export type NextEntityStateType = NextEntityState | NextEntityState[]
+
+export type ChangeEntityState = (nextEntityState: NextEntityStateType) => void
 
 export interface PropItemRenderContext {
   /** 组件实例状态 */
@@ -34,12 +43,16 @@ export interface PropItemMeta {
    * 2. 如果指定的是数组，则传入到属性项的 widgetEntityState 为包含所有定义的对象结构；
    * 3. 可以被组件元数据的 editAttr 定义覆盖；
    */
-  readonly whichAttr?: string | string[]
+  readonly whichAttr: string[]
   /**
    * 1. 属性项给予组件实例的默认值
-   * 2. 会被组件元数据的 override.defaultValue 中覆盖
+   * 2. 会被组件元数据的 defaultValues 中覆盖
    */
   defaultValue?: any
+  /** 多个属性的默认值 */
+  defaultValues?: {
+    [whichAttr: string]: any
+  }
   /** 属性项的渲染组件的定义 */
   propItemCompDef?: {
     /** 用于找到具体组件 */
