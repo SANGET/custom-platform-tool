@@ -5,7 +5,8 @@ import { referenceEditableConfig } from './ColumnEditableConfigForExpandedInfo';
 import { IForeignKeyFromApi, ISELECTSMENU } from '../interface';
 import { RefTableCode as RefTableCodeTmpl, RefField as RefFieldTmpl, StrategyRenderer as StrategyRendererTmpl } from './CreateReference';
 import { FOREIGNKEYS_KEY, STRATEGY_OPTIONS } from '../constants';
-import { RenderText, getlabelByMenuList } from './FieldColumnsForExpandedInfo';
+import { RenderText } from './FieldColumnsForExpandedInfo';
+import { getlabelByMenuList } from '../service';
 /** 判断控件是否可编辑 */
 const isReferenceEditable = (
   record: IForeignKeyFromApi, formRef: {getFieldValue: (param:string)=>any}, dataIndex: string
