@@ -35,3 +35,7 @@ version.js
 
 dist
 dist-all
+
+# umi
+.umi
+.umi-production

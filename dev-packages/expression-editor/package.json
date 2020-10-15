@@ -1,0 +1,31 @@
+{
+  "name": "@hy/expression-editor",
+  "version": "1.0.0",
+  "description": "基于codeMirror表达式编辑器",
+  "license": "MIT",
+  "scripts": {
+    "start": "cross-env PORT=6681 minictl start",
+    "build": "minictl build"
+  },
+  "devDependencies": {
+    "@infra/react-dev-env-scripts": "^0.0.1"
+  },
+  "dependencies": {
+    "antd": "^4.4.3",
+    "ramda": "^0.27.1",
+    "axios": "^0.20.0",
+    "jsonlint-mod": "^1.7.5"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  }
+}
