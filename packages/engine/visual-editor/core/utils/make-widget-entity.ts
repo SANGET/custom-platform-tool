@@ -5,11 +5,11 @@ import {
   increaseID,
 } from '@engine/visual-editor/utils';
 import {
-  WidgetTypeMeta, WidgetEntity, TempWidgetEntityType, TEMP_ENTITY_ID
+  WidgetMetadata, WidgetEntity, TempWidgetEntityType, TEMP_ENTITY_ID
 } from '../../data-structure';
 
 export type MakeWidgetEntity = (
-  widgetType: WidgetTypeMeta,
+  widgetType: WidgetMetadata,
   options?: {
     idCount?: number
     extendEntityID?: string
@@ -21,7 +21,7 @@ export type MakeWidgetEntity = (
  * 实例化 widgetType
  */
 export const makeWidgetEntity: MakeWidgetEntity = (
-  widgetType: WidgetTypeMeta,
+  widgetType: WidgetMetadata,
   options = {}
 ) => {
   const {

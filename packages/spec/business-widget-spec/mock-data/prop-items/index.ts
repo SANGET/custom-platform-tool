@@ -7,7 +7,7 @@ import { ApiMock } from "../api-mock";
 /**
  * TODO: 搞清楚属性如何影响组件实例，或者是说组件实例如何根据属性数据进行调整
  */
-export const propItemsCollection: PropItemsCollection = {
+const propItemsCollection: PropItemsCollection = {
   prop_field: PropItemComps.FieldHelperSpec,
   prop_real_value: PropItemComps.ValueHelperSpec,
   prop_style_title_color: PropItemComps.TitleColorHelperSpec,

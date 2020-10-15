@@ -1,4 +1,5 @@
 import React from 'react';
+import { Input, Selector } from '@infra/ui';
 import { PropItemCompAccessSpec } from '@engine/visual-editor/data-structure';
 
 export const TitleHelperSpec: PropItemCompAccessSpec = () => ({
@@ -8,11 +9,17 @@ export const TitleHelperSpec: PropItemCompAccessSpec = () => ({
 
   whichAttr: 'title',
 
-  defaultValue: 'label',
+  defaultValue: '输入框标题',
 
-  render() {
+  render(ctx) {
+    const { changeEntityState, widgetEntityState } = ctx;
+    /** 取自身定义的 whichAttr */
+    let value = widgetEntityState.title;
+    if (value === null) value = '';
     return (
-      <div></div>
+      <div>
+        <Input value={value} onChange={changeEntityState} />
+      </div>
     );
   }
 });

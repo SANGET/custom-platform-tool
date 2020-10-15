@@ -7,14 +7,16 @@ import {
 /**
  * 提取 prop item config
  */
-export const extractPropConfig = (
+export const takePropItemConfig = (
   propItemConfigFunc: PropItemCompAccessSpec,
   entity: WidgetEntity,
   extendProps?
 ): PropItemMeta => {
   if (typeof propItemConfigFunc === 'function') {
     const _entity = produce(entity, (draft) => draft);
-    return propItemConfigFunc(_entity);
+    const propItemMeta = propItemConfigFunc(_entity);
+    Object.assign(propItemMeta, extendProps);
+    return propItemMeta;
   }
   return propItemConfigFunc;
 };

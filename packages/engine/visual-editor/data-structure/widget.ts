@@ -1,6 +1,6 @@
 /// //////////////// widget ///////////////////
 
-import { PropItemConfig } from "./prop-item-access-spec";
+import { PropItemCompAccessSpec } from ".";
 
 /**
  * 基础组件类型
@@ -9,12 +9,20 @@ interface BasicWidgetType {
   type: string
 }
 
+export type EditAttr = string | string[]
+
 /**
  * 组件引用属性项的配置项
  */
 export interface PropItemRefs {
   /** 引用的属性项的 id */
   propID: string
+  /**
+   * 1. 该属性项编辑的属性
+   * 2. 可以覆盖由属性项元数据中声明的 whichAttr 属性
+   * 3. 如果不填，默认可以修改全部属性
+   */
+  editAttr?: EditAttr
   /** 覆盖属性项定义的值 */
   override?: {
     defaultValue?: any
@@ -28,7 +36,7 @@ export interface WidgetBindPropItemsType {
   /** 绑定的属性项 */
   propItemRefs?: PropItemRefs[]
   /** 原生属性配置 */
-  rawPropItems?: PropItemConfig[]
+  rawPropItems?: PropItemCompAccessSpec[]
 }
 
 /**
@@ -48,13 +56,23 @@ export interface BasicWidgetClassType<C> {
   widgetDef: C
 }
 
+export interface WidgetEditablePropMeta {
+  type: 'string' | 'number' | 'boolean' | 'any' | 'struct'
+}
+
+export interface WidgetEditableProps {
+  [propName: string]: WidgetEditablePropMeta
+}
+
 /**
  * 可拖动的组件的 class
  */
-export interface WidgetTypeMeta<C = BasicWidgetType> extends BasicWidgetClassType<C> {
+export interface WidgetMetadata<C = BasicWidgetType> extends BasicWidgetClassType<C> {
   id: string
   /** 可以指定组件类被实例化时的 id */
   entityID?: string
+  /** 可编辑的属性 */
+  editableProps: WidgetEditableProps
 }
 
 /// //////////////// widget entity ///////////////////
@@ -62,7 +80,7 @@ export interface WidgetTypeMeta<C = BasicWidgetType> extends BasicWidgetClassTyp
 /**
  * 组件实例信息
  */
-export interface WidgetEntity extends WidgetTypeMeta {
+export interface WidgetEntity extends WidgetMetadata {
   /** 实例 id */
   id: string
   /** 子元素 */
@@ -73,7 +91,7 @@ export interface WidgetEntity extends WidgetTypeMeta {
   _state: string
   // _state: 'active' | 'disable'
   /** 实例化后的 class id */
-  _classID: WidgetTypeMeta['id']
+  _classID: WidgetMetadata['id']
 }
 
 /**

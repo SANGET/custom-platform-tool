@@ -1,6 +1,6 @@
 /// //////////////// 拖拽 ///////////////////
 
-import { WidgetTypeMeta } from "./widget";
+import { WidgetMetadata } from "./widget";
 
 /**
  * 基本拖拽项
@@ -20,7 +20,7 @@ export interface BasicDragableItemType {
  * 组件类拖拽项
  */
 export interface DragableItemType extends BasicDragableItemType {
-  dragableWidgetType: WidgetTypeMeta
+  dragableWidgetType: WidgetMetadata
 }
 
 /**
