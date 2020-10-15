@@ -5,7 +5,7 @@ import React from 'react';
 import { Input } from 'antd';
 
 /**
- * FormInput 必须的 props。在属性项定义时通过 whichAttr 属性指定
+ * FormInput 必须的 props
  */
 export interface FormInputCompProps {
   title: string
@@ -20,6 +20,7 @@ export const FormInputComp: React.FC<FormInputCompProps> = (props) => {
     labelColor,
     defValue,
   } = props;
+
   return (
     <div>
       <div

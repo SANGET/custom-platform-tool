@@ -12,13 +12,16 @@
     "packages/engine/**/*",
     "packages/infrastructure/*",
     "packages/consumer-app/*",
-    "packages/spec/*"
+    "packages/web-platform/",
+    "packages/spec/*",
+    "dev-packages/expression-editor/"
   ],
   "scripts": {
     "lerna:bootstrap": "lerna bootstrap",
     "start:all": "lerna run --parallel --stream start",
     "start:web-platform": "cd ./packages/web-platform && npm run dev",
     "start:provider-app": "yarn && cd ./packages/provider-app-entry && npm start",
+    "start:expression-editor": "yarn && cd ./dev-packages/expression-editor && npm start",
     "start:data": "cd ./packages/provider-app-entry/app && npm start",
     "start:visual-editor": "cd ./packages/engine/visual-editor && npm start",
     "start:page-designer": "cd ./packages/provider-app-hub/PageDesigner && npm start",

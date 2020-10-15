@@ -1,7 +1,5 @@
 import React from 'react';
 import { PropItemRendererProps } from '@engine/visual-editor/components/PropertiesEditor/types';
-import * as PropItemComps from '@infra/ui/form';
-import { getPropItem } from '@spec/business-widget';
 import { FXContainer } from './FXContainer';
 import { Unexpect } from '../WidgetRenderer';
 
@@ -10,29 +8,27 @@ import { Unexpect } from '../WidgetRenderer';
  * 根据属性项的 type 选择对应的组件进行渲染
  */
 export const PropItemRenderer: React.FC<PropItemRendererProps> = ({
-  propItemConfig,
+  propItemMeta,
   propItemValue,
-  onChange,
+  changeEntityState,
 }) => {
+  const propItemRenderCtx = {
+    changeEntityState,
+    widgetEntityState: propItemValue,
+  };
+
   const {
-    label, propItemCompDef, propItemCompRender,
-  } = propItemConfig;
+    label, propItemCompDef,
+  } = propItemMeta;
+
+  // const propItemCompConfig = getPropItem(propItemCompType);
 
   let Com;
-  if (propItemCompRender) {
-    Com = propItemCompRender({
-      onChange,
-      InterComp: PropItemComps,
-      fxHelper: FXContainer
-    });
-  } else if (propItemCompDef) {
-    const { type: propItemCompType, ...propsForComponent } = propItemCompDef;
-    const propItemCompConfig = getPropItem(propItemCompType);
-    if (propItemCompConfig.unexpected) {
-      Com = <Unexpect />;
-    } else {
-      Com = propItemCompConfig.render(propItemValue, onChange);
-    }
+  // const { type: propItemCompType, ...propsForComponent } = propItemCompDef;
+  if (!propItemMeta.render) {
+    Com = <Unexpect />;
+  } else {
+    Com = propItemMeta.render(propItemRenderCtx);
   }
   return (
     <div className="mb10">

@@ -90,7 +90,7 @@ const Table: React.FC<IProps> = (props: IProps, ref) => {
     if (operate === "edit") {
       onNavigate({
         type: "PUSH",
-        path: `/table-info`,
+        path: `/table-editor`,
         pathExtend: id,
         params: { id, title: `编辑表_${name}` }
       });

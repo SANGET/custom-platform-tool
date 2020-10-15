@@ -2,17 +2,24 @@
  * 属性项接入标准
  */
 
-import { PropItemType } from "./prop-item";
+import { PropItemMeta } from "./prop-item";
 import { WidgetEntity } from "./widget";
 
 /**
- * 返回属性项的函数接入方式
+ * 属性项接入方法的上下文
  */
-export type PropItemConfig = (entity: WidgetEntity) => PropItemType
+export interface PropItemCompAccessSpecCtx {
+  entity: WidgetEntity
+}
+
+/**
+ * 属性项的组件的接入标准
+ */
+export type PropItemCompAccessSpec = (propItemCompAccessSpecCtx: PropItemCompAccessSpecCtx) => PropItemMeta
 
 /**
  * 属性项集合
  */
 export interface PropItemsCollection {
-  [colID: string]: PropItemConfig
+  [colID: string]: PropItemCompAccessSpec
 }

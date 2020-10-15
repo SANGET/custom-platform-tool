@@ -1,0 +1,11 @@
+export const MESSAGE = {
+  GETDICTIONARYLIST_FAILED: '获取字典列表数据失败，请联系技术人员',
+  GETLISTOFDICTIONARY_FAILED: '获取字典详情数据失败，请联系技术人员',
+  GETLISTOFDICTIONARYCHILD_FAILED: '获取子字典详情数据失败，请联系技术人员',
+  DELETECHILDOFDICTIONARY_SUCCESS: '字典子项删除成功！',
+  DELETEDICTIONARY_SUCCESS: '字典删除成功！',
+  MOVECHILD_FAILED: '更改排序失败',
+  ADDDICTIONARY_FAILED: '字典新增失败',
+  DELETEDICTIONARY_FAILED: '删除字典失败，请联系技术人员',
+  EDITCHILDOFDICTIONARY_FAILED: '配置子项失败，请联系技术人员'
+};

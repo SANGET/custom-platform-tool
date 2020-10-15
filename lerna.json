@@ -9,7 +9,9 @@
     "packages/engine/*",
     "packages/infrastructure/*",
     "packages/consumer-app/*",
-    "packages/spec/*"
+    "packages/web-platform/",
+    "packages/spec/*",
+    "dev-packages/expression-editor/"
   ],
   "version": "independent",
   "npmClient": "yarn",
