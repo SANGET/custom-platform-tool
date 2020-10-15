@@ -1,10 +1,8 @@
-import React, { ReactElement } from 'react'
+import React, { ReactElement } from 'react';
 
-import ExpressEditor from '@hy/expression-editor'
+import ExpressEditor from '@hy/expression-editor';
 
-
-const Base: React.FC =  (): ReactElement => {
-
-  return (<ExpressEditor/>)
-}
-export default Base
+const Base: React.FC = (): ReactElement => {
+  return (<ExpressEditor/>);
+};
+export default Base;

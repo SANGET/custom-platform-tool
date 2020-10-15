@@ -1,7 +1,7 @@
 import { EventDataNode, DataNode } from "antd/lib/tree";
 
 interface IExpandNode {
-  name?: string ;
+  name?: string
   description?: string
 }
 export interface ITreeNodeInfo {

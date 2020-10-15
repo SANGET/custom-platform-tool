@@ -1,20 +1,21 @@
-import React, { ReactElement, Key, useState } from 'react'
-import { Tree, Card } from 'antd'
-import CodeEditor from '@engine/code-editor'
-import { FUNCTION_TREE } from './config'
-import { ITreeNodeInfo } from './interface'
-import "./style.less"
+import React, { ReactElement, Key, useState } from 'react';
+import { Tree, Card } from 'antd';
+import CodeEditor from '@engine/code-editor';
+import { FUNCTION_TREE } from './config';
+import { ITreeNodeInfo } from './interface';
+import "./style.less";
+
 interface IProps {
   onSelect: (info: ITreeNodeInfo) => void;
 }
 
 const FuncTree: React.FC<IProps> = (props: IProps): ReactElement => {
-  const [ description, setDescription ] = useState("")
-  const { onSelect } = props
+  const [description, setDescription] = useState("");
+  const { onSelect } = props;
   const handleSelectNode = (selectedKeys: Key[], info: ITreeNodeInfo) => {
-    info.node.description && setDescription(info.node.description)
-    onSelect(info)
-  }
+    info.node.description && setDescription(info.node.description);
+    onSelect(info);
+  };
   return (
     <div className="tree-menu">
       <Card title="功能函数" style={{ width: 300 }}>
@@ -36,6 +37,6 @@ const FuncTree: React.FC<IProps> = (props: IProps): ReactElement => {
         />
       </Card>
     </div>
-  )
-}
-export default React.memo(FuncTree)
+  );
+};
+export default React.memo(FuncTree);

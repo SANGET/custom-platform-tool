@@ -1,3 +1,3 @@
-import CodeEditor from "./src/CodeEditor"
+import CodeEditor from "./src/CodeEditor";
 
-export default CodeEditor
+export default CodeEditor;

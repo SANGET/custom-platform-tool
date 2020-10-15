@@ -1,5 +1,5 @@
 {
-  "name": "@engine/lowCode",
+  "name": "@engine/low-code",
   "version": "1.0.0",
   "description": "低代码引擎",
   "dependencies": {

@@ -1,7 +1,9 @@
-import { Modal } from 'antd'
-const R = require('ramda')
+import { Modal } from 'antd';
+
+const R = require('ramda');
+
 window.HY = {
-  Modal: Modal,
+  Modal,
   info: console.info,
-  R: R
-}
+  R
+};

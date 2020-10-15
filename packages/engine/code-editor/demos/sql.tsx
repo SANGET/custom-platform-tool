@@ -1,5 +1,6 @@
-import React, { ReactElement } from 'react'
+import React, { ReactElement } from 'react';
 import CodeEditor from '@engine/code-editor';
+
 const Sql: React.FC = (): ReactElement => {
   return <CodeEditor
     value= ""
@@ -8,6 +9,6 @@ const Sql: React.FC = (): ReactElement => {
       tables: { table1: ['name', 'score', 'birthDate'], table2: ['bcd'], table3: ['edd'] },
       completeSingle: false,
     }}
-  />
-}
-export  default Sql
+  />;
+};
+export default Sql;

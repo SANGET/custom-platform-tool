@@ -1,4 +1,4 @@
-import { IBaseOption } from "./interface"
+import { IBaseOption } from "./interface";
 
 interface IFuncTree {
   key: string;
@@ -8,13 +8,12 @@ interface IFuncTree {
   children?: IFuncTree[]
 }
 
-
 export const DATA_TYPE: IBaseOption[] = [
-  {key: 'String', value: '字符串'},
-  {key: 'Number', value: '数字'},
-  {key: 'Array', value: '数组'},
-  {key: 'Object', value: '对象'},
-]
+  { key: 'String', value: '字符串' },
+  { key: 'Number', value: '数字' },
+  { key: 'Array', value: '数组' },
+  { key: 'Object', value: '对象' },
+];
 export const FUNCTION_TREE: IFuncTree = {
   key: "0",
   title: "HY",
@@ -33,7 +32,7 @@ HY.info(params);
 @params 类型为字符串或者对象
 使用: HY.info("hello, world")
 `,
-        },{
+        }, {
           key: "0-1-2",
           title: "错误提醒",
           name: "HY.Modal.warning({title: 'xxxx'});",
@@ -57,19 +56,20 @@ title: "测试警告",
 content: "内容",
 onOk: function() { console.log("onOk") }
 })
-`},
-{
-  key: "0-1-3",
-  title: "求和",
-  name: "HY.R.add(1,2);",
-  description: `
+`
+        },
+        {
+          key: "0-1-3",
+          title: "求和",
+          name: "HY.R.add(1,2);",
+          description: `
 HY.R.add(number1, number2, ...numbern);
 功能: 求和
 @params number1
 使用: HY.R.add(1,2)
 `,
-}
+        }
       ]
     }
   ]
-}
+};

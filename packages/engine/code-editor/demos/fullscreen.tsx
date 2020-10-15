@@ -1,14 +1,15 @@
-import React, { ReactElement } from 'react'
-import CodeEditor from '@engine/code-editor'
-import { Button } from 'antd'
+import React, { ReactElement } from 'react';
+import CodeEditor from '@engine/code-editor';
+import { Button } from 'antd';
+
 const FullScreen: React.FC = (): ReactElement => {
-  let refEditor: any
+  let refEditor: any;
   const handlefullScreen = (): void => {
-    refEditor.setOption("fullScreen" as any, !refEditor.getOption("fullScreen" as any))
-  }
+    refEditor.setOption("fullScreen" as any, !refEditor.getOption("fullScreen" as any));
+  };
   const getEditor = (editor: any) => {
-    refEditor = editor
-  }
+    refEditor = editor;
+  };
   return (
     <>
       <CodeEditor
@@ -17,16 +18,16 @@ const FullScreen: React.FC = (): ReactElement => {
         fullscreen={true}
         getEditor={getEditor}
         extraKeys={{
-          "F1": function (cm) {
+          F1(cm) {
             cm.setOption("fullScreen" as any, !cm.getOption("fullScreen" as any));
           },
-          "Esc": function (cm) {
+          Esc(cm) {
             if (cm.getOption("fullScreen" as any)) cm.setOption("fullScreen" as any, false);
           }
         }}
       />
       <Button onClick={handlefullScreen}>全屏</Button>
     </>
-  )
-}
-export default FullScreen
+  );
+};
+export default FullScreen;

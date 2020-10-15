@@ -1,5 +1,5 @@
-const STRIP_COMMENTS = /((\/\/.*$)|(\/\*[\s\S]*?\*\/))/mg
-const ARGUMENT_NAMES = /([^\s,]+)/g
+const STRIP_COMMENTS = /((\/\/.*$)|(\/\*[\s\S]*?\*\/))/mg;
+const ARGUMENT_NAMES = /([^\s,]+)/g;
 /**
  * 比较两个 类型 值是否相等
  * @export
@@ -8,36 +8,36 @@ const ARGUMENT_NAMES = /([^\s,]+)/g
  * @returns boolean
  */
 export function equals(x: any, y: any) {
-  var f1 = x instanceof Object
-  var f2 = y instanceof Object
+  const f1 = x instanceof Object;
+  const f2 = y instanceof Object;
   if (!f1 || !f2) {
-      return x === y
+    return x === y;
   }
   if (Object.keys(x).length !== Object.keys(y).length) {
-      return false
+    return false;
   }
-  var newX = Object.keys(x)
-  for (var p in newX) {
-      p = newX[p];
-      var a = x[p] instanceof Object;
-      var b = y[p] instanceof Object;
-      if (a && b) {
-          equals(x[p], y[p])
-      } else if (x[p] !== y[p]) {
-          return false;
-      }
+  const newX = Object.keys(x);
+  for (let p in newX) {
+    p = newX[p];
+    const a = x[p] instanceof Object;
+    const b = y[p] instanceof Object;
+    if (a && b) {
+      equals(x[p], y[p]);
+    } else if (x[p] !== y[p]) {
+      return false;
+    }
   }
-  return true
+  return true;
 }
 /**
  * 除去代码片段里面注释
  * @param codes
  */
 export function removeComments(codes: string): string {
-  const reg = /("([^\\\"]*(\\.)?)*")|('([^\\\']*(\\.)?)*')|(\/{2,}.*?(\r|\n|$))|(\/\*(\n|.)*?\*\/)/g
+  const reg = /("([^\\\"]*(\\.)?)*")|('([^\\\']*(\\.)?)*')|(\/{2,}.*?(\r|\n|$))|(\/\*(\n|.)*?\*\/)/g;
   return codes.replace(reg, (word: string) => {
-    return /^\/{2,}/.test(word) || /^\/\*/.test(word) ? "" : word
-  }).trim()
+    return /^\/{2,}/.test(word) || /^\/\*/.test(word) ? "" : word;
+  }).trim();
 }
 /**
  * 获取 function 里面的参数
@@ -45,11 +45,11 @@ export function removeComments(codes: string): string {
  * @return string[]
  */
 export function getFuncParamNames(func: string): string[] {
-  var fnStr = func.toString().replace(STRIP_COMMENTS, '')
-  var result = fnStr.slice(fnStr.indexOf('(')+1, fnStr.indexOf(')')).match(ARGUMENT_NAMES)
-  return result ? result: []
+  const fnStr = func.toString().replace(STRIP_COMMENTS, '');
+  const result = fnStr.slice(fnStr.indexOf('(') + 1, fnStr.indexOf(')')).match(ARGUMENT_NAMES);
+  return result || [];
 }
 
 export function firstUpperCase(str: string): string {
-  return str.charAt(0).toUpperCase() + str.slice(1)
+  return str.charAt(0).toUpperCase() + str.slice(1);
 }
