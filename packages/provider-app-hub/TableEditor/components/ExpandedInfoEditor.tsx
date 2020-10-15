@@ -34,7 +34,7 @@ class ExpandedInfoEditor extends React.Component {
 
   render() {
     const {
-      title, actionAreaRenderer, columns, dataSource,
+      title, actionAreaRenderer, columns, dataSource, rowSelectionType,
       blurRow, clickRow, doubleClickRow, formRef, changeValue
     } = this.props;
     const { selectedRowKeys } = this.state;
@@ -58,12 +58,12 @@ class ExpandedInfoEditor extends React.Component {
               pagination={false}
               rowKey='id'
               scroll={{ x: '100%' }}
-              rowSelection = {{
-                type: 'radio',
+              rowSelection = {rowSelectionType ? {
+                type: rowSelectionType,
                 selectedRowKeys,
                 hideSelectAll: true,
                 fixed: true
-              }}
+              } : null}
               onRow={(record, index) => {
                 return {
                   onBlur: (event) => { blurRow(record, index); },

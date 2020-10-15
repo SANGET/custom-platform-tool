@@ -674,6 +674,7 @@ class TableEditor extends React.Component {
         <Tabs onTabClick={this.handelChangeTab} type="card" style={{ width: "100%" }} activeKey={activeAreaInExpandedInfo}>
           <TabPane tab="表字段" key="fieldList">
             { activeAreaInExpandedInfo === 'fieldList' ? (<ExpandedInfoEditor
+              rowSelectionType="radio"
               ref="fieldList"
               formRef={this.expandInfoFormRef}
               title="字段管理"
@@ -745,6 +746,7 @@ class TableEditor extends React.Component {
           <TabPane tab="引用表" key="referenceList">
             { activeAreaInExpandedInfo === 'referenceList' ? (
               <ExpandedInfoEditor
+                rowSelectionType="radio"
                 ref="referenceList"
                 formRef={this.expandInfoFormRef}
                 title="引用字段管理"
@@ -778,6 +780,7 @@ class TableEditor extends React.Component {
           <TabPane tab="外键设置" key="foreignKeyList">
             { activeAreaInExpandedInfo === 'foreignKeyList' ? (
               <ExpandedInfoEditor
+                rowSelectionType="radio"
                 ref="foreignKeyList"
                 formRef={this.expandInfoFormRef}
                 title="外键字段管理"
