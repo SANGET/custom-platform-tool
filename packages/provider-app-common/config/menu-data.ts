@@ -23,7 +23,13 @@ export const ProviderAppMenuData: MenuDataType[] = [
         id: '12',
         icon: '',
         path: '/page-manager'
-      }
+      },
+      {
+        title: '弹窗选择',
+        id: '13',
+        icon: '',
+        path: '/popup-window-selector'
+      },
     ]
   },
   {

@@ -9,7 +9,6 @@
     "packages/engine/*",
     "packages/infrastructure/*",
     "packages/consumer-app/*",
-    "packages/web-platform/",
     "packages/spec/*"
   ],
   "version": "independent",

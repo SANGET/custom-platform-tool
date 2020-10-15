@@ -7,6 +7,8 @@ import {
 } from "@provider-app/data-designer/src/pages";
 import TableInfo from "@provider-app/table-info/app";
 import TableStructure from "@provider-app/table-structure/app";
+import PopupWindowSelector from "@provider-app/popup-window-selector/app";
+
 /// //////// 数据设计结束
 import { resolvePagePath } from "multiple-page-routing/utils";
 
@@ -58,6 +60,10 @@ const RouterConfig: RouterConfigType = {
   '/table-info': {
     title: '编辑表',
     component: TableInfo
+  },
+  '/popup-window-selector': {
+    title: '弹窗选择',
+    component: PopupWindowSelector
   },
 };
 
