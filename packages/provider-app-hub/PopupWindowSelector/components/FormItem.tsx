@@ -53,12 +53,12 @@ export const NameCodeItem: React.FC<IProps> = React.memo((props: IProps): ReactE
         rules={[
           { required: true, message: '弹窗标题不能为空' },
           { pattern: RE.CENUSB, message: '输入字段可以为中文、英文、数字、下划线、括号' },
-          { max: 64, message: '最多只能输入64个字符' },
+          { max: 30, message: '最多只能输入30个字符' },
         ]}
       >
         <Input
           onChange={handleNameChange}
-          placeholder='最多可输入64个字符，名称唯一。输入字段可以为中文、英文、数字、下划线、括号'
+          placeholder='最多可输入30个字符，名称唯一。输入字段可以为中文、英文、数字、下划线、括号'
         />
       </Form.Item>
       <Form.Item
