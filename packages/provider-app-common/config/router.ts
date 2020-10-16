@@ -9,6 +9,9 @@ import TableInfo from "@provider-app/table-info/app";
 import TableEditor from "@provider-app/table-editor/app";
 import DictionaryManager from "@provider-app/dictionary-manager/app";
 import TableStructure from "@provider-app/table-structure/app";
+
+import PopupWindowSelector from "@provider-app/popup-window-selector/app";
+
 /// //////// 数据设计结束
 import { resolvePagePath } from "multiple-page-routing/utils";
 
@@ -60,6 +63,10 @@ const RouterConfig: RouterConfigType = {
   '/table-info': {
     title: '编辑表',
     component: TableInfo
+  },
+  '/popup-window-selector': {
+    title: '弹窗选择',
+    component: PopupWindowSelector
   },
   '/table-editor': {
     title: '编辑表',
