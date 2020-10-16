@@ -10,17 +10,12 @@ export const ValueHelperSpec: PropItemCompAccessSpec = (propItemCtx) => ({
   whichAttr: ['defValue', 'exp', 'variable'],
 
   render(ctx) {
-    const { fxHelper, changeEntityState, widgetEntityState } = ctx;
-    console.log(widgetEntityState);
+    const { changeEntityState, widgetEntityState } = ctx;
 
-    /** 取自身定义的 whichAttr */
-    let value = widgetEntityState.defValue;
-    if (value === null) value = '';
     return (
       <ValueHelper
-        fxHelper={fxHelper}
         onChange={changeEntityState}
-        value={value}
+        widgetEntityState={widgetEntityState}
       />
     );
   }

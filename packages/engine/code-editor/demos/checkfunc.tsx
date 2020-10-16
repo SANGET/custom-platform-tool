@@ -1,11 +1,12 @@
-import React, { ReactElement } from 'react'
-import CodeEditor from '@engine/code-editor'
-import { Tree, Row, Col} from 'antd'
-import { Key } from 'antd/lib/table/interface'
-import { EventDataNode, DataNode } from 'antd/lib/tree'
-import { parse } from '@babel/parser'
+import React, { ReactElement } from 'react';
+import CodeEditor from '@engine/code-editor';
+import { Tree, Row, Col } from 'antd';
+import { Key } from 'antd/lib/table/interface';
+import { EventDataNode, DataNode } from 'antd/lib/tree';
+import { parse } from '@babel/parser';
+
 const Home: React.FC = (): ReactElement => {
-  let editor: any
+  let editor: any;
   const treeData = [{
     title: 'HY',
     key: '0-0',
@@ -33,7 +34,7 @@ const Home: React.FC = (): ReactElement => {
         ]
       },
     ],
-  }]
+  }];
   const handleSelectNode = (selectedKeys: Key[], info: {
     event: 'select';
     selected: boolean;
@@ -41,18 +42,18 @@ const Home: React.FC = (): ReactElement => {
     selectedNodes: DataNode[];
     nativeEvent: MouseEvent;
   }) => {
-    console.dir(editor)
-    const cur = editor.getCursor()
-    console.dir(cur)
-    editor.replaceRange(info.node.value, cur, cur, '+insert')
-    editor.setCursor({ line: cur.line+1, ch: cur.ch + 1 })
+    console.dir(editor);
+    const cur = editor.getCursor();
+    console.dir(cur);
+    editor.replaceRange(info.node.value, cur, cur, '+insert');
+    editor.setCursor({ line: cur.line + 1, ch: cur.ch + 1 });
     // console.dir(selectedKeys)
     // console.dir(info.node.value!)
     // console.dir(info.nativeEvent)
     // console.dir(info.event)
     // console.dir(info.nativeEvent)
-  }
-  console.dir(parse('A(a,b)+B(C(c,d),e)', {sourceType: "script"}))
+  };
+  console.dir(parse('A(a,b)+B(C(c,d),e)', { sourceType: "script" }));
   return (
     <Row justify="start">
       <Col flex="auto">
@@ -71,6 +72,6 @@ const Home: React.FC = (): ReactElement => {
       </Col>
     </Row>
 
-  )
-}
-export  default Home
+  );
+};
+export default Home;

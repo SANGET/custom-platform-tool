@@ -6,7 +6,7 @@ export const ColumnHelperSpec: PropItemCompAccessSpec = () => ({
 
   label: '列数量',
 
-  whichAttr: 'columnCount',
+  whichAttr: ['columnCount'],
 
   propItemCompDef: {
     type: 'FieldSelector',

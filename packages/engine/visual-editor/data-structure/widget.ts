@@ -23,9 +23,9 @@ export interface PropItemRefs {
    * 3. 如果不填，默认可以修改全部属性
    */
   editAttr?: EditAttr
-  /** 覆盖属性项定义的值 */
-  override?: {
-    defaultValue?: any
+  /** 覆盖属性项定义的默认值 */
+  defaultValues?: {
+    [editAttr: string]: any
   }
 }
 
