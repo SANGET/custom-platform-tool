@@ -15,6 +15,8 @@ export interface DatasourceItem {
   moduleId: string
   /** 名字 */
   name: string
+  /** 类型 */
+  type: string
   /** columns */
   columns: ColumnItem[]
 }

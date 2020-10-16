@@ -48,6 +48,7 @@ export const ValueHelper: React.FC<ValueHelperProps> = ({
                 return (
                   <div>
                     <ExpEditor
+                      defaultValue={exp}
                       onSubmit={(val) => {
                         onChange([
                           { value: val, attr: 'exp' },

@@ -31,42 +31,60 @@ class PageDesignerApp extends React.Component<VisualEditorAppProps & HY.Provider
   }
 
   /**
+   * 包装更新页面的数据源的数据结构
+   * @param dataSourcesFormRemote
+   */
+  wrapDataSourceDataForUpdate = (dataSourcesFormRemote) => {
+    const dataSourcesItems = dataSourcesFormRemote.map((tableData) => {
+      console.log('tableData', tableData);
+      return {
+        datasourceId: tableData.id,
+        datasourceType: tableData.type
+      };
+    });
+    return {
+      dataSources: dataSourcesItems
+    };
+  }
+
+  /**
    * 响应更新数据源的回调
    * TODO: 优化链路
    */
-  onUpdatedDatasource = async (addingData) => {
+  onUpdatedDatasource = async (addingDataFormRemote) => {
     const { appContext, dispatcher, appLocation } = this.props;
     const { pageID, title } = appLocation;
     const { UpdateAppContext } = dispatcher;
     const pageContent = this.getPageContent();
 
-    await updatePageService(this.getPageInfo(), pageContent, {
-      dataSources: addingData.map((tableData) => {
-        return {
-          datasourceId: tableData.id,
-          datasourceType: tableData.type
-        };
-      })
-    });
+    await updatePageService(
+      this.getPageInfo(),
+      pageContent,
+      this.wrapDataSourceDataForUpdate(addingDataFormRemote)
+    );
     const {
-      datasources
+      interDatasources
     } = await getPageContentWithDatasource(pageID);
     UpdateAppContext({
       payload: {
-        datasources
+        interDatasources
       }
     });
   }
 
+  getPageExtendInfo = () => {
+    return this.props.appContext.payload.interDatasources;
+  }
+
   getPageInfo = () => {
     const {
-      appLocation,
+      appLocation
     } = this.props;
     const { pageID, title } = appLocation;
     return {
       id: pageID,
       name: title,
-      type: 2
+      type: 2,
     };
   }
 
@@ -106,7 +124,7 @@ class PageDesignerApp extends React.Component<VisualEditorAppProps & HY.Provider
       getPageContentWithDatasource(pageID)
     ]);
     const {
-      datasources, pageContent, pageDataRes
+      interDatasources, pageContent, pageDataRes
     } = remotePageData;
 
     /** 准备初始化数据 */
@@ -114,8 +132,8 @@ class PageDesignerApp extends React.Component<VisualEditorAppProps & HY.Provider
       draftInitData.pageContent = pageContent;
       draftInitData.payload = {
         pageDataRes,
-        // 填入 datasources
-        datasources,
+        // 填入 interDatasources
+        interDatasources,
       };
       return draftInitData;
     });
@@ -125,7 +143,12 @@ class PageDesignerApp extends React.Component<VisualEditorAppProps & HY.Provider
 
   onReleasePage = () => {
     const pageContent = this.getPageContent();
-    updatePageService(this.getPageInfo(), pageContent);
+    const interDatasources = this.getPageExtendInfo();
+    updatePageService(
+      this.getPageInfo(),
+      pageContent,
+      this.wrapDataSourceDataForUpdate(interDatasources)
+    );
   }
 
   render() {
@@ -161,7 +184,7 @@ class PageDesignerApp extends React.Component<VisualEditorAppProps & HY.Provider
             className="comp-panel"
           >
             <WidgetPanel
-              datasources={appContext?.payload?.datasources}
+              interDatasources={appContext?.payload?.interDatasources}
               compClassForPanelData={appContext.compClassForPanelData}
               compClassCollection={appContext.compClassCollection}
               onUpdatedDatasource={this.onUpdatedDatasource}

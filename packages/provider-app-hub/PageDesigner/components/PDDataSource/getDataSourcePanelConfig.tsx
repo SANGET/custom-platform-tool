@@ -3,19 +3,19 @@ import { DataSourceDragItem } from './DataSourceDragItem';
 import { DataSourceSelector } from './DataSourceSelector';
 
 interface WrapAddDataSourceBtnOptions {
-  datasources
+  interDatasources
   onUpdatedDatasource
 }
 /**
  * 获取组件类面板的「数据源」标签的配置
  */
 export const getDataSourcePanelConfig = (options: WrapAddDataSourceBtnOptions) => {
-  const { datasources, onUpdatedDatasource } = options;
+  const { interDatasources, onUpdatedDatasource } = options;
   return {
     // 通过嵌入 react component 到组件类面板的 title 属性中
     title: (
       <DataSourceSelector
-        datasources={datasources}
+        interDatasources={interDatasources}
         onAddDataSource={(addData) => {
           // return console.log(addData);
           onUpdatedDatasource(addData);
@@ -24,7 +24,7 @@ export const getDataSourcePanelConfig = (options: WrapAddDataSourceBtnOptions) =
     ),
     renderer: (groupConfig, idx) => {
       return (
-        <DataSourceDragItem datasources={datasources} />
+        <DataSourceDragItem interDatasources={interDatasources} />
       );
     }
   };

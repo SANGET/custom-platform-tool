@@ -8,10 +8,6 @@ export const ColumnHelperSpec: PropItemCompAccessSpec = () => ({
 
   whichAttr: ['columnCount'],
 
-  propItemCompDef: {
-    type: 'FieldSelector',
-  },
-
   config: {
     type: 'DropdownSelector',
     defaultValue: 1,

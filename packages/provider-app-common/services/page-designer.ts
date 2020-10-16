@@ -30,6 +30,7 @@ export async function getPageDetailService(pageID: string) {
   const pageData = await $R_P.get(`/page/v1/pages/${pageID}`);
   // 为了兼容未来的字段更改
   const { result } = pageData;
+  if (!result) return {};
   let pageContent;
   try {
     pageContent = JSON.parse(result.iubDsl);

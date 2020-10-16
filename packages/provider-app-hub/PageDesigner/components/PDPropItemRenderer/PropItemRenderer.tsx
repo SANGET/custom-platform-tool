@@ -11,6 +11,7 @@ export const PropItemRenderer: React.FC<PropItemRendererProps> = ({
   propItemMeta,
   propItemValue,
   changeEntityState,
+  ...other
 }) => {
   const propItemRenderCtx = {
     changeEntityState,
@@ -18,13 +19,12 @@ export const PropItemRenderer: React.FC<PropItemRendererProps> = ({
   };
 
   const {
-    label, propItemCompDef,
+    label,
   } = propItemMeta;
 
   // const propItemCompConfig = getPropItem(propItemCompType);
 
   let Com;
-  // const { type: propItemCompType, ...propsForComponent } = propItemCompDef;
   if (!propItemMeta.render) {
     Com = <Unexpect />;
   } else {

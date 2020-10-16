@@ -53,7 +53,7 @@ export class PageDataService {
    * @param pageData 
    */
   pageData2IUBDSL(pageData) {
-    const { iubDsl } = pageData;
+    const { iubDsl, dataSources } = pageData;
     let contentData;
     const IUBDSLData = {
       sysRtCxtInterface: {},

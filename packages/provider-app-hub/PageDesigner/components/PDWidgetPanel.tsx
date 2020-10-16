@@ -7,7 +7,7 @@ import { GroupItemsRender, PanelItemsGroup } from '@engine/visual-editor/compone
 import { DataSourceDragItem, DataSourceSelector } from './PDDataSource';
 
 export interface PageDesignerComponentPanelProps {
-  datasources
+  interDatasources
   onUpdatedDatasource
   compClassForPanelData: PanelItemsGroup
   compClassCollection: ComponentPanelProps['compClassCollection']
@@ -50,7 +50,7 @@ const itemRendererFac = (
 const PDWidgetPanel: React.FC<PageDesignerComponentPanelProps> = ({
   compClassCollection,
   getDragItemConfig,
-  datasources,
+  interDatasources,
   onUpdatedDatasource,
   compClassForPanelData,
   ...other
@@ -78,7 +78,7 @@ const PDWidgetPanel: React.FC<PageDesignerComponentPanelProps> = ({
         </Tab>
         <Tab label={(
           <DataSourceSelector
-            datasources={datasources}
+            interDatasources={interDatasources}
             onAddDataSource={(addData) => {
               // return console.log(addData);
               onUpdatedDatasource(addData);
@@ -87,7 +87,7 @@ const PDWidgetPanel: React.FC<PageDesignerComponentPanelProps> = ({
         )}
         >
           <DataSourceDragItem
-            datasources={datasources}
+            interDatasources={interDatasources}
           />
         </Tab>
         <Tab label="控件模版">

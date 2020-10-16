@@ -1,19 +1,20 @@
 import React, { useEffect, useState } from 'react';
 
 interface DataSourceDragItemProps {
-  datasources: PD.Datasources
+  /** 内部的数据源格式 */
+  interDatasources: PD.Datasources
 }
 
 /**
  * 根据 columns 包装可以拖拽的元素
  */
 export const DataSourceDragItem: React.FC<DataSourceDragItemProps> = ({
-  datasources
+  interDatasources
 }) => {
   return (
     <div className="data-source-drag-items">
       {
-        Array.isArray(datasources) && datasources.map((datasourceItem) => {
+        Array.isArray(interDatasources) && interDatasources.map((datasourceItem) => {
           const { name: dName, columns } = datasourceItem;
           return (
             <div className="group p-2" key={dName}>
