@@ -1,7 +1,8 @@
-import { isCallable, isBoundedFunction, isConstructable } from "./utils"
-const boundValueSymbol = Symbol('bound value')
-const proxyPropertyGetterMap = new Map<WindowProxy, Record<PropertyKey, CallableFunction>>()
-const getterInvocationResultMap = new Map<CallableFunction, any>()
+import { isCallable, isBoundedFunction, isConstructable } from "./utils";
+
+const boundValueSymbol = Symbol('bound value');
+const proxyPropertyGetterMap = new Map<WindowProxy, Record<PropertyKey, CallableFunction>>();
+const getterInvocationResultMap = new Map<CallableFunction, any>();
 
 export function getTargetValue(target: any, value: any): any {
   /*
@@ -10,26 +11,26 @@ export function getTargetValue(target: any, value: any): any {
    */
   if (isCallable(value) && !isBoundedFunction(value) && !isConstructable(value)) {
     if (value[boundValueSymbol]) {
-      return value[boundValueSymbol]
+      return value[boundValueSymbol];
     }
 
-    const boundValue = value.bind(target)
+    const boundValue = value.bind(target);
     // some callable function has custom fields, we need to copy the enumerable props to boundValue. such as moment function.
-    Object.keys(value).forEach(key => (boundValue[key] = value[key]))
-    Object.defineProperty(value, boundValueSymbol, { enumerable: false, value: boundValue })
-    return boundValue
+    Object.keys(value).forEach((key) => (boundValue[key] = value[key]));
+    Object.defineProperty(value, boundValueSymbol, { enumerable: false, value: boundValue });
+    return boundValue;
   }
 
-  return value
+  return value;
 }
 export function getProxyPropertyValue(getter: CallableFunction) {
-  const getterResult = getterInvocationResultMap.get(getter)
+  const getterResult = getterInvocationResultMap.get(getter);
   if (!getterResult) {
-    const result = getter()
-    getterInvocationResultMap.set(getter, result)
-    return result
+    const result = getter();
+    getterInvocationResultMap.set(getter, result);
+    return result;
   }
-  return getterResult
+  return getterResult;
 }
 /**
  *
@@ -37,11 +38,10 @@ export function getProxyPropertyValue(getter: CallableFunction) {
  * @param property
  */
 export function getProxyPropertyGetter(proxy: WindowProxy, property: PropertyKey): any {
-  const getters = proxyPropertyGetterMap.get(proxy)
+  const getters = proxyPropertyGetterMap.get(proxy);
   if (getters) {
-    return getters![property as string]
+    return getters![property as string];
   }
 
-  return undefined
+  return undefined;
 }
-

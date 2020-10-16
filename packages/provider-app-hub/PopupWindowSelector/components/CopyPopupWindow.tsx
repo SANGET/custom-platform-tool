@@ -4,7 +4,7 @@ import pinyin4js from 'pinyin4js';
 import { NameCodeItem, FromFooterBtn } from "./FormItem";
 import './index.less';
 import { copyPopupWindowService } from '../service';
-import { ICopyData } from './PopupWindow';
+import { ICopyData } from './PopupWindowSelector';
 
 interface IProps {
   onOk: () => void;

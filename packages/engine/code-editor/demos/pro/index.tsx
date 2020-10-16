@@ -1,67 +1,67 @@
-import React, { ReactElement, useState, useRef } from 'react'
-import CodeEditor from '@engine/code-editor'
-import createSandbox from '@engine/js-sandbox'
-import Frame, { FrameContextConsumer } from 'react-frame-component'
-import { Button, Modal } from 'antd'
-import './components'
-import FuncTree from './functree'
-import Variable from './variable'
-import { ITreeNodeInfo } from './interface'
-import { Editor } from 'codemirror'
-import { getFuncParamNames, getFuncBody } from './util'
-import styles from './style.less'
+import React, { ReactElement, useState, useRef } from 'react';
+import CodeEditor from '@engine/code-editor';
+import createSandbox from '@engine/js-sandbox';
+import Frame, { FrameContextConsumer } from 'react-frame-component';
+import { Button, Modal } from 'antd';
+import './components';
+import { Editor } from 'codemirror';
+import FuncTree from './functree';
+import Variable from './variable';
+import { ITreeNodeInfo } from './interface';
+import { getFuncParamNames, getFuncBody } from './util';
+import styles from './style.less';
 
-let editor: any
+let editor: any;
 const Pro: React.FC = (): ReactElement => {
-  const [ currentFuncParams, setCurrentFuncParams ] = useState<string[]>([])
-  const [ run, setRun ] = useState<boolean>(false)
-  const [ result, setResult ] = useState<string>("")
-  const variableRef = useRef(null)
+  const [currentFuncParams, setCurrentFuncParams] = useState<string[]>([]);
+  const [run, setRun] = useState<boolean>(false);
+  const [result, setResult] = useState<string>("");
+  const variableRef = useRef(null);
   const handleSelectTreeNode = (info: ITreeNodeInfo) => {
-    const { name } = info.node
-    if(name && editor) {
-      const cur = editor.getCursor()
-      editor.replaceRange(name, cur, cur, '+insert')
-      editor.setCursor({ line: cur.line, ch: cur.ch + 1 })
+    const { name } = info.node;
+    if (name && editor) {
+      const cur = editor.getCursor();
+      editor.replaceRange(name, cur, cur, '+insert');
+      editor.setCursor({ line: cur.line, ch: cur.ch + 1 });
     }
-  }
+  };
 
   const handleCodeEditorChange = (instance: Editor, changeObj: object) => {
-    const params = getFuncParamNames(instance.getValue())
-    if(params.length > 0 || (params.length === 0 && currentFuncParams.length === 1)) setCurrentFuncParams(params)
-  }
+    const params = getFuncParamNames(instance.getValue());
+    if (params.length > 0 || (params.length === 0 && currentFuncParams.length === 1)) setCurrentFuncParams(params);
+  };
   const handleRun = () => {
     // @ts-ignore
-    const params = variableRef.current!.getCurrentParmas()
-    const context = paserParmasToContext(params)
-    const code = getFuncBody(editor.getValue())
-    console.dir(context)
-    const sandbox = createSandbox(context)
-    const res = sandbox(code)
-    setResult(res)
+    const params = variableRef.current!.getCurrentParmas();
+    const context = paserParmasToContext(params);
+    const code = getFuncBody(editor.getValue());
+    console.dir(context);
+    const sandbox = createSandbox(context);
+    const res = sandbox(code);
+    setResult(res);
     // setRun(true)
-  }
+  };
   const paserParmasToContext = (params: any[]) => {
-    const context = {}
-    params.map(item=> {
-      const { key, value } = item
-      context[`${key}`] = value
-    })
-    return context
-  }
+    const context = {};
+    params.map((item) => {
+      const { key, value } = item;
+      context[`${key}`] = value;
+    });
+    return context;
+  };
   const handleFrameLoaded = () => {
-     // @ts-ignore
-    const params = variableRef.current!.getCurrentParmas()
-    const context = paserParmasToContext(params)
-    const code = getFuncBody(editor.getValue())
-    const sandbox = createSandbox(context)
-    const res = sandbox(code)
-    setResult(res)
+    // @ts-ignore
+    const params = variableRef.current!.getCurrentParmas();
+    const context = paserParmasToContext(params);
+    const code = getFuncBody(editor.getValue());
+    const sandbox = createSandbox(context);
+    const res = sandbox(code);
+    setResult(res);
     // window.frames["preview"].createSandbox = createSandbox
     // window.frames["preview"].context = context
     // window.frames["preview"].code = code
     // window.frames["preview"].HY = window.top!.HY
-  }
+  };
   return (
     <>
       <div className={styles["pro-demo"]}>
@@ -88,8 +88,8 @@ const Pro: React.FC = (): ReactElement => {
           <CodeEditor
             value= "function main() {}"
             mode="javascript"
-            renderSelectMode={()=> <></>}
-            gutters = {["CodeMirror-lint-markers", "CodeMirror-linenumbers", "CodeMirror-foldgutter" ]}
+            renderSelectMode={() => <></>}
+            gutters = {["CodeMirror-lint-markers", "CodeMirror-linenumbers", "CodeMirror-foldgutter"]}
             getEditor={(ref) => editor = ref}
             hintOptions={{
               completeSingle: false,
@@ -114,6 +114,6 @@ const Pro: React.FC = (): ReactElement => {
 
     </Modal> */}
     </>
-  )
-}
-export  default Pro
+  );
+};
+export default Pro;

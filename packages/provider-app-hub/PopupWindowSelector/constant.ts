@@ -107,11 +107,11 @@ export const SELECT_TYPE_OPTIONS: ITableType[] = [
   }
 ];
 
-export const TABLE_VALUE_ENUM: IValueEnum = {
-  TABLE: { text: "普通表1" },
-  TREE: { text: "树形表2" },
-  AUX_TABLE: { text: "附属表3" }
-};
+// export const TABLE_VALUE_ENUM: IValueEnum = {
+//   TABLE: { text: "普通表1" },
+//   TREE: { text: "树形表2" },
+//   AUX_TABLE: { text: "附属表3" }
+// };
 
 export const POPUP_WINDOW_VALUE_ENUM: IValueEnum = {
   TABLE: { text: "表格", value: 1 },

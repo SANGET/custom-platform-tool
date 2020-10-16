@@ -7,18 +7,26 @@ export const TitleHelperSpec: PropItemCompAccessSpec = () => ({
 
   label: '标题',
 
-  whichAttr: 'title',
+  whichAttr: ['title'],
 
-  defaultValue: '输入框标题',
+  defaultValues: {
+    title: '输入框标题'
+  },
 
   render(ctx) {
     const { changeEntityState, widgetEntityState } = ctx;
     /** 取自身定义的 whichAttr */
-    let value = widgetEntityState.title;
-    if (value === null) value = '';
+    let _value = widgetEntityState.title;
+    if (_value === null) _value = '';
     return (
       <div>
-        <Input value={value} onChange={changeEntityState} />
+        <Input
+          value={_value}
+          onChange={(value) => changeEntityState({
+            attr: 'title',
+            value
+          })}
+        />
       </div>
     );
   }

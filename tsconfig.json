@@ -16,7 +16,7 @@
     "strict": true,
     "forceConsistentCasingInFileNames": true,
     "declaration": true,
-    "module": "ES6",
+    "module": "es2020",
     "moduleResolution": "node",
     "jsx": "react"
   },

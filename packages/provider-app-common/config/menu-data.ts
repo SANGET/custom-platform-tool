@@ -51,6 +51,12 @@ export const ProviderAppMenuData: MenuDataType[] = [
         path: '/dictionary-manager'
       },
       {
+        title: '权限项管理',
+        id: '24',
+        icon: '',
+        path: '/lessee-authority'
+      },
+      {
         title: '其他数据源',
         id: '23',
         icon: '',

@@ -9,6 +9,8 @@ import TableInfo from "@provider-app/table-info/app";
 import TableEditor from "@provider-app/table-editor/app";
 import DictionaryManager from "@provider-app/dictionary-manager/app";
 import TableStructure from "@provider-app/table-structure/app";
+import LesseeAuthority from "@provider-app/lessee-authority/app";
+
 import PopupWindowSelector from "@provider-app/popup-window-selector/app";
 
 /// //////// 数据设计结束
@@ -66,6 +68,10 @@ const RouterConfig: RouterConfigType = {
   '/popup-window-selector': {
     title: '弹窗选择',
     component: PopupWindowSelector
+  },
+  '/lessee-authority': {
+    title: '权限项管理',
+    component: LesseeAuthority
   },
   '/table-editor': {
     title: '编辑表',
