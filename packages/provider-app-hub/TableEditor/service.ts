@@ -84,6 +84,6 @@ export const deleteConfirm = (param: IDeleteConfirmParam): void => {
     },
   });
 };
-export const getlabelByMenuList = (menu: ISELECTSMENU[], key?: string): string => {
-  return key ? (menu?.filter((item) => item?.value === key)?.[0]?.label || '') : '';
+export const getlabelByMenuList = (menu: ISELECTSMENU[], value?: string): string => {
+  return menu.filter((item) => item.value === value)[0]?.label || '';
 };
