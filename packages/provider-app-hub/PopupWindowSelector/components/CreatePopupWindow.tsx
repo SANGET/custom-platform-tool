@@ -3,7 +3,10 @@ import React, { useState } from 'react';
 import {
   Button, Form, Input, Select, InputNumber, message, notification
 } from 'antd';
-import { SHOW_TYPE_OPTIONS, SHOW_TYPE, SPECIES } from '../constant';
+import { FormInstance } from 'antd/lib/form';
+import {
+  SHOW_TYPE_OPTIONS, SELECT_TYPE_OPTIONS, SHOW_TYPE, SPECIES, SELECT_TYPE
+} from '../constant';
 import {
   NameCodeItem, ModuleTreeItem, PrimaryTreeItem, FromFooterBtn
 } from "./FormItem";
@@ -11,6 +14,8 @@ import CreateMenu from './CreateMenu';
 import { createPopupWindowService } from '../service';
 import './index.less';
 import CreateModal from './CreateModal';
+import { PopupWindowTable } from './PopupWindowTable';
+import { PopupWindowField } from './PopupWindowField';
 
 const { Option } = Select;
 const { TextArea } = Input;
@@ -31,7 +36,7 @@ const CreatePopupWindow: React.FC<IProps> = (props: IProps) => {
   const [visibleModal, setVisibleModal] = useState<boolean>(false);
   const handleFinish = async (values) => {
     // const params = assemblyParams(values);
-    const params = assemblyPopupParams();
+    const params = assemblyPopupParams(values);
     const res = await createPopupWindowService(params);
     if (res.code === "00000") {
       notification.success({
@@ -68,23 +73,63 @@ const CreatePopupWindow: React.FC<IProps> = (props: IProps) => {
     return params;
   };
 
-  const assemblyPopupParams = () => {
+  const assemblyPopupParams = (values) => {
+    // const params = {
+    //   name: 'abcd',
+    //   showType: 1,
+    //   selectType: 1,
+    //   selectCount: 0,
+    //   enable: 1,
+    //   tablePopupWindowDetail: {
+    //     popupWindowId: 1234,
+    //     datasource: 4567,
+    //     datasourceType: 'DB',
+    //     returnValue: 2233,
+    //     returnText: 4455,
+    //     sortColumnInfo: 'STR1',
+    //     showColumn: 'STR2',
+    //   }
+    // };
+
+    // const params = {
+    //   name: 'abcd',
+    //   showType: 1,
+    //   selectType: 1,
+    //   selectCount: 0,
+    //   enable: 1,
+    //   tablePopupWindowDetail: {
+    //     popupWindowId: 1234,
+    //     datasource: 4567,
+    //     datasourceType: 'DB',
+    //     returnValue: 2233,
+    //     returnText: 4455,
+    //     sortColumnInfo: 'STR1',
+    //     showColumn: 'STR2',
+    //   }
+    // };
+
+    const {
+      name, showType, selectType, datasource, datasourceType, returnValue, returnText
+    } = values;
+
     const params = {
-      name: 'abcd',
-      showType: 1,
-      selectType: 1,
+      name,
+      showType,
+      selectType,
       selectCount: 0,
       enable: 1,
       tablePopupWindowDetail: {
         popupWindowId: 1234,
-        datasource: 4567,
+        datasource,
         datasourceType: 'DB',
-        returnValue: 2233,
-        returnText: 4455,
+        returnValue,
+        returnText,
         sortColumnInfo: 'STR1',
         showColumn: 'STR2',
       }
     };
+
+    console.log(params);
 
     return params;
   };
@@ -124,6 +169,25 @@ const CreatePopupWindow: React.FC<IProps> = (props: IProps) => {
           </Select>
         </Form.Item>
         <Form.Item
+          name="selectType"
+          label="选择类型"
+          rules={[{
+            required: true,
+            message: "请选择选择类型"
+          }]}
+          initialValue={SELECT_TYPE.MULTIPLE}
+        >
+          <Select
+            placeholder="请选择选择类型"
+          >
+            {
+              SELECT_TYPE_OPTIONS.map((item, index) => <Option
+                key={index} value={item.value}
+              >{item.title}</Option>)
+            }
+          </Select>
+        </Form.Item>
+        <Form.Item
           noStyle
           shouldUpdate={(prevValues, currentValues) => prevValues.showType !== currentValues.showType}
         >
@@ -146,6 +210,26 @@ const CreatePopupWindow: React.FC<IProps> = (props: IProps) => {
               ) : null;
           }}
         </Form.Item>
+        <PopupWindowTable
+          form={form}
+          label="数据源"
+          text = 'datasource'
+        />
+        <PopupWindowField
+          label = "返回值"
+          code='returnValue'
+          form={form}
+          name="returnValue"
+          text = 'returnValue'
+
+        />
+        <PopupWindowField
+          label = "返回文本"
+          code='returnText'
+          form={form}
+          name="returnText"
+          text = 'returnText'
+        />
         <ModuleTreeItem />
         <Button
           type="link"
@@ -172,5 +256,4 @@ const CreatePopupWindow: React.FC<IProps> = (props: IProps) => {
     </>
   );
 };
-
 export default React.memo(CreatePopupWindow);

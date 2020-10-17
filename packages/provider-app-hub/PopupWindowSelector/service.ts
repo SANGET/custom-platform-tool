@@ -1,3 +1,13 @@
+import { notification } from 'antd';
+
+type IStatus = "success" | "info" | "warning" | "error"
+export function openNotification(type: IStatus, msg = "", description = "") {
+  notification?.[type]?.({
+    message: msg,
+    description
+  });
+}
+
 /** 获取表结构列表数据 */
 export async function queryPopupWindowListService(params) {
   return await $R_P.get({
@@ -52,3 +62,22 @@ export async function createMenuService(params) {
     data: params
   });
 }
+
+export async function getTablesList() {
+  return await $R_P.get({
+    url: `/data/v1/tables/list`,
+  });
+}
+
+export async function queryTablesList() {
+  return await $R_P.get({
+    url: `/data/v1/tables/list`,
+  });
+}
+
+export async function getTableInfo(id) {
+  return await $R_P.get({
+    url: `/data/v1/tables/${id}`,
+    params: {},
+  });
+}/** 查询模块列表 */

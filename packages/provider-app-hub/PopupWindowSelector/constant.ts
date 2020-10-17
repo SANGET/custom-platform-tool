@@ -1,6 +1,61 @@
 import { ProColumns } from '@hy/pro-table';
 import { IOperationalMenuItem, IValueEnum, ITableType } from './interface';
 
+export enum API_ERROR_MSG {
+  /** 查表详情失败的提示信息 */
+  "GETTABLEINFO" = "查询表数据失败，请联系技术人员",
+  "ALLOWDELETE" = "查询删除绑定情况失败，请联系技术人员"
+}
+
+export enum API_CODE {
+  /** 查表详情成功的 code 值 */
+  "SUCCESS" = "00000"
+}
+
+export enum NOTIFICATION_TYPE {
+  /** 成功 */
+  "SUCCESS" = "success",
+  /** 提示 */
+  "INFO" = "info",
+  /** 提醒 */
+  "WARNING" = "warning",
+  /** 失败 */
+  "ERROR" = "error"
+}
+export enum COLUMNS_KEY {
+  /** 唯一标识 */
+  "ID" = "id",
+  /** 序号 */
+  "INDEX" = "index",
+  /** 字段名称 */
+  "NAME" = "name",
+  /** 字段编码 */
+  "CODE" = "code",
+  /** 字段类型 */
+  "FIELDTYPE" = "fieldType",
+  /** 数据类型 */
+  "DATATYPE" = "dataType",
+  /** 字段长度 */
+  "FIELDSIZE" = "fieldSize",
+  /** 小数点长度 */
+  "DECIMALSIZE" = "decimalSize",
+  /** 必填 */
+  "REQUIRED" = "required",
+  /** 唯一 */
+  "UNIQUE" = "unique",
+  /** 字典 */
+  "DICTIONARYFOREIGN" = "dictionaryForeign",
+  "DICTIONARYFOREIGNCN" = "dictionaryForeignCn",
+  /** 转换成拼音 */
+  "PINYINCONVENT" = "pinyinConvent",
+  /** 编码规则 */
+  "REGULAR" = "regular",
+  /** 分类 */
+  "SPECIES" = "species",
+  "EDITABLE" = "editable",
+  "CREATEDCUSTOMED" = "createdCustomed"
+}
+
 export const MORE_MENU = [{
   title: "表结构模板",
   key: "template"
@@ -84,25 +139,25 @@ export enum SELECT_TYPE {
 
 export const SHOW_TYPE_OPTIONS: ITableType[] = [
   {
-    value: "TABLE",
+    value: "1",
     title: "表格"
   }, {
-    value: "TREE",
+    value: "2",
     title: "树形"
   }, {
-    value: "LEFT_TREE_RIGHT_TABLE",
+    value: "3",
     title: "左树右表"
   }, {
-    value: "CUSTOMIZATION",
+    value: "4",
     title: "自定义"
   }
 ];
 export const SELECT_TYPE_OPTIONS: ITableType[] = [
   {
-    value: "SINGLE",
+    value: "2",
     title: "多选"
   }, {
-    value: "MULTIPLE",
+    value: "1",
     title: "单选"
   }
 ];
@@ -202,3 +257,26 @@ export const RE = {
 
   CEN: /^[\u4E00-\u9FA5A-Za-z0-9]+$/
 };
+
+export interface ISELECTSMENU {
+  label: string
+  key: string
+  value: string
+}
+
+export enum FIELDTYPE {
+  /** 字符串 */
+  "STRING" = "STRING",
+  /** 数字 */
+  "INT" = "INT",
+  /** 长整型 */
+  "LONG" = "LONG",
+  /** 时间 */
+  "TIME" = "TIME",
+  /** 日期 */
+  "DATE" = "DATE",
+  /** 日期时间 */
+  "DATE_TIME" = "DATE_TIME",
+  /** 超大文本 */
+  "TEXT" = "TEXT"
+}
