@@ -89,7 +89,7 @@ const PageChoose: React.FC<IPageChoose> = (props: IPageChoose) => {
     return isEditable && isPage;
   };
   const getPageList = () => {
-    getPageListServices().then((res) => {
+    getPageListServices({}).then((res) => {
       setOptions(res?.result?.data.map((item) => {
         return {
           label: item.name,
@@ -117,7 +117,6 @@ const PageChoose: React.FC<IPageChoose> = (props: IPageChoose) => {
     >
       {({ getFieldValue }) => {
         const editable = canIEdit(getFieldValue);
-        console.log(record.id);
         return editable ? (
           <Form.Item
             name={MENU_KEY.PAGELINK}
@@ -137,7 +136,7 @@ const PageChoose: React.FC<IPageChoose> = (props: IPageChoose) => {
         );
       }}
     </Form.Item>);
-  }, [record.editable, record.type]);
+  }, [record.editable, record.type, options]);
 };
 
 const getListColumns = ({
