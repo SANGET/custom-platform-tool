@@ -72,8 +72,8 @@ class PageDesignerApp extends React.Component<VisualEditorAppProps & HY.Provider
     });
   }
 
-  getPageExtendInfo = () => {
-    return this.props.appContext.payload.interDatasources;
+  getDatasources = () => {
+    return this.props.appContext.payload?.interDatasources;
   }
 
   getPageInfo = () => {
@@ -121,20 +121,20 @@ class PageDesignerApp extends React.Component<VisualEditorAppProps & HY.Provider
     /** 并发获取初始化数据 */
     const [dynamicData, remotePageData] = await Promise.all([
       getFEDynamicData(),
-      getPageContentWithDatasource(pageID)
+      // getPageContentWithDatasource(pageID)
     ]);
-    const {
-      interDatasources, pageContent, pageDataRes
-    } = remotePageData;
+    // const {
+    //   interDatasources, pageContent, pageDataRes
+    // } = remotePageData;
 
     /** 准备初始化数据 */
     const initData = produce(dynamicData, (draftInitData) => {
-      draftInitData.pageContent = pageContent;
-      draftInitData.payload = {
-        pageDataRes,
-        // 填入 interDatasources
-        interDatasources,
-      };
+      // draftInitData.pageContent = pageContent;
+      // draftInitData.payload = {
+      //   pageDataRes,
+      //   // 填入 interDatasources
+      //   interDatasources,
+      // };
       return draftInitData;
     });
 
@@ -143,7 +143,7 @@ class PageDesignerApp extends React.Component<VisualEditorAppProps & HY.Provider
 
   onReleasePage = () => {
     const pageContent = this.getPageContent();
-    const interDatasources = this.getPageExtendInfo();
+    const interDatasources = this.getDatasources();
     updatePageService(
       this.getPageInfo(),
       pageContent,
@@ -185,8 +185,8 @@ class PageDesignerApp extends React.Component<VisualEditorAppProps & HY.Provider
           >
             <WidgetPanel
               interDatasources={appContext?.payload?.interDatasources}
-              compClassForPanelData={appContext.compClassForPanelData}
-              compClassCollection={appContext.compClassCollection}
+              widgetPanelData={appContext.widgetPanelData}
+              widgetMetaDataCollection={appContext.widgetMetaDataCollection}
               onUpdatedDatasource={this.onUpdatedDatasource}
             />
           </div>
@@ -212,8 +212,9 @@ class PageDesignerApp extends React.Component<VisualEditorAppProps & HY.Provider
                 <PropertiesEditor
                   key={activeEntityID}
                   propItemData={appContext.propItemData}
+                  interDatasources={this.getDatasources()}
                   // eslint-disable-next-line max-len
-                  widgetBindedPropItemsMeta={appContext?.compClassCollection[activeEntity?._classID]?.bindPropItems}
+                  widgetBindedPropItemsMeta={appContext?.widgetMetaDataCollection[activeEntity?._classID]?.bindPropItems}
                   selectedEntity={activeEntity}
                   propPanelData={appContext.propPanelData}
                   defaultEntityState={activeEntity.propState}

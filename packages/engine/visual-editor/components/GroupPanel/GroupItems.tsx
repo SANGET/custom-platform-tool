@@ -32,7 +32,7 @@ export const GroupItemsRender: React.FC<GroupItemsRenderProps> = ({
                   items && items.map((item, _idx) => {
                     const itemKey = `${idx}_${_idx}`;
                     return (
-                      <div className="item" key={itemKey}>{itemRenderer(item, groupType)}</div>
+                      <div className="item mb-4" key={itemKey}>{itemRenderer(item, groupType)}</div>
                     );
                   })
                 }

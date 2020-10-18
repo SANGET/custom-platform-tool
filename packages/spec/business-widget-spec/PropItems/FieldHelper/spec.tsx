@@ -24,7 +24,7 @@ export const FieldHelperSpec: PropItemCompAccessSpec = () => ({
               return (
                 <div>
                   <FieldSelector
-                    interDatasources={exp}
+                    interDatasources={interDatasources}
                     onSubmit={(val) => {
                       onChange([
                         { value: val, attr: 'exp' },

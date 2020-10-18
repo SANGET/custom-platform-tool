@@ -26,8 +26,8 @@ export const getPageContentWithDatasource = async (pageID) => {
  */
 export const getFEDynamicData = async () => {
   const [
-    compClassCollection,
-    compClassForPanelData,
+    widgetMetaDataCollection,
+    widgetPanelData,
     pagePropsData,
     propItemData,
     propPanelData,
@@ -40,9 +40,9 @@ export const getFEDynamicData = async () => {
   ]);
 
   const FEDynamicData = {
-    compClassForPanelData,
+    widgetPanelData,
     propPanelData,
-    compClassCollection,
+    widgetMetaDataCollection,
     propItemData,
     pagePropsData,
   };
