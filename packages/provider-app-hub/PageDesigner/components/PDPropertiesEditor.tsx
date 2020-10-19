@@ -3,7 +3,7 @@ import Editor, { PropertiesEditorProps } from '@engine/visual-editor/components/
 import { PropItemRenderer } from './PDPropItemRenderer';
 
 interface PropsEditorProps extends Omit<PropertiesEditorProps, 'propItemRenderer'> {
-  interDatasources
+  interDatasources: PD.Datasources
   customConfig?: any
 }
 

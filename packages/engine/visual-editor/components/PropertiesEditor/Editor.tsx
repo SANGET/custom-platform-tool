@@ -282,12 +282,13 @@ PropertiesEditorProps, PropertiesEditorState
     return widgetBindedPropItemsMeta && (!!widgetBindedPropItemsMeta.propItemRefs || !!widgetBindedPropItemsMeta.rawPropItems);
   }
 
-  propItemRenderer = () => {
-
+  propItemRenderer = (item, groupType) => {
+    console.log('item', item);
   }
 
   render() {
     const hasProps = this.hasPropertiesConfig();
+    const { propPanelData } = this.props;
 
     const propFormDOM = hasProps && this.renderPropItems();
 
@@ -296,8 +297,8 @@ PropertiesEditorProps, PropertiesEditorState
         className="entity-prop-editor"
       >
         {/* <GroupPanel
-        panelData={{}}
-        itemRenderer={this.propItemRenderer}
+          panelData={propPanelData}
+          itemRenderer={this.propItemRenderer}
         /> */}
         {
           propFormDOM
