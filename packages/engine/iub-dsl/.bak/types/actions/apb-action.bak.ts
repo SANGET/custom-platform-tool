@@ -3,7 +3,7 @@ import {
   CollectionType, Condition, BasicActionConf, DataQuoteRelationRef
   // ApbActionFn
 } from "..";
-import { ActionsFlow } from "./action-flow";
+import { ActionsFlow } from "./action";
 
 /** 连表, 引用, 返回 */
 // 如果收集不通过, 应该不会有后续,这个如何体现?

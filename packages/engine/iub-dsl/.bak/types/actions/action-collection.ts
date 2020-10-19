@@ -1,4 +1,4 @@
-import { CommonCondition } from "../../types copy";
+import { CommonCondition } from './../../../definition/public/index';
 import { ApbAction } from "./apb-action";
 import { UpdateState } from "./state-action";
 import { ActionsFlow } from "./action-flow";

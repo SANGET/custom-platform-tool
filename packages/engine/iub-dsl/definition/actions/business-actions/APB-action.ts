@@ -1,16 +1,21 @@
 import { NormalCURD } from './CURD';
-import { BasicActionConf } from "..";
+import { BasicActionConf } from '../action';
+
+export type APBDSLCURDActionType = 'APBDSLCURD';
 
 export interface APBDSLCURD extends BasicActionConf {
-  type: 'APBDSLCURD',
-  /** apb业务功能码「小的」 */
-  businesscode: string;
-  /** apbAction列表 */
-  actionList: {
-    [id: string]: NormalCURD
+  actionType: APBDSLCURDActionType;
+  actionOptions: {
+    /** apb业务功能码「小的」 */
+    businesscode: string;
+    /** apbAction列表 */
+    actionList: {
+      [id: string]: NormalCURD
+    }
+    /** apbstep执行步骤 */
+    actionStep: string[];
   }
-  /** apbstep执行步骤 */
-  actionStep: string[];
+  actionOutput: 'string';
 }
 
 /** APB的功能码 */

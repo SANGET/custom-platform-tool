@@ -6,7 +6,8 @@ import { DataCollection } from "..";
 
 export enum EnumCURD {
   TableInsert = 'TableInsert',
-  TableUpdate = 'TableUpdate'
+  TableUpdate = 'TableUpdate',
+  TableSelect = 'TableSelect'
 }
 
 type fieldMapping = DataCollection // | string
@@ -26,4 +27,9 @@ export interface TableUpdate extends BaseTableInfo {
   conditionConf: string;
 }
 
-export type NormalCURD = TableInsert | TableUpdate
+export interface TableSelect extends BaseTableInfo {
+  type: EnumCURD.TableSelect;
+  conditionConf?: string;
+}
+
+export type NormalCURD = TableInsert | TableUpdate | TableSelect

@@ -1,6 +1,6 @@
 import { ComplexType } from "@iub-dsl/definition/schemas";
 import { CommonCondition } from "@iub-dsl/definition/public";
-import { BasicActionConf } from "..";
+import { BasicActionConf, FlowOutputOfObj } from "../action";
 
 /**
  * 基础的数据收集结构, 递归由数据表的关系进行额外考虑
@@ -21,13 +21,17 @@ export interface BaseCollectionStruct extends CommonCondition {
  * 界限: 是否可以和配置一一对应
  */
 
-interface ColletionStruct extends CommonCondition {
-  type: 'dataCollection';
+export type DataCollectionActionType = 'dataCollection'
 
-  /** 收集类型array/object */
-  collectionType: ComplexType;
-  /** 有结构就是完整得描述, 字符串默认收集 collectField */
-  struct: (BaseCollectionStruct | string)[];
+interface ColletionStruct extends BasicActionConf {
+  actionType: DataCollectionActionType;
+  actionOptions: {
+    /** 收集类型array/object */
+    collectionType: ComplexType;
+    /** 有结构就是完整得描述, 字符串默认收集 collectField */
+    struct: (BaseCollectionStruct | string)[];
+  }
+  actionOutput: FlowOutputOfObj
 }
 
-export type DataCollection = (ColletionStruct)& BasicActionConf
+export type DataCollection = ColletionStruct
