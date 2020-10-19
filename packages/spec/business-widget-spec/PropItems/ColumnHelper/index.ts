@@ -1,1 +1,4 @@
+/**
+ * index
+ */
 export * from './spec';

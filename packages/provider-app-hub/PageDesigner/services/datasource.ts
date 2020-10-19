@@ -5,10 +5,14 @@ import { getDataSourceDetail } from "@provider-app/services";
  */
 export const takeColumnsData = (columns: any[]): PD.Column[] => {
   return columns.map((column) => {
+    // console.log('column', column);
     return {
       id: column.id,
       name: column.name,
-      dataType: column.dataType,
+      colDataType: column.dataType,
+      fieldSize: column.fieldSize,
+      fieldType: column.fieldType,
+      fieldCode: column.code,
     };
   });
 };

@@ -1,6 +1,6 @@
 import React from 'react';
 import { PropItemCompAccessSpec } from '@engine/visual-editor/data-structure';
-import { ValueHelper } from './ValueHelper';
+import { ValueHelper } from './comp';
 
 export const ValueHelperSpec: PropItemCompAccessSpec = (propItemCtx) => ({
   id: 'prop_real_value',

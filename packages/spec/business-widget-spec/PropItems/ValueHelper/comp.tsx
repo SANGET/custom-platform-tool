@@ -5,17 +5,27 @@ import {
 import { ChangeEntityState } from '@engine/visual-editor/data-structure';
 import { ExpEditor } from './ExpEditor';
 
+/**
+ * 可用的值的类型
+ */
 const selectTypes = {
   costomValue: '自定义',
   expression: '表达式',
   variable: '变量',
 };
 
+/**
+ * ValueHelperProps
+ */
 interface ValueHelperProps {
   widgetEntityState
   onChange: ChangeEntityState
 }
 
+/**
+ * ValueHelper
+ * @param param0
+ */
 export const ValueHelper: React.FC<ValueHelperProps> = ({
   widgetEntityState,
   onChange,
@@ -27,7 +37,7 @@ export const ValueHelper: React.FC<ValueHelperProps> = ({
     case 'costomValue':
       Comp = (
         <Input
-          value={defValue}
+          value={defValue || ''}
           onChange={(value) => onChange([
             { value, attr: 'defValue' },
             /** 需要将 value 清空 */

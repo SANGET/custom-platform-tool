@@ -54,5 +54,5 @@ export interface PropItemMeta {
     [whichAttr: string]: any
   }
   /** 渲染属性项 */
-  render(ctx: PropItemRenderContext): JSX.Element
+  render(propItemRenderCtx: PropItemRenderContext): JSX.Element
 }

@@ -72,10 +72,16 @@ class PageDesignerApp extends React.Component<VisualEditorAppProps & HY.Provider
     });
   }
 
+  /**
+   * 获取数据源
+   */
   getDatasources = () => {
     return this.props.appContext.payload?.interDatasources;
   }
 
+  /**
+   * 获取页面信息
+   */
   getPageInfo = () => {
     const {
       appLocation
@@ -88,6 +94,9 @@ class PageDesignerApp extends React.Component<VisualEditorAppProps & HY.Provider
     };
   }
 
+  /**
+   * 获取页面内容
+   */
   getPageContent = () => {
     const {
       layoutInfo,
@@ -121,26 +130,29 @@ class PageDesignerApp extends React.Component<VisualEditorAppProps & HY.Provider
     /** 并发获取初始化数据 */
     const [dynamicData, remotePageData] = await Promise.all([
       getFEDynamicData(),
-      // getPageContentWithDatasource(pageID)
+      getPageContentWithDatasource(pageID)
     ]);
-    // const {
-    //   interDatasources, pageContent, pageDataRes
-    // } = remotePageData;
+    const {
+      interDatasources, pageContent, pageDataRes
+    } = remotePageData;
 
     /** 准备初始化数据 */
     const initData = produce(dynamicData, (draftInitData) => {
-      // draftInitData.pageContent = pageContent;
-      // draftInitData.payload = {
-      //   pageDataRes,
-      //   // 填入 interDatasources
-      //   interDatasources,
-      // };
+      draftInitData.pageContent = pageContent;
+      draftInitData.payload = {
+        pageDataRes,
+        // 填入 interDatasources
+        interDatasources,
+      };
       return draftInitData;
     });
 
     InitApp(initData);
   }
 
+  /**
+   * 发布页面
+   */
   onReleasePage = () => {
     const pageContent = this.getPageContent();
     const interDatasources = this.getDatasources();
