@@ -21,6 +21,7 @@ interface IProps {
 
   okText?: string;
   cancelText?: string;
+  defaultValue?: string
 }
 /**  数据表名称 和  数据表编码 模块 */
 export const NameCodeItem: React.FC<IProps> = React.memo((props: IProps): ReactElement => {
@@ -132,7 +133,7 @@ export const PrimaryTreeItem: React.FC<IProps> = React.memo((props: IProps): Rea
 /**  归属模块 */
 export const ModuleTreeItem: React.FC<IProps> = React.memo((props: IProps): ReactElement => {
   const [moduleTree, setModuleTree] = useState<any[]>([]);
-  const { label = "归属模块", placeholder = "请选择归属模块" } = props;
+  const { label = "归属模块", placeholder = "请选择归属模块", defaultValue } = props;
   useEffect(() => {
     getMenusData();
   }, []);
@@ -172,6 +173,7 @@ export const ModuleTreeItem: React.FC<IProps> = React.memo((props: IProps): Reac
       }]}
     >
       <TreeSelect
+        defaultValue = {defaultValue}
         showSearch
         style={{ width: '100%' }}
         placeholder={placeholder}

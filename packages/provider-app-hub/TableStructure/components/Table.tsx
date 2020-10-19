@@ -35,9 +35,9 @@ export interface ICopyData {
 }
 
 const Table: React.FC<IProps> = (props: IProps, ref) => {
-  let moduleId = "";
   const actionRef = useRef<ActionType>();
   const formRef = useRef<FormInstance>();
+  const [moduleId, setModuleId] = useState<string>('');
   const [copyData = {}, setCopyData] = useState<ICopyData>();
   const [visibleCopyModal, setVisibleCopyModal] = useState<boolean>(false);
   const [visibleCrateTableModal, setVisibleCrateTableModal] = useState<boolean>(false);
@@ -53,7 +53,7 @@ const Table: React.FC<IProps> = (props: IProps, ref) => {
   const columns = [...COLUMNS, tableOperational];
   useEffect(() => {
     if (props.moduleId) {
-      moduleId = props.moduleId === SELECT_ALL ? "" : props.moduleId;
+      setModuleId(props.moduleId === SELECT_ALL ? "" : props.moduleId);
       proTableReset();
       fromReset();
     }
@@ -198,6 +198,7 @@ const Table: React.FC<IProps> = (props: IProps, ref) => {
         onCancel={() => setVisibleCrateTableModal(false)}
       >
         <CreateTable
+          moduleIdDefaultValue = {moduleId}
           onOk={handleCratetTableOk}
           onCancel={() => setVisibleCrateTableModal(false)}
           upDataMenus={handleUpdataMenus}

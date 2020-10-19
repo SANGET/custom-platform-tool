@@ -20,13 +20,16 @@ interface IProps {
   onCancel: () => void;
 
   upDataMenus: () => void;
+  moduleIdDefaultValue?:string
 }
 const layout = {
   labelCol: { span: 5 },
   wrapperCol: { span: 19 },
 };
 const CreateTable: React.FC<IProps> = (props: IProps) => {
-  const { onCancel, onOk, upDataMenus } = props;
+  const {
+    onCancel, onOk, upDataMenus, moduleIdDefaultValue
+  } = props;
   const [form] = Form.useForm();
   const [visibleModal, setVisibleModal] = useState<boolean>(false);
   const handleFinish = async (values) => {
@@ -124,7 +127,7 @@ const CreateTable: React.FC<IProps> = (props: IProps) => {
               ) : null;
           }}
         </Form.Item>
-        <ModuleTreeItem />
+        <ModuleTreeItem defaultValue={moduleIdDefaultValue}/>
         <Button
           type="link"
           className="create-link"
@@ -138,7 +141,7 @@ const CreateTable: React.FC<IProps> = (props: IProps) => {
         />
       </Form>
       <CreateModal
-        title="新建数据表"
+        title="新建模块"
         modalVisible={visibleModal}
         onCancel={() => setVisibleModal(false)}
       >
