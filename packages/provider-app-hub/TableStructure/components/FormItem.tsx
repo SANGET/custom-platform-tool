@@ -177,7 +177,7 @@ export const ModuleTreeItem: React.FC<IProps> = React.memo((props: IProps): Reac
         style={{ width: '100%' }}
         placeholder={placeholder}
         allowClear
-        treeIcon={true}
+        treeIcon={false}
         filterTreeNode={false}
         treeData={moduleTree}
         onSearch={handleSearch}
