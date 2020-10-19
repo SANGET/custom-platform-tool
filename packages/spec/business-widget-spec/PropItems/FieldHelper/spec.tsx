@@ -39,7 +39,6 @@ export const FieldHelperSpec: PropItemCompAccessSpec = () => ({
                     interDatasources={interDatasources}
                     defaultSelected={selectedField}
                     onSubmit={(val) => {
-                      console.log(val);
                       changeEntityState({
                         // field: val
                         attr: 'field',
