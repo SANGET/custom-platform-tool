@@ -4,6 +4,7 @@
   "private": true,
   "types": "index.d.ts",
   "scripts": {
+    "postinstall": "vh gen",
     "start": "cross-env PORT=6679 minictl start",
     "build": "minictl build"
   },
