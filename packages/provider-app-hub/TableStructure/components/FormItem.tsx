@@ -38,13 +38,13 @@ export const NameCodeItem: React.FC<IProps> = React.memo((props: IProps): ReactE
   };
   /**
   * 格式化数据
-  * 将数据中文转换成小写拼音, 并除去括号, 截取前 44 个长度
+  * 将数据中文转换成小写拼音, 并除去括号, 截取前40 个长度
   * @param name
   * @returns str
   */
   const formatNameToCode = (name): string => {
     const pinyin = pinyin4js.convertToPinyinString(name, "", pinyin4js.WITHOUT_TONE);
-    const substr = pinyin.replace(RE.BRACKETS, "").substring(0, 44);
+    const substr = pinyin.replace(RE.BRACKETS, "").substring(0, 40);
     return substr.toLowerCase();
   };
   return (
@@ -65,7 +65,7 @@ export const NameCodeItem: React.FC<IProps> = React.memo((props: IProps): ReactE
       <Form.Item
         name="code" label="数据表编码" rules={[
           { required: true, message: '数据表编码不能为空' },
-          { pattern: RE.ENUS, message: "44个字符，仅支持英文小写、数字、下划线, 不能以数字和下划线开头" },
+          { pattern: RE.ENUS, message: "40个字符，仅支持英文小写、数字、下划线, 不能以数字和下划线开头" },
         ]}
       >
         <Input placeholder='会自动将中文转为首字母大写英文,可手动修改' />
