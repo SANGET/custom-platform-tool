@@ -148,7 +148,7 @@ export const COLUMNS: ProColumns[] = [
 export const RE = {
   /** 中文、英文、数字、下划线、括号 */
 
-  CENUSB: /^(?!_)(?!.*?_$)[a-zA-Z0-9_()\u4e00-\u9fa5]+$/,
+  CENUSB: /^[a-zA-Z0-9_()\u4e00-\u9fa5]+$/,
 
   /** 英文小写、数字、下划线 */
 
