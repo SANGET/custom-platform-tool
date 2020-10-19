@@ -38,7 +38,7 @@ export const FieldSelector: React.FC<FieldSelectorProps> = ({
   const [selectColInfo, setSelectCol] = useState<SelectedField>(defaultSelected);
   return (
     <div className="field-selector p-5">
-      <div className="flex">
+      <div className="flex flex-wrap justify-around">
         {
           interDatasources.map((datasourceItem) => {
             const {

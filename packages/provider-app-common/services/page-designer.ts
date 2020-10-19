@@ -12,14 +12,17 @@ export async function updatePageService(pageInfo: PageInfo, pageContent, extendD
     return console.error('请传入 pageInfo');
   }
   const { id, name, type = 2 } = pageInfo;
+  const updatePageData = Object.assign({}, extendData, {
+    name,
+    type,
+    /** TODO: 字段需要更改 */
+    iubDsl: JSON.stringify(pageContent),
+  });
+  // console.log('updatePageData', updatePageData);
+  console.log('pageContent', pageContent);
   return await $R_P.put({
     url: `/page/v1/pages/${id}`,
-    data: Object.assign({}, extendData, {
-      name,
-      type,
-      /** TODO: 字段需要更改 */
-      iubDsl: JSON.stringify(pageContent),
-    })
+    data: updatePageData
   });
 }
 

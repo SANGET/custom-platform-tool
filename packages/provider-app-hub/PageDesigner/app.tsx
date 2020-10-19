@@ -36,7 +36,6 @@ class PageDesignerApp extends React.Component<VisualEditorAppProps & HY.Provider
    */
   wrapDataSourceDataForUpdate = (dataSourcesFormRemote) => {
     const dataSourcesItems = dataSourcesFormRemote.map((tableData) => {
-      console.log('tableData', tableData);
       return {
         datasourceId: tableData.id,
         datasourceType: tableData.type

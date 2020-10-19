@@ -2,9 +2,6 @@ import PageManager from "@provider-app/page-manager/app";
 import MenuManager from "@provider-app/menu-manager/app";
 import PageDesignerApp from "@provider-app/page-designer/main";
 /// //////// 数据设计
-import {
-  TableStruct, DictManage, EditStruct
-} from "@provider-app/data-designer/src/pages";
 import TableInfo from "@provider-app/table-info/app";
 import TableEditor from "@provider-app/table-editor/app";
 import DictionaryManager from "@provider-app/dictionary-manager/app";
