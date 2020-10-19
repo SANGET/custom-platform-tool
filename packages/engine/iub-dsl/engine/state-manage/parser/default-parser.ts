@@ -3,7 +3,7 @@ import { FoundationTypeSchemas } from '@iub-dsl/definition';
 import { DefaultParserFn } from '../../types';
 
 /** 可以使用默认基础类型解析器的key */
-type FiledKey =('type' | 'defaultVal'| 'fieldMapping') & keyof FoundationTypeSchemas
+type FiledKey = ('type' | 'defaultVal'| 'fieldMapping') & keyof FoundationTypeSchemas
 
 /** 默认基础类型解析器 */
 type DefaultFoundationTypeParser = DefaultParserFn<FoundationTypeSchemas>

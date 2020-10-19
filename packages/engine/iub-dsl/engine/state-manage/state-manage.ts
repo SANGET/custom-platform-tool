@@ -1,9 +1,5 @@
 /* eslint-disable no-param-reassign */
-import React, {
-  useState, useLayoutEffect, useEffect, useContext,
-  useRef, useReducer, useMemo,
-  Dispatch, SetStateAction, useCallback
-} from 'react';
+import { useMemo } from 'react';
 import {
   get as LGet, set as LSet, defaultsDeep, cloneDeep
 } from 'lodash';
@@ -16,12 +12,18 @@ type GetParam = string | {
 } | GetParam[]
 
 // TODO
-const getFullInitStruct = (baseStruct: CommonObjStruct) => {
+const getFullInitStruct = ({ baseStruct, pathMapInfo }: {
+  baseStruct: CommonObjStruct,
+  pathMapInfo: any
+}) => {
   return Object.keys(baseStruct).reduce((result, key) => {
     if (typeof baseStruct[key] === 'string') {
       // result[key] = key;
       result[key] = baseStruct[key];
-    } else if (Array.isArray(baseStruct[key])) {
+    } else if (
+      pathMapInfo[key]?.structType === 'structArray'
+      // Array.isArray(baseStruct[key])
+    ) {
       result[key] = [];
     } else {
       result[key] = getFullInitStruct(baseStruct[key]);
@@ -33,13 +35,13 @@ const getFullInitStruct = (baseStruct: CommonObjStruct) => {
 const SchemasRegExp = /^@\(schemas\)\./;
 /** 状态管理的AOP/util */
 export const isPageState = (text: string) => SchemasRegExp.test(text);
-export const pickKeyWord = (text:string) => text.replace(SchemasRegExp, '');
+export const pickKeyWord = (text:string) => text.replace(SchemasRegExp, '') || text;
 
 /** TODO: 跨页面问题 */
 export const createIUBStore = (analysisData: SchemasAnalysisRes) => {
   const { levelRelation, pathMapInfo, baseStruct } = analysisData;
 
-  const fullStruct = getFullInitStruct(baseStruct);
+  const fullStruct = getFullInitStruct({ baseStruct, pathMapInfo });
   return () => {
     const [IUBPageStore, setIUBPageStore] = useCacheState(fullStruct);
 

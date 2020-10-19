@@ -2,6 +2,52 @@ import {
   Schemas, SchemaItem, ComplexType, FoundationType
 } from "@iub-dsl/definition";
 
+export interface ExtralPathMapInfo {
+  [SCHEMAS_DEFAULT_KEY]: string;
+  parentPath: string
+}
+/**
+ * 分析使用的额外上下文
+ */
+export interface SchemasAnalysisExtralCtx {
+  parentPath: string;
+  tempStruct: { [str: string]: any };
+}
+export type SchemasAnalysisCtx<
+  T = FoundationTypeSchemas | ComplexTypeSchemas
+> = SchemasAnalysisExtralCtx & BaseSchedulerCtx<T>
+
+// TODO: 类型问题
+// const parseContext: ParseBaseOptions & SchemasAnalysisExtralCtx = {
+//   /** TODO: 名词 */
+//   foundationParser: (ctx: SchemasAnalysisCtx<FoundationTypeSchemas>) => {
+//     /** 基础数据类型分析 */
+//     foundationAnalysis(schemasAnalysisRes, ctx);
+
+//     parseContext.tempStruct[ctx.key] = ctx.schemaItem.defaultVal || ''; // 上下文临时结构赋值
+//   },
+//   complexStructParser: (ctx: SchemasAnalysisCtx<ComplexTypeSchemas>) => {
+//     /** 赋值数据类型得分析 */
+//     const newParentPath = complexAnalysis(schemasAnalysisRes, ctx);
+//     parseContext.parentPath = newParentPath;
+
+//     /**
+//      * 注意区分情况:
+//      * 1. 递归: 赋值给上文的结构
+//      * 2. 非递归: 赋值给最外层结构
+//      * 3. 上下文区分: 全局上下文, 递归内部上下文
+//      */
+//     parseContext.tempStruct = {}; // 上下文临时结构赋值
+//     schemasAnalysisRes.baseStruct[newParentPath] = parseContext.tempStruct;
+
+//     /** 递归 */
+//     structScheduler(ctx.schemaItem.struct, parseContext);
+//   },
+//   parentPath: '',
+//   tempStruct: schemasAnalysisRes.baseStruct
+// };
+// structScheduler(originSchemas, parseContext);
+
 /**
  * 基础解析时上下文
  */
@@ -52,4 +98,52 @@ export const structScheduler = <T>(schemas: Schemas, {
         });
     }
   });
+};
+
+/**
+ * 基础数据类型对应的分析
+ */
+const foundationAnalysis = ({
+  pathMapInfo,
+  levelRelation,
+  baseStruct,
+}: SchemasAnalysisRes, {
+  parentPath, key, schemaItem
+}: SchemasAnalysisCtx<FoundationTypeSchemas>) => {
+  /** 路径映射信息添加 */
+  pathMapInfo[parentPath + key] = {
+    ...schemaItem,
+    [SCHEMAS_DEFAULT_KEY]: key,
+    parentPath
+  };
+  /** 等级关系构建 */
+  addLevelRelation({ parentPath, key, levelRelation });
+};
+
+const complexAnalysis = ({
+  pathMapInfo,
+  levelRelation,
+  baseStruct
+}: SchemasAnalysisRes, {
+  parentPath, key, schemaItem: { struct, type },
+}: SchemasAnalysisCtx<ComplexTypeSchemas>) => {
+  /** 公共逻辑新的父级path */
+  let newParentPath = parentPath + key;
+
+  /** 路径映射信息添加 */
+  pathMapInfo[newParentPath] = {
+    structType: type,
+    [SCHEMAS_DEFAULT_KEY]: key,
+    parentPath
+  };
+
+  /** 等级关系构建 */
+  addLevelRelation({ parentPath, key, levelRelation });
+
+  /** 公共逻辑添加新父级的后缀 */
+  newParentPath += (
+    type === ComplexType.structArray ? PATH_SPLIT_MARK_ARR : PATH_SPLIT_MARK
+  );
+
+  return newParentPath;
 };
