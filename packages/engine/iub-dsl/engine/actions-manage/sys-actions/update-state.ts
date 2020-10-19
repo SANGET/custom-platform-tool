@@ -9,16 +9,33 @@ import { UpdateState } from "@iub-dsl/definition/actions";
  */
 export const updateStateAction = (conf: UpdateState) => {
   // 更新状态动作的配置和定义
-  const { actionName, changeMapping, changeTarget } = conf;
+  const {
+    actionOptions: {
+      changeTarget,
+      changeMapping
+    },
+    actionName, actionOutput, actionId
+  } = conf;
   if (changeTarget) {
     return (action, runtimeFnScheduler) => {
       console.log(action);
       // action, 标准得事件执行上下文, param2 运行时上下文标准函数
-      return runtimeFnScheduler({
+      return runtimeFnScheduler.current({
+        actionName,
+        action,
+        id,
+        type: 'targetUpdateState',
+        params: [changeTarget, action.payload],
+      });
+    };
+  }
+  if (changeMapping) {
+    return (action, runtimeFnScheduler) => {
+      return runtimeFnScheduler.current({
         actionName,
         action,
         type: 'targetUpdateState',
-        params: [changeTarget, action.changeValue],
+        params: [changeMapping, action.payload],
       });
     };
   }

@@ -4,10 +4,10 @@ import {
 } from "@iub-dsl/definition/actions";
 
 export const dataCollectionAction = (conf: DataCollection) => {
-  const { actionName, collectionType, struct } = conf;
+  const { actionName, actionOptions: { collectionType, struct }, when } = conf;
   if (collectionType === 'structArray') {
     return (action, runtimeFnScheduler) => {
-      return runtimeFnScheduler({
+      return runtimeFnScheduler.current({
         actionName,
         type: 'getPageState',
         params: [struct]
@@ -22,7 +22,7 @@ export const dataCollectionAction = (conf: DataCollection) => {
    */
   return (action, runtimeFnScheduler) => {
     const newStruct = genGetPagetStateStruct(struct, runtimeFnScheduler);
-    return runtimeFnScheduler({
+    return runtimeFnScheduler.current({
       actionName,
       type: 'getPageState',
       params: [newStruct]
