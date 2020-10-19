@@ -111,13 +111,13 @@ const CreateTable: React.FC<IProps> = (props: IProps) => {
                 <Form.Item
                   name="maxLevel"
                   label="最大层级数"
-                  rules={[{
-                    required: true,
-                    message: "请填写最大层级数"
-                  }]}
+                  rules={[
+                    { required: true, message: "请填写最大层级数" },
+                    { pattern: /^([2-9]|1[1-5])$/, message: "请输入2-15的整数" }
+                  ]}
                   initialValue={15}
                 >
-                  <InputNumber placeholder="须为正整数,最大层级不超过15级" min={2} max={15} />
+                  <InputNumber />
                 </Form.Item>
               ) : getFieldValue('type') === TABLE_TYPE.AUX_TABLE ? (
                 <PrimaryTreeItem />
