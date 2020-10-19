@@ -34,6 +34,7 @@ const TableFactory = ({
   assertPropsKey(id, allPropsKey, canUsePropsKey);
   return (
     <NormalTable
+      rowKey='id'
       {...actualProps}
     />
   );

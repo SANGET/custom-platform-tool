@@ -39,15 +39,6 @@ type ArrayRenderStruct = {
 /** 所有可以渲染的结构 */
 type FullRenderStruct = (BaseRenderStruct | ArrayRenderStruct) & ChildrenStruct
 
-// /** 实际用于渲染的结构规范 */
-// type ActualRenderInfo = {
-//   compTag: AllUI;
-//   mark: string;
-//   propsMap: CompPropsMap[];
-//   propsKeys: string[];
-//   renderStruct: ActualRenderInfo[];
-// }
-
 type RenderStructInfo = {
   mark: string;
   childrenStructInfo: RenderStructInfo[]
@@ -58,7 +49,13 @@ export type RenderCompInfoItem = {
   mark: string;
   propsMap: CompPropsMap[];
   propsKeys: string[];
-  // dynamicProps, staticProps
+  // TODO: types
+  dynamicProps: {
+    [propsKey: string]: any
+  };
+  staticProps: {
+    [propsKey: string]: any
+  }
 }
 type RenderCompInfo = {
   [mark: string]: RenderCompInfoItem

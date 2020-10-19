@@ -74,11 +74,11 @@ const genBaseRenderStruct = (
   } = structItem;
   // TODO: 严重问题, ctx透传很深
   const {
-    parserContext = {}
+    parseContext = {}
   } = widgetParserOptions;
   let {
     propsParser = originPropsParser
-  } = parserContext;
+  } = parseContext;
   if (propsParser !== originPropsParser) {
     propsParser = propsParser(originPropsParser, {
       getStructItemInfo: (key) => structItem[key] || structItem,

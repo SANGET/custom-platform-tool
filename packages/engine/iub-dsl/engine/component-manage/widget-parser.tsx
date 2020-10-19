@@ -1,5 +1,4 @@
 import { AllComponentType } from "@iub-dsl/definition";
-import componentConf from './mock';
 import { AllUI } from './UI-factory/types';
 import { RenderStructInfo, RenderCompInfo } from './component-store/types/renderStruct';
 
@@ -45,7 +44,7 @@ const widgetParseScheduler = (id: string, confItem, options): {
   }
 };
 
-const widgetParser = (conf = componentConf, options?) => {
+const widgetParser = (conf, options?) => {
   const allCompId = Object.keys(conf);
 
   const compParseRes: any = {};

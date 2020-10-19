@@ -1,6 +1,7 @@
 import React, { useMemo, useContext } from "react";
 import { DefaultCtx } from "../../IUBDSLRuntimeContainer";
 import { AllUI } from "../UI-factory/types";
+import { RenderCompInfoItem } from "./types";
 
 /**
  * 生成每个小组件的渲染器
@@ -9,8 +10,7 @@ import { AllUI } from "../UI-factory/types";
 const genCompRenderFC = (
   getWidget: (compTag: AllUI) => React.FC<any>
 ) => (
-  // info: RenderCompInfoItem
-  info: any
+  info: RenderCompInfoItem
 ) => {
   const {
     compTag, mark, propsKeys, propsMap, dynamicProps, staticProps
@@ -18,8 +18,11 @@ const genCompRenderFC = (
   const Comp = getWidget(compTag);
 
   return ({ children, extralProps: actualExtralProps }) => {
-    const { useDynamicPropHandle } = useContext(DefaultCtx);
+    // TODO: dynamicProps 有undefined情况
+    const { useDynamicPropHandle, useFn, cachCtx } = useContext(DefaultCtx);
     const actualDynamicPros = useDynamicPropHandle?.(dynamicProps) || {};
+
+    const eventProps = useFn?.(dynamicProps) || {};
 
     // ! 全局透传的extralProps一改全改:: 谨慎
     // const actualExtralProps = useMemo(() => {
@@ -34,10 +37,11 @@ const genCompRenderFC = (
           {...staticProps}
           {...actualDynamicPros}
           {...actualExtralProps}
+          {...eventProps}
           children={children}
         />
       );
-    }, [children, actualDynamicPros, staticProps, actualExtralProps]);
+    }, [children, actualDynamicPros, staticProps, actualExtralProps, eventProps]);
 
     return renderedComp;
   };
