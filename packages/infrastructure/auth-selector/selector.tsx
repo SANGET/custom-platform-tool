@@ -1,4 +1,4 @@
-import React, { SFC } from 'react';
+import React from 'react';
 import { Call, IsFunc } from '@mini-code/base-func';
 
 import { TransitionGroup, CSSTransition } from 'react-transition-group';
@@ -12,7 +12,7 @@ export interface LoginSelectorProps extends LoginPanelProps {
   children: Children;
 }
 
-const LoginSelector: SFC<LoginSelectorProps> = (props) => {
+const LoginSelector: React.FC<LoginSelectorProps> = (props) => {
   const { children, isLogin } = props;
 
   let container;

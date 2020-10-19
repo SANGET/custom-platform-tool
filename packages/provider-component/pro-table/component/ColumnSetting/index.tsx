@@ -10,7 +10,8 @@ import {
 import { Checkbox, Popover, Tooltip } from 'antd';
 import { DndProvider } from 'react-dnd';
 import classNames from 'classnames';
-import Backend from 'react-dnd-html5-backend';
+// import Backend from 'react-dnd-html5-backend';
+import { HTML5Backend } from 'react-dnd-html5-backend';
 
 import Container, { ColumnsState } from '../../container';
 import { ProColumns } from '../../Table';
@@ -28,7 +29,9 @@ const ToolTipIcon: React.FC<{
   columnKey: string | number;
   show: boolean;
   fixed: 'left' | 'right' | undefined;
-}> = ({ title, show, children, columnKey, fixed }) => {
+}> = ({
+  title, show, children, columnKey, fixed
+}) => {
   const { columnsMap, setColumnsMap } = Container.useContainer();
   if (!show) {
     return null;
@@ -60,7 +63,9 @@ const CheckboxListItem: React.FC<{
   };
   fixed?: boolean | 'left' | 'right';
   setColumnsMap: (map: { [key: string]: ColumnsState }) => void;
-}> = ({ columnKey, className, columnsMap, title, setColumnsMap, fixed }) => {
+}> = ({
+  columnKey, className, columnsMap, title, setColumnsMap, fixed
+}) => {
   const intl = useIntl();
   const config = columnsMap[columnKey || 'null'] || { show: true };
   return (
@@ -126,8 +131,12 @@ const CheckboxList: React.FC<{
   className?: string;
   title: string;
   showTitle?: boolean;
-}> = ({ list, className, showTitle = true, title: listTitle }) => {
-  const { columnsMap, setColumnsMap, sortKeyColumns, setSortKeyColumns } = Container.useContainer();
+}> = ({
+  list, className, showTitle = true, title: listTitle
+}) => {
+  const {
+    columnsMap, setColumnsMap, sortKeyColumns, setSortKeyColumns
+  } = Container.useContainer();
   const show = list && list.length > 0;
   if (!show) {
     return null;
@@ -153,7 +162,9 @@ const CheckboxList: React.FC<{
     setSortKeyColumns(newColumns);
   };
 
-  const listDom = list.map(({ key, dataIndex, title, fixed, ...rest }, index) => {
+  const listDom = list.map(({
+    key, dataIndex, title, fixed, ...rest
+  }, index) => {
     const columnKey = genColumnKey(key, rest.index);
     return (
       <DnDItem
@@ -176,7 +187,7 @@ const CheckboxList: React.FC<{
     );
   });
   return (
-    <DndProvider backend={Backend}>
+    <DndProvider backend={HTML5Backend}>
       {showTitle && <span className={`${className}-list-title`}>{listTitle}</span>}
       {listDom}
     </DndProvider>
@@ -237,15 +248,14 @@ const GroupCheckboxList: React.FC<{
 
 const ColumnSetting = <T, U = {}>(props: ColumnSettingProps<T>) => {
   const counter = Container.useContainer();
-  const localColumns: Omit<ProColumns<any> & { index?: number }, 'ellipsis'>[] =
-    props.columns || counter.columns || [];
+  const localColumns: Omit<ProColumns<any> & { index?: number }, 'ellipsis'>[] = props.columns || counter.columns || [];
 
   const { columnsMap, setColumnsMap, setSortKeyColumns } = counter;
   /**
    * 设置全部选中，或全部未选中
    * @param show
    */
-  const setAllSelectAction = (show: boolean = true) => {
+  const setAllSelectAction = (show = true) => {
     const columnKeyMap = {};
     localColumns.forEach(({ key, fixed, index }) => {
       const columnKey = genColumnKey(key, index);

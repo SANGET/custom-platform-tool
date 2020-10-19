@@ -8,7 +8,9 @@ import createStore from './store';
 import { AllDispatcherActions } from './actions';
 import { VisualEditorState } from './reducers/reducer';
 
-/** TODO: 完善 state */
+/**
+ * TODO: 完善 state
+ */
 export const mapVisualStateToProps = (state: VisualEditorState) => {
   return produce(state, (draft) => {
     /** 设置 activeEntity */

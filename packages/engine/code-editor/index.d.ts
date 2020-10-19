@@ -10,7 +10,6 @@
 // // }
 // declare function CodeMirror(host: HTMLDivElement, options?: IExpandConfiguration): Editor;
 
-
 interface window {
   JSHINT: any;
   jsonlint: any;

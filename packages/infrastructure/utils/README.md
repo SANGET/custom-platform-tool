@@ -1,11 +1,3 @@
-<!--
- * @Author: wph
- * @Date: 2020-07-27 14:51:28
- * @LastEditTime: 2020-07-28 14:44:17
- * @LastEditors: Please set LastEditors
- * @Description: 权限管理子工程说明文档
- * @FilePath: \custom-platform-v3-frontend\packages\provider-app-hub\AuthManager\README.md
---> 
 # 介绍
 
 配置平台--权限管理应用模块, poc3.1版本目前只包含权限项，权限树两个功能模块
@@ -51,13 +43,11 @@ yarn
 
 -----
 
-
 ### 启动「生产工具」
 
 ```shell
 yarn start:auth
 ```
-
 
 ## 测试
 
@@ -66,11 +56,11 @@ yarn start:auth
 -----
 
 ## 部署
+
 通过jenkins部署,链接和账号是：
 http://192.168.14.101:8080/login?from=%2Fview%2F%2520frontend-project%2Fjob%2Fcustom-platform-v3-frontend_SQ_SCAN%2Fjob%2Ffeat-20200707-authInit%2F4%2Fconsole
 
 hydev/123456
-
 
 -----
 

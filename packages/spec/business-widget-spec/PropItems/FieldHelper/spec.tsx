@@ -58,7 +58,7 @@ export const FieldHelperSpec: PropItemCompAccessSpec = () => ({
           });
         }}
       >
-        {selectedField.column ? takeBindColumnInfo(selectedField) : '点击绑定字段'}
+        {selectedField ? takeBindColumnInfo(selectedField) : '点击绑定字段'}
       </div>
     );
   }
