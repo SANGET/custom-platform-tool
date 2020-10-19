@@ -65,8 +65,7 @@ export const NameCodeItem: React.FC<IProps> = React.memo((props: IProps): ReactE
       <Form.Item
         name="code" label="数据表编码" rules={[
           { required: true, message: '数据表编码不能为空' },
-          { pattern: RE.ENUS, message: "输入字段仅为英文小写、数字、下划线, 不能以数字和下划线开头" },
-          { max: 44, message: '最多只能输入44个字符' },
+          { pattern: RE.ENUS, message: "44个字符，仅支持英文小写、数字、下划线, 不能以数字和下划线开头" },
         ]}
       >
         <Input placeholder='会自动将中文转为首字母大写英文,可手动修改' />
