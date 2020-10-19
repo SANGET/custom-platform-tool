@@ -158,7 +158,7 @@ function handleRes(resData) {
       // });
       break;
     default:
-      // AntdMessage.error(msg);
+      AntdMessage.error(msg);
   }
 }
 

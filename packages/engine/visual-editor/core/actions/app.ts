@@ -7,9 +7,9 @@
 import { BasePageData } from "../../data-structure";
 
 interface AppActionsContext {
-  compClassForPanelData?
+  widgetPanelData?
   propPanelData?
-  compClassCollection?
+  widgetMetaDataCollection?
   propItemData?
   pagePropsData?
   pageContent?: BasePageData

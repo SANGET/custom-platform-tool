@@ -3,6 +3,7 @@ import ExpressEditor from '@engine/code-editor';
 import { Button } from 'antd';
 
 export const ExpEditor = ({
+  defaultValue,
   onSubmit
 }) => {
   const [editingVal, setEditingVal] = useState('');
@@ -10,6 +11,7 @@ export const ExpEditor = ({
   return (
     <div>
       <ExpressEditor
+        value={defaultValue}
         ref={editorRef.current}
         // theme="3024-day"
         onChange={(instance) => {

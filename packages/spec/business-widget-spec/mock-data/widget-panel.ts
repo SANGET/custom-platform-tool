@@ -10,6 +10,7 @@ export const widgetPanelData: GroupPanelData = {
       items: [
         'widget-id-1',
         'widget-id-5',
+        'widget-id-11',
       ]
     },
     {

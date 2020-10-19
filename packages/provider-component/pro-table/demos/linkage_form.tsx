@@ -1,6 +1,8 @@
 import React from 'react';
 import { PlusOutlined } from '@ant-design/icons';
-import { Button, Tag, Space, Input } from 'antd';
+import {
+  Button, Tag, Space, Input
+} from 'antd';
 import ProTable, { ProColumns, TableDropdown } from '@ant-design/pro-table';
 import request from 'umi-request';
 
@@ -162,12 +164,11 @@ const columns: ProColumns<GithubIssueItem>[] = [
 export default () => (
   <ProTable<GithubIssueItem>
     columns={columns}
-    request={async (params = {}) =>
-      request<{
-        data: GithubIssueItem[];
-      }>('https://proapi.azurewebsites.net/github/issues', {
-        params,
-      })
+    request={async (params = {}) => request<{
+      data: GithubIssueItem[];
+    }>('https://proapi.azurewebsites.net/github/issues', {
+      params,
+    })
     }
     rowKey="id"
     dateFormatter="string"

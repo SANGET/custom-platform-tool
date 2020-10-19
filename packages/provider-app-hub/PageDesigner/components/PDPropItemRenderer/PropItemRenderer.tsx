@@ -3,28 +3,34 @@ import { PropItemRendererProps } from '@engine/visual-editor/components/Properti
 import { FXContainer } from './FXContainer';
 import { Unexpect } from '../WidgetRenderer';
 
+interface PDPropItemRendererProps extends PropItemRendererProps {
+  interDatasources
+}
+
 /**
  * 属性项渲染器
  * 根据属性项的 type 选择对应的组件进行渲染
  */
-export const PropItemRenderer: React.FC<PropItemRendererProps> = ({
+export const PropItemRenderer: React.FC<PDPropItemRendererProps> = ({
+  interDatasources,
   propItemMeta,
   propItemValue,
   changeEntityState,
+  ...other
 }) => {
   const propItemRenderCtx = {
+    interDatasources,
     changeEntityState,
     widgetEntityState: propItemValue,
   };
 
   const {
-    label, propItemCompDef,
+    label,
   } = propItemMeta;
 
   // const propItemCompConfig = getPropItem(propItemCompType);
 
   let Com;
-  // const { type: propItemCompType, ...propsForComponent } = propItemCompDef;
   if (!propItemMeta.render) {
     Com = <Unexpect />;
   } else {
