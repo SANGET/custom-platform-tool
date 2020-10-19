@@ -39,7 +39,6 @@ export const FieldHelperSpec: PropItemCompAccessSpec = () => ({
                     interDatasources={interDatasources}
                     defaultSelected={selectedField}
                     onSubmit={(val) => {
-                      console.log(val);
                       changeEntityState({
                         // field: val
                         attr: 'field',
@@ -59,7 +58,7 @@ export const FieldHelperSpec: PropItemCompAccessSpec = () => ({
           });
         }}
       >
-        {selectedField.column ? takeBindColumnInfo(selectedField) : '点击绑定字段'}
+        {selectedField ? takeBindColumnInfo(selectedField) : '点击绑定字段'}
       </div>
     );
   }
