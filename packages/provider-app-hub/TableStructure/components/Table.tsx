@@ -188,7 +188,7 @@ const Table: React.FC<IProps> = (props: IProps, ref) => {
         scroll={{ x: '500px' }}
         toolBarRender={renderToolBarRender}
         pagination={{
-          hideOnSinglePage: true,
+          // hideOnSinglePage: true,
           pageSizeOptions: PAGE_SIZE_OPTIONS
         }}
       />
