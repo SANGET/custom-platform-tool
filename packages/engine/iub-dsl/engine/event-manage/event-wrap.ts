@@ -51,22 +51,25 @@ export const useEventProps = (eventWrapFnList: any[], runtimeFnScheduler) => {
   const eventProps = {};
 
   eventWrapFnList.forEach(({ eventType, eventHandle, eventDeps }) => {
-    eventDepsToUse = runtimeFnScheduler({
+    eventDepsToUse = runtimeFnScheduler.current({
       type: 'getWatchDeps',
       params: [eventDeps || []]
     }) || [];
     allEventDepsToUse.push(...eventDepsToUse);
     /** 缓存每个事件 */
-    // eslint-disable-next-line react-hooks/rules-of-hooks
-    eventProps[eventType] = useMemo(() => {
-      return eventHandle(runtimeFnScheduler);
-    }, eventDepsToUse);
+    eventProps[eventType] = eventHandle(runtimeFnScheduler); // 用useRef缓存减少很多计算
+    //  useMemo(() => {
+    // return eventHandle(runtimeFnScheduler);
+    // }, eventDepsToUse);
   });
+
+  // return eventProps;
 
   /** 换成最终结果 */
   return useMemo(
     () => eventProps,
-    allEventDepsToUse
+    // allEventDepsToUse
+    []
   );
 };
 

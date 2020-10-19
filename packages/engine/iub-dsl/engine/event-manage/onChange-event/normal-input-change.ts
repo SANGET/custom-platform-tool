@@ -5,7 +5,7 @@ export const normalInputChange = (
   e: React.ChangeEvent<HTMLInputElement>
 ) => ({
   type: 'normalInputChange',
-  changeValue: e.target.value,
+  payload: e.target.value,
   compMark: '',
   // 一些组件配置的必要的信息
 });
