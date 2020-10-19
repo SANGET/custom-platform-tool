@@ -11,7 +11,7 @@ import { createIUBStore } from './state-manage';
 import { genEventWrapFnList, useEventProps } from './event-manage';
 import { renderStructInfoListRenderer } from './component-manage/component-store/render-widget-struct';
 import { useCacheState } from './utils';
-import { APBDSLrequest } from './utils/apb-dsl';
+import { APBDSLrequest as originReq } from './utils/apb-dsl';
 
 const useUU = (setListConf: any[] = []) => {
   const [prop, setProp] = useCacheState({});
@@ -23,6 +23,17 @@ const useUU = (setListConf: any[] = []) => {
   });
   return prop;
 };
+const APBDSLrequest = (reqParam) => {
+  return originReq(reqParam);
+};
+
+// address: "301描述信息描述描述描述~@!!~"
+// age: "96"
+// id: "1315554941783384064"
+// username: "张三301"
+// const transformT = ({address, age,id, username}) => ({
+
+// })
 
 const genRuntimeCtxFn = (dslParseRes, runtimeCtx) => {
   const {
@@ -35,7 +46,8 @@ const genRuntimeCtxFn = (dslParseRes, runtimeCtx) => {
   const {
     IUBStoreEntity,
     runTimeLine,
-    setRunTimeLine
+    setRunTimeLine,
+    cachCtx
   } = runtimeCtx;
   const {
     getPageState,
@@ -46,17 +58,43 @@ const genRuntimeCtxFn = (dslParseRes, runtimeCtx) => {
 
   const runtimeContext = {
     targetUpdateState,
+    updatePageState,
     getPageState,
     getWatchDeps,
     APBDSLrequest
   };
-  const runtimeFnScheduler = ({ action, type, params }) => {
+  const runtimeFnScheduler = ({
+    action, type, params, actionName
+  }) => {
     // if (Object.prototype.toString.call(action) === "[object Object]") {
     //   setRunTimeLine([...runTimeLine, action]);
     // }
+
     const runRes = runtimeContext[type](...params);
+    if (actionName === 'TableSelect') {
+      runRes.then((res) => {
+        runtimeFnScheduler({
+          type: 'updatePageState',
+          params: [{
+            entity_27: res
+          }],
+          actionName: 'setTableData',
+          action: {
+            type: 'setTableData'
+          }
+        });
+      });
+    }
+    if (actionName === 'TableInsert') {
+      runRes.then((res) => {
+        const element = document.querySelectorAll('button');
+        element?.[2].click();
+      });
+    }
+
     return runRes;
   };
+  cachCtx.current = runtimeFnScheduler;
 
   /**
    * !! 注意: 引用关系的处理「一大难题」
@@ -68,13 +106,7 @@ const genRuntimeCtxFn = (dslParseRes, runtimeCtx) => {
    * 3.
    */
   const useDynamicPropHandle = (dynamicProps: any = {}) => {
-    const { value } = dynamicProps;
-
-    /** 载入上下文,生成实际的fn */
-    // watch 事件 用到的state
-    const eventWrapFnList = useMemo(() => genEventWrapFnList(dynamicProps, { getActionFn }), []);
-
-    const eventProps = useEventProps(eventWrapFnList, runtimeFnScheduler);
+    const { value, dataSource } = dynamicProps;
 
     const list: any[] = [];
     if (value) {
@@ -84,16 +116,35 @@ const genRuntimeCtxFn = (dslParseRes, runtimeCtx) => {
         handle: () => ({ value: newState })
       });
     }
+    if (dataSource) {
+      const newDataSource = getPageState(dataSource);
+      list.push({
+        deps: [newDataSource],
+        handle: () => ({
+          dataSource: newDataSource
+        })
+      });
+    }
     const propp = useUU(list);
+
     return useMemo(() => {
       return {
-        ...eventProps,
         ...propp
       };
     }, [
       propp,
-      eventProps
     ]);
+  };
+
+  const useFn = (dynamicProps = {}) => {
+    /** 载入上下文,生成实际的fn */
+    // watch 事件 用到的state
+    const eventWrapFnList = useMemo(() => genEventWrapFnList(dynamicProps, { getActionFn }), []);
+
+    // const eventProps = useEventProps(eventWrapFnList, runtimeFnScheduler);
+    const eventProps = useEventProps(eventWrapFnList, cachCtx);
+    // const eventProps = {};
+    return eventProps;
   };
 
   // 先放着
@@ -107,7 +158,9 @@ const genRuntimeCtxFn = (dslParseRes, runtimeCtx) => {
 
   return {
     useDynamicPropHandle,
-    conditionParamHandle
+    conditionParamHandle,
+    useFn,
+    cachCtx
   };
 };
 
@@ -127,6 +180,7 @@ const IUBDSLRuntimeContainer = React.memo<{dslParseRes: any}>(({ dslParseRes }) 
     getPageState, updatePageState, IUBPageStore
   } = IUBStoreEntity;
   const [runTimeLine, setRunTimeLine] = useState([]);
+  const cachCtx = useRef(() => {});
 
   // useTempCode(IUBStoreEntity);
 
@@ -166,7 +220,8 @@ const IUBDSLRuntimeContainer = React.memo<{dslParseRes: any}>(({ dslParseRes }) 
     IUBStoreEntity,
     APBDSLrequest,
     runTimeLine,
-    setRunTimeLine
+    setRunTimeLine,
+    cachCtx
   }), [IUBStoreEntity]);
 
   // console.log('conditionValue ---> ', conditionParser(ctx));
@@ -175,9 +230,6 @@ const IUBDSLRuntimeContainer = React.memo<{dslParseRes: any}>(({ dslParseRes }) 
 
   return (
     <DefaultCtx.Provider value={ctx}>
-      <pre>
-        {JSON.stringify(getPageState(), null, 2)}
-      </pre>
       <FromWrapFactory>
         <LayoutRenderer
           layoutNode={actualRenderComponentList}
@@ -193,6 +245,9 @@ const IUBDSLRuntimeContainer = React.memo<{dslParseRes: any}>(({ dslParseRes }) 
           }}
         />
       </FromWrapFactory>
+      <pre>
+        {JSON.stringify(getPageState(), null, 2)}
+      </pre>
     </DefaultCtx.Provider>
   );
 }, (prev, next) => {

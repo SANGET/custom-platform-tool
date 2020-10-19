@@ -4,10 +4,11 @@ import { TypeOfIUBDSL } from "@iub-dsl/definition";
 import SchemasParser from "./state-manage/schemas";
 import widgetParser from "./component-manage/widget-parser";
 import { actionsCollectionParser } from "./actions-manage/actions-parser";
+import { flowParser } from './flow-engine';
 import { isPageState } from "./state-manage";
 import { eventPropsHandle } from "./event-manage";
 
-const extralUpdateStateConfParser = (actionConf, actionConfParseRes, parserContext) => {
+const extralUpdateStateConfParser = (actionConf, actionConfParseRes, parseContext) => {
   const { changeTarget } = actionConf;
   const { changeStateToUse, getStateToUse } = actionConfParseRes;
   if (changeTarget) {
@@ -16,7 +17,7 @@ const extralUpdateStateConfParser = (actionConf, actionConfParseRes, parserConte
   return actionConfParseRes;
 };
 
-const extralAPBDSLCURDOfConfParser = (actionConf, actionConfParseRes, parserContext) => {
+const extralAPBDSLCURDOfConfParser = (actionConf, actionConfParseRes, parseContext) => {
   const { changeStateToUse, getStateToUse } = actionConfParseRes;
   getStateToUse.push("@(schemas).entity_25", "@(schemas).entity_26", "@(schemas).entity_28");
   return actionConfParseRes;
@@ -49,22 +50,21 @@ const genIUBDSLParserCtx = (parseRes) => {
     };
   };
 
-  const actionConfParser = (actionConf, actionConfParseRes, parserContext) => {
+  const actionConfParser = (actionConf, actionConfParseRes, parseContext) => {
     // isPageState
-    console.log(actionConf);
 
     switch (actionConf.type) {
       case 'updateState':
-        return extralUpdateStateConfParser(actionConf, actionConfParseRes, parserContext);
+        return extralUpdateStateConfParser(actionConf, actionConfParseRes, parseContext);
       case 'APBDSLCURD':
-        return extralAPBDSLCURDOfConfParser(actionConf, actionConfParseRes, parserContext);
+        return extralAPBDSLCURDOfConfParser(actionConf, actionConfParseRes, parseContext);
       default:
         return actionConfParseRes;
     }
   };
   return {
     propsParser,
-    actionConfParser
+    actionConfParser,
   };
 };
 
@@ -73,7 +73,8 @@ const IUBDSLParser = ({ dsl }) => {
     actionsCollection, sysRtCxtInterface,
     componentsCollection, schemas,
     metadataCollection, relationshipsCollection,
-    layoutContent, pageID, name, type
+    layoutContent, pageID, name, type,
+    flowCollection
   } = dsl as TypeOfIUBDSL;
 
   let parseRes: any = {
@@ -87,15 +88,15 @@ const IUBDSLParser = ({ dsl }) => {
     schemas
   };
 
-  const parserContext = genIUBDSLParserCtx(parseRes);
+  const parseContext = genIUBDSLParserCtx(parseRes);
 
   const renderComponentKeys = Object.keys(componentsCollection);
 
   /** 页面模型解析 */
   const schemasParseRes = SchemasParser(schemas);
   /** 每个动作解析成函数「流程将其连起来」 */
-  const parseActionResult = actionsCollectionParser(actionsCollection, parserContext);
-  console.log(parseActionResult);
+  const parseActionResult = actionsCollectionParser(actionsCollection, parseContext);
+  // console.log(parseActionResult);
 
   parseRes = {
     ...parseRes,
@@ -111,8 +112,16 @@ const IUBDSLParser = ({ dsl }) => {
 
   /** 组件解析 TODO: propsMap有问题, 上下文没有对其进行干预 */
   const componentParseRes = widgetParser(componentsCollection, {
-    parserContext
+    parseContext
   });
+
+  const flowParseRes = flowParser(flowCollection, { parseContext, parseRes });
+  // console.log(flowParseRes);
+  const { getFlowItemInfo } = flowParseRes;
+  const { flowItemRun } = getFlowItemInfo('flow1');
+  console.log(flowItemRun({
+    getFlowItemInfo
+  })?.then());
 
   parseRes = {
     ...parseRes,

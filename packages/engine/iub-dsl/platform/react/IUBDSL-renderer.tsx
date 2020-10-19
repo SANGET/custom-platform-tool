@@ -1,6 +1,7 @@
 import React from 'react';
 import { IUBDSLParser, IUBDSLRuntimeContainer } from '@iub-dsl/engine';
-import { testDemo } from '@iub-dsl/demo/base-reference';
+// import { testDemo } from '@iub-dsl/demo/base-reference';
+import { userDemo } from '@iub-dsl/demo/base-reference/user/user';
 
 const resolvedDsl: {
   [pageId: string]: any; // IUB_DSL解析结果
@@ -12,7 +13,7 @@ const resolvedDsl: {
 const IUBDSLRenderer = React.memo<{dsl: any}>(({ dsl }) => {
   const { pageID } = dsl;
   if (typeof pageID !== 'string') {
-    dsl = testDemo;
+    dsl = userDemo;
     // return <ErrorRenderer msg='IUB-DSL Data Error'/>;
   }
   // 临时添加schemas
@@ -34,13 +35,13 @@ const IUBDSLRenderer = React.memo<{dsl: any}>(({ dsl }) => {
   }
   return <ErrorRenderer/>;
 },
-//  () => {
-  // // TODO: 记得删除
-  // if (process.env.NODE_ENV === 'development') {
-  //   return true;
-  // }
-  // return false;
-// }
+() => {
+  // TODO: 记得删除
+  if (process.env.NODE_ENV === 'development') {
+    return true;
+  }
+  return false;
+}
 // eslint-disable-next-line function-paren-newline
 );
 
