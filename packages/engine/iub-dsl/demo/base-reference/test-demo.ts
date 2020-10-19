@@ -1,4 +1,6 @@
-import { FoundationType } from '@iub-dsl/definition';
+import {
+  FoundationType, ComplexType, TypeOfIUBDSL, Schemas
+} from '@iub-dsl/definition';
 
 const genOrder = Math.floor(Math.random() * 10000);
 const genAge = Math.floor(Math.random() * 100);
@@ -28,31 +30,54 @@ export const addConf = (key, index): any => ({
     }
   }
 });
-export const testDemo = {
-  sysRtCxtInterface: {},
+export const testDemo: TypeOfIUBDSL = {
+  sysRtCxtInterface: {} as any,
   schemas: {
     entity_25: {
       fieldMapping: "tableId1.fieldId1",
       type: FoundationType.string,
       defaultVal: `张三${genOrder}`,
+      desc: '用户名'
     },
     entity_26: {
       fieldMapping: "tableId1.fieldId1",
       type: FoundationType.string,
-      defaultVal: `${genOrder}描述信息描述描述描述~@!!~`,
+      defaultVal: `西湖区湖底公园1${genOrder}~@!!~`,
+      desc: '用户描述'
     },
     entity_27: {
-      fieldMapping: "tableId1.fieldId1",
-      type: FoundationType.string
+      type: ComplexType.structArray,
+      struct: {
+        sdId0: {
+          fieldMapping: "tableId1.fieldId1",
+          type: FoundationType.string,
+          desc: '用户ID',
+        },
+        sdId1: {
+          fieldMapping: "tableId1.fieldId1",
+          type: FoundationType.string,
+          desc: '用户名'
+        },
+        sdId2: {
+          fieldMapping: "tableId1.fieldId1",
+          type: FoundationType.string,
+          desc: '用户描述'
+        },
+        sdId3: {
+          fieldMapping: "tableId1.fieldId1",
+          type: FoundationType.string,
+          desc: '用户年龄'
+        },
+      }
     },
     entity_28: {
       fieldMapping: "tableId1.fieldId1",
       type: FoundationType.string,
       defaultVal: `${genAge}`,
-
+      desc: '用户年龄'
     },
   },
-  metadataCollection: {},
+  metadataCollection: {} as any,
   relationshipsCollection: {},
   componentsCollection: {
     entity_25: {
@@ -75,7 +100,7 @@ export const testDemo = {
     },
     entity_26: {
       id: "entity_26",
-      label: "用户描述",
+      label: "用户地址",
       type: "componentRef",
       compType: "FormInput",
       title: "文本框",
@@ -92,7 +117,7 @@ export const testDemo = {
       }
     },
     entity_00: {
-      id: "entity_27", label: "性别", type: "componentRef", compType: "Input", title: "输入框"
+      id: "entity_00", label: "性别", type: "componentRef", compType: "Input", title: "输入框"
     },
     entity_28: {
       id: "entity_28",
@@ -130,6 +155,20 @@ export const testDemo = {
         }
       }
     },
+    entity_02: {
+      id: "entity_02",
+      label: "按钮",
+      type: "componentRef",
+      compType: "Button",
+      title: "按钮",
+      text: '查表',
+      actions: {
+        onClick: {
+          type: 'actionRef',
+          actionID: `@(actions).entity_02`
+        }
+      }
+    },
     entity_27: {
       id: "entity_27",
       label: "表格",
@@ -139,8 +178,8 @@ export const testDemo = {
       columns: [
         {
           title: '姓名',
-          dataIndex: 'name',
-          key: 'name',
+          dataIndex: 'username',
+          key: 'username',
         },
         {
           title: '年龄',
@@ -148,27 +187,14 @@ export const testDemo = {
           key: 'age',
         },
         {
-          title: '住址',
+          title: '用户地址',
           dataIndex: 'address',
           key: 'address',
         },
       ],
-      dataSource: [
-        {
-          key: '1',
-          name: '胡彦斌',
-          age: 32,
-          address: '西湖区湖底公园1号',
-        },
-        {
-          key: '2',
-          name: '胡彦祖',
-          age: 42,
-          address: '西湖区湖底公园1号',
-        },
-      ]
+      dataSource: '@(schemas).entity_27'
     },
-  },
+  } as any,
   actionsCollection: {
     entity_25: {
       type: 'updateState',
@@ -185,13 +211,30 @@ export const testDemo = {
       type: 'updateState',
       changeTarget: '@(schemas).entity_28'
     },
+    entity_27: {
+      type: 'updateState',
+      changeMapping: '@(schemas).entity_27'
+    },
+    entity_02: {
+      type: 'APBDSLCURD',
+      actionName: 'TableSelect',
+      businesscode: '34562',
+      actionList: {
+        apbA1: {
+          type: 'TableSelect',
+          table: 'test_user_k',
+        }
+      },
+      actionStep: ['apbA1']
+    },
     entity_01: {
       type: 'APBDSLCURD',
+      actionName: 'TableInsert',
       businesscode: '34562',
       actionList: {
         apbA1: {
           type: 'TableInsert',
-          table: 'test_user',
+          table: 'test_user_k',
           fieldMapping: {
             type: 'dataCollection',
             collectionType: 'structObject',
@@ -205,7 +248,7 @@ export const testDemo = {
                 collectField: '@(schemas).entity_25'
               },
               {
-                aliasField: 'description',
+                aliasField: 'address',
                 collectField: '@(schemas).entity_26'
               },
               {
@@ -231,7 +274,7 @@ export const testDemo = {
       //     collectField: '@(schemas).entity_25'
       //   },
       //   {
-      //     aliasField: 'description',
+      //     aliasField: 'address',
       //     collectField: '@(schemas).entity_26'
       //   },
       //   {
@@ -240,7 +283,7 @@ export const testDemo = {
       //   },
       // ]
     }
-  },
+  } as any,
   layoutContent: {
     type: "general",
     content: [{
@@ -252,7 +295,7 @@ export const testDemo = {
     }, {
       id: "entity_28", label: "文本框", type: "componentRef", compType: "FormInput", title: "文本框", componentID: "entity_28", refID: "entity_28"
     }]
-  },
+  } as any,
   pageID: "testPage",
   name: "测试页面",
   type: "config"
