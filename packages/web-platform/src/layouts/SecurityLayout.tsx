@@ -44,7 +44,7 @@ class SecurityLayout extends React.PureComponent<SecurityLayoutProps, SecurityLa
 
     if (dispatch) {
       dispatch({
-        type: 'user/fetchCurrent',
+        type: 'user/fetchUserInfo',
       });
     }
   }

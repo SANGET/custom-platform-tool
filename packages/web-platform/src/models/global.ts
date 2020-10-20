@@ -37,7 +37,6 @@ const GlobalModel: IGlobalModel = {
 
   subscriptions: {
     setup({ history }): void {
-      console.dir(history);
       // Subscribe history(url) change, trigger `load` action if pathname is `/`
       // history.listen(({ pathname, search }): void => {
       //   if (typeof window.ga !== 'undefined') {

@@ -1,6 +1,6 @@
 import { Effect, Reducer } from 'umi';
 
-import { queryCurrent } from '@/services/user';
+import { queryUserInfo } from '@/services/user';
 import store from 'store';
 
 export interface IAccount {
@@ -71,7 +71,7 @@ export interface IUserModel {
   namespace: 'user';
   state: IUserModelState;
   effects: {
-    fetchCurrent: Effect;
+    fetchUserInfo: Effect;
   };
   reducers: {
     setCurrentUser: Reducer<IUserModelState>;
@@ -87,14 +87,12 @@ const UserModel: IUserModel = {
   state: inintState,
 
   effects: {
-    * fetchCurrent({ payload }, { call, put }) {
-      const response = yield call(queryCurrent);
-      if (response?.code === 0) {
-        yield put({
-          type: 'setCurrentUser',
-          payload: response.result,
-        });
-      }
+    * fetchUserInfo({ payload }, { call, put }) {
+      const response = yield call(queryUserInfo);
+      yield put({
+        type: 'setCurrentUser',
+        payload: response.result,
+      });
     },
   },
 

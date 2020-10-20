@@ -2,7 +2,8 @@
  * request 网络请求工具
  * 更详细的 api 文档: https://github.com/umijs/umi-request
  */
-import { extend } from 'umi-request';
+import axios, { AxiosInstance } from 'axios';
+// import { extend } from 'umi-request';
 import { notification } from 'antd';
 import store from 'store';
 import HOSTENV from './env';
@@ -46,32 +47,40 @@ const errorHandler = (error: { response: Response }): Response => {
   return response;
 };
 
-/**
- * 配置request请求时的默认参数
- */
-const request = extend({
-  errorHandler, // 默认错误处理
-  credentials: 'same-origin', // 默认请求是否带上cookie
-  headers: {
-    Authorization: `Bearer ${store.get("token")}`
-  },
-});
-/** request 拦截器
- * 根据不同URL 前缀来添加host 地址
- */
-request.interceptors.request.use((url, options) => {
-  const completeUrl = urlAddPrefix(url);
-  return {
-    url: completeUrl,
-    options: { ...options },
-  };
-});
-/** 根据url 来组装对应的host */
-const urlAddPrefix = (url: string): string => {
-  const host = HOSTENV.get();
-  if (!host) return url;
-  const pre = url.split("/").filter((item) => item);
-  const prefix = pre[0].toLocaleUpperCase();
-  return host[prefix] + url;
+export const initRequest = (baseURL) => {
+  if (window.$A_R) return;
+  /**
+   * 配置request请求时的默认参数
+   */
+  const request = axios.create({
+    baseURL,
+    // errorHandler, // 默认错误处理
+    // credentials: 'same-origin', // 默认请求是否带上cookie
+    headers: {
+      Authorization: `Bearer ${store.get("token")}`
+    },
+  });
+
+  /**
+   * 定义不可被更改的 $R_P 属性
+   */
+  Object.defineProperties(window, {
+    $A_R: {
+      get() {
+        return request;
+      },
+      set() {
+        return false;
+      }
+    }
+  });
 };
-export default request;
+
+declare global {
+  /** 应用端的请求对象，application request */
+  const $A_R: AxiosInstance;
+  interface Window {
+    /** 应用端的请求对象，application request */
+    $A_R: AxiosInstance;
+  }
+}

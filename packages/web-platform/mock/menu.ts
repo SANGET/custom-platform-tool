@@ -1,5 +1,5 @@
 export default {
-  'POST /api/menu/list': {
+  'POST /api/menu/list11': {
     status: null,
     success: true,
     code: 0,

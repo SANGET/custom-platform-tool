@@ -31,10 +31,12 @@ export interface IMenusModel {
     destory: Reducer<IMenusModelState>;
   };
 }
+
 const inintState = {
   list: [],
   original: []
 };
+
 const MenusModel: IMenusModel = {
   namespace: 'menus',
 
@@ -43,13 +45,11 @@ const MenusModel: IMenusModel = {
   effects: {
     * getMenu({ payload }, { call, put }) {
       const response = yield call(queryMenuList, payload);
-      if (response?.code === 0) {
-        yield put({
-          type: 'setMeunList',
-          payload: response.result,
-        });
-      }
-      return response;
+      yield put({
+        type: 'setMeunList',
+        payload: response.data.result,
+      });
+      return response.data;
     },
   },
 
