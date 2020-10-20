@@ -55,6 +55,7 @@ const Table: React.FC<IProps> = (props: IProps, ref) => {
     if (props.moduleId) {
       setModuleId(props.moduleId === SELECT_ALL ? "" : props.moduleId);
       proTableReset();
+      // fromReset();
     }
   }, [props.moduleId]);
   const handleMenuClick = ({ key }) => {
