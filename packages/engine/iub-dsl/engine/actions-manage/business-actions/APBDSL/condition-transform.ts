@@ -120,32 +120,3 @@ export const APBDSLCondControlResHandle = (condControlRes: APBDSLCondition): APB
 
   return condControlRes;
 };
-
-// const genAPBDSLcondOfCondStruct = async (condStruct: ConditionControl) => {
-//   const APBDSLCondition: { and?: any; or?: any } = {};
-//   if (condStruct.and?.length) {
-//     APBDSLCondition.and = await genAPBDSLcondOfCondIdOrStructs(condStruct.and.slice());
-//   }
-//   if (condStruct.or?.length) {
-//     APBDSLCondition.or = await genAPBDSLcondOfCondIdOrStructs(condStruct.or.slice());
-//   }
-//   return APBDSLCondition;
-// };
-
-// const genAPBDSLcondOfCondIdOrStructs = async (
-//   condIdOrStructs: (string | ConditionControl)[],
-//   APBDSLCondRes: any[] = []
-// ) => {
-//   const condIdOrStruct = condIdOrStructs.shift();
-//   if (typeof condIdOrStruct === 'string') {
-//     // id
-//   } else if (condIdOrStruct) {
-//     /** 条件struct的条件生成 */
-//     APBDSLCondRes.push(await genAPBDSLcondOfCondStruct(condIdOrStruct));
-//   }
-//   if (condIdOrStructs.length) {
-//     /** 递归 */
-//     await genAPBDSLcondOfCondIdOrStructs(condIdOrStructs, APBDSLCondRes);
-//   }
-//   return APBDSLCondRes;
-// };
