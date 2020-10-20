@@ -1,10 +1,6 @@
 import { getPreviewUrl } from '@provider-app/config/getPreviewUrl';
 import React from 'react';
 
-const defaultAppUrl = 'http://localhost:8000/preview?path=/preview&mode=preview&pageId=xxxxxx';
-
-const defaultWebServerUrl = 'http://localhost:3000';
-
 export const ToApp = ({
   appLocation
 }) => {
