@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { TypeOfIUBDSL, DefaultSchemas } from "@iub-dsl/engine";
+import { TypeOfIUBDSL, DefaultSchemas } from "@iub-dsl/definition";
 import { StructRef, FieldRef } from '@iub-dsl/definition/schemas/default-schemas';
 import { dependencyInspect } from "..";
 

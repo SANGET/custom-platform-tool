@@ -19,10 +19,10 @@ const genCompRenderFC = (
 
   return ({ children, extralProps: actualExtralProps }) => {
     // TODO: dynamicProps 有undefined情况
-    const { useDynamicPropHandle, useFn, cachCtx } = useContext(DefaultCtx);
+    const { useDynamicPropHandle, useRunTimeFn } = useContext(DefaultCtx);
     const actualDynamicPros = useDynamicPropHandle?.(dynamicProps) || {};
 
-    const eventProps = useFn?.(dynamicProps) || {};
+    const eventProps = useRunTimeFn?.(dynamicProps) || {};
 
     // ! 全局透传的extralProps一改全改:: 谨慎
     // const actualExtralProps = useMemo(() => {

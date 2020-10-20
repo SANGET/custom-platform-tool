@@ -52,8 +52,7 @@ const genIUBDSLParserCtx = (parseRes) => {
 
   const actionConfParser = (actionConf, actionConfParseRes, parseContext) => {
     // isPageState
-
-    switch (actionConf.type) {
+    switch (actionConf.actionType) {
       case 'updateState':
         return extralUpdateStateConfParser(actionConf, actionConfParseRes, parseContext);
       case 'APBDSLCURD':
@@ -96,7 +95,6 @@ const IUBDSLParser = ({ dsl }) => {
   const schemasParseRes = SchemasParser(schemas);
   /** 每个动作解析成函数「流程将其连起来」 */
   const parseActionResult = actionsCollectionParser(actionsCollection, parseContext);
-  // console.log(parseActionResult);
 
   parseRes = {
     ...parseRes,
@@ -116,15 +114,15 @@ const IUBDSLParser = ({ dsl }) => {
   });
 
   const flowParseRes = flowParser(flowCollection, { parseContext, parseRes });
-  // console.log(flowParseRes);
-  const { getFlowItemInfo } = flowParseRes;
-  const { flowItemRun } = getFlowItemInfo('flow1');
-  console.log(flowItemRun({
-    getFlowItemInfo
-  })?.then());
+  // const { getFlowItemInfo } = flowParseRes;
+  // const { flowItemRun } = getFlowItemInfo('flow1');
+  // console.log(flowItemRun({
+  //   getFlowItemInfo
+  // })?.then());
 
   parseRes = {
     ...parseRes,
+    ...flowParseRes,
     componentParseRes,
     renderComponentKeys,
     getCompParseInfo: (compId) => componentParseRes[compId]
