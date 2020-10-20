@@ -6,13 +6,19 @@ import { BusinessWidgetAccessSpec } from '../../interfaces';
 export const NormalTable: BusinessWidgetAccessSpec = () => ({
   name: 'NormalTable',
 
-  propEditor(props) {
+  editableProps: {
+    columns: 'array[{ key: string }]'
+  },
+
+  propEditor(ctx) {
     return (
-      <TableEditor {...props} />
+      <TableEditor {...ctx} />
     );
   },
 
   render(widgetState) {
+    // console.log(widgetState);
+
     return (
       <NormalTableComp {...widgetState} />
     );

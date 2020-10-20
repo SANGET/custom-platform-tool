@@ -16,7 +16,7 @@ export class TableEditor extends React.Component<RegisterEditor> {
   }
 
   getDefaultColumns = () => {
-    const { entityState } = this.props.compContext;
+    const { entityState } = this.props;
     const { columns = [] } = entityState || {};
     return columns;
   }
@@ -68,7 +68,7 @@ export class TableEditor extends React.Component<RegisterEditor> {
 
   render() {
     const {
-      onChange
+      changeEntityState, onSubmit
     } = this.props;
     const { usingColumn } = this.state;
     return (
@@ -81,8 +81,9 @@ export class TableEditor extends React.Component<RegisterEditor> {
         <div className="action-area p10">
           <Button
             onClick={(e) => {
-              onChange(this.getChangeValue(usingColumn));
-              this.props.modalOptions?.close();
+              changeEntityState(this.getChangeValue(usingColumn));
+              // this.props.modalOptions?.close();
+              onSubmit?.();
             }}
           >
           保存

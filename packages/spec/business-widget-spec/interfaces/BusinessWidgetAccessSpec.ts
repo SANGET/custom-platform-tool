@@ -1,3 +1,6 @@
+import { WidgetEntityState } from "@engine/visual-editor/data-structure";
+import { CustomEditor } from "@engine/visual-editor/spec/custom-editor";
+
 /**
  * 基础的 UI 接入规范
  */
@@ -14,9 +17,9 @@ export interface BusinessWidgetMeta {
   didMount?: () => void
   /** 被卸载时的回调 */
   didUnmount?: () => void
-  propEditor?: (widgetState) => JSX.Element
+  propEditor?: CustomEditor
   /** 用于渲染的组件 */
-  render: (widgetState) => JSX.Element
+  render: (widgetState: WidgetEntityState) => JSX.Element
 }
 
 /**
