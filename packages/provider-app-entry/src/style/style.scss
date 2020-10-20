@@ -2,7 +2,6 @@
 @import './layout.scss';
 
 .app-nav {
-  // background-color: $themeColor;
   .ant-menu {
     border-bottom: none;
   }
@@ -15,9 +14,7 @@
 }
 
 #table-info,
-#page-manager,
 #menu-manager,
-#page-manager,
 #dictionary-manager {
   margin: 0 auto;
   width: 100%;
@@ -25,4 +22,8 @@
   max-width: 1290px;
   // background-color: #FFF;
   padding: 20px;
+}
+
+#page-manager {
+  height: 100%;
 }
