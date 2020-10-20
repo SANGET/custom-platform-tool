@@ -6,8 +6,8 @@ import {
 export const dataCollectionAction = (conf: DataCollection) => {
   const { actionName, actionOptions: { collectionType, struct }, when } = conf;
   if (collectionType === 'structArray') {
-    return (action, runtimeFnScheduler) => {
-      return runtimeFnScheduler.current({
+    return async ({ action, runtimeFnScheduler }) => {
+      return await runtimeFnScheduler({
         actionName,
         type: 'getPageState',
         params: [struct]
@@ -20,9 +20,9 @@ export const dataCollectionAction = (conf: DataCollection) => {
    * 2. 映射成元数据形式 field
    * 3. 固定映射 aliasField
    */
-  return (action, runtimeFnScheduler) => {
+  return async ({ action, runtimeFnScheduler }) => {
     const newStruct = genGetPagetStateStruct(struct, runtimeFnScheduler);
-    return runtimeFnScheduler.current({
+    return await runtimeFnScheduler({
       actionName,
       type: 'getPageState',
       params: [newStruct]

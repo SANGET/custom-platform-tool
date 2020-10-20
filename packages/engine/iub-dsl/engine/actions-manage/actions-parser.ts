@@ -29,115 +29,10 @@ interface ActionParserRes {
 
 const getExtralActionParserRes = (): ExtralActionParseRes => ({ changeStateToUse: [], getStateToUse: [] });
 
-const wiresaee = [
-  ['flow1', 'flow2', 'flow3'],
-  ['flow32', 'flow12'],
-  ['flow3132', 'flow12'],
-  ['flow3132', 'fdjkljlj', 'fjoq[m'],
-  ['flow32', 'fdjkljlj', 'fjoq[m'],
-  ['flow32209jk', 'flow1223199'],
-  ['flow322', 'flow1223199'],
-];
-
-const getFlowItem = (id) => () => {
-  console.log(id);
-};
-
-/** promise第一层n个条件控制, 按顺序执行 */
-const flowP = (wiresConf?) => {
-  // const { outputsWires, wires, conditionConf } = wiresConf;
-  // const wiresLine = wires.length;
-  // return from(wiresaee).pipe(
-  //   map((nextFlowIds) => from(nextFlowIds)),
-  //   map((nexFlowId$) => {
-  //     return nexFlowId$.pipe(
-  //       map((nexFlowId) => getFlowItem(nexFlowId)),
-  //       // 动作的执行
-  //     );
-  //   }),
-  // );
-};
-
-const flowItemParserScheduler = (flowConf: ActionsDefinition) => {
-  const {
-    actionOptions, actionId, actionType,
-    when, condition, actionName,
-    actionOutput,
-  } = flowConf;
-  // wiresConf && flowP(wiresConf);
-
-  const flowItemParseRes: any = {
-    actionParseRes: {
-      actionHandle: () => {},
-      actionOutput: {},
-      changeStateToUse: [],
-      getStateToUse: []
-    },
-    conditionParseRes: {},
-    nextflow: {}
-  };
-  switch (flowConf.actionType) {
-    case 'APBDSLCURD':
-      // APBDSLCURDAction(actionConf);
-      break;
-    case 'dataCollection':
-      // dataCollectionAction(actionConf);
-      break;
-    case 'updateState':
-      flowItemParseRes.actionParseRes.actionHandle = updateStateAction(flowConf);
-      break;
-    default:
-      break;
-  }
-  return flowItemParseRes;
-};
-
-const scheduler = (...args) => {
-  return 'true';
-};
-
-const actionItemRunWrap = (...args) => {
-  return true;
-};
-
-const flowActionWrap = () => {
-  const flowItemParseRes = {
-    actionParseRes: {
-      actionHandle: () => {},
-      actionOutput: {},
-      changeStateToUse: [],
-      getStateToUse: []
-    },
-    conditionParseRes: {},
-    nextflow: {},
-    flowDeps: [], // 整个流程用到的所有变量
-  };
-  const flowCtx = {};
-  if (scheduler(flowItemParseRes.conditionParseRes)) {
-    const actionRes = actionItemRunWrap(flowItemParseRes.actionParseRes);
-  }
-};
-
-const flowConfParser = (flowConfs: ActionsDefinition[]) => {
-  return flowConfs.map((conf) => {
-    return flowItemParserScheduler(conf);
-  });
-};
-
 export const actionsCollectionParser = (
   actionCollection: ActionCollection,
-  parserContext
-) => {
-  // const flowIds: string[] = Object.keys(actionCollection);
-  // let flowConf: ActionsDefinition[];
-  // const flowParseRes = {};
-  // console.log(actionCollection);
-  // for (let i = 0; i < flowIds.length; i++) {
-  //   flowConf = actionCollection[flowIds[i]];
-  //   flowParseRes[flowIds[i]] = flowConfParser(flowConf);
-  // }
-  // console.log(flowParseRes);
-
+  parsrContext
+): ActionParserRes => {
   const actionParseRes = {};
   const actionIds = Object.keys(actionCollection);
   actionIds.forEach((key) => {
@@ -148,7 +43,7 @@ export const actionsCollectionParser = (
       ...commonActionConfParser(
         actionCollection[key],
         getExtralActionParserRes(),
-        parserContext
+        parsrContext
       )
     };
   });
@@ -162,12 +57,13 @@ export const actionsCollectionParser = (
 const commonActionConfParser = (
   actionConf,
   actionConfParseRes: ExtralActionParseRes,
-  parserContext
+  parsrContext
 ): ExtralActionParseRes => {
-  const { actionConfParser } = parserContext;
+  const { actionConfParser } = parsrContext;
   if (actionConfParser) {
-    return actionConfParser(actionConf, actionConfParseRes, parserContext);
+    return actionConfParser(actionConf, actionConfParseRes, parsrContext);
   }
+
   return actionConfParseRes;
 };
 

@@ -17,21 +17,20 @@ export const updateStateAction = (conf: UpdateState) => {
     actionName, actionOutput, actionId
   } = conf;
   if (changeTarget) {
-    return (action, runtimeFnScheduler) => {
-      console.log(action);
+    return async ({ action, runtimeFnScheduler }) => {
       // action, 标准得事件执行上下文, param2 运行时上下文标准函数
-      return runtimeFnScheduler.current({
+      return await runtimeFnScheduler({
         actionName,
         action,
-        id,
+        actionId,
         type: 'targetUpdateState',
         params: [changeTarget, action.payload],
       });
     };
   }
   if (changeMapping) {
-    return (action, runtimeFnScheduler) => {
-      return runtimeFnScheduler.current({
+    return async ({ action, runtimeFnScheduler }) => {
+      return await runtimeFnScheduler({
         actionName,
         action,
         type: 'targetUpdateState',
