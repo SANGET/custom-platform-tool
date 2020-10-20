@@ -1,143 +1,207 @@
-import React, { useState, useEffect } from "react";
-import { Link } from "multiple-page-routing";
-import { Button, Table } from "antd";
-import { ColumnsType } from "antd/lib/table";
+import React, { useRef, useEffect } from "react";
+import { Button, Modal, notification } from "antd";
+import { FormInstance } from 'antd/lib/form';
+import { onNavigate } from "multiple-page-routing";
+import { ExclamationCircleOutlined } from '@ant-design/icons';
 import { CloseModal, ShowModal } from "@infra/ui";
-import dayjs from "dayjs";
-import { delPageServices, getPageListServices } from "../services/apis";
+import ProTable, { ProColumns, ActionType } from "@hy/pro-table";
+import Operational from "../components/Operational";
+import {
+  TABLE_COLUMNS, PAGE_CONFIG, OPERATIONAL_MENU, SELECT_ALL
+} from "../constant";
+import { ITableItem, IReleaseParams, IOperationalMethods } from "../interface";
+import { getPageListServices, delPageServices, releasePageService } from "../services/apis";
 import { CreatePage } from "./CreatePage";
 
-const pageTypeMenu = {
-  2: '页面'
-};
+const { confirm } = Modal;
 
-const getListColumns = ({
-  onDel
-}): ColumnsType => [
-  {
-    key: 'index',
-    dataIndex: 'index',
-    title: '序号',
-    render: (text, _, index) => index + 1
-  },
-  {
-    key: 'name',
-    dataIndex: 'name',
-    title: '页面名称'
-  },
-  {
-    key: 'type',
-    dataIndex: 'type',
-    title: '页面类型',
-    render: (text) => pageTypeMenu[text]
-  },
-  {
-    key: 'belongToMenuId',
-    dataIndex: 'belongToMenuId',
-    title: '归属模块'
-  },
-  {
-    key: 'gmtCreate',
-    dataIndex: 'gmtCreate',
-    title: '创建时间',
-    render: (date) => dayjs(date).format('YYYY-MM-DD HH:mm:ss')
-  },
-  {
-    key: 'action',
-    title: '操作',
-    render: (text, { id, name }) => {
-      return (
-        <>
-          <Link
-            to='/page-designer'
-            pathExtend={id}
-            params={{
-              title: name,
-              /** 必须要的页面 id */
-              pageID: id
-            }}
-          >
-            编辑
-          </Link>
-          <span
-            className="link-btn ml10"
-            onClick={(e) => {
-              delPageServices(id).then(() => {
-                onDel();
-              });
-            }}
-          >
-            删除
-          </span>
-        </>
-      );
-    },
-  },
-];
+interface IProps {
+  moduleId: string | null;
+}
 
-type UseListData = () => [any[], () => void]
-
-const mockData = {
-  id: '123',
-  name: '321'
-};
-
-const usePageList: UseListData = () => {
-  const [listData, setPageList] = useState([mockData]);
-  const getListData = () => {
-    getPageListServices().then((pageListRes) => {
-      setPageList(pageListRes?.result?.data);
+const PageList: React.FC<IProps> = (props: IProps) => {
+  let moduleId: string | null = null;
+  const actionRef = useRef<ActionType>();
+  const formRef = useRef<FormInstance>();
+  /**
+   * 发布页面请求
+   * @param data 发布的模块 ID, 页面 ID 数组
+   */
+  const releasePage = async ({ menuIds, pageInfoIds }:IReleaseParams) => {
+    const res = await releasePageService(menuIds, pageInfoIds);
+    if (res.code === "00000") {
+      notification.success({ message: "发布成功" });
+      proTableReload();
+    } else {
+      notification.error({ message: "发布失败" });
+    }
+  };
+  /**
+   * 删除页面请求
+   * @param id 页面 ID
+   */
+  const deleteTableSingleLine = async (id: string) => {
+    const res = await delPageServices(id);
+    if (res.code === "00000") {
+      notification.success({ message: "删除成功" });
+      proTableReload();
+    } else {
+      notification.error({ message: "删除失败" });
+    }
+  };
+  /**
+   * 删除前提示框
+   * @param id 页面 ID
+   * @param publishedVersion 发布版本，用于展示不同提示语（已发布，未发布）
+   */
+  const checkBeforeDelete = (id: string, publishedVersion: string) => {
+    confirm({
+      title: publishedVersion ? "页面已发布，是否继续删除。" : "是否确定删除？",
+      icon: <ExclamationCircleOutlined />,
+      okText: '确定',
+      cancelText: '取消',
+      onOk: () => { deleteTableSingleLine(id); }
     });
   };
-  useEffect(() => {
-    getListData();
-  }, []);
-  return [listData, getListData];
-};
-
-const PageList: React.FC = (props) => {
-  const [listData, getListData] = usePageList();
-  const ListColumns = React.useMemo(() => {
+  /**
+   * 发布前提示框
+   * @param data 发布的模块 ID, 页面 ID 数组
+   */
+  const checkBeforeRelease = ({ menuIds, pageInfoIds }:IReleaseParams) => {
+    confirm({
+      title: "是否确定发布？",
+      icon: <ExclamationCircleOutlined />,
+      okText: '确定',
+      cancelText: '取消',
+      onOk: () => { releasePage({ menuIds, pageInfoIds }); }
+    });
+  };
+  /**
+   * 生成 pro-table 所需 ProColumns 的方法
+   * @param methods 操作类型回调函数集合
+   */
+  const getListColumns = (methods: IOperationalMethods): ProColumns<ITableItem>[] => [
+    ...TABLE_COLUMNS,
+    {
+      title: '操作',
+      dataIndex: "action",
+      hideInSearch: true,
+      fixed: "right",
+      width: Number(OPERATIONAL_MENU.length) * 80,
+      render: (text, record) => <Operational data={record} methods={methods} />
+    },
+  ];
+  /**
+   * 生成 ProColumns
+   */
+  const tableColumns = React.useMemo(() => {
     return getListColumns({
-      onDel: () => {
-        console.log('del');
-        getListData();
+      edit: ({ id, name }) => {
+        // 编辑
+        onNavigate({
+          type: "PUSH",
+          path: "/page-designer",
+          pathExtend: id,
+          params: {
+            title: name,
+            pageID: id
+          }
+        });
+      },
+      release: ({ id }) => {
+        // 发布
+        checkBeforeRelease({ menuIds: [], pageInfoIds: [id] });
+      },
+      delete: ({ id, publishedVersion }) => {
+        // 删除
+        checkBeforeDelete(id, publishedVersion);
       }
     });
   }, []);
+  /**
+   * 表格数据请求函数
+   * @param params 相关请求参数
+   */
+  const getData = async (params) => {
+    const { current, pageSize } = params;
+    const tableParams = {
+      ...params,
+      offset: (current - 1) * pageSize || 0,
+      size: pageSize || 10,
+      totalSize: true,
+      moduleId
+    };
+    const res = await getPageListServices(tableParams);
+    const { data, total } = res.result;
+    return Promise.resolve({
+      data: data || [],
+      success: true,
+      total: total || 0
+    });
+  };
+  /**
+   * 表格刷新
+   */
+  const proTableReload = () => {
+    actionRef?.current?.reload();
+  };
+  /**
+   * 渲染表格工具栏
+   */
+  const renderToolBarRender = () => [
+    <Button
+      key="1" type="primary" onClick={() => {
+        const modalID = ShowModal({
+          title: '创建页面',
+          width: 700,
+          children: () => {
+            return (
+              <div className="p20">
+                <CreatePage
+                  onSuccess={() => {
+                    CloseModal(modalID);
+                    proTableReload();
+                  }}
+                />
+              </div>
+            );
+          }
+        });
+      }}
+    >
+      自定义页面
+    </Button>
+  ];
+  useEffect(() => {
+    if (props.moduleId) {
+      moduleId = props.moduleId === SELECT_ALL ? null : props.moduleId;
+      proTableReload();
+    }
+  }, [props.moduleId]);
+
   return (
-    <div className="page-list-data">
-      <div className="pu10">
-        <Button
-          onClick={(e) => {
-          // console.log('asd');
-            const modalID = ShowModal({
-              title: '创建页面',
-              width: 700,
-              children: () => {
-                return (
-                  <div className="p20">
-                    <CreatePage
-                      onSuccess={(e) => {
-                        CloseModal(modalID);
-                        getListData();
-                      }}
-                    />
-                  </div>
-                );
-              }
-            });
-          }}
-        >
-          创建页面
-        </Button>
-      </div>
-      <Table
-        dataSource={listData}
-        rowKey={'id'}
-        columns={ListColumns}
+    <>
+      <ProTable<ITableItem>
+        request={getData}
+        search={{
+          searchText: "搜索",
+          resetText: "清空",
+          collapsed: false,
+          collapseRender: () => ""
+        }}
+        actionRef={actionRef}
+        formRef={formRef}
+        columns={tableColumns}
+        rowKey="id"
+        scroll={{ x: 500 }}
+        toolBarRender={renderToolBarRender}
+        pagination={{
+          hideOnSinglePage: true,
+          pageSizeOptions: PAGE_CONFIG.SIZE_OPTIONS,
+          pageSize: PAGE_CONFIG.SIZE
+        }}
       />
-    </div>
+    </>
   );
 };
 
