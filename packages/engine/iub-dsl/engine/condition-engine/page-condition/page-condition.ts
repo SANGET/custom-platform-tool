@@ -45,6 +45,7 @@ const condOperatorHandle = (
     ) {
       return originHandle({ operator, expsValue });
     }
+    console.error('验证条件表达式参数前置失败!!~~');
     return false;
   };
 };
@@ -52,7 +53,7 @@ const condOperatorHandle = (
 /** 页面操作符处理函数列表 */
 const condOperatorHandleList = {
   [ConditionOperator.EQU]: condOperatorHandle(
-    equHandle, {}
+    equHandle, { expValidLength: 2 }
   ),
   [ConditionOperator.N_EMPTY]: condOperatorHandle(
     nEmptyHandle, {}
@@ -108,6 +109,7 @@ const condOperatorHandleList = {
 export const getPageCondOperatorHandle = (operator: ConditionOperator): NormalParserFn => {
   let temp: NormalParserFn;
   if ((temp = condOperatorHandleList[operator])) {
+    /** TODO: 缺少包装器扩展 */
     return temp;
   }
   console.error('未获取到页面条件操作符的处理函数?~? getPageCondOperatorHandle');

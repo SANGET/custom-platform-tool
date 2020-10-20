@@ -30,7 +30,7 @@ const genInCond = ({ expsValue: [exp1, exp2] }) => ({ in: { [exp1]: exp2 } });
 /** 包含 */
 const genLikeCond = ({ expsValue: [exp1, exp2] }) => ({ like: { [exp1]: exp2 } });
 
-const genCondWrapFn = (originHandle, ctx) => {
+const originGenCondFnWrap = (originHandle, ctx?) => {
   return (param) => {
     const { expsValue } = param;
     /** 获取了无效的expsValue */
@@ -42,63 +42,32 @@ const genCondWrapFn = (originHandle, ctx) => {
 };
 
 const genCondFnList = {
-  [ConditionOperator.EQU]: genCondWrapFn(
-    genEquCond, {}
-  ),
-  [ConditionOperator.N_EMPTY]: genCondWrapFn(
-    genNotEmptyCond, {}
-  ),
-  [ConditionOperator.EMPTY]: genCondWrapFn(
-    genEmptyCond, {}
-  ),
-  [ConditionOperator.BETWEEN]: genCondWrapFn(
-    genNotEmptyCond, {}
-  ),
-  [ConditionOperator.GERATER]: genCondWrapFn(
-    genNotEmptyCond, {}
-  ),
-  [ConditionOperator.GERATER_EQU]: genCondWrapFn(
-    genNotEmptyCond, {}
-  ),
-  [ConditionOperator.IN]: genCondWrapFn(
-    genInCond, {}
-  ),
-  [ConditionOperator.LESS]: genCondWrapFn(
-    genNotEmptyCond, {}
-  ),
-  [ConditionOperator.LESS_EQU]: genCondWrapFn(
-    genNotEmptyCond, {}
-  ),
-  [ConditionOperator.LIKE]: genCondWrapFn(
-    genLikeCond, {}
-  ),
-  [ConditionOperator.N_BETTWEEN]: genCondWrapFn(
-    genNotEmptyCond, {}
-  ),
-  [ConditionOperator.N_EQU]: genCondWrapFn(
-    genNotEquCond, {}
-  ),
-  [ConditionOperator.N_IN]: genCondWrapFn(
-    genNotEmptyCond, {}
-  ),
-  [ConditionOperator.N_LIKE]: genCondWrapFn(
-    genNotEmptyCond, {}
-  ),
-  [ConditionOperator.S_N_WITH]: genCondWrapFn(
-    genNotEmptyCond, {}
-  ),
-  [ConditionOperator.S_WITH]: genCondWrapFn(
-    genNotEmptyCond, {}
-  ),
+  [ConditionOperator.EQU]: genEquCond,
+  [ConditionOperator.N_EMPTY]: genNotEmptyCond,
+  [ConditionOperator.EMPTY]: genEmptyCond,
+  [ConditionOperator.BETWEEN]: genNotEmptyCond,
+  [ConditionOperator.GERATER]: genNotEmptyCond,
+  [ConditionOperator.GERATER_EQU]: genNotEmptyCond,
+  [ConditionOperator.IN]: genInCond,
+  [ConditionOperator.LESS]: genNotEmptyCond,
+  [ConditionOperator.LESS_EQU]: genNotEmptyCond,
+  [ConditionOperator.LIKE]: genLikeCond,
+  [ConditionOperator.N_BETTWEEN]: genNotEmptyCond,
+  [ConditionOperator.N_EQU]: genNotEquCond,
+  [ConditionOperator.N_IN]: genNotEmptyCond,
+  [ConditionOperator.N_LIKE]: genNotEmptyCond,
+  [ConditionOperator.S_N_WITH]: genNotEmptyCond,
+  [ConditionOperator.S_WITH]: genNotEmptyCond,
 };
 
 /**
  * 获取APBDSL条件操作符处理函数
  * @param operator 条件操作符
  */
-export const getAPBDSLCondOperatorHandle = (operator: ConditionOperator) => {
+export const getAPBDSLCondOperatorHandle = (operator: ConditionOperator, { genCondFnWrap = originGenCondFnWrap }) => {
   let temp;
   if ((temp = genCondFnList[operator])) {
+    temp = genCondFnWrap(temp, { originHandle: originGenCondFnWrap });
     return temp;
   }
   console.error('未找到APBDSL条件操作符对应的处理函数?~? getAPBDSLCondOperatorHandle');

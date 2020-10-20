@@ -1,7 +1,7 @@
 import React, { useMemo, useContext } from "react";
-import { DefaultCtx } from "../../IUBDSLRuntimeContainer";
 import { AllUI } from "../UI-factory/types";
 import { RenderCompInfoItem } from "./types";
+import { DefaultCtx } from "../../runtime";
 
 /**
  * 生成每个小组件的渲染器
@@ -19,10 +19,10 @@ const genCompRenderFC = (
 
   return ({ children, extralProps: actualExtralProps }) => {
     // TODO: dynamicProps 有undefined情况
-    const { useDynamicPropHandle, useRunTimeFn } = useContext(DefaultCtx);
+    const { useDynamicPropHandle, useRunTimeEventProps } = useContext(DefaultCtx);
     const actualDynamicPros = useDynamicPropHandle?.(dynamicProps) || {};
 
-    const eventProps = useRunTimeFn?.(dynamicProps) || {};
+    const eventProps = useRunTimeEventProps?.(dynamicProps) || {};
 
     // ! 全局透传的extralProps一改全改:: 谨慎
     // const actualExtralProps = useMemo(() => {
