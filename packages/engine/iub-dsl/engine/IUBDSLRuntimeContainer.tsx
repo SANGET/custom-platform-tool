@@ -74,8 +74,12 @@ const genRuntimeCtxFn = (dslParseRes, runtimeCtx) => {
     if (type === 'ConditionHandleOfAPBDSL') {
       const expsValueHandle = (expsValue) => {
         console.log(expsValue);
-        expsValue[1] = '';
+        // if (expsValue[0] === 'username') {
+        // expsValue[1] = '张三3667';
+        // if (expsValue[0] === 'address') {
+        // expsValue[1] = '西湖区湖底公园';
         // return expsValue;
+        // }
         return false;
       };
       return await conditionEngine(params[0], {
@@ -163,7 +167,6 @@ const genRuntimeCtxFn = (dslParseRes, runtimeCtx) => {
 };
 
 export const DefaultCtx = React.createContext<any>({});
-export const RunTimeCtx = React.createContext<any>({});
 
 const IUBDSLRuntimeContainer = React.memo<{dslParseRes: any}>(({ dslParseRes }) => {
   const {

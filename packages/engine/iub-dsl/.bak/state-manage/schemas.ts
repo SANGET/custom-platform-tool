@@ -1,8 +1,8 @@
-/* eslint-disable no-param-reassign */
 import {
   ComplexType, FoundationType, Schemas
 } from '@iub-dsl/definition';
 import { testSchemas } from "@iub-dsl/demo/business-case/location";
+/* eslint-disable no-param-reassign */
 import schemasAnalysis from './analysis/analysis';
 import { PATH_SPLIT_MARK, PATH_SPLIT_MARK_ARR } from './const';
 

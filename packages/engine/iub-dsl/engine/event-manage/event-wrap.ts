@@ -66,10 +66,7 @@ export const useEventProps = (eventWrapFnList: any[], runTimeCtx) => {
   });
 
   /** 换成最终结果 */
-  return useMemo(
-    () => eventProps,
-    []
-  );
+  return useMemo(() => eventProps, []);
 };
 
 /** 事件解析 */

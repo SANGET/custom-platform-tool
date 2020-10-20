@@ -82,6 +82,8 @@ const genTableDeleteFn = (actionConf: TableDelete) => {
     return APBDSLItem;
   };
 };
+
+/** 递归调用生成steps */
 const APBDSLStepsFnRun = async ({ fns, result = [] }: any, runtimeCtx) => {
   const fn: any = fns?.shift();
   if (fn) {
