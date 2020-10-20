@@ -58,26 +58,31 @@ const flowActions = {
 
 const flowCollection: FlowCollection = {
   flow1: {
+    id: 'flow1',
     actionId: 'action1',
     flowOutCondition: [],
     flowOut: [['flow3', 'flow7', 'flow5']]
   },
   flow2: {
+    id: 'flow2',
     actionId: 'action2',
     flowOutCondition: [],
     flowOut: [['flow5', 'flow7']]
   },
   flow3: {
+    id: 'flow3',
     actionId: 'action3',
     flowOutCondition: [],
     flowOut: [['flow4']]
   },
   flow4: {
+    id: 'flow4',
     actionId: 'action4',
     flowOutCondition: [],
     flowOut: [['flow6', 'flow7']]
   },
   flow5: {
+    id: 'flow5',
     actionId: 'action5',
     flowOutCondition: [],
     flowOut: [
@@ -86,21 +91,25 @@ const flowCollection: FlowCollection = {
     ]
   },
   flow6: {
+    id: 'flow6',
     actionId: 'action6',
     flowOutCondition: [],
     flowOut: []
   },
   flow7: {
+    id: 'flow7',
     actionId: 'action7',
     flowOutCondition: [],
     flowOut: [['flow8']]
   },
   flow8: {
+    id: 'flow8',
     actionId: 'action8',
     flowOutCondition: [],
     flowOut: [['flow9']]
   },
   flow9: {
+    id: 'flow9',
     actionId: 'action9',
     flowOutCondition: [],
     flowOut: []

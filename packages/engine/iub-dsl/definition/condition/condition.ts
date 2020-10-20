@@ -5,10 +5,10 @@ interface ExpressionStruct {
   a: 'b'
 }
 
-type ConditionDescriptionInfo = string | ExpressionStruct;
+export type ConditionDescriptionInfo = string | ExpressionStruct;
 
 /** exp为表达式的意思: 对应原型每个格子 */
-interface ConditionItemInfo {
+export interface ConditionItemInfo {
   operator: ConditionOperator;
   exp1: ConditionDescriptionInfo;
   exp2?: ConditionDescriptionInfo;
@@ -18,22 +18,22 @@ interface ConditionItemInfo {
   // [exp: string]: ConditionDescriptionInfo;
 }
 /** 对应条件配置中: 每一条的条件配置 */
-interface ConditionItemList {
+export interface ConditionList {
   [condId: string]: ConditionItemInfo
 }
 
 /** 对应条件配置中: 条件公式 */
-type ConditionControl = {
+export type ConditionControl = {
   [condSymbol in ConditionSymbol]?: (string | ConditionControl)[];
 };
 
 export interface Condition {
-  conditionItemList: ConditionItemList;
+  conditionList: ConditionList;
   conditionControl: ConditionControl;
 }
 
 const conditionExample: Condition = {
-  conditionItemList: {
+  conditionList: {
     condId0: {
       operator: ConditionOperator.EMPTY,
       exp1: '3'
@@ -73,7 +73,7 @@ interface ConditionHandleBeforeOptions {
   // needValidOperator: ConditionOperator;
 }
 
-interface ConditionItemListParserRes {
+interface ConditionListParserRes {
   conditionHandleFn: NormalParserFn;
   normalParam: FnParam;
 }
@@ -175,7 +175,7 @@ const getActualConditionHandleFn = (operator: ConditionOperator) => {
 };
 
 /** 每个条件描述的解析器 */
-const conditionItemListParser = (itemInfo: ConditionItemInfo, parserContext): ConditionItemListParserRes => {
+const conditionListParser = (itemInfo: ConditionItemInfo, parserContext): ConditionListParserRes => {
   const { operator } = itemInfo;
   /** 先解析后运行, 需要收集依赖, 并且可以动态设置对象值 */
   // let { expParser = originNormalParamParser } = parserContext;
@@ -196,13 +196,13 @@ const conditionItemListParser = (itemInfo: ConditionItemInfo, parserContext): Co
 };
 
 // ? 不纯洁
-const conditionListScheduler = (conditionItemList: ConditionItemList, parserContext) => {
-  const conditionItemIds = Object.keys(conditionItemList);
+const conditionListScheduler = (conditionList: ConditionList, parserContext) => {
+  const conditionItemIds = Object.keys(conditionList);
   const conditionListParseRes: {
-    [condId: string]: ConditionItemListParserRes
+    [condId: string]: ConditionListParserRes
   } = {};
   conditionItemIds.forEach((id) => {
-    conditionListParseRes[id] = conditionItemListParser(conditionItemList[id], parserContext);
+    conditionListParseRes[id] = conditionListParser(conditionList[id], parserContext);
   });
 
   return {
@@ -228,7 +228,7 @@ const conditionControlRun = (conf: ConditionControl, conditionRun) => {
 };
 
 export const conditionParser = (parserContext, conf: Condition = conditionExample) => {
-  const { conditionControl, conditionItemList } = conf;
+  const { conditionControl, conditionList } = conf;
 
   let {
     conditionParamHandle = originNormalParamHandle
@@ -239,7 +239,7 @@ export const conditionParser = (parserContext, conf: Condition = conditionExampl
     });
   }
 
-  const conditionParseRes = conditionListScheduler(conditionItemList, parserContext);
+  const conditionParseRes = conditionListScheduler(conditionList, parserContext);
   const { conditionItemIds, conditionListParseRes } = conditionParseRes;
 
   const getConditionFn = (conditionId) => {
