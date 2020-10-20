@@ -179,7 +179,27 @@ const Table: React.FC<IProps> = (props: IProps, ref) => {
           searchText: "搜索",
           resetText: "清空",
           collapsed: false,
-          collapseRender: () => ""
+          collapseRender: () => "",
+          optionRender: ({ searchText, resetText }, { form }) => [
+            <Button
+              key="search"
+              type="primary"
+              onClick={() => {
+                form?.submit();
+              }}
+            >
+              {searchText}
+            </Button>,
+            <Button
+              key="rest"
+              onClick={() => {
+                form?.resetFields();
+                form?.submit();
+              }}
+            >
+              {resetText}
+            </Button>
+          ],
         }}
         actionRef={actionRef}
         formRef={formRef}
