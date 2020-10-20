@@ -11,7 +11,9 @@ import { Location } from 'history';
 /** 获取路由配置 */
 import { Dashboard } from "@provider-app/dashboard/main";
 import Router, { getRouteName } from '@provider-app/config/router';
-import { LoadingTip } from "@hy/loading-tip";
+import { LoadingTip } from "@provider-ui/loading-tip";
+import { VersionDisplayer } from 'version-helper';
+import VersionInfo from './version.json';
 
 import {
   // Hall,
@@ -220,6 +222,7 @@ export default class App extends MultipleRouterManager<AppContainerProps, AppCon
                   isEntryApp && <ToApp appLocation={this.appLocation} />
                 }
                 <UserStatusbar logout={logout} />
+                <VersionDisplayer versionInfo={VersionInfo} />
               </header>
               <div id="provider_app_content">
                 {

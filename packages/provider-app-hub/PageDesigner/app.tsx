@@ -3,7 +3,7 @@ import React from "react";
 import produce from 'immer';
 import { VEDispatcher, VisualEditorState } from "@engine/visual-editor/core";
 import { updatePageService } from "@provider-app/services";
-import { LoadingTip } from "@hy/loading-tip";
+import { LoadingTip } from "@provider-ui/loading-tip";
 import ToolBar from './components/PDToolbar';
 import WidgetPanel from './components/PDWidgetPanel';
 import CanvasStage from './components/PDCanvasStage';
