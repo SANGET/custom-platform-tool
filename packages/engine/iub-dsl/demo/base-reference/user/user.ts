@@ -1,7 +1,7 @@
 import {
   FoundationType, ComplexType, TypeOfIUBDSL, Schemas
 } from '@iub-dsl/definition';
-import { actionsCollection } from './action-collection';
+import { actionsCollection, demoActionFlow } from './action-collection';
 import { schemas } from './scheams';
 import { componentsCollection } from './components';
 import { flowActions, flowCollection } from './flow-collection';
@@ -13,7 +13,7 @@ export const userDemo = {
   relationshipsCollection: {},
   componentsCollection,
   actionsCollection: Object.assign({}, actionsCollection, flowActions),
-  flowCollection,
+  flowCollection: Object.assign({}, demoActionFlow, flowCollection),
   layoutContent: {
     type: "general",
     content: [{

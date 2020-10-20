@@ -46,4 +46,22 @@ export const schemas = {
     defaultVal: `${genAge}`,
     desc: '用户年龄'
   },
+  search_01: {
+    fieldMapping: "tableId1.fieldId1",
+    type: FoundationType.string,
+    defaultVal: ``,
+    desc: ''
+  },
+  search_02: {
+    fieldMapping: "tableId1.fieldId1",
+    type: FoundationType.string,
+    defaultVal: ``,
+    desc: ''
+  },
+  search_03: {
+    fieldMapping: "tableId1.fieldId1",
+    type: FoundationType.string,
+    defaultVal: ``,
+    desc: ''
+  },
 };

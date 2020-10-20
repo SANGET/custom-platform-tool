@@ -13,7 +13,7 @@ export const componentsCollection = {
     actions: {
       onChange: {
         type: 'actionRef',
-        actionID: `@(actions).entity_25`
+        actionID: `@(flow).f_entity_25`
       }
     }
   },
@@ -31,7 +31,7 @@ export const componentsCollection = {
     actions: {
       onChange: {
         type: 'actionRef',
-        actionID: `@(actions).entity_26`
+        actionID: `@(flow).f_entity_26`
       }
     }
   },
@@ -52,7 +52,7 @@ export const componentsCollection = {
     actions: {
       onChange: {
         type: 'actionRef',
-        actionID: `@(actions).entity_28`
+        actionID: `@(flow).f_entity_28`
       }
     }
   },
@@ -66,11 +66,11 @@ export const componentsCollection = {
     actions: {
       onClick: {
         type: 'actionRef',
-        actionID: `@(actions).entity_01`
+        actionID: `@(flow).f_entity_01`
       },
       onChange: {
         type: 'actionRef',
-        actionID: `@(actions).entity_25`
+        actionID: `@(flow).f_entity_25`
       }
     }
   },
@@ -84,7 +84,53 @@ export const componentsCollection = {
     actions: {
       onClick: {
         type: 'actionRef',
-        actionID: `@(actions).entity_02`
+        actionID: `@(flow).f_entity_02`
+      }
+    }
+  },
+  search_01: {
+    id: "search_01",
+    label: "用户名",
+    type: "componentRef",
+    compType: "FormInput",
+    compCode: "search_01",
+    placeholder: "请输入查询的用户名?",
+    value: `@(schemas).search_01`,
+    actions: {
+      onChange: {
+        type: 'actionRef',
+        actionID: `@(flow).f_search_01`
+      }
+    }
+  },
+  search_02: {
+    id: "search_02",
+    label: "用户地址",
+    type: "componentRef",
+    compType: "FormInput",
+    compCode: "search_02",
+    placeholder: "请输入查询地址?",
+    value: `@(schemas).search_02`,
+    actions: {
+      onChange: {
+        type: 'actionRef',
+        actionID: `@(flow).f_search_02`
+      }
+    }
+  },
+  search_03: {
+    id: "search_03",
+    label: "用户年龄",
+    type: "componentRef",
+    compType: "FormInput",
+    compCode: "search_03",
+    unit: "岁",
+    placeholder: "请输入查询年龄?",
+    value: `@(schemas).search_03`,
+    actions: {
+      onChange: {
+        type: 'actionRef',
+        actionID: `@(flow).f_search_03`
       }
     }
   },

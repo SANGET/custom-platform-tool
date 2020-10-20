@@ -13,6 +13,7 @@ export const flowActions = {
   },
   action3: (msg) => {
     console.log('action3');
+    msg.payload = '2f6df13a.9a2e1e';
     return msg;
   },
   action4: (msg) => {
