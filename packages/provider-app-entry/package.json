@@ -13,7 +13,8 @@
     "react-dom": "^16.13.1"
   },
   "devDependencies": {
-    "@infra/react-dev-env-scripts": "^0.0.1"
+    "@infra/react-dev-env-scripts": "^0.0.1",
+    "version-helper": "^1.2.0-beta1.5"
   },
   "dependencies": {
     "@ant-design/icons": "^4.2.2",

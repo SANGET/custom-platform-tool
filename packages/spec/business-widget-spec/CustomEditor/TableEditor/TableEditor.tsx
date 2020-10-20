@@ -1,8 +1,8 @@
 import React from 'react';
 import { Button, Input } from '@infra/ui';
-import { Table as AntTable } from 'antd';
 import { RegisterEditor } from '@engine/visual-editor/spec';
 import { columns as AllColumns, data } from './mock-data';
+import { GeneralTableComp } from '../../Widgets';
 
 export class TableEditor extends React.Component<RegisterEditor> {
   state = {
@@ -16,7 +16,7 @@ export class TableEditor extends React.Component<RegisterEditor> {
   }
 
   getDefaultColumns = () => {
-    const { entityState } = this.props.compContext;
+    const { entityState } = this.props;
     const { columns = [] } = entityState || {};
     return columns;
   }
@@ -68,7 +68,7 @@ export class TableEditor extends React.Component<RegisterEditor> {
 
   render() {
     const {
-      onChange
+      changeEntityState, onSubmit
     } = this.props;
     const { usingColumn } = this.state;
     return (
@@ -77,12 +77,13 @@ export class TableEditor extends React.Component<RegisterEditor> {
         {/* <div className="p10">
           <Button>变量</Button>
         </div> */}
-        <AntTable columns={usingColumn} dataSource={data} />
+        <GeneralTableComp columns={usingColumn} dataSource={data} />
         <div className="action-area p10">
           <Button
             onClick={(e) => {
-              onChange(this.getChangeValue(usingColumn));
-              this.props.modalOptions?.close();
+              changeEntityState(this.getChangeValue(usingColumn));
+              // this.props.modalOptions?.close();
+              onSubmit?.();
             }}
           >
           保存

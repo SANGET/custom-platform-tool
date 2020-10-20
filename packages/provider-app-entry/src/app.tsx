@@ -11,7 +11,9 @@ import { Location } from 'history';
 /** 获取路由配置 */
 import { Dashboard } from "@provider-app/dashboard/main";
 import Router, { getRouteName } from '@provider-app/config/router';
-import { LoadingTip } from "@hy/loading-tip";
+import { LoadingTip } from "@provider-ui/loading-tip";
+import { VersionDisplayer } from 'version-helper';
+import VersionInfo from './version.json';
 
 import {
   // Hall,
@@ -49,6 +51,8 @@ export interface AppLocationState {
   lessee: string
   /**  */
   pageID: string
+  /** 应用名 */
+  appName: string
 }
 
 export type AppLocationType = Location<AppLocationState> & DefaultLocationState & AppLocationState
@@ -193,7 +197,7 @@ export default class App extends MultipleRouterManager<AppContainerProps, AppCon
       routers, routerSnapshot, activeRoute,
       navMenu, ready,
     } = this.state;
-    const { appName } = this.appLocation;
+    const { appName: currAppName } = this.appLocation;
 
     const isEntryApp = this.isEntryApp();
 
@@ -207,7 +211,7 @@ export default class App extends MultipleRouterManager<AppContainerProps, AppCon
                 className={`provider-app-header bg-white flex items-center content-center shadow ${isEntryApp ? 'has-app' : ''}`}
               >
                 <Logo
-                  appName={appName}
+                  appName={currAppName}
                   isEntryApp={isEntryApp}
                   onClick={(e) => {
                     this.closeAll();
@@ -220,6 +224,9 @@ export default class App extends MultipleRouterManager<AppContainerProps, AppCon
                   isEntryApp && <ToApp appLocation={this.appLocation} />
                 }
                 <UserStatusbar logout={logout} />
+                <div className="pr-2 text-gray-600">
+                  <VersionDisplayer versionInfo={VersionInfo} $T={(val) => val} />
+                </div>
               </header>
               <div id="provider_app_content">
                 {

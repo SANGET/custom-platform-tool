@@ -1,12 +1,20 @@
-import request from '@/utils/request';
-
 /**
  * 获取用户菜单
  * @param params
  */
 export async function queryMenuList(params: API.IMeunParams) {
-  return request<API.IMenunType>('/api/menu/list', {
+  return $A_R('/haoyun/erp/business/34562', {
     method: 'POST',
-    data: params,
+    data: {
+      steps: [
+        {
+          function: {
+            code: "ALL_ACTIVE_MENU",
+            params: {
+            }
+          }
+        }
+      ]
+    },
   });
 }

@@ -5,22 +5,16 @@
  * TODO: 放到前端动态资源管理服务中进行统一管理
  */
 
-import { WidgetEntityState } from "../../data-structure";
+import { CustomEditorCtx } from "../custom-editor";
 
-export interface RegisterCompElementProps {
-  compContext: {
-    entityState: WidgetEntityState
-  }
-}
+export type RegisterCompElementProps = CustomEditorCtx
 
-export interface RegisterEditor extends RegisterCompElementProps {
-  onChange: (nextValue: WidgetEntityState) => void
-}
+export type RegisterEditor = CustomEditorCtx
 
 /**
  * 可注册的 component
  */
-export type RegistrableComponent = React.ElementType<RegisterCompElementProps>
+export type RegistrableComponent = React.ElementType<CustomEditorCtx>
 export type RegistrablePropEditor = React.ElementType<RegisterEditor>
 
 export interface RegisterComponentConfig {

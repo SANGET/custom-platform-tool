@@ -95,11 +95,9 @@ export const PDdragableItemWrapperFac: DragableItemWrapperFac = (
                   editorRenderer={(modalOptions) => {
                     return (
                       <PropEditor
-                        modalOptions={modalOptions}
-                        compContext={{
-                          entityState
-                        }}
-                        onChange={(changeVal) => {
+                        onSubmit={(e) => modalOptions?.close()}
+                        entityState={entityState}
+                        changeEntityState={(changeVal) => {
                           // updateEntityState(changeVal);
                           UpdateEntityState(updateCtx, changeVal);
                         }}
