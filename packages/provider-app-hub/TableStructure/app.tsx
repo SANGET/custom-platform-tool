@@ -49,13 +49,13 @@ class DataDesign extends PureComponent<IProps, IState> {
     return (
       <ConfigProvider locale={zhCN}>
         <Row className="data-design-layout">
-          <Col xs={24} sm={8} md={7} lg={7} xl={5} className="sider-menu-tree">
+          <Col xs={24} sm={7} md={6} lg={5} xl={4} className="sider-menu-tree">
             <MeunsTree
               ref={this.menuRef}
               onSelect={this.handleTreeSelect}
             />
           </Col>
-          <Col xs={24} sm={16} md={17} lg={17} xl={19} className="content-pro-table">
+          <Col xs={24} sm={17} md={18} lg={19} xl={20} className="content-pro-table">
             <Table
               moduleId={moduleId}
               updataMenus={this.handleUpdataMenus}
