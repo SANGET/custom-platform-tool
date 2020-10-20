@@ -26,7 +26,7 @@ const Container: React.FC<IContainerProps> = (props) => {
         lessee,
         app
       });
-      setData(res?.result || {});
+      setData(res.data?.result || {});
     }
   };
   if (!pageId) {
