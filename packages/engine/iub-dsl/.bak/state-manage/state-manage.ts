@@ -35,7 +35,7 @@ const getFullInitStruct = ({ baseStruct, pathMapInfo }: {
 const SchemasRegExp = /^@\(schemas\)\./;
 /** 状态管理的AOP/util */
 export const isPageState = (text: string) => SchemasRegExp.test(text);
-export const pickKeyWord = (text:string) => text.replace(SchemasRegExp, '') || text;
+export const pickPageStateKeyWord = (text:string) => text.replace(SchemasRegExp, '') || text;
 
 /** TODO: 跨页面问题 */
 export const createIUBStore = (analysisData: SchemasAnalysisRes) => {
@@ -49,7 +49,7 @@ export const createIUBStore = (analysisData: SchemasAnalysisRes) => {
     const getPageState = (strOrStruct?) => {
       if (typeof strOrStruct === 'string') {
         if (isPageState(strOrStruct)) {
-          return LGet(IUBPageStore, pickKeyWord(strOrStruct), '');
+          return LGet(IUBPageStore, pickPageStateKeyWord(strOrStruct), '');
         }
         // console.warn('stateManage: 非schemas描述');
         // TODO
@@ -71,7 +71,7 @@ export const createIUBStore = (analysisData: SchemasAnalysisRes) => {
 
     const handleFn = useMemo(() => {
       const targetUpdateState = (target, value) => {
-        target = pickKeyWord(target);
+        target = pickPageStateKeyWord(target);
         setIUBPageStore({
           [target]: value
         });
@@ -85,7 +85,7 @@ export const createIUBStore = (analysisData: SchemasAnalysisRes) => {
         updatePageState,
         isPageState,
         targetUpdateState,
-        pickKeyWord,
+        pickPageStateKeyWord,
       };
     }, []);
 

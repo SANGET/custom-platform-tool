@@ -18,9 +18,9 @@ export const updateStateAction = (conf: UpdateState) => {
     actionName, actionOutput, actionId
   } = conf;
   if (changeTarget) {
-    return async ({ action, runtimeFnScheduler }) => {
+    return async ({ action, asyncRuntimeScheduler }) => {
       // action, 标准得事件执行上下文, param2 运行时上下文标准函数
-      return await runtimeFnScheduler({
+      return await asyncRuntimeScheduler({
         actionName,
         action,
         actionId,
@@ -30,8 +30,8 @@ export const updateStateAction = (conf: UpdateState) => {
     };
   }
   if (changeMapping) {
-    return async ({ action, runtimeFnScheduler }) => {
-      return await runtimeFnScheduler({
+    return async ({ action, asyncRuntimeScheduler }) => {
+      return await asyncRuntimeScheduler({
         actionName,
         action,
         type: RuntimeSchedulerFnName.targetUpdateState,

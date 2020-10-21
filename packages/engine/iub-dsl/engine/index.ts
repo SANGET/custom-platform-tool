@@ -1,6 +1,7 @@
 import IUBDSLParser from './IUBDSLParser';
 import IUBDSLRuntimeContainer from './IUBDSLRuntimeContainer';
 
+/** 全局配置, 依赖检查, 留坑 */
 function dependencyInspect(): boolean {
   return true;
 }

@@ -53,19 +53,19 @@ export const genRuntimeCtxFn = (dslParseRes, runtimeCtx) => {
     getPageState,
     getWatchDeps,
     updatePageState, targetUpdateState,
-    IUBPageStore, pickKeyWord
+    IUBPageStore, pickPageStateKeyWord
   } = IUBStoreEntity;
 
   /** 事件运行调度中心的函数 */
-  const runtimeContext = {
+  const asyncRuntimeContext = {
     targetUpdateState,
     updatePageState,
     getPageState,
     getWatchDeps,
     APBDSLrequest
   };
-  /** 事件运行的调度中心 */
-  const runtimeFnScheduler = async ({
+  /** 异步运行时调度中心 */
+  const asyncRuntimeScheduler = async ({
     action, type, params, actionName
   }) => {
     // if (Object.prototype.toString.call(action) === "[object Object]") {
@@ -74,7 +74,7 @@ export const genRuntimeCtxFn = (dslParseRes, runtimeCtx) => {
 
     if (type === RuntimeSchedulerFnName.ConditionHandleOfAPBDSL) {
       const expsValueHandle = (expsValue) => {
-        expsValue = transMarkValFromArr(expsValue, runtimeContext);
+        expsValue = transMarkValFromArr(expsValue, asyncRuntimeContext);
 
         return validTransMarkValFromArr(expsValue);
       };
@@ -85,10 +85,12 @@ export const genRuntimeCtxFn = (dslParseRes, runtimeCtx) => {
       });
     }
 
-    const runRes = await runtimeContext[type](...params);
+    const runRes = await asyncRuntimeContext[type](...params);
 
     return runRes;
   };
+
+  /** 同步运行时调度中心 */
 
   /**
    * @description 处理动态的props
@@ -133,7 +135,7 @@ export const genRuntimeCtxFn = (dslParseRes, runtimeCtx) => {
 
   /** 在事件运行中使用的上下文 */
   runTimeCtxToBusiness.current = {
-    runtimeFnScheduler
+    asyncRuntimeScheduler
   };
 
   /**

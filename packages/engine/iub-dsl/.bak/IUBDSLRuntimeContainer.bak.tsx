@@ -29,7 +29,7 @@ const auseRuntimeCtx = (dslParseRes, runtimeCtx) => {
   // const IUBStoreEntity = createIUBStore(schemasParseRes);
   const {
     getPageState, isPageState, targetUpdateState, useWatchState, IUBPageStore,
-    pickKeyWord
+    pickPageStateKeyWord
   } = IUBStoreEntity;
 
   // 条件处理
@@ -131,11 +131,11 @@ const ctxFn = (dslParseRes, runtimeCtx) => {
   console.log(1233);
   const { IUBStoreEntity } = runtimeCtx;
   const {
-    getPageState, updatePageState, IUBPageStore, useWatchState, pickKeyWord
+    getPageState, updatePageState, IUBPageStore, useWatchState, pickPageStateKeyWord
   } = IUBStoreEntity;
   const useDynamicPropHandle = (dynamicProps) => {
     if (dynamicProps.value) {
-      const target = pickKeyWord(dynamicProps.value);
+      const target = pickPageStateKeyWord(dynamicProps.value);
       return useMemo(() => {
         const newProps = cloneDeep(dynamicProps);
         newProps.value = getPageState(newProps.value);
