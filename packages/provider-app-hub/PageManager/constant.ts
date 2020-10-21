@@ -10,9 +10,9 @@ export enum MENUS_TYPE {
 }
 export const PAGE_CONFIG = { SIZE: 10, SIZE_OPTIONS: ["10", "20", "30", "40", "50", "100"] };
 export const PAGE_TYPE_ENUM = [
-  { text: "自定义页面", value: 1, status: 'Default' },
-  { text: "仪表盘页面", value: 2, status: 'Default' },
-  { text: "定制页面", value: 3, status: 'Default' }
+  { text: "自定义页面", value: 1 },
+  { text: "仪表盘页面", value: 2 },
+  { text: "定制页面", value: 3 }
 ];
 export const TABLE_COLUMNS: ProColumns<ITableItem>[] = [
   {
@@ -32,21 +32,21 @@ export const TABLE_COLUMNS: ProColumns<ITableItem>[] = [
     title: '页面类型',
     dataIndex: 'type',
     valueEnum: PAGE_TYPE_ENUM.reduce((a, b) => {
-      a[b.value] = Object.assign({ text: b.text }, b.status && { status: b.status });
+      a[b.value] = Object.assign({ text: b.text });
       return a;
     }, {}),
     width: 150,
   },
   {
     title: '归属模块',
-    dataIndex: 'moduleName',
+    dataIndex: 'belongMenus',
     ellipsis: true,
     width: 150,
     hideInSearch: true
   },
   {
     title: '数据表',
-    dataIndex: 'moduleName',
+    dataIndex: 'dataSources',
     ellipsis: true,
     width: 150,
     hideInSearch: true
