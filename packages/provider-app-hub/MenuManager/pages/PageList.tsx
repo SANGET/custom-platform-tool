@@ -398,13 +398,15 @@ class MenuList extends React.Component {
 
   editMenuFormRef = React.createRef<FormInstance>();
 
+  getNodeDefIcon = (type) => {
+    return type === MENU_TYPE.MODULE ? ICON_DEFAULTVALUE.MODULE : ICON_DEFAULTVALUE.PAGE;
+  };
+
   constructTree = (nodes) => {
     const treeMap = {};
     const treeList = [];
     const allExpandedKeys = [];
-    const getNodeDefIcon = (type) => {
-      return type === MENU_TYPE.MODULE ? ICON_DEFAULTVALUE.MODULE : ICON_DEFAULTVALUE.PAGE;
-    };
+    const _this = this;
     nodes.forEach((node) => {
       if (!node) return;
       const {
@@ -414,7 +416,7 @@ class MenuList extends React.Component {
       } = node;
       treeMap[id] = node;
       // 拼记录的默认 icon
-      node[MENU_KEY.ICON] = icon || getNodeDefIcon(type);
+      node[MENU_KEY.ICON] = icon || this.getNodeDefIcon(type);
     });
     nodes.forEach((node) => {
       if (node) {
@@ -792,12 +794,17 @@ class MenuList extends React.Component {
           }}
           rowKey="id"
           formRef={this.editMenuFormRef}
-          changeValue = {(changeValues, allValues) => {
-            if ((MENU_KEY.TYPE in changeValues) && changeValues[MENU_KEY.TYPE] === MENU_TYPE.MODULE) {
+          changeValue = {(changeValues) => {
+            if (MENU_KEY.TYPE in changeValues) {
               this.editMenuFormRef.current?.setFieldsValue({
-                [MENU_KEY.PAGELINK]: '',
-                [MENU_KEY.PAGENAME]: '',
+                [MENU_KEY.ICON]: this.getNodeDefIcon(this.editMenuFormRef.current?.getFieldValue(MENU_KEY.TYPE))
               });
+              if (changeValues[MENU_KEY.TYPE] === MENU_TYPE.MODULE) {
+                this.editMenuFormRef.current?.setFieldsValue({
+                  [MENU_KEY.PAGELINK]: '',
+                  [MENU_KEY.PAGENAME]: '',
+                });
+              }
             }
           }}
           title="菜单列表"
