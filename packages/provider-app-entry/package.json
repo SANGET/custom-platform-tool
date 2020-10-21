@@ -4,9 +4,9 @@
   "private": true,
   "types": "index.d.ts",
   "scripts": {
-    "postinstall": "vh gen",
+    "set:version": "vh gen",
     "start": "cross-env PORT=6679 minictl start",
-    "build": "minictl build"
+    "build": "npm run set:version && minictl build"
   },
   "peerDependencies": {
     "react": "^16.13.1",
