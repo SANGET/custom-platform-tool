@@ -38,17 +38,15 @@ interface IBaseLayoutState {
 }
 
 class BasicLayout extends React.PureComponent<IBasicLayoutProps, IBaseLayoutState> {
-  public state: IBaseLayoutState = {
+  state: IBaseLayoutState = {
     openKeys: []
   }
 
-  public async componentDidMount() {
+  async componentDidMount() {
     this.setPreviewMenuAndTabs();
     const res = await this.getMenu();
-    if (res?.code === "SA0000") {
-      this.setDefaultTabs(res.result || []);
-      this.setDefaultopenKeys();
-    }
+    this.setDefaultTabs(res.result || []);
+    this.setDefaultopenKeys();
   }
 
   componentWillUnmount() {
@@ -64,7 +62,7 @@ class BasicLayout extends React.PureComponent<IBasicLayoutProps, IBaseLayoutStat
   /**
    * 预览模式添加菜单和tabs
    */
-  public setPreviewMenuAndTabs() {
+  setPreviewMenuAndTabs() {
     const mode = this.getHistoryQueryValue("mode");
     const { query } = history.location;
     const { pageId } = query;
@@ -98,7 +96,7 @@ class BasicLayout extends React.PureComponent<IBasicLayoutProps, IBaseLayoutStat
    * 根据url query path 参数设置 初始 展开的 SubMenu 菜单项 key 数组
    *
    */
-  public setDefaultopenKeys() {
+  setDefaultopenKeys() {
     const menuId = this.getHistoryQueryValue("menuId");
     if (!menuId) return;
     const selectKeys = [];
@@ -109,7 +107,7 @@ class BasicLayout extends React.PureComponent<IBasicLayoutProps, IBaseLayoutStat
     });
   }
 
-  public getMenuPidsByPath(menuId, pids) {
+  getMenuPidsByPath(menuId, pids) {
     const { originalMeunData } = this.props;
     const find = originalMeunData?.find((item) => item.id === menuId);
     if (find) {
@@ -118,7 +116,7 @@ class BasicLayout extends React.PureComponent<IBasicLayoutProps, IBaseLayoutStat
     }
   }
 
-  public getQueryByParams = (params: string[]) => {
+  getQueryByParams = (params: string[]) => {
     const { query } = history.location;
     let result = "";
     params.map((item) => {
@@ -130,12 +128,12 @@ class BasicLayout extends React.PureComponent<IBasicLayoutProps, IBaseLayoutStat
     return result;
   }
 
-  public getHistoryQueryValue = (key: string): string => {
+  getHistoryQueryValue = (key: string): string => {
     const { query } = history.location;
     return query[key] || "";
   }
 
-  public setDefaultTabs = (menu) => {
+  setDefaultTabs = (menu) => {
     const { query } = history.location;
     const {
       menuId, app, mode, lessee, pageId
@@ -161,7 +159,7 @@ class BasicLayout extends React.PureComponent<IBasicLayoutProps, IBaseLayoutStat
     }
   }
 
-  public getMenu = async () => {
+  getMenu = async () => {
     const { dispatch } = this.props;
     return dispatch({
       type: "menus/getMenu",
@@ -171,7 +169,7 @@ class BasicLayout extends React.PureComponent<IBasicLayoutProps, IBaseLayoutStat
     });
   }
 
-  public handleMenuCollapse = (payload: boolean): void => {
+  handleMenuCollapse = (payload: boolean): void => {
     const { dispatch } = this.props;
     dispatch({
       type: 'global/changeLayoutCollapsed',
@@ -179,7 +177,7 @@ class BasicLayout extends React.PureComponent<IBasicLayoutProps, IBaseLayoutStat
     });
   }
 
-  public renderMenuContent = (props: SiderMenuProps, dom: React.ReactNode): React.ReactNode => {
+  renderMenuContent = (props: SiderMenuProps, dom: React.ReactNode): React.ReactNode => {
     const { loadingMenu } = this.props;
     return loadingMenu ? (<div
       style={{
@@ -194,7 +192,7 @@ class BasicLayout extends React.PureComponent<IBasicLayoutProps, IBaseLayoutStat
    * 点击菜单
    * @param param0
    */
-  public handleMenuSelect = (info): void => {
+  handleMenuSelect = (info): void => {
     const {
       page, id, pageId, name, path
     } = info;
@@ -221,7 +219,7 @@ class BasicLayout extends React.PureComponent<IBasicLayoutProps, IBaseLayoutStat
     history.push(link);
   }
 
-  public handleCollapseChange = (collapsed: boolean) => {
+  handleCollapseChange = (collapsed: boolean) => {
     const { dispatch } = this.props;
     dispatch({
       type: "global/changeLayoutCollapsed",
@@ -229,11 +227,11 @@ class BasicLayout extends React.PureComponent<IBasicLayoutProps, IBaseLayoutStat
     });
   }
 
-  public handleSettingChange = (config) => {
+  handleSettingChange = (config) => {
     console.dir(config);
   }
 
-  public handleOpenChange = (openKeys) => {
+  handleOpenChange = (openKeys) => {
     this.setState({
       openKeys
     });
