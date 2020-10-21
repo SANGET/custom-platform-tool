@@ -40,21 +40,20 @@ const Model: ILoginModel = {
      * 失败: 设置错误信息
      */
     * login({ payload }, { call, put, select }) {
-      const response: API.ILoginType = yield call(accountLogin, payload);
-      // const response = { code: 0, message: "" };
-      if (response.code === 0) {
+      try {
+        const response: API.ILoginType = yield call(accountLogin, payload);
         yield put({
           type: 'setLoginInfo',
           payload: response,
         });
-      } else {
+        return response;
+      } catch (e) {
         yield put({
           type: 'setLoginMessage',
-          payload: response.message,
+          payload: e.message,
         });
+        return e;
       }
-
-      return response;
     },
     /**
      * 用户退出

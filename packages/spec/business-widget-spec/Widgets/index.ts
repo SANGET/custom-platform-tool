@@ -1,3 +1,4 @@
 export * from './FormInput';
-export * from './Table';
+export * from './GeneralTable';
 export * from './DropdownSelector';
+export * from './Textarea';

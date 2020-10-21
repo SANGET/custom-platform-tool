@@ -5,13 +5,23 @@ import { FlexMeta } from "./Flex-meta";
 import { TableMeta } from "./Table-meta";
 import { CustomMeta } from "./Custom-meta";
 import { DropdownSelectorMeta } from "./DropdownSelector-meta";
+import { TextareaMeta } from "./Textarea-meta";
+
+const tempArr = [
+  FormInputMeta,
+  FlexMeta,
+  TableMeta,
+  CustomMeta,
+  DropdownSelectorMeta,
+  TextareaMeta,
+];
 
 export const widgetMetadataCollection: WidgetTypeMetadataCollection = {
-  'widget-id-1': FormInputMeta,
-  'widget-id-2': FlexMeta,
-  'widget-id-3': TableMeta,
-  'widget-id-4': CustomMeta,
-  'widget-id-5': DropdownSelectorMeta,
 };
+
+/** 将数组转换成 collection 数据机构 */
+tempArr.forEach((meta) => {
+  widgetMetadataCollection[meta.id] = meta;
+});
 
 export const getWidgetDefinitionData = ApiMock(widgetMetadataCollection);

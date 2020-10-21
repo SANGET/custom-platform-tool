@@ -1,8 +1,6 @@
-import request from '@/utils/request';
-
 /**
  * 获取单前用户信息
  */
-export async function queryCurrent() {
-  return request<API.ICurrentUserType>('/auth/user/info/cur');
+export async function queryUserInfo() {
+  return $A_R.post('http://localhost:8000/auth/user/info/cur');
 }

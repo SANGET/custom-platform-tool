@@ -30,12 +30,12 @@
   },
   "dependencies": {
     "codemirror": "^5.56.0",
-    "antd": "^4.4.3",
     "@types/codemirror": "^0.0.97",
     "jsonlint-mod": "^1.7.5"
   },
   "peerDependencies": {
-    "umi": "3.x"
+    "umi": "3.x",
+    "antd": "^4.4.3"
   },
   "publishConfig": {
     "access": "public"

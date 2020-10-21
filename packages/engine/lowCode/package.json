@@ -4,11 +4,11 @@
   "description": "低代码引擎",
   "dependencies": {
     "@babel/core": "^7.11.4",
-    "axios": "^0.20.0",
     "@babel/types": "^7.11.0",
     "@babel/traverse": "^7.11.0",
     "@babel/parser": "^7.11.4",
     "@babel/generator": "^7.11.4",
-    "@babel/preset-env": "^7.11.0"
+    "@babel/preset-env": "^7.11.0",
+    "axios": "^0.20.0"
   }
 }

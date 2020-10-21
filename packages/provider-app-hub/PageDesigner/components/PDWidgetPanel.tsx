@@ -7,29 +7,34 @@ import { GroupItemsRender, PanelItemsGroup } from '@engine/visual-editor/compone
 import { DataSourceDragItem, DataSourceSelector } from './PDDataSource';
 
 export interface PageDesignerComponentPanelProps {
-  datasources
+  interDatasources
   onUpdatedDatasource
-  compClassForPanelData: PanelItemsGroup
-  compClassCollection: ComponentPanelProps['compClassCollection']
+  widgetPanelData: PanelItemsGroup
+  widgetMetaDataCollection: ComponentPanelProps['widgetMetaDataCollection']
   getDragItemConfig?: ComponentPanelProps['getDragItemConfig']
 }
 
 const itemRendererFac = (
-  compClassCollection, getDragItemConfig
+  widgetMetaDataCollection, getDragItemConfig
 ) => (componentClassID, groupType) => {
-  const componentClass = compClassCollection[componentClassID];
+  const widgetMeta = widgetMetaDataCollection[componentClassID];
+  if (!widgetMeta) {
+    return (
+      <div className="t_red">widget 未定义</div>
+    );
+  }
   const {
     id, label
-  } = componentClass;
+  } = widgetMeta;
   switch (groupType) {
     case 'dragableItems':
       return (
         <DragItemComp
           className="drag-comp-item"
           type={DragableItemTypes.DragableItemType}
-          dragConfig={getDragItemConfig ? getDragItemConfig(componentClass) : {}}
+          dragConfig={getDragItemConfig ? getDragItemConfig(widgetMeta) : {}}
           dragableWidgetType={{
-            ...componentClass,
+            ...widgetMeta,
           }}
         >
           {label}
@@ -48,18 +53,18 @@ const itemRendererFac = (
  * page designer widget panel
  */
 const PDWidgetPanel: React.FC<PageDesignerComponentPanelProps> = ({
-  compClassCollection,
+  widgetMetaDataCollection,
   getDragItemConfig,
-  datasources,
+  interDatasources,
   onUpdatedDatasource,
-  compClassForPanelData,
+  widgetPanelData,
   ...other
 }) => {
   const itemRenderer = useMemo(
-    () => itemRendererFac(compClassCollection, getDragItemConfig),
-    [compClassCollection, getDragItemConfig],
+    () => itemRendererFac(widgetMetaDataCollection, getDragItemConfig),
+    [widgetMetaDataCollection, getDragItemConfig],
   );
-  const { title: compPanelTitle, type: groupType, ...otherPanelConfig } = compClassForPanelData;
+  const { title: compPanelTitle, type: groupType, ...otherPanelConfig } = widgetPanelData;
 
   return (
     <div className="component-panel-container">
@@ -67,7 +72,7 @@ const PDWidgetPanel: React.FC<PageDesignerComponentPanelProps> = ({
         <Tab label={compPanelTitle}>
           {/* <WidgetPanel
             {...other}
-            componentPanelConfig={[compClassForPanelData]}
+            componentPanelConfig={[widgetPanelData]}
             itemRenderer={itemRenderer}
           /> */}
           <GroupItemsRender
@@ -78,7 +83,7 @@ const PDWidgetPanel: React.FC<PageDesignerComponentPanelProps> = ({
         </Tab>
         <Tab label={(
           <DataSourceSelector
-            datasources={datasources}
+            interDatasources={interDatasources}
             onAddDataSource={(addData) => {
               // return console.log(addData);
               onUpdatedDatasource(addData);
@@ -87,7 +92,7 @@ const PDWidgetPanel: React.FC<PageDesignerComponentPanelProps> = ({
         )}
         >
           <DataSourceDragItem
-            datasources={datasources}
+            interDatasources={interDatasources}
           />
         </Tab>
         <Tab label="控件模版">

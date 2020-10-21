@@ -45,7 +45,7 @@ class BasicLayout extends React.PureComponent<IBasicLayoutProps, IBaseLayoutStat
   public async componentDidMount() {
     this.setPreviewMenuAndTabs();
     const res = await this.getMenu();
-    if (res?.code === 0) {
+    if (res?.code === "SA0000") {
       this.setDefaultTabs(res.result || []);
       this.setDefaultopenKeys();
     }
@@ -289,12 +289,14 @@ class BasicLayout extends React.PureComponent<IBasicLayoutProps, IBaseLayoutStat
 
 export default connect(({
   global, settings, menus, loading, tabs
-}: ConnectState) => ({
-  collapsed: global.collapsed,
-  menuData: menus.list,
-  originalMeunData: menus.original || [],
-  tabsData: tabs.list || [],
-  activeKey: tabs.activeKey,
-  settings,
-  loadingMenu: loading.effects['menus/getMenu'],
-}))(BasicLayout);
+}: ConnectState) => {
+  return {
+    collapsed: global.collapsed,
+    menuData: menus.list,
+    originalMeunData: menus.original || [],
+    tabsData: tabs.list || [],
+    activeKey: tabs.activeKey,
+    settings,
+    loadingMenu: loading.effects['menus/getMenu'],
+  };
+})(BasicLayout);

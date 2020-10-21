@@ -4,9 +4,13 @@ import { AppService } from './app.service';
 import { PageDataModule } from './page-data/page-data.module';
 import { ResHelperModule } from './res-helper/res-helper.module';
 import { PreviewAppModule } from './preview-app/preview-app.module';
+import { ReleaseAppModule } from './release-app/release-app.module';
 
 @Module({
-  imports: [PageDataModule, ResHelperModule, PreviewAppModule],
+  imports: [
+    PageDataModule, ReleaseAppModule, 
+    ResHelperModule, PreviewAppModule
+  ],
   controllers: [AppController],
   providers: [AppService],
 })

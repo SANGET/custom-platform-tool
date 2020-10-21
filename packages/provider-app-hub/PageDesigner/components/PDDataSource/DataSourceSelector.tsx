@@ -5,7 +5,7 @@ import { DataSourceBinder } from "./DataSourceBinder";
 
 export const DataSourceSelector = ({
   onAddDataSource,
-  datasources
+  interDatasources
 }) => {
   return (
     <div className="flex items-center">
@@ -19,9 +19,9 @@ export const DataSourceSelector = ({
             children: () => {
               return (
                 <DataSourceBinder
-                  bindedDataSources={datasources}
+                  bindedDataSources={interDatasources}
                   onSubmit={(submitData) => {
-                  // console.log(submitData);
+                    console.log(submitData);
                     onAddDataSource(submitData);
                     CloseModal(modalID);
                   }}

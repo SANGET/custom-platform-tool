@@ -12,14 +12,17 @@ export async function updatePageService(pageInfo: PageInfo, pageContent, extendD
     return console.error('请传入 pageInfo');
   }
   const { id, name, type = 2 } = pageInfo;
+  const updatePageData = Object.assign({}, extendData, {
+    name,
+    type,
+    /** TODO: 字段需要更改 */
+    iubDsl: JSON.stringify(pageContent),
+  });
+  // console.log('updatePageData', updatePageData);
+  console.log('pageContent', pageContent);
   return await $R_P.put({
     url: `/page/v1/pages/${id}`,
-    data: Object.assign({}, extendData, {
-      name,
-      type,
-      /** TODO: 字段需要更改 */
-      iubDsl: JSON.stringify(pageContent),
-    })
+    data: updatePageData
   });
 }
 
@@ -30,6 +33,7 @@ export async function getPageDetailService(pageID: string) {
   const pageData = await $R_P.get(`/page/v1/pages/${pageID}`);
   // 为了兼容未来的字段更改
   const { result } = pageData;
+  if (!result) return {};
   let pageContent;
   try {
     pageContent = JSON.parse(result.iubDsl);

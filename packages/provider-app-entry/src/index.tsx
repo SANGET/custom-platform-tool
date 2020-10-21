@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from "react-dom";
-import { setAppConfig } from './config-manager';
+import { setAppConfig } from '@provider-app/config/config-manager';
 
 import App from './main';
 import { setPlatformApiUrl } from './services';
