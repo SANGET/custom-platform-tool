@@ -7,3 +7,5 @@ export const originGenUrl = (lesseeCode, appCode, businessCode) => {
   return `${baseUrl}/${lesseeCode}/${appCode}/business/${businessCode}`;
 };
 export const genUrl = curry(originGenUrl)('hy', 'iot');
+
+export const APBDSLtestUrl = genUrl('UserInfo');

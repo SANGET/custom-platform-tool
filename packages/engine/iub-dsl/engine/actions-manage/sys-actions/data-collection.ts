@@ -7,8 +7,8 @@ import { RuntimeSchedulerFnName } from "../../runtime";
 export const dataCollectionAction = (conf: DataCollection) => {
   const { actionName, actionOptions: { collectionType, struct }, when } = conf;
   if (collectionType === 'structArray') {
-    return async ({ action, runtimeFnScheduler }) => {
-      return await runtimeFnScheduler({
+    return async ({ action, asyncRuntimeScheduler }) => {
+      return await asyncRuntimeScheduler({
         actionName,
         type: RuntimeSchedulerFnName.getPageState,
         params: [struct]
@@ -21,9 +21,9 @@ export const dataCollectionAction = (conf: DataCollection) => {
    * 2. 映射成元数据形式 field
    * 3. 固定映射 aliasField
    */
-  return async ({ action, runtimeFnScheduler }) => {
-    const newStruct = genGetPagetStateStruct(struct, runtimeFnScheduler);
-    return await runtimeFnScheduler({
+  return async ({ action, asyncRuntimeScheduler }) => {
+    const newStruct = genGetPagetStateStruct(struct, asyncRuntimeScheduler);
+    return await asyncRuntimeScheduler({
       actionName,
       type: RuntimeSchedulerFnName.getPageState,
       params: [newStruct]
@@ -31,17 +31,19 @@ export const dataCollectionAction = (conf: DataCollection) => {
   };
 };
 
-const genGetPagetStateStruct = (struct: (string | BaseCollectionStruct)[], runtimeFnScheduler) => {
+const genGetPagetStateStruct = (struct: (string | BaseCollectionStruct)[], asyncRuntimeScheduler) => {
   return struct.reduce(((result, sInfo: (string | BaseCollectionStruct)) => {
     if (typeof sInfo === 'string') {
       result[sInfo] = sInfo;
     } else {
       const { aliasField, field, collectField } = sInfo;
       if (collectField !== undefined) {
-        if (aliasField !== undefined) {
+        /** TODO: aliasField和field 的优先级问题 */
+        if (field !== undefined) {
+
+        } else if (aliasField !== undefined) {
           result[aliasField] = collectField;
         }
-        // if (field )
       } else {
         console.error('收集结构信息错误无收集字段信息: collectField');
       }

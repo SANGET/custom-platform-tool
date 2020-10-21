@@ -15,7 +15,7 @@ export const showMoadl = (conf) => {
     },
     actionName, actionOutput, actionId
   } = conf;
-  return async ({ action, runtimeFnScheduler }) => {
+  return async ({ action, asyncRuntimeScheduler }) => {
     Modal[ModalType.confirm]({
       title: '测试弹窗',
     });

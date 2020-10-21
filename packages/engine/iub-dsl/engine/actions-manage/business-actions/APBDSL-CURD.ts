@@ -27,9 +27,9 @@ const normalCURDActionParseScheduler = (action: NormalCURD) => {
 const genTableInsertFn = (actionConf: TableInsert) => {
   const { fieldMapping, table } = actionConf;
   const getFiled = dataCollectionAction(fieldMapping);
-  return async ({ action, runtimeFnScheduler }) => {
+  return async ({ action, asyncRuntimeScheduler }) => {
     /** 获取插入参数 */
-    const set = await getFiled({ action, runtimeFnScheduler });
+    const set = await getFiled({ action, asyncRuntimeScheduler });
     /** 获取set转换函数 */
     const getSetOfAPBDSL = getGenAPBDSLFunctionTransform(ApbFunction.SET);
     /** 转换 */
@@ -41,9 +41,9 @@ const genTableInsertFn = (actionConf: TableInsert) => {
 const genTableUpdatetFn = (actionConf: TableUpdate) => {
   const { fieldMapping, table } = actionConf;
   const getFiled = dataCollectionAction(fieldMapping);
-  return async ({ action, runtimeFnScheduler }) => {
+  return async ({ action, asyncRuntimeScheduler }) => {
     /** 获取插入参数 */
-    const set = await getFiled({ action, runtimeFnScheduler });
+    const set = await getFiled({ action, asyncRuntimeScheduler });
     /** 获取upd转换函数 */
     const getUpdOfAPBDSL = getGenAPBDSLFunctionTransform(ApbFunction.UPD);
     /** 转换 */
@@ -56,14 +56,14 @@ const genTableSelectFn = (actionConf: TableSelect) => {
   console.log(actionConf);
 
   const { table, condition } = actionConf;
-  return async ({ action, runtimeFnScheduler }) => {
+  return async ({ action, asyncRuntimeScheduler }) => {
     /** 获取set转换函数 */
     const getSelectOfAPBDSL = getGenAPBDSLFunctionTransform(ApbFunction.SELECT);
     const selectParam: SelectParamOfAPBDSL = {
       table
     };
     if (condition) {
-      selectParam.condition = await runtimeFnScheduler({
+      selectParam.condition = await asyncRuntimeScheduler({
         type: 'ConditionHandleOfAPBDSL',
         params: [condition],
       });
@@ -76,7 +76,7 @@ const genTableSelectFn = (actionConf: TableSelect) => {
 
 const genTableDeleteFn = (actionConf: TableDelete) => {
   const { table } = actionConf;
-  return async ({ action, runtimeFnScheduler }) => {
+  return async ({ action, asyncRuntimeScheduler }) => {
     /** 获取set转换函数 */
     const getDelOfAPBDSL = getGenAPBDSLFunctionTransform(ApbFunction.DEL);
     /** 转换 */
@@ -121,7 +121,7 @@ export const APBDSLCURDAction = (conf: APBDSLCURD) => {
     };
     /** 生成很多函数? */
     APBDSL.steps = await APBDSLStepsFnRun(steps, runtimeCtx);
-    return await runtimeCtx?.runtimeFnScheduler({
+    return await runtimeCtx?.asyncRuntimeScheduler({
       type: RuntimeSchedulerFnName.APBDSLrequest,
       params: [APBDSL],
       action,
