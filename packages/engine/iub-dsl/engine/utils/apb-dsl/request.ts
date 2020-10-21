@@ -1,4 +1,5 @@
-import { genUrl } from './url';
+import { APBDSLtestUrl } from '@consumer-app/web-platform/src/utils/gen-url';
+import { AxiosResponse } from 'axios';
 
 enum APBDSLResponeCode {
   SA0000 = 'SA0000',
@@ -72,22 +73,15 @@ interface APBDSLRespone<T = any> {
   result: T
   timestamp: string
 }
-export const APBDSLrequest = (reqParam) => {
-  const reqUrl = genUrl(34562);
+export const APBDSLrequest = <R = any>(reqParam) => {
+  // const reqUrl = genUrl('UserInfo');
   // console.dir(reqParam, { depth: 3 });
-
-  return fetch(`${reqUrl}`, {
-    body: JSON.stringify(reqParam),
-    headers: {
-      'content-type': 'application/json'
-    },
+  return $A_R(APBDSLtestUrl, {
     method: 'POST',
-    mode: 'cors',
-  }).then<APBDSLRespone>((response: Response) => {
-    return response.json();
-  }).then((res) => {
-    if (res.code === APBDSLResponeCode.SA0000) {
-      return Promise.resolve(res.result);
+    data: reqParam
+  }).then(({ data }: AxiosResponse<APBDSLRespone<R | boolean>>) => {
+    if (data.code === APBDSLResponeCode.SA0000) {
+      return Promise.resolve(data.result);
     }
     return Promise.resolve(false);
   });
