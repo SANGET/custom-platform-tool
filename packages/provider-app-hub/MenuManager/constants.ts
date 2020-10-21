@@ -36,7 +36,9 @@ export const MESSAGE = {
   ADD_MENU_FAILED: "新增菜单数据失败，请联系技术人员",
   DEL_MENU_FAILED: "删除菜单数据失败，请联系技术人员",
   DEL_MENU_SUCCESS: "删除菜单数据成功",
-  SELECT_ICON_FAILED: "请选择图标"
+  SELECT_ICON_FAILED: "请选择图标",
+  NAME_REGUIRED: "菜单名称必填",
+  NAME_REG_FAILED: "支持32个字符内的中文、英文、数字"
 };
 
 export const MENU_KEY = {
@@ -69,3 +71,5 @@ export enum ICON_DEFAULTVALUE {
 }
 
 export const MAX_LEVEL = 5;
+
+export const NAME_REG = /^[\u4e00-\u9fa5a-zA-Z0-9]{1,32}$/;

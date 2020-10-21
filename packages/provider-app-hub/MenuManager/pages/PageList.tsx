@@ -17,7 +17,7 @@ import {
   delMenuServices, getMenuListServices, getPageListServices, editMenuServices, setMenuStatusServices, addMenuServices
 } from "../services/apis";
 import {
-  MAX_LEVEL, ICON_DEFAULTVALUE, SAVE_TYPE, MENU_OPTIONS, MESSAGE, API_CODE, NOTIFICATION_TYPE, BUTTON_TYPE, BUTTON_SIZE, MENU_TYPE, MENU_KEY
+  NAME_REG, MAX_LEVEL, ICON_DEFAULTVALUE, SAVE_TYPE, MENU_OPTIONS, MESSAGE, API_CODE, NOTIFICATION_TYPE, BUTTON_TYPE, BUTTON_SIZE, MENU_TYPE, MENU_KEY
 } from '../constants';
 
 import { IconAppointed, SelectIcon } from './SelectIcon';
@@ -183,7 +183,6 @@ const getListColumns = ({
     dataIndex: MENU_KEY.NAME,
     title: () => {
       const ExpandIcon = expandedRowKeys.length > 0 ? CompressOutlined : DragOutlined;
-
       return (
         <>
           {'菜单名称'}
@@ -202,7 +201,8 @@ const getListColumns = ({
       return record.editable ? (
         <Form.Item
           rules={[
-            { required: true, message: '菜单名称必填' },
+            { required: true, message: MESSAGE.NAME_REGUIRED },
+            { pattern: NAME_REG, message: MESSAGE.NAME_REG_FAILED },
           ]}
           name={MENU_KEY.NAME}
         >
