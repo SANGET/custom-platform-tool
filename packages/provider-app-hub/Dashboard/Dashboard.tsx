@@ -87,7 +87,9 @@ export const Dashboard: React.FC<DashboardProps> = (props) => {
       <div className="flex flex-row">
         {
           appData && appData.map(((data, idx) => {
-            const { appShortNameEn, id, appCode } = data;
+            const {
+              appShortNameEn, id, appCode, accessName
+            } = data;
             return (
               <AppTile
                 key={id}
@@ -95,13 +97,13 @@ export const Dashboard: React.FC<DashboardProps> = (props) => {
                 title={appShortNameEn}
                 onClick={(e) => {
                   onSelectApp && onSelectApp({
-                    app: appCode,
+                    app: accessName,
                     appName: appShortNameEn
                   });
                 }}
                 to={defaultToRoute}
                 params={{
-                  app: appCode
+                  app: accessName
                 }}
               />
             );
