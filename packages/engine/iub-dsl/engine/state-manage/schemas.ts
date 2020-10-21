@@ -1,58 +1,11 @@
 /* eslint-disable no-param-reassign */
-import { Subject } from 'rxjs';
 import {
   ComplexType, FoundationType, Schemas
 } from '@iub-dsl/definition';
+import { testSchemas } from "@iub-dsl/demo/business-case/location";
 import schemasAnalysis from './analysis/analysis';
 import { PATH_SPLIT_MARK, PATH_SPLIT_MARK_ARR } from './const';
-import { PathMapInfoItem } from './analysis/i-analysis';
 
-/** 树 / 多重嵌套 */
-const sdId3 = { // 位置管理表格数据
-  type: ComplexType.structArray,
-  refTable: 'tableId1', // 整个结构引用得表
-  desc: '位置管理表格数据',
-  struct: {
-    // 普通字段
-    sdId1: {
-      type: FoundationType.string,
-      desc: '位置名字',
-      fieldMapping: 'tableId1.filedId2',
-    },
-    // 复杂结构引用
-    sdId3: {
-      type: ComplexType.structObject,
-      desc: '上级位置',
-      fieldMapping: 'tableId1.filedId3', // 原表字段
-      refTable: 'tableId2', // 复杂结构引用的表
-      // TODO: 使用关系描述处理
-      struct: {
-        ssdId0: {
-          type: FoundationType.string,
-          fieldMapping: 'tableId2.filedId1',
-          compTag: 'value', // 对外有映射的字段
-        },
-        ssdId1: {
-          type: FoundationType.string,
-          desc: '上级位置名字',
-          fieldMapping: 'tableId2.filedId2',
-          compTag: 'show',
-        },
-        // 多重引用
-        ssdId2: {
-          type: ComplexType.structObject,
-          fieldMapping: 'tableId2.filedId3',
-          refTable: 'tableId2',
-          struct: {}
-        },
-        // 树形引用
-        ssdId3: {
-          type: 'structTreeArr',
-        }
-      }
-    }
-  }
-};
 /** 描述对象从[from]: any 转换成 [to]:any */
 interface MapConf {
   from: string;
@@ -74,11 +27,16 @@ interface MapDataParam<T> {
  * @steps_4 实例化状态管理
  */
 const SchemasParser = (originSchemas: Schemas) => {
+  // originSchemas = Object.assign({}, testSchemas, originSchemas);
+
   const schemasAnalysisRes = schemasAnalysis(originSchemas);
 
-  const { levelRelation } = schemasAnalysisRes;
+  // const { levelRelation } = schemasAnalysisRes;
 
   console.log(schemasAnalysisRes);
+  /** 原始逻辑必要的 */
+  /** 额外逻辑, 充分的 */
+
   return schemasAnalysisRes;
 };
 

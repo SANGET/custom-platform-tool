@@ -1,62 +1,83 @@
-/* eslint-disable no-param-reassign */
-import { conditionP, whenP, funcP } from './code-engine';
+import { ActionsDefinition, ActionCollection } from "@iub-dsl/definition/actions/action";
 
-interface ParseResultRef {
-  actionID: string;
-  type: string;
-  handle: (runtimeContext, ...args: any) => void
-  paramStruct: string;
-  variableStruct: string;
-  // when: string[]; // 和整个app的运行时相关
-  when: (runtimeContext, ...args: any) => boolean; // ?? 按照配置也是低代码
-  condition: (runtimeContext, ...args: any) => boolean; // ?? 按照配置也是低代码
+import { updateStateAction, dataCollectionAction, showMoadl } from "./sys-actions";
+import { APBDSLCURDAction } from "./business-actions";
+
+interface ExtralActionParseRes {
+  // actionConf, // ! 尽量不要暴露, 因为actionConf会不安全
+  changeStateToUse: string[];
+  getStateToUse: string[];
 }
 
-export const funcWrap = (param: ParseResultRef) => {
-  // 事件代理
-  return (runtimeContext) => {
-    return (...args) => {
-      return param.handle(runtimeContext, ...args);
+interface OriginActionInfoParseRes {
+  actionHandle: any; // Func
+}
+type ActionInfoParseRes = OriginActionInfoParseRes & ExtralActionParseRes
+
+interface ActionInfoListParseRes {
+  [actionId: string]: ActionInfoParseRes
+}
+
+interface ActionParserRes {
+  actionIds: string[]
+  actionParseRes: ActionInfoListParseRes
+}
+
+const getExtralActionParserRes = (): ExtralActionParseRes => ({ changeStateToUse: [], getStateToUse: [] });
+
+export const actionsCollectionParser = (
+  actionCollection: ActionCollection,
+  parsrContext
+): ActionParserRes => {
+  const actionParseRes = {};
+  const actionIds = Object.keys(actionCollection);
+  actionIds.forEach((key) => {
+    actionParseRes[key] = {
+      /** 原始逻辑必要的 */
+      actionHandle: getActionFn(actionCollection[key]),
+      /** 额外逻辑, 充分的 TODO: 终究对逻辑有侵入 */
+      ...commonActionConfParser(
+        actionCollection[key],
+        getExtralActionParserRes(),
+        parsrContext
+      )
     };
+  });
+
+  return {
+    actionParseRes,
+    actionIds
   };
 };
-export const parseActionItem = (actionID, actionItem: any) => {
-  const result: ParseResultRef = {
-    actionID,
-    type: '',
-    handle: () => ({}),
-    paramStruct: '',
-    variableStruct: '',
-    when: () => false,
-    condition: () => false,
-  };
 
-  result.handle = funcP(actionItem, actionID);
+const commonActionConfParser = (
+  actionConf,
+  actionConfParseRes: ExtralActionParseRes,
+  parsrContext
+): ExtralActionParseRes => {
+  const { actionConfParser } = parsrContext;
+  if (actionConfParser) {
+    return actionConfParser(actionConf, actionConfParseRes, parsrContext);
+  }
 
-  // TODO:
-  result.when = whenP(actionItem);
-  result.condition = conditionP(actionItem);
-
-  return funcWrap(result);
+  return actionConfParseRes;
 };
 
-export const ActionsCollectionParser = (actionsCollection: {
-  [actionID: string]: any;
-}) => {
-  return Object.keys(actionsCollection).reduce((actionParseRes, actionID) => {
-    actionParseRes[actionID] = parseActionItem(actionID, actionsCollection[actionID]);
-    return actionParseRes;
-  }, {});
+const getActionFn = (actionConf: ActionsDefinition) => {
+  switch (actionConf.actionType) {
+    case 'updateState':
+      return updateStateAction(actionConf);
+    case 'dataCollection':
+      return dataCollectionAction(actionConf);
+    case 'APBDSLCURD':
+      return APBDSLCURDAction(actionConf);
+    case 'showMoadl':
+      return showMoadl(actionConf);
+    default:
+      if (typeof actionConf === 'function') {
+        return actionConf;
+      }
+      console.error('err action');
+      return () => {};
+  }
 };
-
-interface ActionsItem {
-
-  actionId: string;
-
-  doAction: string;
-
-}
-
-class Action {
-  actions: ActionsItem[] = []
-}

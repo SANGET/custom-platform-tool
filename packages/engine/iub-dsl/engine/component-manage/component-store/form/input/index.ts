@@ -1,1 +1,1 @@
-export * from './base-input-parser';
+export * from './normal-input-parser';

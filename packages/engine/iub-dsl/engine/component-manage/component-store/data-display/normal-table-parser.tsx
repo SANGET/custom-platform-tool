@@ -11,7 +11,7 @@ const getTableCompAllConfKeys = (conf) => Object.keys(conf);
  * @param conf 组件配置
  * @param options 解析选项
  */
-const normalTableParser = (id, conf, options): any => {
+const normalTableParser = (id, conf, widgetParserOptions): any => {
   /** 解析阶段 */
   const allConfKey = getTableCompAllConfKeys(conf);
   const renderInfo = normalTableRenderStructParser(
@@ -20,7 +20,8 @@ const normalTableParser = (id, conf, options): any => {
       baseMark: id,
       allConfKey,
       originConf: conf,
-    }
+    },
+    widgetParserOptions
   );
 
   /** 解析阶段 - end */
