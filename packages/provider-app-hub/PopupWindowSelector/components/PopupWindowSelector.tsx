@@ -235,7 +235,12 @@ const PopupWindowSelector: React.FC<IProps> = (props: IProps, ref) => {
     }
   </Menu>;
   const renderToolBarRender = () => [
-    <Button key="3" type="primary" onClick={() => { setEditModalData({ modalTitle: '新建弹窗', okText: '开始创建弹窗' }); setvisibleCreateEditModal(true); }}>
+    <Button
+      key="3" type="primary" onClick={() => {
+        setEditModalData({ modalTitle: '新建弹窗', okText: '开始创建弹窗' });
+        setvisibleCreateEditModal(true);
+      }}
+    >
       新建弹窗
     </Button>,
     <Dropdown overlay={renderMenu}>

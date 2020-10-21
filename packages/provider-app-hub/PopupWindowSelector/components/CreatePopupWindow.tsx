@@ -37,7 +37,7 @@ const layout = {
 const CreatePopupWindow: React.FC<IProps> = (props: IProps) => {
   const {
     onCancel, onOk, upDataMenus, editData: {
-      id, code, name, selectType, showType, tablePopupWindowDetail: { datasource, datasourceType }
+      id, code, name, selectType, showType
     }, editModalData: { okText }
   } = props;
 

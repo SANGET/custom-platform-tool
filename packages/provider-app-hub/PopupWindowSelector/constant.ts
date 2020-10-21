@@ -288,7 +288,7 @@ export interface IPopupWindow{
   selectType: string
   selectCount: string
   enable: string
-  tablePopupWindowDetail : {
+  tablePopupWindowDetail?: {
     createdBy: string
     datasource: string
     datasourceType: string
