@@ -54,7 +54,8 @@ export const MENU_KEY = {
   EDITABLE: 'editable',
   CHILDREN: 'children',
   INDEXPATH: 'indexPath',
-  IDPATH: 'idPath'
+  IDPATH: 'idPath',
+  LEVEL: 'level'
 };
 
 export enum SAVE_TYPE {
@@ -66,3 +67,5 @@ export enum ICON_DEFAULTVALUE {
   MODULE = 'RiFolderLine',
   PAGE = 'RiFileTextLine'
 }
+
+export const MAX_LEVEL = 5;
