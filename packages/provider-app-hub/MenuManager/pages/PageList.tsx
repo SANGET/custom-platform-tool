@@ -56,6 +56,8 @@ const MenuSelect: React.FC<IMenuSelect> = (props) => {
 interface IPageChoose {
   record: IMenu,
   formRef: React.RefObject<FormInstance<any>>
+  text: string
+  selectPage: string
 }
 // const useDictionaryList: UseListData = (param) => {
 //   const [dictionaryList, setDictionaryList] = useState<{list: Idictionary[], total: number}>({ list: [mockDictionary], total: 1 });
@@ -80,36 +82,20 @@ interface IPageChoose {
 // };
 const PageChoose: React.FC<IPageChoose> = (props: IPageChoose) => {
   const {
-    record, formRef
+    record, formRef, text, selectPage
   } = props;
-  const [options, setOptions] = useState([]);
   const canIEdit = (getFieldValue) => {
     const isEditable = record.editable;
-    const isPage = record[MENU_KEY.TYPE] === MENU_TYPE.PAGE;
+    const isPage = getFieldValue(MENU_KEY.TYPE) === MENU_TYPE.PAGE;
     return isEditable && isPage;
   };
-  const getPageList = () => {
-    getPageListServices({}).then((res) => {
-      setOptions(res?.result?.data.map((item) => {
-        return {
-          label: item.name,
-          key: item.id,
-          value: item.id
-        };
-      }));
-    });
+  const handleClick = (e) => {
+    e.stopPropagation();
+    typeof selectPage === 'function' && selectPage(formRef.current?.getFieldValue(MENU_KEY.PAGELINK));
   };
-  const handleChange = (value, option) => {
-    formRef.current?.setFieldsValue({
-      [MENU_KEY.PAGENAME]: option.label
-    });
+  const getText = (editable, getFieldValue) => {
+    return editable ? (getFieldValue(MENU_KEY.PAGENAME)) : text;
   };
-  useEffect(() => {
-    const isEditable = record.editable;
-    const isModuel = record.type === MENU_TYPE.MODULE;
-    isEditable && !isModuel && getPageList();
-  }, [record.editable, record.type]);
-
   return React.useMemo(() => {
     return (<Form.Item
       shouldUpdate
@@ -181,12 +167,14 @@ const getListColumns = ({
     }
   },
   {
-    key: MENU_KEY.PAGELINK,
-    dataIndex: MENU_KEY.PAGELINK,
+    key: MENU_KEY.PAGENAME,
+    dataIndex: MENU_KEY.PAGENAME,
     title: '页面链接',
     render: (text, record, index) => {
       return (
         <PageChoose
+          selectPage = {selectPage}
+          text = {text}
           formRef = {formRef}
           record = {record}
         />

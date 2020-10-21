@@ -5,6 +5,7 @@ import {
 export {
   MENU_TYPE, API_CODE, NOTIFICATION_TYPE, BUTTON_TYPE, BUTTON_SIZE
 };
+export const SELECT_ALL = 'all';
 export const MENU_OPTIONS = [
   {
     label: "模块",

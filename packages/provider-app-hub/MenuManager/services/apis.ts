@@ -18,10 +18,10 @@ export async function delMenuServices(pageID) {
   });
 }
 
-export async function getPageListServices(param) {
+export async function getPageListServices(params) {
   return await $R_P.get({
     url: '/page/v1/pages',
-    data: param
+    params
   });
 }
 

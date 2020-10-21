@@ -1,5 +1,6 @@
 import React from "react";
 import MenuList from "./pages/PageList";
+import "./index.less";
 
 const App: HY.SubApp = (props) => {
   return (
