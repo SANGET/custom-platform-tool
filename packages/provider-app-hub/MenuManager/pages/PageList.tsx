@@ -722,6 +722,7 @@ class MenuList extends React.Component {
         this.setState({
           editingKey: ''
         });
+        this.getMenuList();
       this.editMenuFormRef.current?.resetFields();
       },
       onAddChild: (param) => {
