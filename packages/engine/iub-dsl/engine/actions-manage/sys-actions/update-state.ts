@@ -1,4 +1,5 @@
 import { UpdateState } from "@iub-dsl/definition/actions";
+import { RuntimeSchedulerFnName } from "../../runtime";
 
 /**
  * 最重要的问题: 流程和隔离
@@ -23,7 +24,7 @@ export const updateStateAction = (conf: UpdateState) => {
         actionName,
         action,
         actionId,
-        type: 'targetUpdateState',
+        type: RuntimeSchedulerFnName.targetUpdateState,
         params: [changeTarget, action.payload],
       });
     };
@@ -33,7 +34,7 @@ export const updateStateAction = (conf: UpdateState) => {
       return await runtimeFnScheduler({
         actionName,
         action,
-        type: 'targetUpdateState',
+        type: RuntimeSchedulerFnName.targetUpdateState,
         params: [changeMapping, action.payload],
       });
     };

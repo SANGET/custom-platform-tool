@@ -2,6 +2,7 @@ import {
   DataCollection,
   BaseCollectionStruct,
 } from "@iub-dsl/definition/actions";
+import { RuntimeSchedulerFnName } from "../../runtime";
 
 export const dataCollectionAction = (conf: DataCollection) => {
   const { actionName, actionOptions: { collectionType, struct }, when } = conf;
@@ -9,7 +10,7 @@ export const dataCollectionAction = (conf: DataCollection) => {
     return async ({ action, runtimeFnScheduler }) => {
       return await runtimeFnScheduler({
         actionName,
-        type: 'getPageState',
+        type: RuntimeSchedulerFnName.getPageState,
         params: [struct]
       });
     };
@@ -24,7 +25,7 @@ export const dataCollectionAction = (conf: DataCollection) => {
     const newStruct = genGetPagetStateStruct(struct, runtimeFnScheduler);
     return await runtimeFnScheduler({
       actionName,
-      type: 'getPageState',
+      type: RuntimeSchedulerFnName.getPageState,
       params: [newStruct]
     });
   };

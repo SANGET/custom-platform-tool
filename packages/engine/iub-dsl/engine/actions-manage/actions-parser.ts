@@ -1,10 +1,6 @@
 import { ActionsDefinition, ActionCollection } from "@iub-dsl/definition/actions/action";
-import { from, pipe, Observable } from "rxjs";
-import {
-  map, tap, mergeAll, switchAll, concatAll, mergeMap
-} from 'rxjs/operators';
 
-import { updateStateAction, dataCollectionAction } from "./sys-actions";
+import { updateStateAction, dataCollectionAction, showMoadl } from "./sys-actions";
 import { APBDSLCURDAction } from "./business-actions";
 
 interface ExtralActionParseRes {
@@ -75,6 +71,8 @@ const getActionFn = (actionConf: ActionsDefinition) => {
       return dataCollectionAction(actionConf);
     case 'APBDSLCURD':
       return APBDSLCURDAction(actionConf);
+    case 'showMoadl':
+      return showMoadl(actionConf);
     default:
       if (typeof actionConf === 'function') {
         return actionConf;

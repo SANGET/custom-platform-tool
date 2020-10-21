@@ -4,6 +4,8 @@ import {
 } from "@iub-dsl/definition/actions";
 import { dataCollectionAction } from "../sys-actions";
 import { getGenAPBDSLFunctionTransform, SelectParamOfAPBDSL } from "./APBDSL";
+import { RuntimeSchedulerFnName } from "../../runtime";
+import { arrayAsyncHandle } from "../../utils";
 
 const normalCURDActionParseScheduler = (action: NormalCURD) => {
   const { type: CURDType, table } = action;
@@ -84,14 +86,11 @@ const genTableDeleteFn = (actionConf: TableDelete) => {
 };
 
 /** 递归调用生成steps */
-const APBDSLStepsFnRun = async ({ fns, result = [] }: any, runtimeCtx) => {
-  const fn: any = fns?.shift();
-  if (fn) {
-    result.push(await fn(runtimeCtx));
-  }
-  if (fns?.length) {
-    await APBDSLStepsFnRun({ fns, result }, runtimeCtx);
-  }
+const APBDSLStepsFnRun = async (originFns, runtimeCtx) => {
+  const result = arrayAsyncHandle(originFns, {
+    handle: async (fn) => await fn(runtimeCtx)
+  });
+
   return result;
 };
 
@@ -121,9 +120,9 @@ export const APBDSLCURDAction = (conf: APBDSLCURD) => {
       businesscode
     };
     /** 生成很多函数? */
-    APBDSL.steps = await APBDSLStepsFnRun({ fns: steps }, runtimeCtx);
+    APBDSL.steps = await APBDSLStepsFnRun(steps, runtimeCtx);
     return await runtimeCtx?.runtimeFnScheduler({
-      type: 'APBDSLrequest',
+      type: RuntimeSchedulerFnName.APBDSLrequest,
       params: [APBDSL],
       action,
       actionName,

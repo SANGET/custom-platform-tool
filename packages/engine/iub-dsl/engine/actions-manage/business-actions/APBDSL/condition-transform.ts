@@ -30,6 +30,7 @@ const genInCond = ({ expsValue: [exp1, exp2] }) => ({ in: { [exp1]: exp2 } });
 /** 包含 */
 const genLikeCond = ({ expsValue: [exp1, exp2] }) => ({ like: { [exp1]: exp2 } });
 
+/** 条件验证的包装函数, 验证 expsValue是否有效 */
 const originGenCondFnWrap = (originHandle, ctx?) => {
   return (param) => {
     const { expsValue } = param;
@@ -64,7 +65,7 @@ const genCondFnList = {
  * 获取APBDSL条件操作符处理函数
  * @param operator 条件操作符
  */
-export const getAPBDSLCondOperatorHandle = (operator: ConditionOperator, { genCondFnWrap = originGenCondFnWrap }) => {
+export const getAPBDSLCondOperatorHandle = ({ genCondFnWrap = originGenCondFnWrap }, operator: ConditionOperator) => {
   let temp;
   if ((temp = genCondFnList[operator])) {
     temp = genCondFnWrap(temp, { originHandle: originGenCondFnWrap });
@@ -82,9 +83,12 @@ export const APBDSLCondControlResHandle = (condControlRes: APBDSLCondition): APB
   /** 过滤无效的条件处理 */
   if (condControlRes.and) {
     condControlRes.and = condControlRes.and.filter((v) => v);
+    /** 删除为空的条件 */
+    // if (!condControlRes.and.length) Reflect.deleteProperty(condControlRes, 'and');
   }
   if (condControlRes.or) {
     condControlRes.or = condControlRes.or.filter((v) => v);
+    // if (!condControlRes.or.length) Reflect.deleteProperty(condControlRes, 'or');
   }
 
   return condControlRes;
