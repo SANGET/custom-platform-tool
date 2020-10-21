@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import {
   Button, Form, Select, Input, Switch
 } from "antd";
+import { CompressOutlined, DragOutlined } from '@ant-design/icons';
 import { ColumnsType } from "antd/lib/table";
 import dayjs from "dayjs";
 import {
@@ -168,17 +169,33 @@ const Icon: React.FC<IIcon> = (props: IIcon) => {
 };
 
 const getListColumns = ({
-  onDel,
-  onAddChild,
   formRef,
   editingKey,
+  expandedRowKeys,
+  onDel,
+  onAddChild,
   selectPage,
-  selectIcon
+  selectIcon,
+  onExpand
 }): ColumnsType => [
   {
     key: MENU_KEY.NAME,
     dataIndex: MENU_KEY.NAME,
-    title: '菜单名称',
+    title: () => {
+      const ExpandIcon = expandedRowKeys.length > 0 ? CompressOutlined : DragOutlined;
+
+      return (
+        <>
+          {'菜单名称'}
+          <ExpandIcon
+            onClick={onExpand}
+            className="text-2xl ml-1"
+            style={{
+              verticalAlign: 'baseline'
+            }}
+          />
+        </>);
+    },
     ellipsis: { showTitle: true },
     width: 200,
     render: (text, record, index) => {
@@ -348,6 +365,8 @@ type UseListData = () => [any[], () => void]
 interface IState {
   menuList: IMenu[],
   menuMap: any,
+
+  allExpandedKeysInMenu: string[],
   searchArea: {
     type: string
     name: string
@@ -361,6 +380,7 @@ class MenuList extends React.Component {
   state: IState = {
     menuList: [],
     menuMap: {},
+    allExpandedKeysInMenu: [],
     searchArea: {
       type: '',
       name: ''
@@ -378,6 +398,7 @@ class MenuList extends React.Component {
   constructTree = (nodes) => {
     const treeMap = {};
     const treeList = [];
+    const allExpandedKeys = [];
     const getNodeDefIcon = (type) => {
       return type === MENU_TYPE.MODULE ? ICON_DEFAULTVALUE.MODULE : ICON_DEFAULTVALUE.PAGE;
     };
@@ -397,6 +418,7 @@ class MenuList extends React.Component {
         const { [MENU_KEY.ID]: id, [MENU_KEY.PID]: pid } = node;
         const parent = treeMap[pid];
         if (parent) {
+          !allExpandedKeys.includes(pid) && allExpandedKeys.push(pid);
           !parent[MENU_KEY.CHILDREN] && (parent[MENU_KEY.CHILDREN] = []);
           parent[MENU_KEY.CHILDREN].push(node);
         } else {
@@ -404,10 +426,10 @@ class MenuList extends React.Component {
         }
       }
     });
-    console.log(treeList);
     return {
       list: treeList,
-      map: treeMap
+      map: treeMap,
+      allExpandedKeys
     };
   }
 
@@ -432,10 +454,11 @@ class MenuList extends React.Component {
         openNotification(NOTIFICATION_TYPE.ERROR, MESSAGE.GET_MENU_LIST_FAILED);
         return;
       }
-      const { list: menuList, map: menuMap } = this.constructTree(res.result);
+      const { list: menuList, map: menuMap, allExpandedKeys: allExpandedKeysInMenu } = this.constructTree(res.result);
       this.setState({
         menuList,
-        menuMap
+        menuMap,
+        allExpandedKeysInMenu
       });
     });
   }
@@ -673,6 +696,8 @@ class MenuList extends React.Component {
     } = this.state;
     const columns = getListColumns({
       formRef: this.editMenuFormRef,
+      editingKey: this.state.editingKey,
+      expandedRowKeys,
       onDel: (record) => {
         this.deleteRow(record);
         this.setState({
@@ -684,7 +709,6 @@ class MenuList extends React.Component {
         /** 找到对应的父级id */
         this.createChildRow(param);
       },
-      editingKey: this.state.editingKey,
       selectPage: (selectedPageLink) => {
         this.setState({
           visibleModalSelectPage: true
@@ -693,6 +717,11 @@ class MenuList extends React.Component {
       selectIcon: (iconType) => {
         this.setState({
           visibleModalSelectIcon: true
+        });
+      },
+      onExpand: () => {
+        this.setState({
+          expandedRowKeys: expandedRowKeys.length === 0 ? this.state.allExpandedKeysInMenu : []
         });
       }
     });
@@ -729,6 +758,7 @@ class MenuList extends React.Component {
           </Button>
         </Form>
         <Table
+          className="mt-2"
           ref="referenceList"
           expandable = {{
             expandedRowKeys,
