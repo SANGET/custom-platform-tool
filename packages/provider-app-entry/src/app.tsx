@@ -13,7 +13,7 @@ import { Dashboard } from "@provider-app/dashboard/main";
 import Router, { getRouteName } from '@provider-app/config/router';
 import { LoadingTip } from "@provider-ui/loading-tip";
 import { VersionDisplayer } from 'version-helper';
-import VersionInfo from './version.json';
+// import VersionInfo from './version.json';
 
 import {
   // Hall,
@@ -225,7 +225,7 @@ export default class App extends MultipleRouterManager<AppContainerProps, AppCon
                 }
                 <UserStatusbar logout={logout} />
                 <div className="pr-2 text-gray-600">
-                  <VersionDisplayer versionInfo={VersionInfo} $T={(val) => val} />
+                  {/* <VersionDisplayer versionInfo={VersionInfo} $T={(val) => val} /> */}
                 </div>
               </header>
               <div id="provider_app_content">
