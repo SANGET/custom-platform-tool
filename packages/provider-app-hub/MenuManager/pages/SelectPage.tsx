@@ -108,6 +108,8 @@ const PageList: React.FC<IPageSelect> = React.memo((props: IPageSelect) => {
       onSearch={handleSearch}
     />
     <List
+      className="overflow-auto"
+      style={{ height: 300 }}
       size="small"
       bordered
       dataSource={pageList}
@@ -128,13 +130,13 @@ const PageList: React.FC<IPageSelect> = React.memo((props: IPageSelect) => {
 });
 const SelectPage: React.FC<ISelectPage> = (props: ISelectPage) => {
   const {
-    pageLink, onCancel, onOk
+    currentPage, onCancel, onOk
   } = props;
   const [moduleId, setModuleId] = useState<string>('');
   const [page, setPage] = useState({ pageLink: '', pageName: '' });
   useEffect(() => {
-    setPage({ pageLink, pageName: '' });
-  }, [pageLink]);
+    setPage(currentPage);
+  }, [currentPage.pageLink, currentPage.pageName]);
   const handleSelectModule = (module) => {
     const moduleIdTmpl = module === SELECT_ALL ? '' : module;
     setModuleId(moduleIdTmpl);
@@ -148,6 +150,7 @@ const SelectPage: React.FC<ISelectPage> = (props: ISelectPage) => {
   };
 
   const handleOk = () => {
+    console.log(page);
     onOk(page);
   };
   const handleCancel = () => {
@@ -155,13 +158,13 @@ const SelectPage: React.FC<ISelectPage> = (props: ISelectPage) => {
   };
   return React.useMemo(() => {
     return (
-      <div style={{ height: '400px' }}>
-        <div className="float-left w-2/5">
+      <div className="select-page-modal">
+        <div className="float-left w-2/5" style={{ height: 350 }}>
           <MenuTree
             onSelect={handleSelectModule}
           />
         </div>
-        <div className="float-left w-3/5 pl-3">
+        <div className="float-left w-3/5 pl-3" style={{ height: 350 }}>
           <PageList
             moduleId = {moduleId}
             pageLink={page.pageLink}

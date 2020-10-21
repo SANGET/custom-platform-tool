@@ -826,7 +826,10 @@ class MenuList extends React.Component {
           >
 
             <SelectPage
-              pageLink = {this.editMenuFormRef.current?.getFieldValue(MENU_KEY.PAGELINK)}
+              currentPage = {{
+                pageLink: this.editMenuFormRef.current?.getFieldValue(MENU_KEY.PAGELINK),
+                pageName: this.editMenuFormRef.current?.getFieldValue(MENU_KEY.PAGENAME)
+              }}
               type="selectPage"
               onOk={({ pageName, pageLink }) => {
                 this.setState({ visibleModalSelectPage: false });
