@@ -60,6 +60,7 @@ const PDWidgetPanel: React.FC<PageDesignerComponentPanelProps> = ({
   widgetPanelData,
   ...other
 }) => {
+  console.log('widgetPanelData :>> ', widgetPanelData);
   const itemRenderer = useMemo(
     () => itemRendererFac(widgetMetaDataCollection, getDragItemConfig),
     [widgetMetaDataCollection, getDragItemConfig],

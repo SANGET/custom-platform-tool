@@ -6,6 +6,7 @@
 
 import React from 'react';
 import { Tabs, Tab } from '@infra/ui';
+import classnames from 'classnames';
 import { GroupItemsRender, GroupItemsRenderProps } from './GroupItems';
 
 export type GroupPanelItem = any
@@ -19,19 +20,15 @@ export interface GroupPanelData {
   /** 组的标题 */
   title: string
   /** 组的类型 */
-  type: string
+  type?: string
   itemsGroups: GroupItemsRenderProps['itemsGroups']
   /** 组渲染器，如果存在，则直接返回该渲染 */
   renderer?: (item, idx) => JSX.Element
 }
 
-// export interface GroupPanelData {
-//   tabGroup: PanelItemsGroup[]
-// }
-
 export interface GroupPanelProps {
   /** 组件 panel 的配置 */
-  panelData: GroupPanelData
+  panelData: GroupPanelData[]
   /** group 元素的 className */
   className?: string
   /** 可拖拽 item 的包装器 interface */
@@ -41,13 +38,17 @@ export interface GroupPanelProps {
 
 export const GroupPanel: React.FC<GroupPanelProps> = ({
   panelData,
-  className = 'group-panel-container',
+  className,
   handleChange,
   itemRenderer,
 }) => {
+  const classes = classnames(
+    'group-panel-container',
+    className
+  );
   return (
     <div
-      className={className}
+      className={classes}
     >
       <Tabs
         onChangeTab={handleChange}

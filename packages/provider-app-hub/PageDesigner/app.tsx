@@ -153,13 +153,19 @@ class PageDesignerApp extends React.Component<VisualEditorAppProps & HY.Provider
    * 发布页面
    */
   onReleasePage = () => {
-    const pageContent = this.getPageContent();
-    const interDatasources = this.getDatasources();
-    updatePageService(
-      this.getPageInfo(),
-      pageContent,
-      this.wrapDataSourceDataForUpdate(interDatasources)
-    );
+    return new Promise((resolve, reject) => {
+      const pageContent = this.getPageContent();
+      const interDatasources = this.getDatasources();
+      updatePageService(
+        this.getPageInfo(),
+        pageContent,
+        this.wrapDataSourceDataForUpdate(interDatasources)
+      ).then((res) => {
+        resolve(res);
+      }).catch((e) => {
+        reject(e);
+      });
+    });
   }
 
   render() {
@@ -230,10 +236,12 @@ class PageDesignerApp extends React.Component<VisualEditorAppProps & HY.Provider
                   propPanelData={appContext.propPanelData}
                   defaultEntityState={activeEntity.propState}
                   initEntityState={(entityState) => InitEntityState(selectedInfo, entityState)}
-                  updateEntityState={(entityState) => UpdateEntityState({
-                    nestingInfo: selectedInfo.nestingInfo,
-                    entity: activeEntity
-                  }, entityState)}
+                  updateEntityState={(entityState) => {
+                    UpdateEntityState({
+                      nestingInfo: selectedInfo.nestingInfo,
+                      entity: activeEntity
+                    }, entityState);
+                  }}
                 />
               )
             }
