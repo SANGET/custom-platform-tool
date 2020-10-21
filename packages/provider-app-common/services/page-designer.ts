@@ -16,7 +16,7 @@ export async function updatePageService(pageInfo: PageInfo, pageContent, extendD
     name,
     type,
     /** TODO: 字段需要更改 */
-    iubDsl: JSON.stringify(pageContent),
+    pageContent: JSON.stringify(pageContent),
   });
   // console.log('updatePageData', updatePageData);
   console.log('pageContent', pageContent);
@@ -36,7 +36,7 @@ export async function getPageDetailService(pageID: string) {
   if (!result) return {};
   let pageContent;
   try {
-    pageContent = JSON.parse(result.iubDsl);
+    pageContent = JSON.parse(result.pageContent);
   } catch (e) {
     console.log('暂无数据');
   }
