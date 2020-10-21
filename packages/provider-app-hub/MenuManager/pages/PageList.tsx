@@ -138,6 +138,12 @@ const Icon: React.FC<IIcon> = (props: IIcon) => {
   const getIconKey = (getFieldValue) => {
     return record.editable ? getFieldValue(MENU_KEY.ICON) : record[MENU_KEY.ICON];
   };
+  const getClassName = (editable) => {
+    const classList = className.split(' ');
+    classList.push('w-6');
+    editable && classList.push('cursor-pointer');
+    return classList.join(' ');
+  };
   return (
     <Form.Item
       shouldUpdate
@@ -147,7 +153,7 @@ const Icon: React.FC<IIcon> = (props: IIcon) => {
         const key = getIconKey(getFieldValue);
         return (
           <div
-            className={`${className} w-6`}
+            className={getClassName(record.editable)}
             onClick={(e) => { handleClick(e, key); }}
           >
             <IconAppointed
