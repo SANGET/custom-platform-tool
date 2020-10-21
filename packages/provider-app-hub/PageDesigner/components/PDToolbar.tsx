@@ -4,8 +4,27 @@ import { getPreviewUrl } from '@provider-app/config/getPreviewUrl';
 
 import { EditButton } from "./PDPageMetadataEditor/EditButton";
 
+const ReleaseBtn = ({
+  onReleasePage
+}: ToolbarCustomProps) => {
+  const [loading, setLoading] = React.useState(false);
+  return (
+    <Button
+      loading={loading}
+      onClick={(e) => {
+        setLoading(true);
+        onReleasePage?.().finally(() => {
+          setTimeout(() => setLoading(false), 800);
+        });
+      }}
+    >
+      保存
+    </Button>
+  );
+};
+
 interface ToolbarCustomProps {
-  onReleasePage?: () => void
+  onReleasePage?: () => Promise<unknown>
   appLocation
 }
 
@@ -13,6 +32,7 @@ const ToolbarCustom: React.FC<ToolbarCustomProps> = ({
   onReleasePage,
   appLocation
 }) => {
+  const previewUrl = getPreviewUrl(appLocation);
   return (
     <div className="flex items-center px-2" style={{ height: '100%' }}>
       <span className="text-gray-500">新手教程制作中，敬请期待</span>
@@ -30,7 +50,7 @@ const ToolbarCustom: React.FC<ToolbarCustomProps> = ({
         className="mr10"
         onClick={(e) => {
           ShowModal({
-            title: 'PC 预览',
+            title: `PC 预览 ${previewUrl}`,
             modalType: 'side',
             position: 'bottom',
             maxHeightable: false,
@@ -75,13 +95,7 @@ const ToolbarCustom: React.FC<ToolbarCustomProps> = ({
       >
           手机预览
       </Button>
-      <Button
-        onClick={(e) => {
-          onReleasePage && onReleasePage();
-        }}
-      >
-          保存
-      </Button>
+      <ReleaseBtn onReleasePage={onReleasePage} />
       {/* <Button
           className="mr10"
         >
