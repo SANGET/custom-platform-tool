@@ -5,8 +5,9 @@ export interface ITableItem {
   /** 页面类型 */
   type: string;
   /** 归属模块 */
-  moduleName: string;
+  belongMenus: string[];
   /** 数据表 */
+  dataSources: string[];
   /** 创建时间 */
   gmtCreate: string;
   /** 当前版本 */
@@ -41,6 +42,7 @@ export interface INode {
   key: string;
   id: string;
   pid: string;
+  value?: string;
 }
 
 export interface IOperationalMethods {

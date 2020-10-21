@@ -18,13 +18,14 @@ const useMenuList: IUseMenuList = () => {
   const constructTree = (data, searchValue?: string) => {
     const idMap = {};
     const jsonTree: INode[] = [];
-    data.forEach((node) => { node && (idMap[node.id] = node); });
+    data.forEach((node: INode) => { node && (idMap[node.id] = node); });
     data.forEach((node: INode) => {
       if (node) {
         // eslint-disable-next-line no-param-reassign
         node.title = searchValue ? renderHighlightValue(node.name, searchValue) : node.name;
         // eslint-disable-next-line no-param-reassign
         node.key = node.id;
+        node.value = node.id;
         const parent = idMap[node.pid];
         if (parent) {
           !parent.children && (parent.children = []);
