@@ -5,17 +5,21 @@ import {
 import { ColumnsType } from "antd/lib/table";
 import dayjs from "dayjs";
 import {
-  openNotification, contructTree, getlabelByMenuList, deleteConfirm
+  openNotification, getlabelByMenuList, deleteConfirm
 } from '@provider-app/table-editor/service';
 import { FormInstance } from 'antd/lib/form';
 import Table from '@provider-app/table-editor/components/ExpandedInfoEditor';
+import CreateModal from '@provider-app/dictionary-manager/components/CreateModal';
 import lodash from 'lodash';
+import SelectPage from './SelectPage';
 import {
   delMenuServices, getMenuListServices, getPageListServices, editMenuServices, setMenuStatusServices, addMenuServices
 } from "../services/apis";
 import {
-  SAVE_TYPE, MENU_OPTIONS, MESSAGE, API_CODE, NOTIFICATION_TYPE, BUTTON_TYPE, BUTTON_SIZE, MENU_TYPE, MENU_KEY
+  ICONS, SAVE_TYPE, MENU_OPTIONS, MESSAGE, API_CODE, NOTIFICATION_TYPE, BUTTON_TYPE, BUTTON_SIZE, MENU_TYPE, MENU_KEY
 } from '../constants';
+
+import { IconAppointed, SelectIcon } from './SelectIcon';
 
 type IMenuType = MENU_TYPE.MODULE | MENU_TYPE.PAGE
 interface IMenu {
@@ -105,31 +109,74 @@ const PageChoose: React.FC<IPageChoose> = (props: IPageChoose) => {
         const editable = canIEdit(getFieldValue);
         return editable ? (
           <Form.Item
-            name={MENU_KEY.PAGELINK}
+            name={MENU_KEY.PAGENAME}
             rules={[
               { required: true, message: '页面链接必填' },
             ]}
           >
-            <Select
-              onClick = {(e) => e.stopPropagation()}
+            <Input
+              className="cursor-pointer"
+              onClick = {(e) => handleClick(e)}
               onBlur = {(e) => e.stopPropagation()}
-              options = {options}
-              onChange = {handleChange}
             />
           </Form.Item>
-        ) : (
-          record[MENU_KEY.PAGENAME]
-        );
+        ) : getText(record.editable, getFieldValue);
       }}
     </Form.Item>);
-  }, [record.editable, record.type, options]);
+  }, [record.editable, record.type]);
+};
+
+const Icon: React.FC<IIcon> = (props: IIcon) => {
+  const {
+    record, formRef, onSelect
+  } = props;
+  const handleClick = (e, iconType) => {
+    e.stopPropagation();
+    if (!record.editable) return;
+    onSelect(iconType);
+  };
+  const getIconKey = (getFieldValue) => {
+    if (record.editable) {
+      const key = getFieldValue(MENU_KEY.ICON);
+      if (key) return key;
+      const type = getFieldValue(MENU_KEY.TYPE);
+      return type === MENU_TYPE.MODULE ? ICONS.FAFOLDER : ICONS.FAFILEAT;
+    }
+    const key = record[MENU_KEY.ICON];
+    if (key) return key;
+    const type = record[MENU_KEY.TYPE];
+    return type === MENU_TYPE.MODULE ? ICONS.FAFOLDER : ICONS.FAFILEAT;
+  };
+  return (
+    <Form.Item
+      shouldUpdate
+      noStyle
+    >
+      {({ getFieldValue }) => {
+        const key = getIconKey(getFieldValue);
+        return (
+          <div
+            className="text-xl w-6"
+            onClick={(e) => { handleClick(e, key); }}
+          >
+            <IconAppointed
+              iconType = {key}
+            />
+          </div>
+        );
+      }}
+    </Form.Item>
+
+  );
 };
 
 const getListColumns = ({
   onDel,
   onAddChild,
   formRef,
-  editingKey
+  editingKey,
+  selectPage,
+  selectIcon
 }): ColumnsType => [
   {
     key: MENU_KEY.NAME,
@@ -146,6 +193,7 @@ const getListColumns = ({
           name={MENU_KEY.NAME}
         >
           <Input
+            onBlur = {(e) => e.stopPropagation()}
             onClick={(e) => e.stopPropagation()}
           />
         </Form.Item>
@@ -185,6 +233,15 @@ const getListColumns = ({
     key: MENU_KEY.ICON,
     dataIndex: MENU_KEY.ICON,
     title: '图标',
+    render: (text, record) => {
+      return (
+        <Icon
+          formRef = {formRef}
+          record = {record}
+          onSelect = {selectIcon}
+        />
+      );
+    }
   },
   {
     key: MENU_KEY.STATUS,
@@ -290,6 +347,8 @@ interface IState {
   }
   editingKey: string
   expandedRowKeys: string[]
+  visibleModalSelectPage: boolean
+  visibleModalSelectIcon: boolean
 }
 class MenuList extends React.Component {
   state: IState = {
@@ -300,7 +359,9 @@ class MenuList extends React.Component {
       name: ''
     },
     editingKey: '',
-    expandedRowKeys: []
+    expandedRowKeys: [],
+    visibleModalSelectPage: false,
+    visibleModalSelectIcon: false
   }
 
   searchFormRef = React.createRef<FormInstance>();
@@ -585,7 +646,9 @@ class MenuList extends React.Component {
   }
 
   render() {
-    const { editingKey, menuList, expandedRowKeys } = this.state;
+    const {
+      editingKey, menuList, expandedRowKeys, visibleModalSelectPage, visibleModalSelectIcon
+    } = this.state;
     const columns = getListColumns({
       formRef: this.editMenuFormRef,
       onDel: (record) => {
@@ -599,7 +662,17 @@ class MenuList extends React.Component {
         /** 找到对应的父级id */
         this.createChildRow(param);
       },
-      editingKey: this.state.editingKey
+      editingKey: this.state.editingKey,
+      selectPage: (selectedPageLink) => {
+        this.setState({
+          visibleModalSelectPage: true
+        });
+      },
+      selectIcon: (iconType) => {
+        this.setState({
+          visibleModalSelectIcon: true
+        });
+      }
     });
     return (
       <>
@@ -648,9 +721,12 @@ class MenuList extends React.Component {
           rowKey="id"
           formRef={this.editMenuFormRef}
           changeValue = {(changeValues, allValues) => {
-            if (!(MENU_KEY.TYPE in changeValues)) return;
-            const { id } = allValues;
-            this.setListWithRecordUpdatedByRowKey(id, { [MENU_KEY.TYPE]: changeValues[MENU_KEY.TYPE] });
+            if ((MENU_KEY.TYPE in changeValues) && changeValues[MENU_KEY.TYPE] === MENU_TYPE.MODULE) {
+              this.editMenuFormRef.current?.setFieldsValue({
+                [MENU_KEY.PAGELINK]: '',
+                [MENU_KEY.PAGENAME]: '',
+              });
+            }
           }}
           title="菜单列表"
           actionAreaRenderer={() => {
@@ -670,6 +746,44 @@ class MenuList extends React.Component {
           columns={columns}
           dataSource={menuList}
         />
+        { visibleModalSelectPage
+          ? (<CreateModal
+            width="750px"
+            title="选择菜单页面"
+            modalVisible={visibleModalSelectPage}
+            onCancel={() => this.setState({ visibleModalSelectPage: false })}
+          >
+
+            <SelectPage
+              pageLink = {this.editMenuFormRef.current?.getFieldValue(MENU_KEY.PAGELINK)}
+              type="selectPage"
+              onOk={({ pageName, pageLink }) => {
+                this.setState({ visibleModalSelectPage: false });
+                this.editMenuFormRef.current?.setFieldsValue({ pageName, pageLink });
+              }}
+              onCancel={() => this.setState({ visibleModalSelectPage: false })}
+            />
+          </CreateModal>)
+          : null }
+        { visibleModalSelectIcon
+          ? (<CreateModal
+            width="750px"
+            title="选择图标"
+            modalVisible={visibleModalSelectIcon}
+            onCancel={() => this.setState({ visibleModalSelectIcon: false })}
+          >
+
+            <SelectIcon
+              currentIon = {this.editMenuFormRef.current?.getFieldValue(MENU_KEY.ICON)}
+              type="selectIcon"
+              onOk={(icon) => {
+                this.setState({ visibleModalSelectIcon: false });
+                this.editMenuFormRef.current?.setFieldsValue({ [MENU_KEY.ICON]: icon });
+              }}
+              onCancel={() => this.setState({ visibleModalSelectIcon: false })}
+            />
+          </CreateModal>)
+          : null }
       </>
     );
   }

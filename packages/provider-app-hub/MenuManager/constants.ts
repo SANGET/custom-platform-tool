@@ -60,3 +60,8 @@ export enum SAVE_TYPE {
   EDIT = 'edit',
   ADD = 'add'
 }
+
+export enum ICONS {
+  FAFOLDER = 'FaFolder',
+  FAFILEAT = 'FaFileAlt'
+}
