@@ -30,7 +30,7 @@ export const ValueHelper: React.FC<ValueHelperProps> = ({
   widgetEntityState,
   onChange,
 }) => {
-  const [selectedItem, setSelectedItem] = React.useState('expression');
+  const [selectedItem, setSelectedItem] = React.useState('costomValue');
   const { exp, defValue, variable } = widgetEntityState;
   let Comp;
   switch (selectedItem) {

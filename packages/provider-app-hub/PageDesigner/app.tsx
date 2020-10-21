@@ -79,17 +79,29 @@ class PageDesignerApp extends React.Component<VisualEditorAppProps & HY.Provider
   }
 
   /**
+   * 获取远端的页面信息数据
+   */
+  getCurrPageDataDetail = () => {
+    const {
+      appContext
+    } = this.props;
+    const { pageDataRes } = appContext?.payload;
+    return pageDataRes;
+  }
+
+  /**
    * 获取页面信息
    */
   getPageInfo = () => {
     const {
-      appLocation
+      appLocation, appContext
     } = this.props;
+    const pageDataFormRemote = this.getCurrPageDataDetail();
     const { pageID, title } = appLocation;
     return {
       id: pageID,
       name: title,
-      type: 2,
+      type: pageDataFormRemote.type,
     };
   }
 
