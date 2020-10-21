@@ -28,7 +28,13 @@ type BusinessActionType =
   APBDSLCURDActionType
 
 type AllActionType = SysActionType | BusinessActionType
-export type ActionsDefinition = UpdateState | DataCollection | APBDSLCURD
+export type ActionsDefinition = UpdateState | DataCollection | APBDSLCURD | {
+  actionType: 'showMoadl';
+  actionOptions?: any;
+  actionName: string
+  actionOutput?: any;
+  actionId: string;
+}
 
 export type ActionOutput = 'string' | 'boolean' | 'undefined' | 'number' | FlowOutputOfObj;
 

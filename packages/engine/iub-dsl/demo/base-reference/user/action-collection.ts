@@ -151,6 +151,12 @@ export const actionsCollection: ActionCollection = {
     },
     actionOutput: 'undefined'
   },
+  ee: {
+    actionId: 'ee',
+    actionType: 'showMoadl',
+    actionName: 'showMoadl',
+    actionOptions: {}
+  }
 };
 
 export const demoActionFlow: FlowCollection = {
@@ -206,6 +212,12 @@ export const demoActionFlow: FlowCollection = {
     id: 'f_search_03',
     actionId: 'search_03',
     flowOutCondition: [],
-    flowOut: []
+    flowOut: [['f_e']]
   },
+  f_e: {
+    id: 'f_e',
+    actionId: 'ee',
+    flowOutCondition: [],
+    flowOut: []
+  }
 };
