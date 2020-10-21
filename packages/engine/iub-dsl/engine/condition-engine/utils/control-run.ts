@@ -1,4 +1,5 @@
 import { ConditionControl } from "@iub-dsl/definition";
+import { arrayAsyncHandle } from "../../utils";
 
 /** 条件控制运行的上下文 */
 interface CondEngineRunCtx {
@@ -22,10 +23,10 @@ export const condControlRun = async <T = any>(condControl: ConditionControl, con
     or?: T[]
   } = { };
   if (and?.length) {
-    result.and = await condOrCondStructRun(and.slice(0), condEngineRunCtx);
+    result.and = await condOrCondStructRun(and, condEngineRunCtx);
   }
   if (or?.length) {
-    result.or = await condOrCondStructRun(or.slice(0), condEngineRunCtx);
+    result.or = await condOrCondStructRun(or, condEngineRunCtx);
   }
   return result;
 };
@@ -38,29 +39,26 @@ export const condControlRun = async <T = any>(condControl: ConditionControl, con
  */
 const condOrCondStructRun = async (
   condOrStructs: (string | ConditionControl)[],
-  condEngineRunCtx: CondEngineRunCtx,
-  result: any[] = []
+  condEngineRunCtx: CondEngineRunCtx
 ) => {
   const { condItemHandle, condControlResHandle } = condEngineRunCtx;
   // 断言 condItemHandle, condControlResHandle
-
-  const condOrStruct = condOrStructs.shift();
-  if (typeof condOrStruct === 'string') {
-    /** 单个条件处理 */
-    result.push(
-      await condItemHandle(condOrStruct)
-    );
-  } else if (condOrStruct) {
-    /** 条件struct的条件生成 */
-    result.push(
-      condControlResHandle(
+  const condOrCondStructHandle = async (condOrStruct) => {
+    if (typeof condOrStruct === 'string') {
+      /** 单个条件处理 */
+      return await condItemHandle(condOrStruct);
+    } if (condOrStruct) {
+      /** 条件struct的条件生成 */
+      return condControlResHandle(
         await condControlRun(condOrStruct, condEngineRunCtx)
-      )
-    );
-  }
-  if (condOrStructs.length) {
-    /** 递归 */
-    await condOrCondStructRun(condOrStructs, condEngineRunCtx, result);
-  }
+      );
+    }
+    return undefined;
+  };
+
+  const result = arrayAsyncHandle(condOrStructs, {
+    handle: condOrCondStructHandle,
+  });
+
   return result;
 };

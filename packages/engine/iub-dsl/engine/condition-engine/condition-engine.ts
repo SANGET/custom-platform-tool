@@ -46,7 +46,7 @@ export const conditionEngine = async (
   conf: Condition = conditionExample,
   {
     expsValueHandle,
-    getOperatorHandle = getPageCondOperatorHandle,
+    getOperatorHandle = getPageCondOperatorHandle.bind(null, {}), // 绑定默认上下文
     condControlResHandle = pageCondControlResHandle,
   }: ConditionEngineCtx
 ) => {

@@ -106,7 +106,7 @@ const condOperatorHandleList = {
  * 获取页面条件操作符的处理函数
  * @param operator 条件操作符
  */
-export const getPageCondOperatorHandle = (operator: ConditionOperator): NormalParserFn => {
+export const getPageCondOperatorHandle = (ctx, operator: ConditionOperator): NormalParserFn => {
   let temp: NormalParserFn;
   if ((temp = condOperatorHandleList[operator])) {
     /** TODO: 缺少包装器扩展 */
