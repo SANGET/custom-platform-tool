@@ -173,6 +173,6 @@ export interface ITableInfoInState {
 export type ITableColumnShowKey = "id" | "name" | "code" | "fieldType" | "dataType" | "fieldSize" | "decimalSize" | "species" | "required" | "unique" | "dictionaryForeign"|"pinyinConvent"
 export interface ISELECTSMENU {
   label: string
-  key: string
-  value: string
+  key: string|number
+  value: string|number
 }

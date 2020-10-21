@@ -20,13 +20,16 @@ interface IProps {
   onCancel: () => void;
 
   upDataMenus: () => void;
+  moduleIdDefaultValue?:string
 }
 const layout = {
   labelCol: { span: 5 },
   wrapperCol: { span: 19 },
 };
 const CreateTable: React.FC<IProps> = (props: IProps) => {
-  const { onCancel, onOk, upDataMenus } = props;
+  const {
+    onCancel, onOk, upDataMenus, moduleIdDefaultValue
+  } = props;
   const [form] = Form.useForm();
   const [visibleModal, setVisibleModal] = useState<boolean>(false);
   const handleFinish = async (values) => {
@@ -111,20 +114,20 @@ const CreateTable: React.FC<IProps> = (props: IProps) => {
                 <Form.Item
                   name="maxLevel"
                   label="最大层级数"
-                  rules={[{
-                    required: true,
-                    message: "请填写最大层级数"
-                  }]}
+                  rules={[
+                    { required: true, message: "请填写最大层级数" },
+                    { pattern: /^([2-9]|1[1-5])$/, message: "请输入2-15的整数" }
+                  ]}
                   initialValue={15}
                 >
-                  <InputNumber placeholder="须为正整数,最大层级不超过15级" min={2} max={15} />
+                  <InputNumber />
                 </Form.Item>
               ) : getFieldValue('type') === TABLE_TYPE.AUX_TABLE ? (
                 <PrimaryTreeItem />
               ) : null;
           }}
         </Form.Item>
-        <ModuleTreeItem />
+        <ModuleTreeItem defaultValue={moduleIdDefaultValue}/>
         <Button
           type="link"
           className="create-link"
@@ -138,7 +141,7 @@ const CreateTable: React.FC<IProps> = (props: IProps) => {
         />
       </Form>
       <CreateModal
-        title="新建数据表"
+        title="新建模块"
         modalVisible={visibleModal}
         onCancel={() => setVisibleModal(false)}
       >

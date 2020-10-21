@@ -35,9 +35,9 @@ export interface ICopyData {
 }
 
 const Table: React.FC<IProps> = (props: IProps, ref) => {
-  let moduleId = "";
   const actionRef = useRef<ActionType>();
   const formRef = useRef<FormInstance>();
+  const [moduleId, setModuleId] = useState<string>('');
   const [copyData = {}, setCopyData] = useState<ICopyData>();
   const [visibleCopyModal, setVisibleCopyModal] = useState<boolean>(false);
   const [visibleCrateTableModal, setVisibleCrateTableModal] = useState<boolean>(false);
@@ -53,9 +53,9 @@ const Table: React.FC<IProps> = (props: IProps, ref) => {
   const columns = [...COLUMNS, tableOperational];
   useEffect(() => {
     if (props.moduleId) {
-      moduleId = props.moduleId === SELECT_ALL ? "" : props.moduleId;
+      setModuleId(props.moduleId === SELECT_ALL ? "" : props.moduleId);
       proTableReset();
-      fromReset();
+      // fromReset();
     }
   }, [props.moduleId]);
   const handleMenuClick = ({ key }) => {
@@ -179,7 +179,27 @@ const Table: React.FC<IProps> = (props: IProps, ref) => {
           searchText: "搜索",
           resetText: "清空",
           collapsed: false,
-          collapseRender: () => ""
+          collapseRender: () => "",
+          optionRender: ({ searchText, resetText }, { form }) => [
+            <Button
+              key="search"
+              type="primary"
+              onClick={() => {
+                form?.submit();
+              }}
+            >
+              {searchText}
+            </Button>,
+            <Button
+              key="rest"
+              onClick={() => {
+                form?.resetFields();
+                form?.submit();
+              }}
+            >
+              {resetText}
+            </Button>
+          ],
         }}
         actionRef={actionRef}
         formRef={formRef}
@@ -188,7 +208,7 @@ const Table: React.FC<IProps> = (props: IProps, ref) => {
         scroll={{ x: '500px' }}
         toolBarRender={renderToolBarRender}
         pagination={{
-          hideOnSinglePage: true,
+          // hideOnSinglePage: true,
           pageSizeOptions: PAGE_SIZE_OPTIONS
         }}
       />
@@ -198,6 +218,7 @@ const Table: React.FC<IProps> = (props: IProps, ref) => {
         onCancel={() => setVisibleCrateTableModal(false)}
       >
         <CreateTable
+          moduleIdDefaultValue = {moduleId}
           onOk={handleCratetTableOk}
           onCancel={() => setVisibleCrateTableModal(false)}
           upDataMenus={handleUpdataMenus}
