@@ -1,7 +1,9 @@
 import { notification, Modal } from 'antd';
+import { construct as contructTree } from '@infra/utils/tools';
 import { FIELDTYPE } from './constants';
 import { ISELECTSMENU, ITableColumnFromApi } from './interface';
 
+export { contructTree };
 const { confirm } = Modal;
 /** 弹出提示 */
 type IStatus = "success" | "info" | "warning" | "error"
@@ -81,4 +83,7 @@ export const deleteConfirm = (param: IDeleteConfirmParam): void => {
       typeof onCancel === 'function' && onCancel();
     },
   });
+};
+export const getlabelByMenuList = (menu: ISELECTSMENU[], value?: string): string => {
+  return menu.filter((item) => item.value === value)[0]?.label || '';
 };

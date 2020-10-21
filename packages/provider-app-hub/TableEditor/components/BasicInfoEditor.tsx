@@ -3,7 +3,7 @@ import {
   Form, Input, Select, TreeSelect, InputNumber
 } from 'antd';
 import { FormInstance } from 'antd/lib/form';
-import { construct as contructTree } from '@infra/utils/tools';
+import { contructTree } from '../service';
 import { TABLE_TYPE_OPTIONS, TABLE_TYPE, MENUS_TYPE } from '../constants';
 import { getMenuListService } from '../apiAgents';
 

@@ -10,6 +10,7 @@ import { fieldEditableConfig } from './ColumnEditableConfigForExpandedInfo';
 import {
   SPECIESCN, DATATYPE, COLUMNS_KEY, FIELDTYPE, FIELDTYPEMENU, FIELDSIZEREGULAR, DATATYPEMENU, DATATYPEMENUFORTEXT, VALUEBOOLEANMENU
 } from '../constants';
+import { getlabelByMenuList } from '../service';
 /** 判断控件是否可编辑 */
 const isFieldEditable = (
   record: ITableColumnInState, formRef: {getFieldValue: (param:string)=>any}, dataIndex: ITableColumnShowKey
@@ -18,9 +19,6 @@ const isFieldEditable = (
   if (!canRowEdit) return false;
   /** 字段名称和字段编码恒可编辑 */
   return fieldEditableConfig[dataIndex]?.(formRef, record) || false;
-};
-export const getlabelByMenuList = (menu: ISELECTSMENU[], key?: string): string => {
-  return key ? (menu?.filter((item) => item?.value === key)?.[0]?.label || '') : '';
 };
 interface IRenderTextProps {
   text: string
