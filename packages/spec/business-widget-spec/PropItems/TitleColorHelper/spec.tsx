@@ -12,12 +12,11 @@ export const TitleColorHelperSpec: PropItemCompAccessSpec = () => ({
   render: (ctx) => {
     const { changeEntityState, widgetEntityState } = ctx;
     /** 取自身定义的 whichAttr */
-    let _value = widgetEntityState.labelColor;
-    if (_value === null) _value = '';
+    const _value = widgetEntityState.labelColor;
     return (
       <div>
         <Input
-          value={_value}
+          value={_value || ''}
           onChange={(value) => changeEntityState({
             attr: 'labelColor',
             value
