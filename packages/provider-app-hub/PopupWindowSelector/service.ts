@@ -23,10 +23,25 @@ export async function createPopupWindowService(params) {
     data: params,
   });
 }
+
+export async function editPopupWindowService(params, id) {
+  return await $R_P.put({
+    url: `/page/v1/popupwindows/${id}`,
+    data: params,
+  });
+}
+
 /** 删除表前确认能否删除 */
 export async function allowDeletePopupWindowService(id) {
   return await $R_P.get({
-    url: `/data/v1/tables/allowedDeleted/${id}`,
+    url: `/page/v1/allowedDeleted/${id}`,
+    params: {},
+  });
+}
+
+export async function queryPopupWindowService(id) {
+  return await $R_P.get({
+    url: `/page/v1/popupwindows/${id}`,
     params: {},
   });
 }
@@ -34,7 +49,7 @@ export async function allowDeletePopupWindowService(id) {
 /** 删除表 */
 export async function deletePopupWindowService(id) {
   return await $R_P.del({
-    url: `/data/v1/tables/${id}`,
+    url: `/page/v1/popupwindows/${id}`,
     data: {},
   });
 }

@@ -34,17 +34,14 @@ const layout = {
   labelCol: { span: 5 },
   wrapperCol: { span: 19 },
 };
-const CreatePopupWindow: React.FC<IProps> = (props: IProps) => {
+const PreviewPopupWindow: React.FC<IProps> = (props: IProps) => {
   const {
     onCancel, onOk, upDataMenus, editData: {
-      id, code, name, selectType, showType, tablePopupWindowDetail: { datasource, datasourceType }
+      id, name, selectType, showType
     }, editModalData: { okText }
   } = props;
-
-  console.log(props.editData);
   const [form] = Form.useForm();
   const [visibleModal, setVisibleModal] = useState<boolean>(false);
-  const [showTypeInit, setShowTypeInit] = useState<string>();
   const handleFinish = async (values) => {
     if (!id) {
     // const params = assemblyParams(values);
@@ -172,10 +169,7 @@ const CreatePopupWindow: React.FC<IProps> = (props: IProps) => {
     onCancel && onCancel();
   };
   useEffect(() => {
-    setShowTypeInit(showType);
-    form.setFieldsValue({
-      name, code, datasource
-    });
+    form.setFieldsValue({ name, showType, selectType });
   }, []);
 
   return (
@@ -192,11 +186,10 @@ const CreatePopupWindow: React.FC<IProps> = (props: IProps) => {
         >
           <Select
             placeholder="请选择显示类型"
-            defaultValue={showTypeInit}
           >
             {
               SHOW_TYPE_OPTIONS.map((item, index) => <Option
-                value={item.value}
+                key={index} value={item.value}
               >{item.title}</Option>)
             }
           </Select>
@@ -211,7 +204,6 @@ const CreatePopupWindow: React.FC<IProps> = (props: IProps) => {
         >
           <Select
             placeholder="请选择选择类型"
-
           >
             {
               SELECT_TYPE_OPTIONS.map((item, index) => <Option
@@ -290,4 +282,4 @@ const CreatePopupWindow: React.FC<IProps> = (props: IProps) => {
     </>
   );
 };
-export default React.memo(CreatePopupWindow);
+export default React.memo(PreviewPopupWindow);

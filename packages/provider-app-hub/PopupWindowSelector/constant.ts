@@ -105,7 +105,7 @@ export const OPERATIONALMENU: IOperationalMenuItem[] = [
     title: "删除",
     behavior: "popconfirm"
   }, {
-    operate: "copy",
+    operate: "preview",
     title: "预览",
     behavior: "onClick",
   },
@@ -279,4 +279,32 @@ export enum FIELDTYPE {
   "DATE_TIME" = "DATE_TIME",
   /** 超大文本 */
   "TEXT" = "TEXT"
+}
+export interface IPopupWindow{
+  id: string
+  code: string
+  name : string
+  showType: string
+  selectType: string
+  selectCount: string
+  enable: string
+  tablePopupWindowDetail : {
+    createdBy: string
+    datasource: string
+    datasourceType: string
+    deleteFlag: string
+    gmtCreate: string
+    gmtModified: string
+    id: string
+    modifiedBy: string
+    returnText: string
+    returnValue: string
+    showColumn: string
+    sortColumnInfo: string
+  },
+
+}
+export interface IModalData{
+  okText : string
+  modalTitle: string
 }
