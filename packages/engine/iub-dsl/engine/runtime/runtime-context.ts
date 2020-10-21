@@ -4,6 +4,16 @@ import { useCacheState } from '../utils';
 import { APBDSLrequest as originReq } from '../utils/apb-dsl';
 import { conditionEngine } from '../condition-engine/condition-engine';
 import { APBDSLCondControlResHandle, getAPBDSLCondOperatorHandle } from '../actions-manage/business-actions/APBDSL';
+import { transMarkValFromArr, validTransMarkValFromArr } from './utils/transform-mark-value';
+
+export enum RuntimeSchedulerFnName {
+  targetUpdateState = 'targetUpdateState',
+  updatePageState = 'updatePageState',
+  getPageState = 'getPageState',
+  getWatchDeps = 'getWatchDeps',
+  APBDSLrequest = 'APBDSLrequest',
+  ConditionHandleOfAPBDSL = 'ConditionHandleOfAPBDSL'
+}
 
 const useUU = (setListConf: any[] = []) => {
   const [prop, setProp] = useCacheState({});
@@ -43,7 +53,7 @@ export const genRuntimeCtxFn = (dslParseRes, runtimeCtx) => {
     getPageState,
     getWatchDeps,
     updatePageState, targetUpdateState,
-    IUBPageStore, pickKeyWord, isPageState
+    IUBPageStore, pickKeyWord
   } = IUBStoreEntity;
 
   /** 事件运行调度中心的函数 */
@@ -62,21 +72,16 @@ export const genRuntimeCtxFn = (dslParseRes, runtimeCtx) => {
     //   setRunTimeLine([...runTimeLine, action]);
     // }
 
-    if (type === 'ConditionHandleOfAPBDSL') {
+    if (type === RuntimeSchedulerFnName.ConditionHandleOfAPBDSL) {
       const expsValueHandle = (expsValue) => {
-        console.log(expsValue);
-        // if (expsValue[0] === 'username') {
-        // expsValue[1] = '张三3667';
-        // if (expsValue[0] === 'address') {
-        // expsValue[1] = '西湖区湖底公园';
-        // return expsValue;
-        // }
-        return false;
+        expsValue = transMarkValFromArr(expsValue, runtimeContext);
+
+        return validTransMarkValFromArr(expsValue);
       };
       return await conditionEngine(params[0], {
         expsValueHandle,
         condControlResHandle: APBDSLCondControlResHandle,
-        getOperatorHandle: getAPBDSLCondOperatorHandle,
+        getOperatorHandle: getAPBDSLCondOperatorHandle.bind(null, {}), // 外部绑定默认上下文
       });
     }
 
