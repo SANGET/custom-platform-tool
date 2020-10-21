@@ -16,7 +16,7 @@ import {
   delMenuServices, getMenuListServices, getPageListServices, editMenuServices, setMenuStatusServices, addMenuServices
 } from "../services/apis";
 import {
-  ICONS, SAVE_TYPE, MENU_OPTIONS, MESSAGE, API_CODE, NOTIFICATION_TYPE, BUTTON_TYPE, BUTTON_SIZE, MENU_TYPE, MENU_KEY
+  ICON_DEFAULTVALUE, SAVE_TYPE, MENU_OPTIONS, MESSAGE, API_CODE, NOTIFICATION_TYPE, BUTTON_TYPE, BUTTON_SIZE, MENU_TYPE, MENU_KEY
 } from '../constants';
 
 import { IconAppointed, SelectIcon } from './SelectIcon';
@@ -128,7 +128,7 @@ const PageChoose: React.FC<IPageChoose> = (props: IPageChoose) => {
 
 const Icon: React.FC<IIcon> = (props: IIcon) => {
   const {
-    record, formRef, onSelect
+    record, formRef, onSelect, className
   } = props;
   const handleClick = (e, iconType) => {
     e.stopPropagation();
@@ -136,16 +136,7 @@ const Icon: React.FC<IIcon> = (props: IIcon) => {
     onSelect(iconType);
   };
   const getIconKey = (getFieldValue) => {
-    if (record.editable) {
-      const key = getFieldValue(MENU_KEY.ICON);
-      if (key) return key;
-      const type = getFieldValue(MENU_KEY.TYPE);
-      return type === MENU_TYPE.MODULE ? ICONS.FAFOLDER : ICONS.FAFILEAT;
-    }
-    const key = record[MENU_KEY.ICON];
-    if (key) return key;
-    const type = record[MENU_KEY.TYPE];
-    return type === MENU_TYPE.MODULE ? ICONS.FAFOLDER : ICONS.FAFILEAT;
+    return record.editable ? getFieldValue(MENU_KEY.ICON) : record[MENU_KEY.ICON];
   };
   return (
     <Form.Item
@@ -156,7 +147,7 @@ const Icon: React.FC<IIcon> = (props: IIcon) => {
         const key = getIconKey(getFieldValue);
         return (
           <div
-            className="text-xl w-6"
+            className={`${className} w-6`}
             onClick={(e) => { handleClick(e, key); }}
           >
             <IconAppointed
@@ -197,7 +188,16 @@ const getListColumns = ({
             onClick={(e) => e.stopPropagation()}
           />
         </Form.Item>
-      ) : text;
+      ) : (
+        <>
+          <Icon
+            className="float-left text-base mt-1"
+            formRef = {formRef}
+            record = {record}
+            onSelect = {selectIcon}
+          /> <span>{text}</span>
+        </>
+      );
     }
   },
   {
@@ -236,6 +236,7 @@ const getListColumns = ({
     render: (text, record) => {
       return (
         <Icon
+          className="text-xl"
           formRef = {formRef}
           record = {record}
           onSelect = {selectIcon}
@@ -371,7 +372,20 @@ class MenuList extends React.Component {
   constructTree = (nodes) => {
     const treeMap = {};
     const treeList = [];
-    nodes.forEach((node) => { node && (treeMap[node[MENU_KEY.ID]] = node); });
+    const getNodeDefIcon = (type) => {
+      return type === MENU_TYPE.MODULE ? ICON_DEFAULTVALUE.MODULE : ICON_DEFAULTVALUE.PAGE;
+    };
+    nodes.forEach((node) => {
+      if (!node) return;
+      const {
+        [MENU_KEY.ID]: id,
+        [MENU_KEY.ICON]: icon,
+        [MENU_KEY.TYPE]: type
+      } = node;
+      treeMap[id] = node;
+      // 拼记录的默认 icon
+      node[MENU_KEY.ICON] = icon || getNodeDefIcon(type);
+    });
     nodes.forEach((node) => {
       if (node) {
         const { [MENU_KEY.ID]: id, [MENU_KEY.PID]: pid } = node;
@@ -384,6 +398,7 @@ class MenuList extends React.Component {
         }
       }
     });
+    console.log(treeList);
     return {
       list: treeList,
       map: treeMap
@@ -462,6 +477,7 @@ class MenuList extends React.Component {
       [MENU_KEY.GMTMODIFIED]: '',
       [MENU_KEY.CREATEUSERNAME]: '',
       [MENU_KEY.STATUS]: MENU_TYPE.MODULE,
+      [MENU_KEY.ICON]: ICON_DEFAULTVALUE.MODULE,
       ...recordDefault
     };
     return record;
@@ -774,7 +790,7 @@ class MenuList extends React.Component {
           >
 
             <SelectIcon
-              currentIon = {this.editMenuFormRef.current?.getFieldValue(MENU_KEY.ICON)}
+              currentIcon = {this.editMenuFormRef.current?.getFieldValue(MENU_KEY.ICON)}
               type="selectIcon"
               onOk={(icon) => {
                 this.setState({ visibleModalSelectIcon: false });

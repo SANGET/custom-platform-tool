@@ -36,6 +36,7 @@ export const MESSAGE = {
   ADD_MENU_FAILED: "新增菜单数据失败，请联系技术人员",
   DEL_MENU_FAILED: "删除菜单数据失败，请联系技术人员",
   DEL_MENU_SUCCESS: "删除菜单数据成功",
+  SELECT_ICON_FAILED: "请选择图标"
 };
 
 export const MENU_KEY = {
@@ -61,7 +62,7 @@ export enum SAVE_TYPE {
   ADD = 'add'
 }
 
-export enum ICONS {
-  FAFOLDER = 'FaFolder',
-  FAFILEAT = 'FaFileAlt'
+export enum ICON_DEFAULTVALUE {
+  MODULE = 'RiFolderLine',
+  PAGE = 'RiFileTextLine'
 }
