@@ -45,13 +45,13 @@
     "postcss-normalize": "7.0.1",
     "postcss-preset-env": "6.6.0",
     "postcss-safe-parser": "4.0.1",
-    "react": "16.13.1",
+    "react": "16.14.0",
     "react-app-polyfill": "^1.0.1",
     "react-dev-utils": "^9.0.1",
-    "react-dom": "16.13.1",
+    "react-dom": "16.14.0",
     "redux": "^4.0.5",
     "redux-logger": "^3.0.6",
-    "react-redux": "^7.2.0",
+    "react-redux": "^7.2.1",
     "resolve": "1.10.0",
     "sass-loader": "7.1.0",
     "semver": "6.0.0",
@@ -65,6 +65,7 @@
     "webpack-merge": "4.2.2",
     "workbox-webpack-plugin": "4.2.0"
   },
+  "devDependencies": {},
   "repository": {
     "type": "git",
     "url": "git+https://github.com/minimal-studio/mini-scripts.git"
@@ -80,7 +81,6 @@
     "url": "https://github.com/minimal-studio/mini-scripts/issues"
   },
   "homepage": "https://github.com/minimal-studio/mini-scripts#readme",
-  "devDependencies": {},
   "browserslist": {
     "production": [
       ">0.2%",
