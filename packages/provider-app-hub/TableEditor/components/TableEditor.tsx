@@ -118,7 +118,7 @@ class TableEditor extends React.Component {
   }
 
   constructFieldListFromRequest = (fieldList) => {
-    return fieldList.map((item) => {
+    return fieldList?.map((item) => {
       const {
         tableName: dictionaryForeignCn,
         fieldCode: dictionaryForeign
@@ -126,7 +126,7 @@ class TableEditor extends React.Component {
       return {
         ...item, ...item.fieldProperty, dictionaryForeign, dictionaryForeignCn
       };
-    });
+    }) || [];
   }
 
   /** 将接口数据设置到 state 上 */
@@ -162,7 +162,7 @@ class TableEditor extends React.Component {
   }
 
   constructFieldListForSave = (fieldList) => {
-    return fieldList.map((item) => {
+    return fieldList?.map((item) => {
       const {
         id, name, code, fieldType, dataType, fieldSize, decimalSize, required, unique, pinyinConvent, regular, dictionaryForeign, species
       } = item;
@@ -194,29 +194,29 @@ class TableEditor extends React.Component {
         },
         ...dictionaryForeignTmpl
       };
-    });
+    }) || [];
   }
 
   constructReferenceListForSave = (referencesList) => {
-    return referencesList.map((item, index) => {
+    return referencesList?.map((item, index) => {
       const {
         id, fieldCode, refTableCode, refFieldCode, refDisplayFieldCode
       } = item;
       return {
         id, fieldCode, refTableCode, refFieldCode, refDisplayFieldCode, sequence: index + 1
       };
-    });
+    }) || [];
   }
 
   constructForeignKeyListForSave = (foreignKeyList) => {
-    return foreignKeyList.map((item, index) => {
+    return foreignKeyList?.map((item, index) => {
       const {
         id, fieldCode, refTableCode, refFieldCode, refDisplayCode, deleteStrategy, updateStrategy
       } = item;
       return {
         id, fieldCode, refTableCode, refFieldCode, refDisplayCode, sequence: index + 1, deleteStrategy, updateStrategy
       };
-    });
+    }) || [];
   }
 
   /** 构建保存时所需数据 */
@@ -306,7 +306,6 @@ class TableEditor extends React.Component {
     try {
       await this.expandInfoFormRef.current?.validateFields();
       const record = this.getRecordFromExpandForm[activeAreaInExpandedInfo]?.();
-      console.log(record);
       const index = this.getIndexByEditingKey();
       this.setState((previousState) => {
         const newList = previousState[activeAreaInExpandedInfo].slice();
@@ -327,7 +326,7 @@ class TableEditor extends React.Component {
   getRowKeysEditable = () => {
     const { activeAreaInExpandedInfo } = this.state;
     return this.state[activeAreaInExpandedInfo]
-      .filter((item) => item.editable)
+      ?.filter((item) => item.editable)
       .map((item) => item.id);
   }
 
@@ -374,7 +373,7 @@ class TableEditor extends React.Component {
       foreignKeyList: DATATYPE.FK
     };
     return fieldList
-      .filter((item) => item.dataType === dataTypeMap[activeAreaInExpandedInfo])
+      ?.filter((item) => item.dataType === dataTypeMap[activeAreaInExpandedInfo])
       .map((item) => {
         return {
           label: item?.name,
