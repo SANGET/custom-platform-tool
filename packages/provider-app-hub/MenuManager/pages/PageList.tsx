@@ -304,7 +304,7 @@ const getListColumns = ({
         id, createdCustomed
       } = record;
       return (
-        <>
+        <div className="page-list-operate-area">
           {!createdCustomed && !editingKey && record[MENU_KEY.TYPE] === MENU_TYPE.MODULE ? (<span
             className="link-btn"
             onClick={(e) => {
@@ -314,7 +314,7 @@ const getListColumns = ({
             子项
           </span>) : null}
           <span
-            className="link-btn ml10"
+            className="link-btn"
             onClick={(e) => {
               e.stopPropagation();
               deleteConfirm({
@@ -337,7 +337,7 @@ const getListColumns = ({
           >
             删除
           </span>
-        </>
+        </div>
       );
     },
   },
