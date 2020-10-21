@@ -53,7 +53,7 @@ export class PageDataService {
    * @param pageData 
    */
   pageData2IUBDSL(pageData) {
-    const { iubDsl, dataSources } = pageData;
+    const { pageContent, dataSources } = pageData;
     let contentData;
     const IUBDSLData = {
       sysRtCxtInterface: {},
@@ -68,9 +68,9 @@ export class PageDataService {
       type: '',
     };
     try {
-      contentData = JSON.parse(iubDsl);
-      const pageContent = contentData.content;
-      const { componentsCollection, layoutContentBody } = flatLayoutNode(pageContent);
+      contentData = JSON.parse(pageContent);
+      const pageLayoutContent = contentData.content;
+      const { componentsCollection, layoutContentBody } = flatLayoutNode(pageLayoutContent);
       IUBDSLData.layoutContent = {
         type: 'general',
         content: layoutContentBody
@@ -81,7 +81,7 @@ export class PageDataService {
       IUBDSLData.componentsCollection = componentsCollection;
     } catch(e) {
       console.log(e);
-      contentData = iubDsl;
+      contentData = pageContent;
     }
     return IUBDSLData;
   }
