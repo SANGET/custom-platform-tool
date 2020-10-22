@@ -12,7 +12,7 @@ import {
   queryPopupWindowListService, allowDeletePopupWindowService, deletePopupWindowService, queryPopupWindowService
 } from '../service';
 import {
-  COLUMNS, OPERATIONALMENU, SELECT_ALL, MORE_MENU, PAGE_SIZE_OPTIONS, IPopupWindow, IModalData
+  COLUMNS, OPERATIONALMENU, SELECT_ALL, MORE_MENU, PAGE_SIZE_OPTIONS, IPopupWindow, IModalData, SHOW_TYPE_OPTIONS, SELECT_TYPE_OPTIONS
 } from '../constant';
 import Operational from './Operational';
 import { IStatus } from '../interface';
@@ -54,6 +54,22 @@ const useModalConfig = () => {
     handleAft: () => {}
   });
   return [modalConfig, setModalConfig];
+};
+
+const getShowTypeTitleById = (showTypeId: number) => {
+  return SHOW_TYPE_OPTIONS.filter((item) => showTypeId === item.id)?.[0]?.title;
+};
+const getShowTypeIdByTitle = (showTypeTitle: string) => {
+  console.log(SHOW_TYPE_OPTIONS.filter((item) => item.title === showTypeTitle)?.[0]?.id);
+  return SHOW_TYPE_OPTIONS.filter((item) => item.title === showTypeTitle)?.[0]?.id;
+};
+
+const getSelectTypeTitleById = (selectTypeId: number) => {
+  return SELECT_TYPE_OPTIONS.filter((item) => selectTypeId === item.id)?.[0]?.title;
+};
+const getSelectTypeIdByTitle = (selectTypeTitle: string) => {
+  console.log(SELECT_TYPE_OPTIONS.filter((item) => item.title === selectTypeTitle)?.[0]?.id);
+  return SELECT_TYPE_OPTIONS.filter((item) => item.title === selectTypeTitle)?.[0]?.id;
 };
 
 const PopupWindowSelector: React.FC<IProps> = (props: IProps, ref) => {

@@ -49,22 +49,6 @@ const CreatePopupWindow: React.FC<IProps> = (props: IProps) => {
   const [form] = Form.useForm();
   const [visibleModal, setVisibleModal] = useState<boolean>(false);
 
-  const getShowTypeTitleById = (showTypeId: string) => {
-    return SHOW_TYPE_OPTIONS.filter((item) => showTypeId.toString() === item.id)?.[0]?.title;
-  };
-  const getShowTypeIdByTitle = (showTypeTitle: string) => {
-    console.log(SHOW_TYPE_OPTIONS.filter((item) => item.title === showTypeTitle.toString())?.[0]?.id);
-    return SHOW_TYPE_OPTIONS.filter((item) => item.title === showTypeTitle.toString())?.[0]?.id;
-  };
-
-  const getSelectTypeTitleById = (selectTypeId: string) => {
-    return SELECT_TYPE_OPTIONS.filter((item) => selectTypeId.toString() === item.id)?.[0]?.title;
-  };
-  const getSelectTypeIdByTitle = (selectTypeTitle: string) => {
-    console.log(SELECT_TYPE_OPTIONS.filter((item) => item.title === selectTypeTitle.toString())?.[0]?.id);
-    return SELECT_TYPE_OPTIONS.filter((item) => item.title === selectTypeTitle.toString())?.[0]?.id;
-  };
-
   const handleFinish = async (values) => {
     if (!id) {
     // const params = assemblyParams(values);
@@ -126,7 +110,7 @@ const CreatePopupWindow: React.FC<IProps> = (props: IProps) => {
 
     const params = {
       name,
-      showType: getShowTypeIdByTitle(showType),
+      showType,
       selectType,
       selectCount: 0,
       enable: 1,
@@ -134,7 +118,7 @@ const CreatePopupWindow: React.FC<IProps> = (props: IProps) => {
     console.log(showType);
     console.log(SHOW_TYPE.TABLE);
     console.log(SHOW_TYPE.TREE);
-    if (getShowTypeIdByTitle(showType) === SHOW_TYPE.TABLE) {
+    if (showType === SHOW_TYPE.TABLE) {
       Object.assign(params, {
         tablePopupWindowDetail: {
           popupWindowId: 1234,
@@ -147,7 +131,7 @@ const CreatePopupWindow: React.FC<IProps> = (props: IProps) => {
         }
       });
     }
-    if (getShowTypeIdByTitle(showType) === SHOW_TYPE.TREE) {
+    if (showType === SHOW_TYPE.TREE) {
       Object.assign(params, {
         treePopupWindowDetail: {
           popupWindowId: 1234,
@@ -178,12 +162,15 @@ const CreatePopupWindow: React.FC<IProps> = (props: IProps) => {
   };
   useEffect(() => {
     form.setFieldsValue({
-      name, code, selectType, showType: getShowTypeTitleById(showType)
+      name, code, selectType, showType
+      // : getShowTypeTitleById(showType)
     });
+    console.log(showType);
   }, []);
   const handleShowTypeSelectChange = (value) => {
 
   };
+  console.log(form.getFieldValue('showType'));
   return (
     <>
       <Form {...layout} form={form} name="control-hooks" onFinish={handleFinish}>
@@ -199,12 +186,13 @@ const CreatePopupWindow: React.FC<IProps> = (props: IProps) => {
           <Select
             placeholder="请选择显示类型"
             onChange={handleShowTypeSelectChange}
+            options = {SHOW_TYPE_OPTIONS}
           >
-            {
+            {/* {
               SHOW_TYPE_OPTIONS.map((item, index) => <Option
                 key={item.id} value={item.title}
               >{item.title}</Option>)
-            }
+            } */}
           </Select>
         </Form.Item>
         <Form.Item

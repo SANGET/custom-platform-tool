@@ -120,46 +120,50 @@ export const OPERATIONALMENU: IOperationalMenuItem[] = [
 
 export enum SHOW_TYPE {
   /** 表 */
-  "TABLE" = "1",
+  "TABLE" = 1,
   /** 树 */
-  "TREE" = "2",
+  "TREE" = 2,
   /** 左树右表 */
-  "LEFT_TREE_RIGHT_TABLE" = "3",
+  "LEFT_TREE_RIGHT_TABLE" = 3,
 
   /** 自定义 */
-  "CUSTOMIZATION" = "4",
+  "CUSTOMIZATION" = 4,
 
 }
 
 export enum SELECT_TYPE {
   /** 单选 */
-  "SINGLE" = "1",
+  "SINGLE" = 1,
   /** 多选 */
-  "MULTIPLE" = "2",
+  "MULTIPLE" = 2,
 
 }
 
 export const SHOW_TYPE_OPTIONS: IPopupShowType[] = [
   {
-    id: "1",
-    title: "表格"
+    key: 1,
+    value: 1,
+    label: "表格"
   }, {
-    id: "2",
-    title: "树形"
+    key: 2,
+    value: 2,
+    label: "树形"
   }, {
-    id: "3",
-    title: "左树右表"
+    key: 3,
+    value: 3,
+    label: "左树右表"
   }, {
-    id: "4",
-    title: "自定义"
+    key: 4,
+    value: 4,
+    label: "自定义"
   }
 ];
 export const SELECT_TYPE_OPTIONS: IPopupSelectType[] = [
   {
-    id: "2",
+    id: 2,
     title: "多选"
   }, {
-    id: "1",
+    id: 1,
     title: "单选"
   }
 ];

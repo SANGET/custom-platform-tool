@@ -13,12 +13,12 @@ export interface IValueEnum {
 }
 
 export interface IPopupShowType {
-  id: string;
+  id: number;
   title: string;
 }
 
 export interface IPopupSelectType {
-  id: string;
+  id: number;
   title: string;
 }
 
