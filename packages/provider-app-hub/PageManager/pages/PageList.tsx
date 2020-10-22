@@ -32,8 +32,6 @@ const PageList: React.FC<IProps> = (props: IProps) => {
     if (res.code === "00000") {
       notification.success({ message: "发布成功" });
       proTableReload();
-    } else {
-      notification.error({ message: "发布失败" });
     }
   };
   /**
@@ -45,8 +43,6 @@ const PageList: React.FC<IProps> = (props: IProps) => {
     if (res.code === "00000") {
       notification.success({ message: "删除成功" });
       proTableReload();
-    } else {
-      notification.error({ message: "删除失败" });
     }
   };
   /**
@@ -54,7 +50,7 @@ const PageList: React.FC<IProps> = (props: IProps) => {
    * @param id 页面 ID
    * @param publishedVersion 发布版本，用于展示不同提示语（已发布，未发布）
    */
-  const checkBeforeDelete = (id: string, publishedVersion: string) => {
+  const checkBeforeDelete = ({ id, publishedVersion }: ITableItem) => {
     confirm({
       title: publishedVersion ? "页面已发布，是否继续删除。" : "是否确定删除？",
       icon: <ExclamationCircleOutlined />,
@@ -67,7 +63,7 @@ const PageList: React.FC<IProps> = (props: IProps) => {
    * 发布前提示框
    * @param data 发布的模块 ID, 页面 ID 数组
    */
-  const checkBeforeRelease = ({ menuIds, pageInfoIds }:IReleaseParams) => {
+  const checkBeforeRelease = ({ menuIds, pageInfoIds }: IReleaseParams) => {
     confirm({
       title: "是否确定发布？",
       icon: <ExclamationCircleOutlined />,
@@ -92,30 +88,30 @@ const PageList: React.FC<IProps> = (props: IProps) => {
     },
   ];
   /**
+   * 跳转页面设计
+   * @param data 跳转信息 ID 和 name
+   */
+  const goEdit = ({ id, name }) => {
+    onNavigate({
+      type: "PUSH",
+      path: "/page-designer",
+      pathExtend: id,
+      params: {
+        title: name,
+        pageID: id
+      }
+    });
+  };
+  /**
    * 生成 ProColumns
    */
   const tableColumns = React.useMemo(() => {
     return getListColumns({
-      edit: ({ id, name }) => {
-        // 编辑
-        onNavigate({
-          type: "PUSH",
-          path: "/page-designer",
-          pathExtend: id,
-          params: {
-            title: name,
-            pageID: id
-          }
-        });
-      },
+      edit: goEdit,
+      delete: checkBeforeDelete,
       release: ({ id }) => {
-        // 发布
         checkBeforeRelease({ menuIds: [], pageInfoIds: [id] });
       },
-      delete: ({ id, publishedVersion }) => {
-        // 删除
-        checkBeforeDelete(id, publishedVersion);
-      }
     });
   }, []);
   /**
@@ -129,12 +125,19 @@ const PageList: React.FC<IProps> = (props: IProps) => {
       offset: (current - 1) * pageSize || 0,
       size: pageSize || 10,
       totalSize: true,
-      moduleId
+      belongToMenuId: moduleId
     };
     const res = await getPageListServices(tableParams);
-    const { data, total } = res.result;
+    const { data, total } = res?.result || {};
     return Promise.resolve({
-      data: data || [],
+      data: Array.isArray(data) ? data.reduce((a, b) => {
+        a.push({
+          ...b,
+          belongMenus: b.belongMenus.map((item) => item.menuName),
+          dataSources: b.dataSources.map((item) => item.datasourceName),
+        });
+        return a;
+      }, []) : [],
       success: true,
       total: total || 0
     });
@@ -158,9 +161,10 @@ const PageList: React.FC<IProps> = (props: IProps) => {
             return (
               <div className="p20">
                 <CreatePage
-                  onSuccess={() => {
+                  onSuccess={(item) => {
                     CloseModal(modalID);
                     proTableReload();
+                    goEdit(item);
                   }}
                 />
               </div>

@@ -7,6 +7,10 @@ import { FormInstance } from 'antd/lib/form';
 import {
   SHOW_TYPE_OPTIONS, SELECT_TYPE_OPTIONS, SHOW_TYPE, SPECIES, SELECT_TYPE, IPopupWindow, IModalData
 } from '../constant';
+
+import {
+  IPopupShowType, IPopupSelectType
+} from '../interface';
 import {
   NameCodeItem, ModuleTreeItem, PrimaryTreeItem, FromFooterBtn
 } from "./FormItem";
@@ -44,7 +48,23 @@ const CreatePopupWindow: React.FC<IProps> = (props: IProps) => {
   console.log(props.editData);
   const [form] = Form.useForm();
   const [visibleModal, setVisibleModal] = useState<boolean>(false);
-  const [showTypeInit, setShowTypeInit] = useState<string>();
+
+  const getShowTypeTitleById = (showTypeId: string) => {
+    return SHOW_TYPE_OPTIONS.filter((item) => showTypeId.toString() === item.id)?.[0]?.title;
+  };
+  const getShowTypeIdByTitle = (showTypeTitle: string) => {
+    console.log(SHOW_TYPE_OPTIONS.filter((item) => item.title === showTypeTitle.toString())?.[0]?.id);
+    return SHOW_TYPE_OPTIONS.filter((item) => item.title === showTypeTitle.toString())?.[0]?.id;
+  };
+
+  const getSelectTypeTitleById = (selectTypeId: string) => {
+    return SELECT_TYPE_OPTIONS.filter((item) => selectTypeId.toString() === item.id)?.[0]?.title;
+  };
+  const getSelectTypeIdByTitle = (selectTypeTitle: string) => {
+    console.log(SELECT_TYPE_OPTIONS.filter((item) => item.title === selectTypeTitle.toString())?.[0]?.id);
+    return SELECT_TYPE_OPTIONS.filter((item) => item.title === selectTypeTitle.toString())?.[0]?.id;
+  };
+
   const handleFinish = async (values) => {
     if (!id) {
     // const params = assemblyParams(values);
@@ -100,61 +120,46 @@ const CreatePopupWindow: React.FC<IProps> = (props: IProps) => {
   };
 
   const assemblyPopupParams = (values) => {
-    // const params = {
-    //   name: 'abcd',
-    //   showType: 1,
-    //   selectType: 1,
-    //   selectCount: 0,
-    //   enable: 1,
-    //   tablePopupWindowDetail: {
-    //     popupWindowId: 1234,
-    //     datasource: 4567,
-    //     datasourceType: 'DB',
-    //     returnValue: 2233,
-    //     returnText: 4455,
-    //     sortColumnInfo: 'STR1',
-    //     showColumn: 'STR2',
-    //   }
-    // };
-
-    // const params = {
-    //   name: 'abcd',
-    //   showType: 1,
-    //   selectType: 1,
-    //   selectCount: 0,
-    //   enable: 1,
-    //   tablePopupWindowDetail: {
-    //     popupWindowId: 1234,
-    //     datasource: 4567,
-    //     datasourceType: 'DB',
-    //     returnValue: 2233,
-    //     returnText: 4455,
-    //     sortColumnInfo: 'STR1',
-    //     showColumn: 'STR2',
-    //   }
-    // };
-
     const {
       name, showType, selectType, datasource, datasourceType, returnValue, returnText
     } = values;
 
     const params = {
       name,
-      showType,
+      showType: getShowTypeIdByTitle(showType),
       selectType,
       selectCount: 0,
       enable: 1,
-      tablePopupWindowDetail: {
-        popupWindowId: 1234,
-        datasource,
-        datasourceType: 'DB',
-        returnValue,
-        returnText,
-        sortColumnInfo: 'STR1',
-        showColumn: 'STR2',
-      }
     };
-
+    console.log(showType);
+    console.log(SHOW_TYPE.TABLE);
+    console.log(SHOW_TYPE.TREE);
+    if (getShowTypeIdByTitle(showType) === SHOW_TYPE.TABLE) {
+      Object.assign(params, {
+        tablePopupWindowDetail: {
+          popupWindowId: 1234,
+          datasource,
+          datasourceType: 'DB',
+          returnValue,
+          returnText,
+          sortColumnInfo: 'STR1',
+          showColumn: 'STR2',
+        }
+      });
+    }
+    if (getShowTypeIdByTitle(showType) === SHOW_TYPE.TREE) {
+      Object.assign(params, {
+        treePopupWindowDetail: {
+          popupWindowId: 1234,
+          datasource,
+          datasourceType: 'TREE',
+          returnValue,
+          returnText,
+          sortColumnInfo: 'STR1',
+          showColumn: 'STR2',
+        }
+      });
+    }
     console.log(params);
 
     return params;
@@ -172,12 +177,13 @@ const CreatePopupWindow: React.FC<IProps> = (props: IProps) => {
     onCancel && onCancel();
   };
   useEffect(() => {
-    setShowTypeInit(showType);
     form.setFieldsValue({
-      name, code, datasource
+      name, code, selectType, showType: getShowTypeTitleById(showType)
     });
   }, []);
+  const handleShowTypeSelectChange = (value) => {
 
+  };
   return (
     <>
       <Form {...layout} form={form} name="control-hooks" onFinish={handleFinish}>
@@ -192,11 +198,11 @@ const CreatePopupWindow: React.FC<IProps> = (props: IProps) => {
         >
           <Select
             placeholder="请选择显示类型"
-            defaultValue={showTypeInit}
+            onChange={handleShowTypeSelectChange}
           >
             {
               SHOW_TYPE_OPTIONS.map((item, index) => <Option
-                value={item.value}
+                key={item.id} value={item.title}
               >{item.title}</Option>)
             }
           </Select>
@@ -211,11 +217,11 @@ const CreatePopupWindow: React.FC<IProps> = (props: IProps) => {
         >
           <Select
             placeholder="请选择选择类型"
-
+            value={selectType}
           >
             {
               SELECT_TYPE_OPTIONS.map((item, index) => <Option
-                key={index} value={item.value}
+                key={item.id} value={item.id}
               >{item.title}</Option>)
             }
           </Select>

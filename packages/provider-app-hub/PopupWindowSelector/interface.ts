@@ -12,6 +12,16 @@ export interface IValueEnum {
   };
 }
 
+export interface IPopupShowType {
+  id: string;
+  title: string;
+}
+
+export interface IPopupSelectType {
+  id: string;
+  title: string;
+}
+
 export interface ITableType {
   title: string;
   value: string;

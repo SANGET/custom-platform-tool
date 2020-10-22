@@ -1,5 +1,7 @@
 import { ProColumns } from '@hy/pro-table';
-import { IOperationalMenuItem, IValueEnum, ITableType } from './interface';
+import {
+  IOperationalMenuItem, IValueEnum, ITableType, IPopupShowType, IPopupSelectType
+} from './interface';
 
 export enum API_ERROR_MSG {
   /** 查表详情失败的提示信息 */
@@ -118,46 +120,46 @@ export const OPERATIONALMENU: IOperationalMenuItem[] = [
 
 export enum SHOW_TYPE {
   /** 表 */
-  "TABLE" = "TABLE",
+  "TABLE" = "1",
   /** 树 */
-  "TREE" = "TREE",
+  "TREE" = "2",
   /** 左树右表 */
-  "LEFT_TREE_RIGHT_TABLE" = "LEFT_TREE_RIGHT_TABLE",
+  "LEFT_TREE_RIGHT_TABLE" = "3",
 
   /** 自定义 */
-  "CUSTOMIZATION" = "CUSTOMIZATION",
+  "CUSTOMIZATION" = "4",
 
 }
 
 export enum SELECT_TYPE {
   /** 单选 */
-  "SINGLE" = "SINGLE",
+  "SINGLE" = "1",
   /** 多选 */
-  "MULTIPLE" = "MULTIPLE",
+  "MULTIPLE" = "2",
 
 }
 
-export const SHOW_TYPE_OPTIONS: ITableType[] = [
+export const SHOW_TYPE_OPTIONS: IPopupShowType[] = [
   {
-    value: "1",
+    id: "1",
     title: "表格"
   }, {
-    value: "2",
+    id: "2",
     title: "树形"
   }, {
-    value: "3",
+    id: "3",
     title: "左树右表"
   }, {
-    value: "4",
+    id: "4",
     title: "自定义"
   }
 ];
-export const SELECT_TYPE_OPTIONS: ITableType[] = [
+export const SELECT_TYPE_OPTIONS: IPopupSelectType[] = [
   {
-    value: "2",
+    id: "2",
     title: "多选"
   }, {
-    value: "1",
+    id: "1",
     title: "单选"
   }
 ];
