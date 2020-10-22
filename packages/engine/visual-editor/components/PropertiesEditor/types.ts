@@ -1,3 +1,4 @@
+import { VEAppDispatcher } from "../../core";
 import { ChangeEntityState, PropItemMeta } from "../../data-structure";
 
 /**
@@ -6,7 +7,8 @@ import { ChangeEntityState, PropItemMeta } from "../../data-structure";
 export interface PropItemRendererProps {
   propItemMeta: PropItemMeta
   /** 属性项的值 */
-  propItemValue
+  propItemValue: unknown
   /** 属性项的 onChange 回调 */
   changeEntityState: ChangeEntityState
+  ChangeMetadata: VEAppDispatcher['ChangeMetadata']
 }

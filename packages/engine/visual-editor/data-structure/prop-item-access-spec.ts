@@ -15,7 +15,8 @@ export interface PropItemCompAccessSpecCtx {
 /**
  * 属性项的组件的接入标准
  */
-export type PropItemCompAccessSpec = (propItemCompAccessSpecCtx: PropItemCompAccessSpecCtx) => PropItemMeta
+export type PropItemCompAccessSpec = PropItemMeta
+// export type PropItemCompAccessSpec = (propItemCompAccessSpecCtx: PropItemCompAccessSpecCtx) => PropItemMeta
 
 /**
  * 属性项集合

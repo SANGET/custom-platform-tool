@@ -2,7 +2,7 @@ import React from 'react';
 import { Input, Selector } from '@infra/ui';
 import { PropItemCompAccessSpec } from '@engine/visual-editor/data-structure';
 
-export const TitleHelperSpec: PropItemCompAccessSpec = () => ({
+export const TitleHelperSpec: PropItemCompAccessSpec = {
   id: 'prop_title_value',
 
   label: '标题',
@@ -10,7 +10,7 @@ export const TitleHelperSpec: PropItemCompAccessSpec = () => ({
   whichAttr: ['title'],
 
   defaultValues: {
-    title: '输入框标题'
+    title: '标题'
   },
 
   render(ctx) {
@@ -29,4 +29,4 @@ export const TitleHelperSpec: PropItemCompAccessSpec = () => ({
       </div>
     );
   }
-});
+};
