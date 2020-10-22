@@ -1,3 +1,5 @@
+import { initPageCtxManage, PageCtxInfo, AddPageCtx } from "./page-context";
+
 /**
  * @description 页面运行容器职责
  * 1. 管理页面的运行时上下文「IUBDSL/定制」「基础功能」
@@ -11,16 +13,27 @@
  * 2. 函数方法的单例 + 混入
  */
 
-interface PageManage{
-  g: string
+export interface PageManageInstance {
+  addPageCtx: AddPageCtx;
+  removePageCtx: (pageIdOrMark: string) => PageCtxInfo<any>[]
+  getIUBPageCtx: (pageIdOrMark: string) => any[]
 }
 
-let pageManageInstance: PageManage;
+let pageManageInstance: PageManageInstance;
 
 export const pageManage = () => {
-  if (pageManageInstance !== null) return pageManageInstance;
+  if (pageManageInstance) return pageManageInstance;
+  const { addPageCtx, removePageCtx, getPageCtx: gPC } = initPageCtxManage();
+
+  /** 获取IUB页面的上下文 */
+  const getIUBPageCtx = (pageIdOrMark: string) => {
+    const pageCtx = gPC(pageIdOrMark);
+    /** 获取useRef的上下文并且过滤无效的 */
+    return pageCtx.map((c) => c.context?.current).filter((v) => v);
+  };
+
   const instance = {
-    g: ''
+    addPageCtx, removePageCtx, getIUBPageCtx
   };
 
   return (pageManageInstance = instance);
