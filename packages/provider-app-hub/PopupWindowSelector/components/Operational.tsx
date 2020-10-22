@@ -19,7 +19,7 @@ const Operational: React.FC<IProps> = (props: IProps): ReactElement => {
       {
         OPERATIONALMENU.map((item, index) => {
           if (item.behavior === "popconfirm") {
-            return data.species === SPECIES.BIS ? (<Popconfirm
+            return 1 === 1 ? (<Popconfirm
               key={index}
               placement="topLeft"
               title={'你确定要删除这条记录吗?'}

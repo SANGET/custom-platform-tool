@@ -189,7 +189,7 @@ export const ModuleTreeItem: React.FC<IProps> = React.memo((props: IProps): Reac
 
 /** 确认 取消按键 */
 export const FromFooterBtn: React.FC<IProps> = React.memo((props: IProps): ReactElement => {
-  const { onCancel, okText = "开始创建", cancelText = "取消" } = props;
+  const { onCancel, okText, cancelText = "取消" } = props;
   return (
     <Row>
       <Col span={24} style={{ textAlign: 'right' }}>
