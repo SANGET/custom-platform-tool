@@ -10,7 +10,7 @@ const pickCanUseCompPropsKey = (
 const dynamicType = ['dynamicProps', 'widgetEvent'];
 /** props处理的结果约定 */
 export const propContextHandle = (result, context) => {
-  const { type, result: actralResult } = result;
+  const { type, result: actralResult = {} } = result;
 
   const { staticProps, dynamicProps } = context;
 
@@ -31,11 +31,11 @@ const genCompPropsMap = (key, propsConf) => ({ key, val: propsConf });
 
 const propsParser = (key, val) => ({ [key]: val });
 
-const genCompPropsMapList = (
-  usePropsKeys: string[], conf: any
-) => usePropsKeys.map((key) => genCompPropsMap(key, conf[key]));
+// const genCompPropsMapList = (
+//   usePropsKeys: string[], conf: any
+// ) => usePropsKeys.map((key) => genCompPropsMap(key, conf[key]));
 
-const genCompPropsMapList3 = (
+const genCompPropsMapList = (
   usePropsKeys: string[],
   { genPropsMap },
   context
@@ -54,7 +54,7 @@ const genPropsMap = (key, propsConf, context) => {
 export {
   pickCanUseCompPropsKey,
   genCompPropsMap,
+  // genCompPropsMapList,
   genCompPropsMapList,
-  genCompPropsMapList3,
   propsParser
 };
