@@ -3,6 +3,7 @@ import React, {
 } from 'react';
 import { Tree, Input, List } from 'antd';
 import { ModalFooter } from '@provider-app/table-editor/components/ChooseDict';
+import { CompressOutlined, DragOutlined } from '@ant-design/icons';
 import { getMenuListServices, getPageListServices } from '../services/apis';
 import { MENU_TYPE, SELECT_ALL } from '../constants';
 
@@ -22,13 +23,15 @@ interface INode {
 
 const MenuTree: React.FC<IMeunsTree> = (props: IMeunsTree) => {
   const { onSelect } = props;
-  // const [searchValue, setSearchValue] = useState<string>('');
+  const [defExpandedKeys, setDefExpandedKeys] = useState<string[]>([]);
+  const [expandedKeys, setExpandedKeys] = useState<string[]>([]);
   const [menusData, setMenusData] = useState<any[]>([]);
   useEffect(() => {
     getMenusListData('');
   }, []);
   const constructTree = (data) => {
     const idMap = {};
+    const expandedKeysInMenu = [];
     const jsonTree: INode[] = [];
     data.forEach((node) => { node && (idMap[node.id] = node); });
     data.forEach((node: INode) => {
@@ -39,20 +42,25 @@ const MenuTree: React.FC<IMeunsTree> = (props: IMeunsTree) => {
         if (parent) {
           !parent.children && (parent.children = []);
           parent.children.push(node);
+          !expandedKeysInMenu.includes(node.pid) && expandedKeysInMenu.push(node.pid);
         } else {
           jsonTree.push(node);
         }
       }
     });
-    return jsonTree;
+    return {
+      menuList: jsonTree,
+      expandedKeysInMenu
+    };
   };
   const getMenusListData = async (searchValue) => {
     const res = await getMenuListServices({
       type: MENU_TYPE.MODULE,
       name: searchValue
     });
-    const tree = constructTree(res?.result || []);
+    const { menuList: tree, expandedKeysInMenu } = constructTree(res?.result || []);
     setMenusData(tree);
+    setDefExpandedKeys(expandedKeysInMenu);
   };
   const handleSelect = (selectedKeys, {
     selected
@@ -62,6 +70,11 @@ const MenuTree: React.FC<IMeunsTree> = (props: IMeunsTree) => {
   const handleSearch = (value) => {
     getMenusListData(value);
   };
+  const onExpand = () => {
+    console.log(expandedKeys);
+    setExpandedKeys(expandedKeys.length > 0 ? [] : defExpandedKeys);
+  };
+  // return React.useMemo(() => {
   return (
     <>
       <Search
@@ -72,14 +85,31 @@ const MenuTree: React.FC<IMeunsTree> = (props: IMeunsTree) => {
         className="border-solid border-gray-400 w-full p-2"
         style={{ borderWidth: '1px' }}
       >
+        <div style={{ height: 20 }}>
+          {
+            expandedKeys.length > 0
+              ? <CompressOutlined
+                className = "float-right"
+                onClick={onExpand}
+              /> : <DragOutlined
+                className = "float-right"
+                onClick={onExpand}
+              />
+          }
+        </div>
         <Tree
-          height={300}
+          expandedKeys = {expandedKeys}
+          height={283}
           treeData={menusData}
           onSelect={handleSelect}
+          onExpand = {(expandedKeysTmpl) => {
+            setExpandedKeys(expandedKeysTmpl);
+          }}
         />
       </div>
     </>
   );
+  // }, [expandTree]);
 };
 
 const PageList: React.FC<IPageSelect> = React.memo((props: IPageSelect) => {
@@ -108,6 +138,8 @@ const PageList: React.FC<IPageSelect> = React.memo((props: IPageSelect) => {
       onSearch={handleSearch}
     />
     <List
+      className="overflow-auto"
+      style={{ height: 300 }}
       size="small"
       bordered
       dataSource={pageList}
@@ -128,13 +160,13 @@ const PageList: React.FC<IPageSelect> = React.memo((props: IPageSelect) => {
 });
 const SelectPage: React.FC<ISelectPage> = (props: ISelectPage) => {
   const {
-    pageLink, onCancel, onOk
+    currentPage, onCancel, onOk
   } = props;
   const [moduleId, setModuleId] = useState<string>('');
   const [page, setPage] = useState({ pageLink: '', pageName: '' });
   useEffect(() => {
-    setPage({ pageLink, pageName: '' });
-  }, [pageLink]);
+    setPage(currentPage);
+  }, [currentPage.pageLink, currentPage.pageName]);
   const handleSelectModule = (module) => {
     const moduleIdTmpl = module === SELECT_ALL ? '' : module;
     setModuleId(moduleIdTmpl);
@@ -148,6 +180,7 @@ const SelectPage: React.FC<ISelectPage> = (props: ISelectPage) => {
   };
 
   const handleOk = () => {
+    console.log(page);
     onOk(page);
   };
   const handleCancel = () => {
@@ -155,13 +188,13 @@ const SelectPage: React.FC<ISelectPage> = (props: ISelectPage) => {
   };
   return React.useMemo(() => {
     return (
-      <div style={{ height: '400px' }}>
-        <div className="float-left w-2/5">
+      <div className="select-page-modal">
+        <div className="float-left w-2/5" style={{ height: 350 }}>
           <MenuTree
             onSelect={handleSelectModule}
           />
         </div>
-        <div className="float-left w-3/5 pl-3">
+        <div className="float-left w-3/5 pl-3" style={{ height: 350 }}>
           <PageList
             moduleId = {moduleId}
             pageLink={page.pageLink}

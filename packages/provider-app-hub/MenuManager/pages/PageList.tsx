@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import {
   Button, Form, Select, Input, Switch
 } from "antd";
+import { CompressOutlined, DragOutlined } from '@ant-design/icons';
 import { ColumnsType } from "antd/lib/table";
 import dayjs from "dayjs";
 import {
@@ -16,7 +17,7 @@ import {
   delMenuServices, getMenuListServices, getPageListServices, editMenuServices, setMenuStatusServices, addMenuServices
 } from "../services/apis";
 import {
-  ICONS, SAVE_TYPE, MENU_OPTIONS, MESSAGE, API_CODE, NOTIFICATION_TYPE, BUTTON_TYPE, BUTTON_SIZE, MENU_TYPE, MENU_KEY
+  NAME_REG, MAX_LEVEL, ICON_DEFAULTVALUE, SAVE_TYPE, MENU_OPTIONS, MESSAGE, API_CODE, NOTIFICATION_TYPE, BUTTON_TYPE, BUTTON_SIZE, MENU_TYPE, MENU_KEY
 } from '../constants';
 
 import { IconAppointed, SelectIcon } from './SelectIcon';
@@ -88,10 +89,10 @@ const PageChoose: React.FC<IPageChoose> = (props: IPageChoose) => {
   const {
     record, formRef, text, selectPage
   } = props;
-  const canIEdit = (getFieldValue) => {
-    const isEditable = record.editable;
+  const canIEdit = (getFieldValue, recordTmpl) => {
+    const { editable } = recordTmpl;
     const isPage = getFieldValue(MENU_KEY.TYPE) === MENU_TYPE.PAGE;
-    return isEditable && isPage;
+    return editable && isPage;
   };
   const handleClick = (e) => {
     e.stopPropagation();
@@ -106,7 +107,7 @@ const PageChoose: React.FC<IPageChoose> = (props: IPageChoose) => {
       noStyle
     >
       {({ getFieldValue }) => {
-        const editable = canIEdit(getFieldValue);
+        const editable = canIEdit(getFieldValue, record);
         return editable ? (
           <Form.Item
             name={MENU_KEY.PAGENAME}
@@ -128,7 +129,7 @@ const PageChoose: React.FC<IPageChoose> = (props: IPageChoose) => {
 
 const Icon: React.FC<IIcon> = (props: IIcon) => {
   const {
-    record, formRef, onSelect
+    record, formRef, onSelect, className
   } = props;
   const handleClick = (e, iconType) => {
     e.stopPropagation();
@@ -136,16 +137,13 @@ const Icon: React.FC<IIcon> = (props: IIcon) => {
     onSelect(iconType);
   };
   const getIconKey = (getFieldValue) => {
-    if (record.editable) {
-      const key = getFieldValue(MENU_KEY.ICON);
-      if (key) return key;
-      const type = getFieldValue(MENU_KEY.TYPE);
-      return type === MENU_TYPE.MODULE ? ICONS.FAFOLDER : ICONS.FAFILEAT;
-    }
-    const key = record[MENU_KEY.ICON];
-    if (key) return key;
-    const type = record[MENU_KEY.TYPE];
-    return type === MENU_TYPE.MODULE ? ICONS.FAFOLDER : ICONS.FAFILEAT;
+    return record.editable ? getFieldValue(MENU_KEY.ICON) : record[MENU_KEY.ICON];
+  };
+  const getClassName = (editable) => {
+    const classList = className.split(' ');
+    classList.push('w-6');
+    editable && classList.push('cursor-pointer');
+    return classList.join(' ');
   };
   return (
     <Form.Item
@@ -156,7 +154,7 @@ const Icon: React.FC<IIcon> = (props: IIcon) => {
         const key = getIconKey(getFieldValue);
         return (
           <div
-            className="text-xl w-6"
+            className={getClassName(record.editable)}
             onClick={(e) => { handleClick(e, key); }}
           >
             <IconAppointed
@@ -171,24 +169,40 @@ const Icon: React.FC<IIcon> = (props: IIcon) => {
 };
 
 const getListColumns = ({
-  onDel,
-  onAddChild,
   formRef,
   editingKey,
+  expandedRowKeys,
+  onDel,
+  onAddChild,
   selectPage,
-  selectIcon
+  selectIcon,
+  onExpand
 }): ColumnsType => [
   {
     key: MENU_KEY.NAME,
     dataIndex: MENU_KEY.NAME,
-    title: '菜单名称',
+    title: () => {
+      const ExpandIcon = expandedRowKeys.length > 0 ? CompressOutlined : DragOutlined;
+      return (
+        <>
+          {'菜单名称'}
+          <ExpandIcon
+            onClick={onExpand}
+            className="text-2xl ml-1"
+            style={{
+              verticalAlign: 'baseline'
+            }}
+          />
+        </>);
+    },
     ellipsis: { showTitle: true },
     width: 200,
     render: (text, record, index) => {
       return record.editable ? (
         <Form.Item
           rules={[
-            { required: true, message: '菜单名称必填' },
+            { required: true, message: MESSAGE.NAME_REGUIRED },
+            { pattern: NAME_REG, message: MESSAGE.NAME_REG_FAILED },
           ]}
           name={MENU_KEY.NAME}
         >
@@ -197,7 +211,16 @@ const getListColumns = ({
             onClick={(e) => e.stopPropagation()}
           />
         </Form.Item>
-      ) : text;
+      ) : (
+        <>
+          <Icon
+            className="float-left text-base mt-1"
+            formRef = {formRef}
+            record = {record}
+            onSelect = {selectIcon}
+          /> <span>{text}</span>
+        </>
+      );
     }
   },
   {
@@ -206,9 +229,12 @@ const getListColumns = ({
     title: '类型',
     width: 120,
     render: (text, record, index) => {
-      const { editable, createdCustomed, type } = record;
+      const {
+        editable, createdCustomed, type, level
+      } = record;
       const isPage = type === MENU_TYPE.PAGE;
-      const rule = (createdCustomed || isPage) && editable;
+      const isMaxLevel = level === MAX_LEVEL;
+      const rule = (createdCustomed || isPage) && editable && !isMaxLevel;
       return rule ? (
         <MenuSelect name="type"/>
       ) : getlabelByMenuList(MENU_OPTIONS, text);
@@ -236,6 +262,7 @@ const getListColumns = ({
     render: (text, record) => {
       return (
         <Icon
+          className="text-xl"
           formRef = {formRef}
           record = {record}
           onSelect = {selectIcon}
@@ -294,20 +321,20 @@ const getListColumns = ({
     title: '操作',
     render: (text, record) => {
       const {
-        id, createdCustomed
+        id, createdCustomed, level
       } = record;
       return (
-        <>
+        <div className="page-list-operate-area">
           {!createdCustomed && !editingKey && record[MENU_KEY.TYPE] === MENU_TYPE.MODULE ? (<span
             className="link-btn"
             onClick={(e) => {
-              onAddChild({ id });
+              onAddChild({ id, level });
             }}
           >
             子项
           </span>) : null}
           <span
-            className="link-btn ml10"
+            className="link-btn"
             onClick={(e) => {
               e.stopPropagation();
               deleteConfirm({
@@ -330,7 +357,7 @@ const getListColumns = ({
           >
             删除
           </span>
-        </>
+        </div>
       );
     },
   },
@@ -341,6 +368,8 @@ type UseListData = () => [any[], () => void]
 interface IState {
   menuList: IMenu[],
   menuMap: any,
+
+  allExpandedKeysInMenu: string[],
   searchArea: {
     type: string
     name: string
@@ -354,6 +383,7 @@ class MenuList extends React.Component {
   state: IState = {
     menuList: [],
     menuMap: {},
+    allExpandedKeysInMenu: [],
     searchArea: {
       type: '',
       name: ''
@@ -368,15 +398,32 @@ class MenuList extends React.Component {
 
   editMenuFormRef = React.createRef<FormInstance>();
 
+  getNodeDefIcon = (type) => {
+    return type === MENU_TYPE.MODULE ? ICON_DEFAULTVALUE.MODULE : ICON_DEFAULTVALUE.PAGE;
+  };
+
   constructTree = (nodes) => {
     const treeMap = {};
     const treeList = [];
-    nodes.forEach((node) => { node && (treeMap[node[MENU_KEY.ID]] = node); });
+    const allExpandedKeys = [];
+    const _this = this;
+    nodes.forEach((node) => {
+      if (!node) return;
+      const {
+        [MENU_KEY.ID]: id,
+        [MENU_KEY.ICON]: icon,
+        [MENU_KEY.TYPE]: type
+      } = node;
+      treeMap[id] = node;
+      // 拼记录的默认 icon
+      node[MENU_KEY.ICON] = icon || this.getNodeDefIcon(type);
+    });
     nodes.forEach((node) => {
       if (node) {
         const { [MENU_KEY.ID]: id, [MENU_KEY.PID]: pid } = node;
         const parent = treeMap[pid];
         if (parent) {
+          !allExpandedKeys.includes(pid) && allExpandedKeys.push(pid);
           !parent[MENU_KEY.CHILDREN] && (parent[MENU_KEY.CHILDREN] = []);
           parent[MENU_KEY.CHILDREN].push(node);
         } else {
@@ -386,7 +433,8 @@ class MenuList extends React.Component {
     });
     return {
       list: treeList,
-      map: treeMap
+      map: treeMap,
+      allExpandedKeys
     };
   }
 
@@ -411,10 +459,11 @@ class MenuList extends React.Component {
         openNotification(NOTIFICATION_TYPE.ERROR, MESSAGE.GET_MENU_LIST_FAILED);
         return;
       }
-      const { list: menuList, map: menuMap } = this.constructTree(res.result);
+      const { list: menuList, map: menuMap, allExpandedKeys: allExpandedKeysInMenu } = this.constructTree(res.result);
       this.setState({
         menuList,
-        menuMap
+        menuMap,
+        allExpandedKeysInMenu
       });
     });
   }
@@ -425,14 +474,20 @@ class MenuList extends React.Component {
 
   handleSearch = () => {
     const searchArea = this.searchFormRef.current?.getFieldsValue([MENU_KEY.NAME, MENU_KEY.TYPE]);
-    this.setState({ searchArea }, () => {
+    this.setState({
+      searchArea,
+      expandedRowKeys: []
+    }, () => {
       this.getMenuList();
     });
   }
 
   handleClear = () => {
     this.searchFormRef.current?.resetFields();
-    this.setState({ searchArea: {} }, () => {
+    this.setState({
+      searchArea: {},
+      expandedRowKeys: []
+    }, () => {
       this.getMenuList();
     });
   }
@@ -462,13 +517,24 @@ class MenuList extends React.Component {
       [MENU_KEY.GMTMODIFIED]: '',
       [MENU_KEY.CREATEUSERNAME]: '',
       [MENU_KEY.STATUS]: MENU_TYPE.MODULE,
+      [MENU_KEY.ICON]: ICON_DEFAULTVALUE.MODULE,
+      [MENU_KEY.LEVEL]: 0,
       ...recordDefault
     };
     return record;
   }
 
-  createChildRow = ({ id: pid }) => {
-    const newRecord = this.createMenu({ pid });
+  createChildRow = ({ id: pid, level: levelParent }) => {
+    const menuDef = { pid };
+    if (levelParent === 4) {
+      Object.assign(menuDef, {
+        [MENU_KEY.TYPE]: MENU_TYPE.PAGE,
+        [MENU_KEY.LEVEL]: MAX_LEVEL,
+        [MENU_KEY.ICON]: ICON_DEFAULTVALUE.PAGE
+      });
+    }
+    const newRecord = this.createMenu(menuDef);
+    console.log(newRecord);
     const parentRecord = this.getRecordByRowKey(pid);
     /** 加数据 */
     parentRecord.children = [newRecord, ...(parentRecord.children || [])];
@@ -651,18 +717,20 @@ class MenuList extends React.Component {
     } = this.state;
     const columns = getListColumns({
       formRef: this.editMenuFormRef,
+      editingKey: this.state.editingKey,
+      expandedRowKeys,
       onDel: (record) => {
         this.deleteRow(record);
         this.setState({
           editingKey: ''
         });
+        this.getMenuList();
       this.editMenuFormRef.current?.resetFields();
       },
       onAddChild: (param) => {
         /** 找到对应的父级id */
         this.createChildRow(param);
       },
-      editingKey: this.state.editingKey,
       selectPage: (selectedPageLink) => {
         this.setState({
           visibleModalSelectPage: true
@@ -671,6 +739,11 @@ class MenuList extends React.Component {
       selectIcon: (iconType) => {
         this.setState({
           visibleModalSelectIcon: true
+        });
+      },
+      onExpand: () => {
+        this.setState({
+          expandedRowKeys: expandedRowKeys.length === 0 ? this.state.allExpandedKeysInMenu : []
         });
       }
     });
@@ -707,6 +780,7 @@ class MenuList extends React.Component {
           </Button>
         </Form>
         <Table
+          className="mt-2"
           ref="referenceList"
           expandable = {{
             expandedRowKeys,
@@ -720,12 +794,17 @@ class MenuList extends React.Component {
           }}
           rowKey="id"
           formRef={this.editMenuFormRef}
-          changeValue = {(changeValues, allValues) => {
-            if ((MENU_KEY.TYPE in changeValues) && changeValues[MENU_KEY.TYPE] === MENU_TYPE.MODULE) {
+          changeValue = {(changeValues) => {
+            if (MENU_KEY.TYPE in changeValues) {
               this.editMenuFormRef.current?.setFieldsValue({
-                [MENU_KEY.PAGELINK]: '',
-                [MENU_KEY.PAGENAME]: '',
+                [MENU_KEY.ICON]: this.getNodeDefIcon(this.editMenuFormRef.current?.getFieldValue(MENU_KEY.TYPE))
               });
+              if (changeValues[MENU_KEY.TYPE] === MENU_TYPE.MODULE) {
+                this.editMenuFormRef.current?.setFieldsValue({
+                  [MENU_KEY.PAGELINK]: '',
+                  [MENU_KEY.PAGENAME]: '',
+                });
+              }
             }
           }}
           title="菜单列表"
@@ -755,7 +834,10 @@ class MenuList extends React.Component {
           >
 
             <SelectPage
-              pageLink = {this.editMenuFormRef.current?.getFieldValue(MENU_KEY.PAGELINK)}
+              currentPage = {{
+                pageLink: this.editMenuFormRef.current?.getFieldValue(MENU_KEY.PAGELINK),
+                pageName: this.editMenuFormRef.current?.getFieldValue(MENU_KEY.PAGENAME)
+              }}
               type="selectPage"
               onOk={({ pageName, pageLink }) => {
                 this.setState({ visibleModalSelectPage: false });
@@ -774,7 +856,7 @@ class MenuList extends React.Component {
           >
 
             <SelectIcon
-              currentIon = {this.editMenuFormRef.current?.getFieldValue(MENU_KEY.ICON)}
+              currentIcon = {this.editMenuFormRef.current?.getFieldValue(MENU_KEY.ICON)}
               type="selectIcon"
               onOk={(icon) => {
                 this.setState({ visibleModalSelectIcon: false });
