@@ -115,32 +115,74 @@ const CreatePopupWindow: React.FC<IProps> = (props: IProps) => {
       selectCount: 0,
       enable: 1,
     };
-    console.log(showType);
-    console.log(SHOW_TYPE.TABLE);
-    console.log(SHOW_TYPE.TREE);
+
     if (showType === SHOW_TYPE.TABLE) {
       Object.assign(params, {
         tablePopupWindowDetail: {
-          popupWindowId: 1234,
+          createdBy: 0,
           datasource,
-          datasourceType: 'DB',
-          returnValue,
-          returnText,
-          sortColumnInfo: 'STR1',
-          showColumn: 'STR2',
+          datasourceType: 'TABLE',
+          deleteFlag: 0,
+          gmtCreate: "",
+          gmtModified: "",
+          id: 0,
+          modifiedBy: 0,
+          returnText: 0,
+          returnValue: 0,
+          showColumn: "",
+          sortColumnInfo: ""
         }
       });
     }
     if (showType === SHOW_TYPE.TREE) {
       Object.assign(params, {
         treePopupWindowDetail: {
-          popupWindowId: 1234,
+          createdBy: 0,
           datasource,
           datasourceType: 'TREE',
-          returnValue,
-          returnText,
-          sortColumnInfo: 'STR1',
-          showColumn: 'STR2',
+          deleteFlag: 0,
+          gmtCreate: 0,
+          gmtModified: 0,
+          id: 0,
+          modifiedBy: 0,
+          relatedSuperiorColumn: 0,
+          returnText: 0,
+          returnValue: 0,
+          showColumn: 0,
+          showSearch: 0,
+          sortColumnInfo: 0,
+          superiorColumn: 0
+        }
+      });
+    }
+
+    if (showType === SHOW_TYPE.LEFT_TREE_RIGHT_TABLE) {
+      Object.assign(params, {
+        treeTablePopupWindowDetail: {
+          createdBy: 0,
+          deleteFlag: 0,
+          gmtCreate: 0,
+          gmtModified: 0,
+          id: 0,
+          modifiedBy: 0,
+          popupWindowId: 0,
+          showSearch: 0,
+          tableDatasource: 0,
+          tableDatasourceType: 0,
+          tableReturnText: 0,
+          tableReturnValue: 0,
+          tableShowColumn: 0,
+          tableSortInfo: 0,
+          tableTreeRelatedColumn: 0,
+          treeDatasource: 0,
+          treeDatasourceType: 0,
+          treeRelatedSuperiorColumn: 0,
+          treeReturnText: 0,
+          treeReturnValue: 0,
+          treeShowColumn: 0,
+          treeSortInfo: 0,
+          treeSuperiorColumn: 0,
+          version: 0
         }
       });
     }
@@ -238,11 +280,15 @@ const CreatePopupWindow: React.FC<IProps> = (props: IProps) => {
           }}
         </Form.Item>
         <PopupWindowTable
+          editData = {props.editData}
           form={form}
           label="数据源"
+          name = 'datasource'
+          code='datasource'
           text = 'datasource'
         />
         <PopupWindowField
+          {...props}
           label = "返回值"
           code='returnValue'
           form={form}
@@ -251,6 +297,7 @@ const CreatePopupWindow: React.FC<IProps> = (props: IProps) => {
 
         />
         <PopupWindowField
+          {...props}
           label = "返回文本"
           code='returnText'
           form={form}
