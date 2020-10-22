@@ -1,5 +1,5 @@
 import { FoundationType, TypeOfIUBDSL, ComplexType } from "@iub-dsl/definition";
-import { ActionFlowKeywork } from "@iub-dsl/definition/actions/action-flow";
+import { ActionFlowKeywork } from "@iub-dsl/definition/actions/action-flow.bak";
 import { ApbFunction } from "../../apb-dsl";
 
 /**
@@ -15,6 +15,52 @@ import { ApbFunction } from "../../apb-dsl";
  * 7. 每个单元格可以显示不同的内容
  */
 
+/** 树 / 多重嵌套 */
+const dId7 = { // 位置管理表格数据
+  type: ComplexType.structArray,
+  refTable: 'tableId1', // 整个结构引用得表
+  desc: '位置管理表格数据',
+  struct: {
+    // 普通字段
+    sdId1: {
+      type: FoundationType.string,
+      desc: '位置名字',
+      fieldMapping: 'tableId1.filedId2',
+    },
+    // 复杂结构引用
+    sdId3: {
+      type: ComplexType.structObject,
+      desc: '上级位置',
+      fieldMapping: 'tableId1.filedId3', // 原表字段
+      refTable: 'tableId2', // 复杂结构引用的表
+      // TODO: 使用关系描述处理
+      struct: {
+        ssdId0: {
+          type: FoundationType.string,
+          fieldMapping: 'tableId2.filedId1',
+          compTag: 'value', // 对外有映射的字段
+        },
+        ssdId1: {
+          type: FoundationType.string,
+          desc: '上级位置名字',
+          fieldMapping: 'tableId2.filedId2',
+          compTag: 'show',
+        },
+        // 多重引用
+        ssdId2: {
+          type: ComplexType.structObject,
+          fieldMapping: 'tableId2.filedId3',
+          refTable: 'tableId2',
+          struct: {}
+        },
+        // 树形引用
+        ssdId3: {
+          type: 'structTreeArr',
+        }
+      }
+    }
+  }
+};
 export const testSchemas = {
   dId0: { // 表单隐藏的 ID
     type: FoundationType.string,
@@ -167,7 +213,8 @@ export const testSchemas = {
         }
       },
     }
-  }
+  },
+  dId7
 };
 
 const IUBLocationForm: TypeOfIUBDSL = {

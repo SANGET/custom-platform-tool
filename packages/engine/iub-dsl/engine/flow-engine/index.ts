@@ -1,3 +1,1 @@
-import flow from './flow';
-
-export default flow;
+export * from './flow';

@@ -1,6 +1,7 @@
 import IUBDSLParser from './IUBDSLParser';
 import IUBDSLRuntimeContainer from './IUBDSLRuntimeContainer';
 
+/** 全局配置, 依赖检查, 留坑 */
 function dependencyInspect(): boolean {
   return true;
 }
@@ -12,6 +13,20 @@ export {
   IUBDSLParser,
   IUBDSLRuntimeContainer
 };
+
+/**
+ * 整理思路 2020-10-09
+ * 1. 解析、运行 、「预备」 「可以是个伪命题都在同一时刻」 TODO: 更新props
+ * 2. schemas: 作用, 基础的页面store. 职能, 获取和修改store
+ * 3. widget:
+ *  1. 生成实际渲染的结构
+ *  2. 赋值props
+ * 4. 事件/动作/流程:
+ *  1.事件包装器, 标准化事件执行上下文
+ *  2. 流程执行上下文
+ *  3. 单个动作执行上下文
+ *
+ */
 
 // TODO: 流程控制 这问题?
 // 联动: 数据结构+数据收集器 --> 查到数据 --> 按照数据结构写入数据

@@ -1,4 +1,4 @@
-import { BasicActionConf } from "..";
+import { BasicActionConf } from '../action';
 
 // 改变页面运行时状态 [可对应: 回填、输入、赋值给控件、联动的动作的赋值部分]
 const testStruct = {
@@ -15,13 +15,17 @@ const testStruct = {
   conition: {},
 };
 
+export type UpdateStateActionType = 'updateState'
 /** 动作更新运行时状态、 控件赋值 */
 export interface UpdateState extends BasicActionConf {
-  type: 'updateState';
-  /** 方式1: A To B 的映射 */
-  changeMapping?: {
-    [mapFrom: string]: string;
-  }
-  /** 方式2: 根据目标信息, 反向映射「如: schemas的描述/数据收集关系」 */
-  changeTarget?: string;
+  actionType: UpdateStateActionType;
+  actionOptions: {
+    /** 方式1: A To B 的映射 */
+    changeMapping?: {
+      [mapFrom: string]: string;
+    }
+    /** 方式2: 根据目标信息, 反向映射「如: schemas的描述/数据收集关系」 */
+    changeTarget?: string;
+  };
+  actionOutput: 'undefined';
 }

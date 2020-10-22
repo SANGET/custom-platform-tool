@@ -1,40 +1,30 @@
 /* eslint-disable no-param-reassign */
-import React, {
-  useState, useLayoutEffect, useEffect, useContext,
-  useRef, useReducer,
-  Dispatch, SetStateAction, useCallback
-} from 'react';
+import { useMemo } from 'react';
 import {
   get as LGet, set as LSet, defaultsDeep, cloneDeep
 } from 'lodash';
 import { CommonObjStruct } from '@iub-dsl/definition';
 import { SchemasAnalysisRes } from './analysis/i-analysis';
+import { useCacheState } from '../utils';
+import { isPageState, pickPageStateKeyWord } from './const';
 
 type GetParam = string | {
   [str: string]: GetParam;
 } | GetParam[]
 
-/** useState增强 */
-const useSetState: <S>(
-  init: S | (() => S)
-) => [S, Dispatch<SetStateAction<S>>] = (initialValueOrFn) => {
-  const [state, set] = useState(initialValueOrFn);
-  const setState = useCallback(
-    (patch) => {
-      const isPatchFunc = patch instanceof Function;
-      set((prevState) => Object.assign({}, prevState, isPatchFunc ? patch(prevState) : patch));
-    },
-    [set],
-  );
-  return [state, setState];
-};
-
 // TODO
-const getFullInitStruct = (baseStruct: CommonObjStruct) => {
+const getFullInitStruct = ({ baseStruct, pathMapInfo }: {
+  baseStruct: CommonObjStruct,
+  pathMapInfo: any
+}) => {
   return Object.keys(baseStruct).reduce((result, key) => {
     if (typeof baseStruct[key] === 'string') {
+      // result[key] = key;
       result[key] = baseStruct[key];
-    } else if (Array.isArray(baseStruct[key])) {
+    } else if (
+      pathMapInfo[key]?.structType === 'structArray'
+      // Array.isArray(baseStruct[key])
+    ) {
       result[key] = [];
     } else {
       result[key] = getFullInitStruct(baseStruct[key]);
@@ -43,28 +33,63 @@ const getFullInitStruct = (baseStruct: CommonObjStruct) => {
   }, {});
 };
 
+/** TODO: 跨页面问题 */
 export const createIUBStore = (analysisData: SchemasAnalysisRes) => {
   const { levelRelation, pathMapInfo, baseStruct } = analysisData;
 
-  const fullStruct = getFullInitStruct(baseStruct);
-
+  const fullStruct = getFullInitStruct({ baseStruct, pathMapInfo });
   return () => {
-    const [IUBPageStore, setIUBPageStore] = useSetState(fullStruct);
+    const [IUBPageStore, setIUBPageStore] = useCacheState(fullStruct);
 
-    // useLayoutEffect(() => {
-    // }, []);
-
-    const getPageState = () => {
+    /** 放到里面会锁定, 放到外面会一直被重新定义 */
+    const getPageState = (strOrStruct?) => {
+      if (typeof strOrStruct === 'string') {
+        if (isPageState(strOrStruct)) {
+          return LGet(IUBPageStore, pickPageStateKeyWord(strOrStruct), '');
+        }
+        // console.warn('stateManage: 非schemas描述');
+        // TODO
+        return strOrStruct;
+      }
+      if (Array.isArray(strOrStruct)) {
+        return strOrStruct.map((newStruct) => getPageState(newStruct));
+      }
+      if (typeof strOrStruct === 'object') {
+        const structKeys = Object.keys(strOrStruct);
+        return structKeys.reduce((result, key) => {
+          result[key] = getPageState(strOrStruct[key]);
+          return result;
+        }, {});
+      }
       return IUBPageStore;
     };
+    const getWatchDeps = getPageState;
 
-    const updatePageState = (newState: CommonObjStruct) => {
-      setIUBPageStore(newState);
-    };
+    const handleFn = useMemo(() => {
+      const targetUpdateState = (target, value) => {
+        target = pickPageStateKeyWord(target);
+        setIUBPageStore({
+          [target]: value
+        });
+      };
+
+      const updatePageState = (newState: CommonObjStruct) => {
+        setIUBPageStore(newState);
+      };
+
+      return {
+        updatePageState,
+        isPageState,
+        targetUpdateState,
+        pickPageStateKeyWord,
+      };
+    }, []);
 
     return {
       getPageState,
-      updatePageState
+      getWatchDeps,
+      ...handleFn,
+      IUBPageStore
     };
   };
 };

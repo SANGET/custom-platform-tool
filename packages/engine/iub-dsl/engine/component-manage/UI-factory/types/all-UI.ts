@@ -1,8 +1,9 @@
 export enum AllUI {
   Tootip = 'Tootip',
-  BaseInput = 'BaseInput',
+  NormalInput = 'NormalInput',
   FormItem = 'FormItem',
   FromWrap = 'FromWrap',
   WidgetError = 'WidgetError',
-  NormalTable = 'NormalTable'
+  NormalTable = 'NormalTable',
+  NormalButton = 'NormalButton',
 }
