@@ -74,7 +74,6 @@ const MenuTree: React.FC<IMeunsTree> = (props: IMeunsTree) => {
     console.log(expandedKeys);
     setExpandedKeys(expandedKeys.length > 0 ? [] : defExpandedKeys);
   };
-  // return React.useMemo(() => {
   return (
     <>
       <Search
@@ -109,7 +108,6 @@ const MenuTree: React.FC<IMeunsTree> = (props: IMeunsTree) => {
       </div>
     </>
   );
-  // }, [expandTree]);
 };
 
 const PageList: React.FC<IPageSelect> = React.memo((props: IPageSelect) => {
