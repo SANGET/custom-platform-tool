@@ -14,7 +14,7 @@ import CreateModal from '@provider-app/dictionary-manager/components/CreateModal
 import lodash from 'lodash';
 import SelectPage from './SelectPage';
 import {
-  delMenuServices, getMenuListServices, getPageListServices, editMenuServices, setMenuStatusServices, addMenuServices
+  delMenuServices, getMenuListServices, editMenuServices, setMenuStatusServices, addMenuServices
 } from "../services/apis";
 import {
   NAME_REG, MAX_LEVEL, ICON_DEFAULTVALUE, SAVE_TYPE, MENU_OPTIONS, MESSAGE, API_CODE, NOTIFICATION_TYPE, BUTTON_TYPE, BUTTON_SIZE, MENU_TYPE, MENU_KEY
@@ -25,6 +25,7 @@ import { IconAppointed, SelectIcon } from './SelectIcon';
 type IMenuType = MENU_TYPE.MODULE | MENU_TYPE.PAGE
 interface IMenu {
   id: string
+  pid: string
   editable?:boolean
   type: IMenuType
   pagelink: string
@@ -35,11 +36,16 @@ interface IMenu {
   createdUserName: string
   createdCustomed?: boolean
 }
+
 interface IMenuSelect {
   name: string
   className?: string
   placeholder?: string
 }
+/**
+ * 类型组件：
+ * 两种类型：页面，模块
+ */
 const MenuSelect: React.FC<IMenuSelect> = (props) => {
   const {
     name, className, placeholder
@@ -49,6 +55,7 @@ const MenuSelect: React.FC<IMenuSelect> = (props) => {
       className = {className}
       name = {name}
     >
+      {/* stopPropagation 可以避免触发行保存 */}
       <Select
         onClick = {(e) => e.stopPropagation()}
         onBlur = {(e) => e.stopPropagation()}
@@ -58,46 +65,45 @@ const MenuSelect: React.FC<IMenuSelect> = (props) => {
     </Form.Item>
   );
 };
+
 interface IPageChoose {
   record: IMenu,
   formRef: React.RefObject<FormInstance<any>>
   text: string
   selectPage: string
 }
-// const useDictionaryList: UseListData = (param) => {
-//   const [dictionaryList, setDictionaryList] = useState<{list: Idictionary[], total: number}>({ list: [mockDictionary], total: 1 });
-//   const getListData = (paramTmpl) => {
-//     const {
-//       name, description, offset, size
-//     } = paramTmpl;
-//     const requestParam = { offset, size };
-//     name && Object.assign(requestParam, { name });
-//     description && Object.assign(requestParam, { description });
-//     getDictionaryListServices(requestParam).then((dictionaryListRes) => {
-//       setDictionaryList({
-//         list: dictionaryListRes?.data,
-//         total: dictionaryListRes?.total
-//       });
-//     });
-//   };
-//   useEffect(() => {
-//     getListData(param);
-//   }, []);
-//   return [dictionaryList, getListData];
-// };
+/**
+ * 页面链接组件
+ * 非编辑状态显示页面名称（pageName）
+ * 编辑状态显示页面名称（pageName），提供点击功能——打开弹窗
+ */
 const PageChoose: React.FC<IPageChoose> = (props: IPageChoose) => {
   const {
     record, formRef, text, selectPage
   } = props;
-  const canIEdit = (getFieldValue, recordTmpl) => {
-    const { editable } = recordTmpl;
+
+  /**
+   * 判断页面链接是否可编辑——可编辑装填且菜单类型为页面
+   * @param getFieldValue form 方法，用于获取实时菜单类型
+   * @param editable 标明当前记录的编辑状态
+   */
+  const canEdit = (getFieldValue, editable) => {
     const isPage = getFieldValue(MENU_KEY.TYPE) === MENU_TYPE.PAGE;
     return editable && isPage;
   };
+  /**
+   * 点击弹窗：调用父组件方法，并告知当前页面链接，以在弹窗中回写
+   */
   const handleClick = (e) => {
     e.stopPropagation();
+    /** 必须是使用 form 方法获取的页面数据，因为 form 的数据不会同步到 record（如果进行实时同步则不能判断是否需要在用户保存时调用后台接口） */
     typeof selectPage === 'function' && selectPage(formRef.current?.getFieldValue(MENU_KEY.PAGELINK));
   };
+  /**
+   * 考虑到在可编辑状态下，页面链接也可能是不可编辑的（类型为模块），应该要区分显示
+   * @param editable 记录的可编辑状态
+   * @param getFieldValue
+   */
   const getText = (editable, getFieldValue) => {
     return editable ? (getFieldValue(MENU_KEY.PAGENAME)) : text;
   };
@@ -107,41 +113,61 @@ const PageChoose: React.FC<IPageChoose> = (props: IPageChoose) => {
       noStyle
     >
       {({ getFieldValue }) => {
-        const editable = canIEdit(getFieldValue, record);
-        return editable ? (
+        const { editable } = record;
+        const canIEdit = canEdit(getFieldValue, editable);
+        return canIEdit ? (
           <Form.Item
             name={MENU_KEY.PAGENAME}
             rules={[
               { required: true, message: '页面链接必填' },
             ]}
           >
+            {/* stopPropagation 可以避免触发行保存 */}
             <Input
               className="cursor-pointer"
+              readOnly
               onClick = {(e) => handleClick(e)}
               onBlur = {(e) => e.stopPropagation()}
             />
           </Form.Item>
-        ) : getText(record.editable, getFieldValue);
+        ) : getText(editable, getFieldValue);
       }}
     </Form.Item>);
   }, [record.editable, record.type]);
 };
 
+interface IIcon {
+  record: IMenu
+  onSelect?: (param: string) => void
+  className: string
+}
+/** 图标组件 */
 const Icon: React.FC<IIcon> = (props: IIcon) => {
   const {
-    record, formRef, onSelect, className
+    record, onSelect, className
   } = props;
+
+  /**
+   * 点击出现展示图标的弹窗
+   * @param e
+   * @param iconType 当前图标
+   */
   const handleClick = (e, iconType) => {
+    /** 不能执行行保存操作 */
     e.stopPropagation();
+    /** 由于没有实时保存图标的接口，则必须是记录可编辑下才能更改图标 */
     if (!record.editable) return;
-    onSelect(iconType);
+    /** 通知父组件，并提供数据以进行回写 */
+    onSelect?.(iconType);
   };
   const getIconKey = (getFieldValue) => {
     return record.editable ? getFieldValue(MENU_KEY.ICON) : record[MENU_KEY.ICON];
   };
-  const getClassName = (editable) => {
+  /** 由于菜单名称和图标列都需要展示图标，所以支持 className 设置 */
+  const getClassName = (editable: boolean) => {
     const classList = className.split(' ');
     classList.push('w-6');
+    /** 记录可编辑下切换鼠标样式标明可编辑图标 */
     editable && classList.push('cursor-pointer');
     return classList.join(' ');
   };
@@ -164,10 +190,10 @@ const Icon: React.FC<IIcon> = (props: IIcon) => {
         );
       }}
     </Form.Item>
-
   );
 };
 
+/** 编辑列配置 */
 const getListColumns = ({
   formRef,
   editingKey,
@@ -186,6 +212,7 @@ const getListColumns = ({
       return (
         <>
           {'菜单名称'}
+          {/* 缩放/展开菜单 */}
           <ExpandIcon
             onClick={onExpand}
             className="text-2xl ml-1"
@@ -206,6 +233,7 @@ const getListColumns = ({
           ]}
           name={MENU_KEY.NAME}
         >
+          {/* stopPropagation 可以避免触发行保存 */}
           <Input
             onBlur = {(e) => e.stopPropagation()}
             onClick={(e) => e.stopPropagation()}
@@ -213,11 +241,10 @@ const getListColumns = ({
         </Form.Item>
       ) : (
         <>
+          {/* 不可编辑状态下显示 菜单图标+菜单名称 */}
           <Icon
             className="float-left text-base mt-1"
-            formRef = {formRef}
             record = {record}
-            onSelect = {selectIcon}
           /> <span>{text}</span>
         </>
       );
@@ -232,10 +259,13 @@ const getListColumns = ({
       const {
         editable, createdCustomed, type, level
       } = record;
+      /** 类型为页面 */
       const isPage = type === MENU_TYPE.PAGE;
+      /** 模块层级最多为4层，即第5层只能是页面 */
       const isMaxLevel = level === MAX_LEVEL;
-      const rule = (createdCustomed || isPage) && editable && !isMaxLevel;
-      return rule ? (
+      /** 已经入库的数据，不能由模块切回页面，但可以由页面切回模块 */
+      const canIEdit = (createdCustomed || isPage) && editable && !isMaxLevel;
+      return canIEdit ? (
         <MenuSelect name="type"/>
       ) : getlabelByMenuList(MENU_OPTIONS, text);
     }
@@ -281,6 +311,7 @@ const getListColumns = ({
           unCheckedChildren="禁用"
           defaultChecked={record[MENU_KEY.STATUS]}
           onChange={(checked, event) => {
+            /** 避免触发行保存 */
             event.stopPropagation();
             /** 将数据实时存储，以保证调用“新增菜单”接口时，能将 staus 同时保存 */
             if (record[MENU_KEY.EDITABLE]) {
@@ -288,6 +319,7 @@ const getListColumns = ({
             }
             /** 如果还没有入库，则先不进行“更改状态”的接口调用 */
             if (record[MENU_KEY.CREATEDCUSTOMED]) return;
+            /** 实时变更状态 */
             setMenuStatusServices({
               id: record[MENU_KEY.ID],
               status: Number(checked)
@@ -297,7 +329,7 @@ const getListColumns = ({
               }
             });
           }}
-
+          /** 避免触发行保存 */
           onClick={(checked, event) => { event.stopPropagation(); }}
         />
       );
@@ -325,14 +357,18 @@ const getListColumns = ({
       } = record;
       return (
         <div className="page-list-operate-area">
-          {!createdCustomed && !editingKey && record[MENU_KEY.TYPE] === MENU_TYPE.MODULE ? (<span
-            className="link-btn"
-            onClick={(e) => {
-              onAddChild({ id, level });
-            }}
-          >
+          {/* 列表中没有编辑项（不能同时存在两行编辑数据），且当前类型为模块时，才能新增子项 */}
+          {!editingKey && record[MENU_KEY.TYPE] === MENU_TYPE.MODULE ? (
+            <span
+              className="link-btn"
+              onClick={(e) => {
+                /** 告知当前id，以从 menuMap 中找到对应 children 进行操作，level是为了保证，最多值能四层模块 */
+                onAddChild({ id, level });
+              }}
+            >
             子项
-          </span>) : null}
+            </span>
+          ) : null}
           <span
             className="link-btn"
             onClick={(e) => {
@@ -340,6 +376,7 @@ const getListColumns = ({
               deleteConfirm({
                 onOk: () => {
                   if (createdCustomed) {
+                    /** 删除后需要刷新列表数据 */
                     onDel(record);
                     return;
                   }
@@ -349,6 +386,7 @@ const getListColumns = ({
                       return;
                     }
                     openNotification(NOTIFICATION_TYPE.SUCCESS, MESSAGE.DEL_MENU_SUCCESS);
+                    /** 删除后需要刷新列表数据 */
                     onDel(record);
                   });
                 }
@@ -381,32 +419,39 @@ interface IState {
 }
 class MenuList extends React.Component {
   state: IState = {
+    /** 列表数据 */
     menuList: [],
+    /** 以 id（唯一标识）为 key，对应记录为 value 的 map，主要用于定位子项的增删改 */
     menuMap: {},
+    /** 用于实现全部数据的展开/收缩 */
     allExpandedKeysInMenu: [],
     searchArea: {
       type: '',
       name: ''
     },
+    /** 当前编辑行唯一标识 */
     editingKey: '',
+    /** 维护当前列表的展开项 */
     expandedRowKeys: [],
     visibleModalSelectPage: false,
     visibleModalSelectIcon: false
   }
 
+  /** 搜索框表单 */
   searchFormRef = React.createRef<FormInstance>();
 
+  /** 列表数据对应编辑表单 */
   editMenuFormRef = React.createRef<FormInstance>();
 
   getNodeDefIcon = (type) => {
     return type === MENU_TYPE.MODULE ? ICON_DEFAULTVALUE.MODULE : ICON_DEFAULTVALUE.PAGE;
   };
 
-  constructTree = (nodes) => {
+  /** 对请求回来的菜单列表数据，进行转化 */
+  constructTree = (nodes: IMenu[]) => {
     const treeMap = {};
-    const treeList = [];
-    const allExpandedKeys = [];
-    const _this = this;
+    const treeList: IMenu[] = [];
+    const allExpandedKeys: string[] = [];
     nodes.forEach((node) => {
       if (!node) return;
       const {
@@ -414,15 +459,17 @@ class MenuList extends React.Component {
         [MENU_KEY.ICON]: icon,
         [MENU_KEY.TYPE]: type
       } = node;
+      /** 以 id（唯一标识）为 key，对应记录为 value 的 map，主要用于定位子项的增删改 */
       treeMap[id] = node;
       // 拼记录的默认 icon
       node[MENU_KEY.ICON] = icon || this.getNodeDefIcon(type);
     });
     nodes.forEach((node) => {
       if (node) {
-        const { [MENU_KEY.ID]: id, [MENU_KEY.PID]: pid } = node;
+        const { [MENU_KEY.PID]: pid } = node;
         const parent = treeMap[pid];
         if (parent) {
+          /** 用于实现全部数据的展开/收缩 */
           !allExpandedKeys.includes(pid) && allExpandedKeys.push(pid);
           !parent[MENU_KEY.CHILDREN] && (parent[MENU_KEY.CHILDREN] = []);
           parent[MENU_KEY.CHILDREN].push(node);
