@@ -196,7 +196,7 @@ class PageDesignerApp extends React.Component<VisualEditorAppProps & HY.Provider
     const {
       InitApp, UnmountApp, UpdateAppContext,
       SelectEntity, InitEntityState, UpdateEntityState,
-      SetLayoutInfo, DelEntity, AddEntity,
+      SetLayoutInfo, DelEntity, AddEntity, ChangeMetadata
     } = dispatcher;
     const { id: activeEntityID, entity: activeEntity } = selectedInfo;
 
@@ -241,11 +241,13 @@ class PageDesignerApp extends React.Component<VisualEditorAppProps & HY.Provider
                 <PropertiesEditor
                   key={activeEntityID}
                   propItemData={appContext.propItemData}
+                  pageMetadata={pageMetadata}
+                  ChangeMetadata={ChangeMetadata}
                   interDatasources={this.getDatasources()}
                   // eslint-disable-next-line max-len
                   widgetBindedPropItemsMeta={appContext?.widgetMetaDataCollection[activeEntity?._classID]?.bindPropItems}
                   selectedEntity={activeEntity}
-                  propPanelData={appContext.propPanelData}
+                  propItemGroupingData={appContext.propItemGroupingData}
                   defaultEntityState={activeEntity.propState}
                   initEntityState={(entityState) => InitEntityState(selectedInfo, entityState)}
                   updateEntityState={(entityState) => {

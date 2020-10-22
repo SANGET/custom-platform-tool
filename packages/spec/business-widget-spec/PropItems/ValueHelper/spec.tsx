@@ -2,7 +2,7 @@ import React from 'react';
 import { PropItemCompAccessSpec } from '@engine/visual-editor/data-structure';
 import { ValueHelper } from './comp';
 
-export const ValueHelperSpec: PropItemCompAccessSpec = (propItemCtx) => ({
+export const ValueHelperSpec: PropItemCompAccessSpec = {
   id: 'prop_real_value',
 
   label: '值',
@@ -19,4 +19,4 @@ export const ValueHelperSpec: PropItemCompAccessSpec = (propItemCtx) => ({
       />
     );
   }
-});
+};

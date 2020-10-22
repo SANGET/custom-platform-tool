@@ -6,6 +6,7 @@ import { TableMeta } from "./Table-meta";
 import { CustomMeta } from "./Custom-meta";
 import { DropdownSelectorMeta } from "./DropdownSelector-meta";
 import { TextareaMeta } from "./Textarea-meta";
+import { FormButtonMeta } from "./FormButton-meta";
 
 const tempArr = [
   FormInputMeta,
@@ -14,6 +15,7 @@ const tempArr = [
   CustomMeta,
   DropdownSelectorMeta,
   TextareaMeta,
+  FormButtonMeta,
 ];
 
 export const widgetMetadataCollection: WidgetTypeMetadataCollection = {

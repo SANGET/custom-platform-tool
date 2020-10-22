@@ -2,18 +2,27 @@ import { LayoutInfoActionReducerState } from "./layout";
 import { WidgetBindPropItemsType } from "./widget";
 
 /**
- * 页面的配置
+ * 页面的元数据
  */
 export interface PageMetadata {
   /** 记录最后一个创建的组件的 ID */
   lastCompID: number
   /** 记录数据源 */
-  dataSource
+  dataSource: {
+    [metaID: string]: PD.Datasources
+  }
+  /** 用于存储页面的表单的数据模型 */
+  schema: {
+    [metaID: string]: any
+  }
   /** 页面标准接口 */
-  pageInterface
+  pageInterface: {
+    [metaID: string]: any
+  }
   /** 联动配置 */
-  linkpage
-  name: string
+  linkpage: {
+    [metaID: string]: any
+  }
 }
 
 /**

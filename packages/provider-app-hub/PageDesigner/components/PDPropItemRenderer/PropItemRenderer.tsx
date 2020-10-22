@@ -1,10 +1,11 @@
 import React from 'react';
 import { PropItemRendererProps } from '@engine/visual-editor/components/PropertiesEditor/types';
-import { FXContainer } from './FXContainer';
+import { PropItemRenderContext } from '@engine/visual-editor/data-structure';
 import { Unexpect } from '../WidgetRenderer';
 
 interface PDPropItemRendererProps extends PropItemRendererProps {
   interDatasources
+  pageMetadata
 }
 
 /**
@@ -15,10 +16,21 @@ export const PropItemRenderer: React.FC<PDPropItemRendererProps> = ({
   interDatasources,
   propItemMeta,
   propItemValue,
+  pageMetadata,
   changeEntityState,
+  ChangeMetadata,
   ...other
 }) => {
-  const propItemRenderCtx = {
+  const propItemRenderCtx: PropItemRenderContext = {
+    takeMeta: (options) => {
+      const { metaAttr, metaRefID } = options;
+      return metaRefID ? pageMetadata[metaAttr]?.[metaRefID] : pageMetadata[metaAttr];
+    },
+    genMetaRefID: (metaAttr) => {
+      if (!metaAttr) throw Error('请传入 metaAttr，否则逻辑无法进行');
+      return String(Object.keys(pageMetadata[metaAttr]).length + 1);
+    },
+    changePageMeta: ChangeMetadata,
     interDatasources,
     changeEntityState,
     widgetEntityState: propItemValue,
