@@ -13,7 +13,7 @@ export interface NavigateConfig {
   /** 路由参数 */
   params?: NavParams
   /** 路由类型 */
-  type: 'PUSH' | 'GO_BACK' | 'LINK' | 'POP'
+  type: 'PUSH' | 'GO_BACK' | 'LINK' | 'POP' | 'ROOT'
   /** 需要跳转的路由，废弃的，需要换成 path */
   route?: string
   /** pathname */
@@ -118,6 +118,9 @@ export const onNavigate: OnNavigate = (config) => {
   switch (type) {
     case "PUSH":
       pushToHistory(`#/${wrapPushUrl(nextConfig)}`, stateForLocation);
+      break;
+    case "ROOT":
+      pushToHistory('/');
       break;
     case "LINK":
       break;

@@ -28,6 +28,7 @@ export interface VEAppDispatcher {
   InitApp: typeof AppActions['InitApp']
   UnmountApp: typeof AppActions['UnmountApp']
   UpdateAppContext: typeof AppActions['UpdateAppContext']
+  ChangeMetadata: typeof AppActions['ChangeMetadata']
 }
 
 /**

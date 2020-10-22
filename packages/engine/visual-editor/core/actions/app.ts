@@ -8,7 +8,7 @@ import { BasePageData } from "../../data-structure";
 
 interface AppActionsContext {
   widgetPanelData?
-  propPanelData?
+  propItemGroupingData?
   widgetMetaDataCollection?
   propItemData?
   pagePropsData?
@@ -58,5 +58,30 @@ export interface UnmountAppAction {
 export const UnmountApp = (): UnmountAppAction => {
   return {
     type: UNMOUNT_APP,
+  };
+};
+
+export const CHANGE_METADATA = 'app/change-metadata';
+
+export interface ChangeMetadataOptions {
+  /** 需要更改的 meta 的属性 */
+  metaAttr: string
+  /** 更改 meta 后的数据 */
+  data: unknown
+  /** 数据的引用 ID，如果不传，则创建一个新的 dataRefID */
+  dataRefID?: string
+}
+
+export interface ChangeMetadataAction extends ChangeMetadataOptions {
+  type: typeof CHANGE_METADATA
+}
+
+/**
+ * 初始化应用数据
+ */
+export const ChangeMetadata = (options: ChangeMetadataOptions): ChangeMetadataAction => {
+  return {
+    type: CHANGE_METADATA,
+    ...options
   };
 };

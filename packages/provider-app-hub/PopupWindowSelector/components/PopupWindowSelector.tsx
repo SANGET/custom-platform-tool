@@ -1,4 +1,6 @@
-import React, { useRef, useState, useEffect } from 'react';
+import React, {
+  useRef, useState, useEffect, useReducer
+} from 'react';
 import ProTable, { ProColumns } from '@hy/pro-table';
 import {
   Button, Modal, notification, Dropdown, Menu
@@ -6,15 +8,17 @@ import {
 import { FormInstance } from 'antd/lib/form';
 import { ExclamationCircleOutlined, DownOutlined } from '@ant-design/icons';
 import { onNavigate } from 'multiple-page-routing';
-import { queryPopupWindowListService, allowDeletePopupWindowService, deletePopupWindowService } from '../service';
 import {
-  COLUMNS, OPERATIONALMENU, SELECT_ALL, MORE_MENU, PAGE_SIZE_OPTIONS
+  queryPopupWindowListService, allowDeletePopupWindowService, deletePopupWindowService, queryPopupWindowService
+} from '../service';
+import {
+  COLUMNS, OPERATIONALMENU, SELECT_ALL, MORE_MENU, PAGE_SIZE_OPTIONS, IPopupWindow, IModalData
 } from '../constant';
 import Operational from './Operational';
 import { IStatus } from '../interface';
 import CreateModal from './CreateModal';
-import CreateTable from './CreatePopupWindow';
-import CopyTable from './CopyPopupWindow';
+import CreatePopupWindow from './CreatePopupWindow';
+import PreviewTable from './PreviewPopupWindow';
 
 const { confirm } = Modal;
 
@@ -28,19 +32,41 @@ interface ActionType {
   reset: () => void;
 }
 
-export interface ICopyData {
+export interface IPreviewData {
   id?: string;
   name?: string;
   code?: string;
 }
+/** 弹窗编辑的弹窗的数据操作 */
+const useModalConfig = () => {
+  const [modalConfig, setModalConfig] = useReducer((state, action) => {
+    if (action.type === 'changeSome') {
+      return {
+        ...state, ...action.name
+      };
+    }
+    return state;
+  }, {
+    modalVisible: false,
+    modalTitle: '',
+    showDictionaryConfig: true,
+    operateParam: {},
+    handleAft: () => {}
+  });
+  return [modalConfig, setModalConfig];
+};
 
 const PopupWindowSelector: React.FC<IProps> = (props: IProps, ref) => {
   let showType = "";
   const actionRef = useRef<ActionType>();
   const formRef = useRef<FormInstance>();
-  const [copyData = {}, setCopyData] = useState<ICopyData>();
-  const [visibleCopyModal, setVisibleCopyModal] = useState<boolean>(false);
-  const [visibleCrateTableModal, setVisibleCrateTableModal] = useState<boolean>(false);
+  const [previewData = {}, setPreviewData] = useState<IPreviewData>();
+  const [previewModalData = {}, setPreviewModalData] = useState<IModalData>();
+  const [editData = {}, setEditData] = useState<IPopupWindow>();
+  const [editModalData = {}, setEditModalData] = useState<IModalData>();
+  const [visiblePreviewModal, setVisiblePreviewModal] = useState<boolean>(false);
+  const [visibleCreateEditModal, setvisibleCreateEditModal] = useState<boolean>(false);
+  const [modalConfig, setModalConfig] = useModalConfig();
 
   const tableOperational: ProColumns = {
     title: '操作',
@@ -48,7 +74,7 @@ const PopupWindowSelector: React.FC<IProps> = (props: IProps, ref) => {
     fixed: 'right',
     hideInSearch: true,
     width: OPERATIONALMENU.length * 80,
-    render: (row, record, index) => <Operational data={record} onClick={handleTableOperational} />
+    render: (row, record, index) => <Operational data={record} onClick={handlePopupWindowOperational} />
   };
   const columns = [...COLUMNS, tableOperational];
   useEffect(() => {
@@ -99,22 +125,53 @@ const PopupWindowSelector: React.FC<IProps> = (props: IProps, ref) => {
       total: total || 0
     });
   };
-  const handleTableOperational = async (item) => {
+  const handlePopupWindowOperational = async (item) => {
     const {
       operate, id, name, code
     } = item;
     if (operate === "edit") {
+      if (!id) {
+        return;
+      }
+      queryPopupWindowService(id).then((res) => {
+      /** 如果接口没有提供提示信息 */
+        if (!res?.msg) {
+          openNotification('error', 'data error');
+        }
+        console.log(res);
+        setEditModalData({ modalTitle: '编辑弹窗', okText: '保存', });
+        setEditData(res?.result);
+        setvisibleCreateEditModal(true);
+      });
+
+      // setModalConfig({
+      //   title: '编辑字典', visible: true, isSub: false, isAddEditRow: false
+      // });
+
+      /*
       onNavigate({
         type: "PUSH",
         path: `/table-info`,
         pathExtend: id,
         params: { id, title: `编辑表_${name}` }
       });
+      */
     } else if (operate === "delete") {
-      checkBeforeDelete(id);
-    } else if (operate === "copy") {
-      setCopyData({ id, name, code });
-      setVisibleCopyModal(true);
+      // checkBeforeDelete(id);
+      deleteTableSingleLine(id);
+    } else if (operate === "preview") {
+      if (!id) {
+        return;
+      }
+      queryPopupWindowService(id).then((res) => {
+        /** 如果接口没有提供提示信息 */
+        if (!res?.msg) {
+          openNotification('error', 'data error');
+        }
+        setPreviewModalData({ modalTitle: '预览弹窗', okText: '保存', });
+        setPreviewData(res?.result);
+        setVisiblePreviewModal(true);
+      });
     }
   };
   const checkBeforeDelete = async (id: string) => {
@@ -160,11 +217,11 @@ const PopupWindowSelector: React.FC<IProps> = (props: IProps, ref) => {
     formRef.current?.resetFields();
   };
   const handleCratetTableOk = () => {
-    setVisibleCrateTableModal(false);
+    setvisibleCreateEditModal(false);
     proTableReload();
   };
-  const handleCopyTableOk = () => {
-    setVisibleCopyModal(false);
+  const handlePreviewTableOk = () => {
+    setVisiblePreviewModal(false);
     proTableReload();
   };
   const handleUpdataMenus = () => {
@@ -178,8 +235,13 @@ const PopupWindowSelector: React.FC<IProps> = (props: IProps, ref) => {
     }
   </Menu>;
   const renderToolBarRender = () => [
-    <Button key="3" type="primary" onClick={() => setVisibleCrateTableModal(true)}>
-      新建表
+    <Button
+      key="3" type="primary" onClick={() => {
+        setEditModalData({ modalTitle: '新建弹窗', okText: '开始创建弹窗' });
+        setvisibleCreateEditModal(true);
+      }}
+    >
+      新建弹窗
     </Button>,
     <Dropdown overlay={renderMenu}>
       <Button type="primary">
@@ -209,25 +271,28 @@ const PopupWindowSelector: React.FC<IProps> = (props: IProps, ref) => {
         }}
       />
       <CreateModal
-        title="新建数据表"
-        modalVisible={visibleCrateTableModal}
-        onCancel={() => setVisibleCrateTableModal(false)}
+        title={editModalData.modalTitle}
+        modalVisible={visibleCreateEditModal}
+        onCancel={() => setvisibleCreateEditModal(false)}
       >
-        <CreateTable
+        <CreatePopupWindow
           onOk={handleCratetTableOk}
-          onCancel={() => setVisibleCrateTableModal(false)}
+          onCancel={() => setvisibleCreateEditModal(false)}
           upDataMenus={handleUpdataMenus}
+          editData = {editData}
+          editModalData = {editModalData}
         />
       </CreateModal>
       <CreateModal
-        title="复制数据表"
-        modalVisible={visibleCopyModal}
-        onCancel={() => setVisibleCopyModal(false)}
+        title="预览弹窗"
+        modalVisible={visiblePreviewModal}
+        onCancel={() => setVisiblePreviewModal(false)}
       >
-        <CopyTable
-          data={copyData}
-          onOk={handleCopyTableOk}
-          onCancel={() => setVisibleCopyModal(false)}
+        <PreviewTable
+          previewModalData={previewModalData}
+          previewData={previewData}
+          onOk={handlePreviewTableOk}
+          onCancel={() => setVisiblePreviewModal(false)}
         />
       </CreateModal>
     </>

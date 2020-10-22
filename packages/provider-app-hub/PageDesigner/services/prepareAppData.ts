@@ -1,7 +1,7 @@
 import {
   getWidgetDefinitionData, getWidgetPanelData,
   getPagePropItems, getPropItemData,
-  getPropPanelData,
+  getPropItemGroupingData,
 } from "@spec/business-widget/mock-data";
 import { getPageDetailService } from "@provider-app/services";
 // import { getDataSourcePanelConfig } from "../components/DataSource";
@@ -30,18 +30,18 @@ export const getFEDynamicData = async () => {
     widgetPanelData,
     pagePropsData,
     propItemData,
-    propPanelData,
+    propItemGroupingData,
   ] = await Promise.all([
     getWidgetDefinitionData(),
     getWidgetPanelData(),
     getPagePropItems(),
     getPropItemData(),
-    getPropPanelData(),
+    getPropItemGroupingData(),
   ]);
 
   const FEDynamicData = {
     widgetPanelData,
-    propPanelData,
+    propItemGroupingData,
     widgetMetaDataCollection,
     propItemData,
     pagePropsData,

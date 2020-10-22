@@ -6,7 +6,7 @@
 import { RequestClass, resolveUrl } from "@mini-code/request";
 import { message as AntdMessage } from 'antd';
 
-import { clearDefaultParams } from "multiple-page-routing";
+import { clearDefaultParams, onNavigate } from "multiple-page-routing";
 import { authStore } from "../auth/actions";
 
 /**
@@ -149,6 +149,9 @@ function handleRes(resData) {
       // console.log(resData);
       // 处理没找到应用的业务逻辑
       AntdMessage.error(msg);
+      onNavigate({
+        type: 'ROOT'
+      });
       authStore.setState({ isLogin: false });
       resetHttpReqHelper();
       // onNavigate({
@@ -158,7 +161,7 @@ function handleRes(resData) {
       // });
       break;
     default:
-      AntdMessage.error(msg);
+      // AntdMessage.error(msg);
   }
 }
 

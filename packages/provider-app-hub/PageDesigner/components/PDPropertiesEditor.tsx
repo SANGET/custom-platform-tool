@@ -11,15 +11,26 @@ interface PropsEditorProps extends Omit<PropertiesEditorProps, 'propItemRenderer
  * Page design prop editor
  */
 const PDPropertiesEditor = ({
+  ChangeMetadata,
   interDatasources,
+  pageMetadata,
   ...otherProps
 }: PropsEditorProps) => {
   return (
     <div>
       <Editor
         {...otherProps}
+        pageMetadata={pageMetadata}
+        ChangeMetadata={ChangeMetadata}
         propItemRenderer={(props) => {
-          return <PropItemRenderer {...props} interDatasources={interDatasources} />;
+          return (
+            <PropItemRenderer
+              {...props}
+              pageMetadata={pageMetadata}
+              ChangeMetadata={ChangeMetadata}
+              interDatasources={interDatasources}
+            />
+          );
         }}
       />
     </div>
