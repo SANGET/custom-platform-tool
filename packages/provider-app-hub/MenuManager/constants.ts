@@ -41,24 +41,24 @@ export const MESSAGE = {
   NAME_REG_FAILED: "支持32个字符内的中文、英文、数字"
 };
 
-export const MENU_KEY = {
-  ID: 'id',
-  PID: 'pid',
-  NAME: 'name',
-  TYPE: 'type',
-  PAGELINK: 'pageLink',
-  PAGENAME: 'pageName',
-  ICON: 'icon',
-  STATUS: 'status',
-  GMTMODIFIED: 'gmtModified',
-  CREATEUSERNAME: 'createdUserName',
-  CREATEDCUSTOMED: 'createdCustomed',
-  EDITABLE: 'editable',
-  CHILDREN: 'children',
-  INDEXPATH: 'indexPath',
-  IDPATH: 'idPath',
-  LEVEL: 'level'
-};
+export enum MENU_KEY {
+  ID = 'id',
+  PID = 'pid',
+  NAME = 'name',
+  TYPE = 'type',
+  PAGELINK = 'pageLink',
+  PAGENAME ='pageName',
+  ICON = 'icon',
+  STATUS = 'status',
+  GMTMODIFIED = 'gmtModified',
+  CREATEUSERNAME = 'createdUserName',
+  CREATEDCUSTOMED = 'createdCustomed',
+  EDITABLE = 'editable',
+  CHILDREN = 'children',
+  INDEXPATH = 'indexPath',
+  IDPATH = 'idPath',
+  LEVEL = 'level'
+}
 
 export enum SAVE_TYPE {
   EDIT = 'edit',
