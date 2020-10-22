@@ -35,11 +35,11 @@ class ExpandedInfoEditor extends React.Component {
   render() {
     const {
       title, actionAreaRenderer, columns, dataSource, rowSelectionType, expandable,
-      blurRow, clickRow, doubleClickRow, formRef, changeValue, rowKey = 'id'
+      blurRow, clickRow, doubleClickRow, formRef, changeValue, rowKey = 'id', className
     } = this.props;
     const { selectedRowKeys } = this.state;
     return (
-      <div className="common-table">
+      <div className={`${className} common-table`}>
         <div className="t-header flex">
           <div className="title">{title}</div>
           <span className="flex"></span>
