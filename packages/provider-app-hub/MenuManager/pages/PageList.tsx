@@ -500,17 +500,21 @@ class MenuList extends React.Component {
   }
 
   getMenuList = () => {
-    const { searchArea } = this.state;
-    getMenuListServices(searchArea).then((res) => {
-      if (res?.code !== API_CODE.SUCCESS) {
-        openNotification(NOTIFICATION_TYPE.ERROR, MESSAGE.GET_MENU_LIST_FAILED);
-        return;
-      }
-      const { list: menuList, map: menuMap, allExpandedKeys: allExpandedKeysInMenu } = this.constructTree(res.result);
-      this.setState({
-        menuList,
-        menuMap,
-        allExpandedKeysInMenu
+    return new Promise((resolve, reject) => {
+      const { searchArea } = this.state;
+      getMenuListServices(searchArea).then((res) => {
+        if (res?.code !== API_CODE.SUCCESS) {
+          openNotification(NOTIFICATION_TYPE.ERROR, MESSAGE.GET_MENU_LIST_FAILED);
+          return;
+        }
+        const { list: menuList, map: menuMap, allExpandedKeys: allExpandedKeysInMenu } = this.constructTree(res.result);
+        this.setState({
+          menuList,
+          menuMap,
+          allExpandedKeysInMenu
+        }, () => {
+          resolve();
+        });
       });
     });
   }
@@ -767,12 +771,17 @@ class MenuList extends React.Component {
       editingKey: this.state.editingKey,
       expandedRowKeys,
       onDel: (record) => {
-        this.deleteRow(record);
-        this.setState({
-          editingKey: ''
+        this.getMenuList().then(() => {
+          const { [MENU_KEY.ID]: id } = record;
+          if (id !== editingKey) {
+            this.setListWithRecordUpdatedByRowKey(editingKey, { editable: true });
+            return;
+          }
+          this.editMenuFormRef.current?.resetFields();
+          this.setState({
+            editingKey: ''
+          });
         });
-        this.getMenuList();
-      this.editMenuFormRef.current?.resetFields();
       },
       onAddChild: (param) => {
         /** 找到对应的父级id */
