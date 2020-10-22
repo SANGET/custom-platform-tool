@@ -1,11 +1,16 @@
 import React, { useEffect, useState } from 'react';
+import * as AllIconsBI from "react-icons/bi";
+import * as AllIconsRI from "react-icons/ri";
 import { Tabs, notification } from 'antd';
 import { ModalFooter } from '@provider-app/table-editor/components/ChooseDict';
 import { useIcon } from '@infra/utils/useIcon';
 import { MESSAGE } from '../constants';
 
 const { TabPane } = Tabs;
-
+interface IIconAppointed {
+  iconType: string
+}
+/** 展示 iconType 指定的 icon */
 const IconAppointed: React.FC<IIconAppointed> = (props: IIconAppointed) => {
   const { iconType } = props;
   const [ready, icons] = useIcon('react-icons/all');
@@ -14,27 +19,36 @@ const IconAppointed: React.FC<IIconAppointed> = (props: IIconAppointed) => {
     ready ? (<Icon/>) : null
   );
 };
-const getAllIconByArea = {
+const filterIconByArea = {
   AllIconsBI: () => {
     return AllIconsBI;
   },
   AllIconsRI: () => {
     const ri = {};
+    /** UI 要求不要面性图标 */
     for (const key in AllIconsRI) {
-      if (/Fill$/.test(key)) continue;
-      ri[key] = AllIconsRI[key];
+      if (!/Fill$/.test(key)) {
+        ri[key] = AllIconsRI[key];
+      }
     }
     return ri;
   }
 };
+/** 获取用于展示的 icon 列表 */
 const getIconList = (listAreaKey) => {
-  const IconItems:any = [];
-  const listArea = getAllIconByArea[listAreaKey]();
+  const IconItems = [];
+  const listArea = filterIconByArea[listAreaKey]();
   Object.keys(listArea).map((key) => {
     IconItems.push({ type: key, icon: listArea[key] });
   });
   return IconItems;
 };
+/** 选择 icon  */
+interface ISelectPage {
+  currentIcon: string
+  onOk: (param: string) => void
+  onCancel: () => void
+}
 const SelectIcon: React.FC<ISelectPage> = (props: ISelectPage) => {
   const {
     currentIcon, onOk, onCancel
@@ -45,24 +59,11 @@ const SelectIcon: React.FC<ISelectPage> = (props: ISelectPage) => {
   }, [currentIcon]);
   const list = [
     { key: 'AllIconsRI', tabName: '电脑图标' },
-    { key: 'AllIconsBI', tabName: '手机图标' },
-    // { key: 'AllIconsAI', tabName: '电脑图标' },
-    // { key: 'AllIconsBS', tabName: '电脑图标' },
-    // { key: 'AllIconsCG', tabName: '电脑图标' },
-    // { key: 'AllIconsDI', tabName: '电脑图标' },
-    // { key: 'AllIconsFA', tabName: '电脑图标' },
-    // { key: 'AllIconsFC', tabName: '电脑图标' },
-    // { key: 'AllIconsFI', tabName: '电脑图标' },
-    // { key: 'AllIconsGI', tabName: '电脑图标' },
-    // { key: 'AllIconsGO', tabName: '电脑图标' },
-    // { key: 'AllIconsGR', tabName: '电脑图标' },
-    // { key: 'AllIconsHI', tabName: '电脑图标' },
-    // { key: 'AllIconsIM', tabName: '电脑图标' },
-    // { key: 'AllIconsIO', tabName: '电脑图标' },
-    // { key: 'AllIconsMD', tabName: '电脑图标' },
-    // { key: 'AllIconsWI', tabName: '电脑图标' }
+    { key: 'AllIconsBI', tabName: '手机图标' }
   ];
+  /** 点击保存 */
   const handleOk = () => {
+    /** 强制选择图标 */
     if (!iconSelected) {
       notification.warn({
         message: MESSAGE.SELECT_ICON_FAILED,
