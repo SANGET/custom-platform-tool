@@ -13,7 +13,7 @@ const genCompRenderFC = (
   info: RenderCompInfoItem
 ) => {
   const {
-    compTag, mark, propsKeys, propsMap, dynamicProps, staticProps
+    compTag, mark, dynamicProps, staticProps
   } = info;
   const Comp = getWidget(compTag);
 
