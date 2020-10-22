@@ -6,6 +6,12 @@ export const widgetPanelData: GroupPanelData = {
   type: 'dragableItems',
   itemsGroups: [
     {
+      title: '通用',
+      items: [
+        'widget-form-button',
+      ]
+    },
+    {
       title: '表单控件',
       items: [
         'widget-id-1',

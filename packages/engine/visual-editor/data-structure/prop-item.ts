@@ -1,5 +1,7 @@
 /// //////////////// 属性项 ///////////////////
 
+import { ChangeMetadata } from "../core";
+
 export type PropItemCompRender = ({
   /** 属性的值 */
   propItemValue,
@@ -20,6 +22,17 @@ export type NextEntityStateType = NextEntityState | NextEntityState[]
 
 export type ChangeEntityState = (nextEntityState: NextEntityStateType) => void
 
+export interface TakeMetaOptions {
+  /** meta 的 attr */
+  metaAttr: string
+  /** meta 的引用 ID */
+  metaRefID?: string
+}
+
+export type TakeMeta = (options: TakeMetaOptions) => unknown
+
+export type GenMetaRefID = (metaAttr: string) => string
+
 export interface PropItemRenderContext {
   /** 内部的已绑定的数据源 */
   interDatasources: PD.Datasources
@@ -27,6 +40,11 @@ export interface PropItemRenderContext {
   widgetEntityState: any
   /** 更改组件实例状态的接口 */
   changeEntityState: ChangeEntityState
+  /** 更改页面的 meta 数据 */
+  changePageMeta: typeof ChangeMetadata
+  takeMeta: TakeMeta
+  /** 生成 meta 引用的 ID */
+  genMetaRefID: GenMetaRefID
 }
 
 /**
@@ -44,13 +62,15 @@ export interface PropItemMeta {
    * 3. 可以被组件元数据的 editAttr 定义覆盖；
    */
   readonly whichAttr: string[]
+  /** 是否使用 meta */
+  readonly useMeta?: boolean
   /**
    * 1. 属性项给予组件实例的默认值
    * 2. 会被组件元数据的 defaultValues 中覆盖
    */
-  defaultValue?: any
+  readonly defaultValue?: any
   /** 多个属性的默认值 */
-  defaultValues?: {
+  readonly defaultValues?: {
     [whichAttr: string]: any
   }
   /** 渲染属性项 */

@@ -11,20 +11,29 @@ const takeBindColumnInfo = (selectedField: SelectedField) => {
 /**
  * 绑定数据列
  */
-export const FieldHelperSpec: PropItemCompAccessSpec = () => ({
+export const FieldHelperSpec: PropItemCompAccessSpec = {
   id: 'prop_field',
 
   label: '列',
 
   whichAttr: ['field'],
 
+  useMeta: true,
+
   render({
     interDatasources,
+    widgetEntityState,
     changeEntityState,
-    widgetEntityState
+    changePageMeta,
+    takeMeta,
+    genMetaRefID,
   }) {
-    // console.log(widgetEntityState);
-    const selectedField = widgetEntityState.field as SelectedField;
+    const fieldMetaRedID = widgetEntityState.field || genMetaRefID('schema');
+    const selectedField = takeMeta({
+      metaAttr: 'schema',
+      metaRefID: fieldMetaRedID
+    }) as SelectedField;
+
     return (
       <div
         className="px-4 py-2 border"
@@ -40,15 +49,14 @@ export const FieldHelperSpec: PropItemCompAccessSpec = () => ({
                     defaultSelected={selectedField}
                     onSubmit={(val) => {
                       changeEntityState({
-                        // field: val
                         attr: 'field',
-                        value: val
+                        value: fieldMetaRedID
                       });
-                      // onChange([
-                      //   { value: val, attr: 'exp' },
-                      //   /** 需要将 value 清空 */
-                      //   { attr: 'defValue', value: null }
-                      // ]);
+                      changePageMeta({
+                        data: val,
+                        metaAttr: 'schema',
+                        dataRefID: fieldMetaRedID
+                      });
                       CloseModal(modalID);
                     }}
                   />
@@ -62,4 +70,4 @@ export const FieldHelperSpec: PropItemCompAccessSpec = () => ({
       </div>
     );
   }
-});
+};

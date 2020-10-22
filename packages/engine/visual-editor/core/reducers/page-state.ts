@@ -2,7 +2,7 @@ import produce from 'immer';
 import { mergeDeep } from '@infra/utils/tools';
 import {
   INIT_APP, InitAppAction,
-  ADD_ENTITY, AddEntityAction, UPDATE_APP, UpdateAppAction
+  ADD_ENTITY, AddEntityAction, UPDATE_APP, UpdateAppAction, ChangeMetadataAction, CHANGE_METADATA
 } from "../actions";
 import { PageMetadata } from "../../data-structure";
 
@@ -11,7 +11,7 @@ const DefaultPageMeta: PageMetadata = {
   dataSource: {},
   pageInterface: {},
   linkpage: {},
-  name: ''
+  schema: {},
 };
 
 /**
@@ -19,7 +19,7 @@ const DefaultPageMeta: PageMetadata = {
  */
 export function pageMetadataReducer(
   state: PageMetadata = DefaultPageMeta,
-  action: InitAppAction | AddEntityAction
+  action: InitAppAction | AddEntityAction | ChangeMetadataAction
 ) {
   switch (action.type) {
     case INIT_APP:
@@ -29,8 +29,24 @@ export function pageMetadataReducer(
       return produce(pageContent, (draft) => (draft ? draft.meta : state));
     case ADD_ENTITY:
       return produce(state, (draft) => {
-        // eslint-disable-next-line no-param-reassign
         draft.lastCompID += 1;
+        return draft;
+      });
+    case CHANGE_METADATA:
+      return produce(state, (draft) => {
+        const { data, metaAttr, dataRefID } = action;
+        if (!draft[metaAttr]) {
+          console.error('尝试修改了不存在的 meta，请检查代码');
+          return draft;
+        }
+        if (dataRefID) {
+          draft[metaAttr][dataRefID] = data;
+        } else {
+          const newDataRefID = Object.keys(draft[metaAttr]).length + 1;
+          Object.assign(draft[metaAttr], {
+            [newDataRefID]: data
+          });
+        }
         return draft;
       });
     default:
@@ -48,7 +64,7 @@ export interface AppContext {
   propItemData?: any
   /** 组件类面板数据 */
   widgetPanelData?: any
-  propPanelData?: any
+  propItemGroupingData?: any
   /** 页面可编辑属性数据 */
   pagePropsData?: any
   /** 页面元数据 */
@@ -67,7 +83,7 @@ export function appContextReducer(
     case INIT_APP:
       const {
         widgetMetaDataCollection, widgetPanelData,
-        propPanelData,
+        propItemGroupingData,
         pagePropsData, propItemData,
         payload,
         name, id
@@ -77,7 +93,7 @@ export function appContextReducer(
         payload,
         widgetMetaDataCollection,
         widgetPanelData,
-        propPanelData,
+        propItemGroupingData,
         pagePropsData,
         propItemData
       };

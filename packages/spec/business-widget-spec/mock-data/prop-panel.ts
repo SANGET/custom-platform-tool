@@ -1,7 +1,7 @@
 import { GroupPanelData } from "@engine/visual-editor/components/GroupPanel";
 import { ApiMock } from "./api-mock";
 
-export const propPanelData: GroupPanelData[] = [
+export const propItemGroupingData: GroupPanelData[] = [
   {
     title: '属性',
     itemsGroups: [
@@ -11,6 +11,7 @@ export const propPanelData: GroupPanelData[] = [
           'prop_title_value',
           'prop_field',
           'prop_real_value',
+          'prop_action_config',
         ]
       },
       {
@@ -53,4 +54,4 @@ export const propPanelData: GroupPanelData[] = [
   },
 ];
 
-export const getPropPanelData = ApiMock(propPanelData);
+export const getPropItemGroupingData = ApiMock(propItemGroupingData);

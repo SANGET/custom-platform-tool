@@ -79,17 +79,29 @@ class PageDesignerApp extends React.Component<VisualEditorAppProps & HY.Provider
   }
 
   /**
+   * 获取远端的页面信息数据
+   */
+  getCurrPageDataDetail = () => {
+    const {
+      appContext
+    } = this.props;
+    const { pageDataRes } = appContext?.payload;
+    return pageDataRes;
+  }
+
+  /**
    * 获取页面信息
    */
   getPageInfo = () => {
     const {
-      appLocation
+      appLocation, appContext
     } = this.props;
+    const pageDataFormRemote = this.getCurrPageDataDetail();
     const { pageID, title } = appLocation;
     return {
       id: pageID,
       name: title,
-      type: 2,
+      type: pageDataFormRemote.type,
     };
   }
 
@@ -184,7 +196,7 @@ class PageDesignerApp extends React.Component<VisualEditorAppProps & HY.Provider
     const {
       InitApp, UnmountApp, UpdateAppContext,
       SelectEntity, InitEntityState, UpdateEntityState,
-      SetLayoutInfo, DelEntity, AddEntity,
+      SetLayoutInfo, DelEntity, AddEntity, ChangeMetadata
     } = dispatcher;
     const { id: activeEntityID, entity: activeEntity } = selectedInfo;
 
@@ -229,11 +241,13 @@ class PageDesignerApp extends React.Component<VisualEditorAppProps & HY.Provider
                 <PropertiesEditor
                   key={activeEntityID}
                   propItemData={appContext.propItemData}
+                  pageMetadata={pageMetadata}
+                  ChangeMetadata={ChangeMetadata}
                   interDatasources={this.getDatasources()}
                   // eslint-disable-next-line max-len
                   widgetBindedPropItemsMeta={appContext?.widgetMetaDataCollection[activeEntity?._classID]?.bindPropItems}
                   selectedEntity={activeEntity}
-                  propPanelData={appContext.propPanelData}
+                  propItemGroupingData={appContext.propItemGroupingData}
                   defaultEntityState={activeEntity.propState}
                   initEntityState={(entityState) => InitEntityState(selectedInfo, entityState)}
                   updateEntityState={(entityState) => {
