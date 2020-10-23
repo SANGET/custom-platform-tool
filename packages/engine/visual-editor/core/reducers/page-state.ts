@@ -12,6 +12,7 @@ const DefaultPageMeta: PageMetadata = {
   pageInterface: {},
   linkpage: {},
   schema: {},
+  actions: {},
 };
 
 /**
@@ -37,7 +38,7 @@ export function pageMetadataReducer(
         const { data, metaAttr, dataRefID } = action;
         if (!draft[metaAttr]) {
           console.error('尝试修改了不存在的 meta，请检查代码');
-          return draft;
+          draft[metaAttr] = {};
         }
         if (dataRefID) {
           draft[metaAttr][dataRefID] = data;

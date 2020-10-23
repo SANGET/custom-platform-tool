@@ -12,7 +12,7 @@
     "antd": "^4.7.1",
     "react-transition-group": "^4.4.1",
     "classnames": "^2.2.6",
-    "@deer-ui/core": "^4.0.0-rc6.2"
+    "@deer-ui/core": "^4.0.5"
   },
   "author": "SANGET",
   "license": "MIT"

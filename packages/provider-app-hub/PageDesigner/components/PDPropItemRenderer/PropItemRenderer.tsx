@@ -28,7 +28,8 @@ export const PropItemRenderer: React.FC<PDPropItemRendererProps> = ({
     },
     genMetaRefID: (metaAttr) => {
       if (!metaAttr) throw Error('请传入 metaAttr，否则逻辑无法进行');
-      return String(Object.keys(pageMetadata[metaAttr]).length + 1);
+      const meta = pageMetadata[metaAttr];
+      return meta ? String(Object.keys(pageMetadata[metaAttr]).length + 1) : '1';
     },
     changePageMeta: ChangeMetadata,
     interDatasources,

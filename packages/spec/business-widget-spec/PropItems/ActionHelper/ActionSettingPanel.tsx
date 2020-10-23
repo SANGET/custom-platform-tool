@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
-  Input, Radio, Switch, ShowModal
+  Input, Radio, Switch, ShowModal, Button
 } from '@infra/ui';
 import { FormLayout } from '@deer-ui/core/form-layout';
 import update from 'immutability-helper';
@@ -16,6 +16,7 @@ interface ActionConfigItem {
 interface ActionConfigItemProps {
   config: ActionConfigItem
   onChange
+  interDatasources: PD.Datasources
 }
 
 const actionTypes = [
@@ -37,80 +38,124 @@ const DefaultActionSetting = {
   condition: ''
 };
 
+const convertDatasource2RadioValues = (interDatasources: PD.Datasources) => {
+  const res = {};
+  interDatasources.forEach((ds) => {
+    const { id, name } = ds;
+    res[id] = name;
+  });
+  return res;
+};
+
 const ActionConfigItem: React.FC<ActionConfigItemProps> = ({
   onChange,
+  interDatasources,
   config
 }) => {
   return (
     <div className="card-item p-4">
-      <Radio
-        values={actionTypes}
-        onChange={(val) => {
-          config.triggerAction = val;
-          onChange(config);
+      <FormLayout
+        defaultValues={{ ...config }}
+        formBtns={[]}
+        onChange={(formVal) => {
+          onChange(formVal);
         }}
-      />
-      <div
-        onClick={(e) => {
-          ShowModal({
-            title: '动作配置',
-            children: () => {
+        formOptions={[
+          {
+            ref: 'triggerAction',
+            type: 'radio',
+            values: actionTypes,
+            title: '动作'
+          },
+          {
+            ref: 'action',
+            type: 'customForm',
+            title: '配置动作',
+            render: (changeCusForm, ctx) => {
+              const { value: actionVal } = ctx;
               return (
-                <FormLayout
-                  formBtns={[
-                    {
-                      actingRef: 'submitting',
-                      action: (formRef) => {
-                        const { value } = formRef;
-                        console.log('value', value);
-                      },
-                      text: '提交'
-                    }
-                  ]}
-                  formOptions={[
-                    {
-                      ref: 'actionName',
-                      type: 'input',
-                      title: '动作名称'
-                    },
-                    {
-                      ref: 'forEntrieTable',
-                      type: 'switch',
-                      title: '整表回写',
-                      hints: ['是', '否']
-                    },
-                    // {
-                    //   ref: ''
-                    // }
-                  ]}
-                />
-                // <div className="horizontal-form form-container animate-input-title">
-                //   <div className="form-group">
-                //     <span className="control-label">动作名称</span>
-                //     <Input onChange={} />
-                //   </div>
-                //   <div className="form-group">
-                //     <span className="control-label">整表回写</span>
-                //     <Switch
-                //       checked={false}
-                //       hints={['是', '否']}
-                //       onChange={(e) => {
-
-              //       }}
-              //     />
-              //   </div>
-              // </div>
+                <div
+                  onClick={(e) => {
+                    ShowModal({
+                      title: '动作配置',
+                      children: ({ close }) => {
+                        return (
+                          <FormLayout
+                            defaultValues={{ ...config.action } || {}}
+                            formBtns={[
+                              {
+                                actingRef: 'submitting',
+                                action: (formRef) => {
+                                  const { value } = formRef;
+                                  // config.action = value;
+                                  changeCusForm(value);
+                                  close();
+                                },
+                                text: '确定'
+                              }
+                            ]}
+                            formOptions={[
+                              {
+                                ref: 'actionName',
+                                type: 'input',
+                                title: '动作名称'
+                              },
+                              {
+                                ref: 'forEntrieTable',
+                                type: 'switch',
+                                title: '整表回写',
+                                hints: ['是', '否']
+                              },
+                              {
+                                ref: 'actionType',
+                                type: 'radio',
+                                title: '操作类型',
+                                defaultValue: 'create',
+                                values: {
+                                  create: '新增',
+                                  update: '修改',
+                                  del: '删除',
+                                }
+                              },
+                              {
+                                ref: 'targetTable',
+                                type: 'radio',
+                                title: '目标数据表',
+                                values: convertDatasource2RadioValues(interDatasources)
+                              },
+                              {
+                                ref: 'firld',
+                                type: 'radio',
+                                title: '字段值',
+                                values: {}
+                              }
+                              // {
+                              //   ref: ''
+                              // }
+                            ]}
+                          />
+                        );
+                      }
+                    });
+                  }}
+                >
+                  {!actionVal ? '配置动作' : '已设置动作'}
+                </div>
               );
             }
-          });
-        }}
-      >配置动作</div>
+          },
+        ]}
+      />
     </div>
   );
 };
 
-export const ActionSettingPanel: React.FC<{}> = (props) => {
-  const [actionSetting, setActionSetting] = React.useState([DefaultActionSetting]);
+export const ActionSettingPanel: React.FC<{}> = ({
+  interDatasources,
+  defaultConfig = [DefaultActionSetting],
+  onSubmit
+}) => {
+  const [actionSetting, setActionSetting] = React.useState(defaultConfig);
   const setActionItem = (config, idx) => {
     const addNextState = update(actionSetting, {
       $splice: [
@@ -119,23 +164,36 @@ export const ActionSettingPanel: React.FC<{}> = (props) => {
     });
     setActionSetting(addNextState);
   };
+
   return (
-    <div className="flex card-container p-2">
-      {
-        actionSetting.map((actionItem, idx) => {
-          return (
-            <ActionConfigItem
-              key={idx}
-              config={{ ...actionItem }}
-              onChange={(nextConfig) => {
-                setActionItem(nextConfig, idx);
-              }}
-            />
-          );
-        })
-      }
-      <div className="card-item p-4">
+    <div className="bg-gray-100 px-2">
+      <div className="flex card-container p-2">
+        {
+          actionSetting.map((actionItem, idx) => {
+            return (
+              <ActionConfigItem
+                key={idx}
+                interDatasources={interDatasources}
+                config={{ ...actionItem }}
+                onChange={(nextConfig) => {
+                  setActionItem(nextConfig, idx);
+                }}
+              />
+            );
+          })
+        }
+        {/* <div className="card-item p-4">
         <span>添加动作</span>
+      </div> */}
+      </div>
+      <div className="p-4">
+        <Button
+          onClick={() => {
+            onSubmit(actionSetting);
+          }}
+        >
+          确定
+        </Button>
       </div>
     </div>
   );
