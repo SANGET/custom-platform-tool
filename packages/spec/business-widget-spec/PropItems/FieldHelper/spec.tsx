@@ -18,7 +18,9 @@ export const FieldHelperSpec: PropItemCompAccessSpec = {
 
   whichAttr: ['field'],
 
-  useMeta: true,
+  useMeta: {
+    schema: true
+  },
 
   render({
     interDatasources,
@@ -28,20 +30,20 @@ export const FieldHelperSpec: PropItemCompAccessSpec = {
     takeMeta,
     genMetaRefID,
   }) {
-    const fieldMetaRedID = widgetEntityState.field || genMetaRefID('schema');
+    const metaRefID = widgetEntityState.field || genMetaRefID('schema');
     const selectedField = takeMeta({
       metaAttr: 'schema',
-      metaRefID: fieldMetaRedID
+      metaRefID
     }) as SelectedField;
 
     return (
       <div
         className="px-4 py-2 border"
         onClick={(e) => {
-          const modalID = ShowModal({
+          ShowModal({
             title: '设置表达式',
             width: 900,
-            children: () => {
+            children: ({ close }) => {
               return (
                 <div>
                   <FieldSelector
@@ -50,14 +52,14 @@ export const FieldHelperSpec: PropItemCompAccessSpec = {
                     onSubmit={(val) => {
                       changeEntityState({
                         attr: 'field',
-                        value: fieldMetaRedID
+                        value: metaRefID
                       });
                       changePageMeta({
                         data: val,
                         metaAttr: 'schema',
-                        dataRefID: fieldMetaRedID
+                        dataRefID: metaRefID
                       });
-                      CloseModal(modalID);
+                      close();
                     }}
                   />
                 </div>

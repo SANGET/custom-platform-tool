@@ -23,6 +23,10 @@ export interface PageMetadata {
   linkpage: {
     [metaID: string]: any
   }
+  /** 联动配置 */
+  actions: {
+    [metaID: string]: any
+  }
 }
 
 /**
