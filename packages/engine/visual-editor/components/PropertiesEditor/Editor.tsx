@@ -13,20 +13,23 @@ import {
   EditAttr,
   NextEntityStateType,
   NextEntityState,
+  PageMetadata,
 } from '../../data-structure';
 import { takePropItemConfig } from './takePropItemConfig';
 import { entityStateMergeRule } from './entityStateMergeRule';
 import { PropItemRendererProps } from './types';
 import { GroupPanel, GroupPanelData } from '../GroupPanel';
+import { VEAppDispatcher } from '../../core';
 
-export type PropPanelData = GroupPanelData
+export type PropPanelData = GroupPanelData[]
 
 export type UpdateEntityStateOfEditor = (entityState: WidgetEntityState) => void
 export type InitEntityStateOfEditor = (entityState: WidgetEntityState) => void
 
 export interface PropertiesEditorProps {
+  pageMetadata: PageMetadata
   /** 选中的 entity */
-  propPanelData: PropPanelData
+  propItemGroupingData: PropPanelData
   selectedEntity: WidgetEntity
   propItemData: PropItemsCollection
   /** 组件绑定的属性项配置 */
@@ -41,6 +44,8 @@ export interface PropertiesEditorProps {
   initEntityState: InitEntityStateOfEditor
   /** 每个属性项的渲染器 */
   propItemRenderer: (props: PropItemRendererProps) => JSX.Element
+  /** 更改元数据 */
+  ChangeMetadata: VEAppDispatcher['ChangeMetadata']
 }
 
 const debounce = new Debounce();
@@ -56,27 +61,6 @@ const wrapDefaultValues = (propItemMeta: PropItemMeta): NextEntityState[] => {
   }));
   return _defaultValues;
 };
-
-/**
- * 设置实例状态的默认值
- */
-class EntityDefaultStateManager {
-  private state = {}
-
-  getState = () => {
-    return this.state;
-  }
-
-  setState = (
-    propItemMeta: PropItemMeta
-  ) => {
-    const _defaultValues = wrapDefaultValues(propItemMeta);
-    this.state = entityStateMergeRule(this.state, _defaultValues);
-    return this.state;
-  }
-}
-
-const entityDefaultStateManager = new EntityDefaultStateManager();
 
 interface PropertiesEditorState {
   entityState: WidgetEntityState
@@ -111,9 +95,6 @@ PropertiesEditorProps, PropertiesEditorState
       } = this.props;
 
       const _defaultEntityState = this.getEntityDefaultState();
-
-      /** 这段代码会执行在 render 之后 */
-      // const _defaultEntityState = entityDefaultStateManager.getState();
       initEntityState(_defaultEntityState);
 
       this.hasDefaultEntityState = true;
@@ -187,31 +168,25 @@ PropertiesEditorProps, PropertiesEditorState
     return res;
   }
 
-  takePropItemMeta = (bindedPropConfig: PropItemRefs | PropItemCompAccessSpec): PropItemMeta => {
+  takePropItemMeta = (bindedPropConfig: PropItemRefs | PropItemCompAccessSpec) => {
     const {
       selectedEntity,
       propItemData,
     } = this.props;
-    let propOriginConfigItem;
-    let propItemMeta: PropItemMeta;
-    if (typeof bindedPropConfig === 'function') {
-      /** 如果 bindedPropConfig 是 PropItemCompAccessSpec */
-      propItemMeta = takePropItemConfig(bindedPropConfig, selectedEntity);
-      // propID = propItemMeta.id;
-    } else {
-      /** 如果 bindedPropConfig 是 PropItemRefs */
-      const { propID, defaultValues } = bindedPropConfig;
+    if (!bindedPropConfig) return null;
+    /** 如果 bindedPropConfig 是 PropItemRefs */
+    const { defaultValues } = bindedPropConfig;
+    const propID = this.getPropItemID(bindedPropConfig);
 
-      /** 覆盖属性项的定义 */
-      const override = {
-        defaultValues
-      };
+    /** 覆盖属性项的定义 */
+    const override = {
+      defaultValues
+    };
 
-      propOriginConfigItem = propItemData[propID];
+    const propOriginConfigItem = propItemData[propID];
 
-      /** 通过传入 entity 来提取 propItemMeta */
-      propItemMeta = takePropItemConfig(propOriginConfigItem, selectedEntity, override);
-    }
+    /** 通过传入 entity 来提取 propItemMeta */
+    const propItemMeta = takePropItemConfig(propOriginConfigItem, override);
     return propItemMeta;
   }
 
@@ -225,67 +200,6 @@ PropertiesEditorProps, PropertiesEditorState
   }
 
   /**
-   * 逐个属性项渲染
-   */
-  renderPropItems = () => {
-    if (!this.hasDefaultEntityState) return null;
-    const {
-      propItemRenderer
-    } = this.props;
-    const { entityState } = this.state;
-    const bindPropItems = this.getPropItemMetadatas();
-
-    return Array.isArray(bindPropItems)
-    && bindPropItems.map((bindedPropConfig) => {
-      const propItemMeta = this.takePropItemMeta(bindedPropConfig);
-
-      /** 如果没有绑定属性项，则直接返回 */
-      if (!propItemMeta) return null;
-
-      let editingAttr;
-      if (typeof bindedPropConfig !== 'function') {
-        editingAttr = this.getEditingAttr(propItemMeta, bindedPropConfig);
-      } else {
-        editingAttr = propItemMeta.whichAttr;
-      }
-
-      /** 将实例状态回填到属性项 */
-      const activeState = this.getPropItemValue(entityState, editingAttr);
-
-      return (
-        <div
-          key={propItemMeta.id}
-        >
-          {
-            propItemRenderer({
-              propItemValue: activeState,
-              changeEntityState: (nextValue) => {
-                // TODO: 完善 onChange
-                /**
-                 * 性能优化
-                 */
-                // const prevState = activeState;
-                // if (nextValue === prevState) return;
-
-                /**
-                 * 更新自身的数据
-                 */
-                this.updateEntityStateForSelf(nextValue);
-
-                /** 延后更新整个应用的数据 */
-                debounce.exec(() => {
-                  this.props.updateEntityState(this.state.entityState);
-                }, 100);
-              },
-              propItemMeta
-            })
-          }
-        </div>
-      );
-    });
-  }
-
-  /**
    * 判断是否存在 PropertiesConfig
    */
   hasPropertiesConfig = () => {
@@ -295,21 +209,35 @@ PropertiesEditorProps, PropertiesEditorState
     return widgetBindedPropItemsMeta && (!!widgetBindedPropItemsMeta.propItemRefs || !!widgetBindedPropItemsMeta.rawPropItems);
   }
 
+  getPropItemID = (propItemMeta: PropItemRefs | PropItemMeta) => {
+    const { id, propID } = propItemMeta;
+    return id || propID;
+  }
+
+  bindPropItems = this.getPropItemMetadatas()
+
   propItemRenderer = (propItemID, groupType) => {
-    // console.log('propItemID', propItemID);
-    const { propItemRenderer, propItemData } = this.props;
+    /** TODO: 优化性能 */
+    const currPropItemConfig = this.bindPropItems.find((item) => {
+      const propID = this.getPropItemID(item);
+      return propID === propItemID;
+    });
+    if (!currPropItemConfig) return null;
+    const {
+      propItemRenderer, propItemData, widgetBindedPropItemsMeta, ChangeMetadata
+    } = this.props;
     const bindedPropConfig = propItemData[propItemID];
     const propItemMeta = this.takePropItemMeta(bindedPropConfig);
 
     /** 如果没有绑定属性项，则直接返回 */
     if (!propItemMeta) return null;
 
-    let editingAttr;
-    if (typeof bindedPropConfig !== 'function') {
-      editingAttr = this.getEditingAttr(propItemMeta, bindedPropConfig);
-    } else {
-      editingAttr = propItemMeta.whichAttr;
-    }
+    const editingAttr = this.getEditingAttr(propItemMeta, bindedPropConfig);
+    // if (typeof bindedPropConfig !== 'function') {
+    //   editingAttr = this.getEditingAttr(propItemMeta, bindedPropConfig);
+    // } else {
+    //   editingAttr = propItemMeta.whichAttr;
+    // }
 
     /** 将实例状态回填到属性项 */
     const activeState = this.getPropItemValue(this.state.entityState, editingAttr);
@@ -320,17 +248,9 @@ PropertiesEditorProps, PropertiesEditorState
         {
           propItemRenderer({
             propItemValue: activeState,
+            ChangeMetadata,
             changeEntityState: (nextValue) => {
-            // TODO: 完善 onChange
-            /**
-             * 性能优化
-             */
-              // const prevState = activeState;
-              // if (nextValue === prevState) return;
-
-              /**
-             * 更新自身的数据
-             */
+              /** 更新自身的数据 */
               this.updateEntityStateForSelf(nextValue);
 
               /** 延后更新整个应用的数据 */
@@ -341,28 +261,21 @@ PropertiesEditorProps, PropertiesEditorState
             propItemMeta
           })
         }
-
       </div>
     );
   }
 
   render() {
-    const hasProps = this.hasPropertiesConfig();
-    const { propPanelData } = this.props;
-
-    // const propFormDOM = hasProps && this.renderPropItems();
+    const { propItemGroupingData } = this.props;
 
     return (
       <div
         className="entity-prop-editor"
       >
         <GroupPanel
-          panelData={propPanelData}
+          panelData={propItemGroupingData}
           itemRenderer={this.propItemRenderer}
         />
-        {/* {
-          propFormDOM
-        } */}
       </div>
     );
   }
