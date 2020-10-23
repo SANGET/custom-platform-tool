@@ -1,16 +1,9 @@
 import {
-  FullRenderStruct, BaseRenderStruct, GenRenderStructContext, CompPropsMap, RenderStructInfo
+  FullRenderStruct, BaseRenderStruct, GenRenderStructContext, RenderStructInfo
 } from "../types/renderStruct";
 import {
-  pickCanUseCompPropsKey, genCompPropsMapList, genCompPropsMapList3, propContextHandle, propsParser as originPropsParser
+  pickCanUseCompPropsKey, genCompPropsMapList, propContextHandle, propsParser as originPropsParser
 } from "./props-parser";
-
-const tempCode = (compTag) => {
-  if (compTag === 'Tootip') {
-    return Math.random() > 0.3;
-  }
-  return true;
-};
 
 const arrayRenderStructParser = (...args) => {};
 
@@ -93,23 +86,14 @@ const genBaseRenderStruct = (
     dynamicProps: {}
   };
 
-  genCompPropsMapList3(usePropsKeys, {
+  genCompPropsMapList(usePropsKeys, {
     genPropsMap: (key: string, ctx) => {
       const conf = originConf[key]; // getConfFn
       propContextHandle(propsParser(key, conf), ctx);
     }
   }, propsParseRes);
 
-  // Old
-  /** 演示临时代码 */
-  let compPropsMapList: CompPropsMap[] = [];
-  if (tempCode(compTag)) {
-    compPropsMapList = genCompPropsMapList(usePropsKeys, originConf);
-  } else {
-    console.log('没有渲染tip: ', mark);
-  }
-
-  if (compPropsMapList.length || requireRender) {
+  if (Object.keys(propsParseRes.dynamicProps) || Object.keys(propsParseRes.staticProps) || requireRender) {
     const childrenStructInfo = [];
     const renderStructInfoItem: RenderStructInfo = {
       mark,
@@ -123,9 +107,7 @@ const genBaseRenderStruct = (
     renderCompInfo[mark] = {
       ...propsParseRes,
       mark,
-      compTag,
-      propsKeys: usePropsKeys,
-      propsMap: compPropsMapList,
+      compTag
     };
   } else if (!canSkip) return;
 

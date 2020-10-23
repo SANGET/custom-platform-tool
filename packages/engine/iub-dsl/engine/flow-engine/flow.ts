@@ -1,5 +1,6 @@
-import { FlowCollection, FlowItemInfo, FlowOutItemWires } from '@iub-dsl/definition/flow';
+/** TODO: 流程上下文运行不是特别规范 */
 
+import { FlowCollection, FlowItemInfo, FlowOutItemWires } from '@iub-dsl/definition/flow';
 import { Condition, CommonCondition } from "@iub-dsl/definition";
 
 const isPromise = (fn) => typeof fn?.then === 'function' || fn instanceof Promise;
@@ -53,8 +54,18 @@ export const flowParser = (flows: FlowCollection, { parseContext, parseRes }): F
 
   /** 流程控制模块运行必要的上下文选择 */
   const flowRunOptions = { getFlowItemInfo };
+  /** 监控流程的想法测试 */
+  // const aop = (handle) => {
+  //   return async (...args) => {
+  //     console.log(args[0].action);
+  //     const res = await handle(...args);
+
+  //     return res;
+  //   };
+  // };
   tempArr.forEach((temp) => {
     temp.flowItemRun = temp.flowItemRun(flowRunOptions);
+    // temp.flowItemRun = aop(temp.flowItemRun);
   });
   tempArr.length = 0;
   return {
@@ -100,6 +111,7 @@ const onceFlowOutRunWrap: OnceFlowOutRunWrap = (flowIds: FlowOutItemWires) => {
     const newFlowCtx = Object.create(context);
     /** 一个出口所有线运行的结果 */
     const onceFlowOutRunRes = await onceFlowOutRun(newFlowCtx, { flowIds, getFlowItemInfo });
+
     /** TODO: 处理结果 */
     /** 返回原本的对象 */
     return Object.getPrototypeOf(newFlowCtx);
@@ -160,12 +172,11 @@ const flowItemRunWrap = ({
 }: FlowItemRunWrapParam) => {
   return (flowRunOptions: FlowRunOptions) => { // flowRunOptions
     return async (context = {}) => {
-      let actionRunRes: any = actionHandle(context);
       let newCtx = context;
+      let actionRunRes: any = actionHandle(context);
       /** TODO: context和动作结果的处理 */
       if (isPromise(actionRunRes)) {
         actionRunRes = await actionRunRes || {};
-
         newCtx = mergeActionRunRes(context, actionRunRes);
         await actualFlowOutRun?.(flowRunOptions, newCtx);
       } else {
@@ -173,6 +184,7 @@ const flowItemRunWrap = ({
         /** 当前项流程运行完, 运行出口 */
         await actualFlowOutRun?.(flowRunOptions, newCtx);
       }
+
       return newCtx;
     };
   };
@@ -217,8 +229,8 @@ const flowItemParser = (flowItem: FlowItemInfo, { parseContext, parseRes }): Flo
   const {
     id, flowOut, flowOutCondition, actionId, when, condition
   } = flowItem;
-  const { getActionFn } = parseRes;
-  const actionInfo = getActionFn(actionId);
+  const { actionParseRes: { getActionParseRes } } = parseRes;
+  const actionInfo = getActionParseRes(actionId);
   const { actionHandle, changeStateToUse, getStateToUse } = actionInfo;
 
   const flowOutRun = flowOutRunWrap({ flowOutCondition, flowOut });

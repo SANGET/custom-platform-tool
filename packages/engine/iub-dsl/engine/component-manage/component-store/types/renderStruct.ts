@@ -47,8 +47,6 @@ type RenderStructInfo = {
 export type RenderCompInfoItem = {
   compTag: AllUI;
   mark: string;
-  propsMap: CompPropsMap[];
-  propsKeys: string[];
   // TODO: types
   dynamicProps: {
     [propsKey: string]: any
@@ -74,11 +72,6 @@ interface GenRenderStructContext {
   index: number;
   renderStructInfo: RenderStructInfo[];
   renderCompInfo: RenderCompInfo
-}
-
-export interface CompPropsMap<T = any> {
-  key: string;
-  val: T
 }
 
 export {

@@ -25,8 +25,8 @@ const actionRefWithFnWrap = ({
     action: normalAction,
     ...runtimeCtx
   };
-  // 触发标准的事件, 传入上下文
-  runFn(eventContext);
+  // 触发标准的事件, 传入上下文, 需要create不然第一次动作将丢失
+  runFn(Object.create(eventContext));
 };
 
 /** 运行时事件处理 */
@@ -113,7 +113,7 @@ const eventParserScheduler = (eventKey: Events, context) => {
     case 'onChange':
       return getOnChangeHandle(compTag);
     case 'onClick':
-      return getOnClickHandle;
+      return getOnClickHandle(compTag);
     default:
       console.error('未处理的事件');
       return () => {};

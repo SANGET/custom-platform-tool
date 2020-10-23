@@ -19,11 +19,13 @@ interface ActionInfoListParseRes {
 }
 
 interface ActionParserRes {
-  actionIds: string[]
-  actionParseRes: ActionInfoListParseRes
+  actionIds: string[];
+  actionParseRes: ActionInfoListParseRes;
+  getActionParseRes: (actionID: string) => ActionInfoParseRes
 }
 
 const getExtralActionParserRes = (): ExtralActionParseRes => ({ changeStateToUse: [], getStateToUse: [] });
+const actionRegExp = /^@\(actions\)\./;
 
 export const actionsCollectionParser = (
   actionCollection: ActionCollection,
@@ -44,9 +46,23 @@ export const actionsCollectionParser = (
     };
   });
 
+  /** 对外暴露获取的函数 */
+  const getActionParseRes = (actionID: string): ActionInfoParseRes => {
+    actionID = actionID.replace(actionRegExp, '');
+    if (actionIds.includes(actionID)) {
+      return actionParseRes[actionID];
+    }
+    return {
+      actionHandle: () => { console.error('未获取Actions'); },
+      changeStateToUse: [],
+      getStateToUse: []
+    };
+  };
+
   return {
     actionParseRes,
-    actionIds
+    actionIds,
+    getActionParseRes
   };
 };
 

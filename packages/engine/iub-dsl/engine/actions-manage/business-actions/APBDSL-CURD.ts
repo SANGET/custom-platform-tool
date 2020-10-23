@@ -9,6 +9,8 @@ import { arrayAsyncHandle } from "../../utils";
 
 const normalCURDActionParseScheduler = (action: NormalCURD) => {
   const { type: CURDType, table } = action;
+  console.log(action);
+
   switch (action.type) {
     case EnumCURD.TableInsert:
       return genTableInsertFn(action);
@@ -27,9 +29,9 @@ const normalCURDActionParseScheduler = (action: NormalCURD) => {
 const genTableInsertFn = (actionConf: TableInsert) => {
   const { fieldMapping, table } = actionConf;
   const getFiled = dataCollectionAction(fieldMapping);
-  return async ({ action, asyncRuntimeScheduler }) => {
+  return async ({ action, asyncRuntimeScheduler, runtimeScheduler }) => {
     /** 获取插入参数 */
-    const set = await getFiled({ action, asyncRuntimeScheduler });
+    const set = await getFiled({ action, asyncRuntimeScheduler, runtimeScheduler });
     /** 获取set转换函数 */
     const getSetOfAPBDSL = getGenAPBDSLFunctionTransform(ApbFunction.SET);
     /** 转换 */
@@ -41,9 +43,9 @@ const genTableInsertFn = (actionConf: TableInsert) => {
 const genTableUpdatetFn = (actionConf: TableUpdate) => {
   const { fieldMapping, table } = actionConf;
   const getFiled = dataCollectionAction(fieldMapping);
-  return async ({ action, asyncRuntimeScheduler }) => {
+  return async ({ action, asyncRuntimeScheduler, runtimeScheduler }) => {
     /** 获取插入参数 */
-    const set = await getFiled({ action, asyncRuntimeScheduler });
+    const set = await getFiled({ action, asyncRuntimeScheduler, runtimeScheduler });
     /** 获取upd转换函数 */
     const getUpdOfAPBDSL = getGenAPBDSLFunctionTransform(ApbFunction.UPD);
     /** 转换 */
@@ -53,8 +55,6 @@ const genTableUpdatetFn = (actionConf: TableUpdate) => {
 };
 
 const genTableSelectFn = (actionConf: TableSelect) => {
-  console.log(actionConf);
-
   const { table, condition } = actionConf;
   return async ({ action, asyncRuntimeScheduler }) => {
     /** 获取set转换函数 */
