@@ -1,7 +1,3 @@
-interface NestingData {
-  [Key: string]: NestingData
-}
-
 /**
  * 获取嵌套数据中的某个项的方法
  * @example

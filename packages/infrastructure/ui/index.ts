@@ -5,3 +5,4 @@ export * from './custom';
 export * from './feedback';
 export * from './table';
 export * from './data-display';
+export * from './utils';

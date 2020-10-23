@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import {
-  Input, Radio, Switch, ShowModal, Button
+  Input, Radio, Switch, ShowModal, Button, PopModelSelector
 } from '@infra/ui';
 import { FormLayout } from '@deer-ui/core/form-layout';
 import update from 'immutability-helper';
+import { actionConfigForm, createActionForm } from './FormOptions';
 
 interface ActionConfigItem {
   event: 'onClick'
@@ -19,17 +20,6 @@ interface ActionConfigItemProps {
   interDatasources: PD.Datasources
 }
 
-const actionTypes = [
-  {
-    value: 'submit',
-    text: '库表操作(数据提交)'
-  },
-  {
-    value: 'openLink',
-    text: '打开连接'
-  },
-];
-
 const DefaultActionSetting = {
   event: 'onClick',
   triggerAction: 'submit',
@@ -38,20 +28,14 @@ const DefaultActionSetting = {
   condition: ''
 };
 
-const convertDatasource2RadioValues = (interDatasources: PD.Datasources) => {
-  const res = {};
-  interDatasources.forEach((ds) => {
-    const { id, name } = ds;
-    res[id] = name;
-  });
-  return res;
-};
-
 const ActionConfigItem: React.FC<ActionConfigItemProps> = ({
   onChange,
   interDatasources,
   config
 }) => {
+  const { action } = config;
+  console.log('action :>> ', action);
+  const [formOptions, setFormOptions] = useState();
   return (
     <div className="card-item p-4">
       <FormLayout
@@ -60,91 +44,9 @@ const ActionConfigItem: React.FC<ActionConfigItemProps> = ({
         onChange={(formVal) => {
           onChange(formVal);
         }}
-        formOptions={[
-          {
-            ref: 'triggerAction',
-            type: 'radio',
-            values: actionTypes,
-            title: '动作'
-          },
-          {
-            ref: 'action',
-            type: 'customForm',
-            title: '配置动作',
-            render: (changeCusForm, ctx) => {
-              const { value: actionVal } = ctx;
-              return (
-                <div
-                  onClick={(e) => {
-                    ShowModal({
-                      title: '动作配置',
-                      children: ({ close }) => {
-                        return (
-                          <FormLayout
-                            defaultValues={{ ...config.action } || {}}
-                            formBtns={[
-                              {
-                                actingRef: 'submitting',
-                                action: (formRef) => {
-                                  const { value } = formRef;
-                                  // config.action = value;
-                                  changeCusForm(value);
-                                  close();
-                                },
-                                text: '确定'
-                              }
-                            ]}
-                            formOptions={[
-                              {
-                                ref: 'actionName',
-                                type: 'input',
-                                title: '动作名称'
-                              },
-                              {
-                                ref: 'forEntrieTable',
-                                type: 'switch',
-                                title: '整表回写',
-                                hints: ['是', '否']
-                              },
-                              {
-                                ref: 'actionType',
-                                type: 'radio',
-                                title: '操作类型',
-                                defaultValue: 'create',
-                                values: {
-                                  create: '新增',
-                                  update: '修改',
-                                  del: '删除',
-                                }
-                              },
-                              {
-                                ref: 'targetTable',
-                                type: 'radio',
-                                title: '目标数据表',
-                                values: convertDatasource2RadioValues(interDatasources)
-                              },
-                              {
-                                ref: 'firld',
-                                type: 'radio',
-                                title: '字段值',
-                                values: {}
-                              }
-                              // {
-                              //   ref: ''
-                              // }
-                            ]}
-                          />
-                        );
-                      }
-                    });
-                  }}
-                >
-                  {!actionVal ? '配置动作' : '已设置动作'}
-                </div>
-              );
-            }
-          },
-        ]}
+        formOptions={actionConfigForm({
+          config, interDatasources
+        })}
       />
     </div>
   );
