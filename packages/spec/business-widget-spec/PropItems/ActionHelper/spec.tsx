@@ -8,16 +8,23 @@ export const ActionHelperSpec: PropItemCompAccessSpec = {
 
   label: '动作设置',
 
-  whichAttr: ['action'],
+  whichAttr: ['actionRef'],
 
-  defaultValues: {
-    action: '标题'
+  useMeta: {
+    actions: true
   },
 
-  useMeta: true,
-
   render(ctx) {
-    const { changeEntityState, widgetEntityState } = ctx;
+    const {
+      takeMeta, genMetaRefID, changeEntityState, changePageMeta,
+      widgetEntityState, interDatasources
+    } = ctx;
+    const metaRefID = widgetEntityState.actionRef || genMetaRefID('actions');
+    const actionConfig = takeMeta({
+      metaAttr: 'actions',
+      metaRefID
+    });
+
     return (
       <div>
         <div
@@ -28,7 +35,23 @@ export const ActionHelperSpec: PropItemCompAccessSpec = {
               width: 900,
               children: ({ close }) => {
                 return (
-                  <ActionSettingPanel />
+                  <ActionSettingPanel
+                    interDatasources={interDatasources}
+                    defaultConfig={actionConfig}
+                    onSubmit={(actionSetting) => {
+                      console.log('actionSetting :>> ', actionSetting);
+                      changeEntityState({
+                        attr: 'actionRef',
+                        value: metaRefID
+                      });
+                      changePageMeta({
+                        data: actionSetting,
+                        metaAttr: 'actions',
+                        dataRefID: metaRefID
+                      });
+                      close();
+                    }}
+                  />
                 );
               }
             });

@@ -34,7 +34,6 @@
     "jsonlint-mod": "^1.7.5"
   },
   "peerDependencies": {
-    "umi": "3.x",
     "antd": "^4.4.3"
   },
   "publishConfig": {

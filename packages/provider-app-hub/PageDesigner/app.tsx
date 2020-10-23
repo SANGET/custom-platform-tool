@@ -15,6 +15,8 @@ import {
 
 import './style';
 // import { VisualEditorStore } from "@engine/visual-editor/core/store";
+/** 是否离线模式，用于在家办公调试 */
+const offlineMode = false;
 
 interface VisualEditorAppProps extends VisualEditorState {
   dispatcher: VEDispatcher
@@ -141,20 +143,22 @@ class PageDesignerApp extends React.Component<VisualEditorAppProps & HY.Provider
     /** 并发获取初始化数据 */
     const [dynamicData, remotePageData] = await Promise.all([
       getFEDynamicData(),
-      getPageContentWithDatasource(pageID)
+      !offlineMode && getPageContentWithDatasource(pageID)
     ]);
-    const {
-      interDatasources, pageContent, pageDataRes
-    } = remotePageData;
 
     /** 准备初始化数据 */
     const initData = produce(dynamicData, (draftInitData) => {
-      draftInitData.pageContent = pageContent;
-      draftInitData.payload = {
-        pageDataRes,
-        // 填入 interDatasources
-        interDatasources,
-      };
+      if (!offlineMode) {
+        const {
+          interDatasources, pageContent, pageDataRes
+        } = remotePageData;
+        draftInitData.pageContent = pageContent;
+        draftInitData.payload = {
+          pageDataRes,
+          // 填入 interDatasources
+          interDatasources,
+        };
+      }
       return draftInitData;
     });
 
