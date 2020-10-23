@@ -3,7 +3,7 @@ import { Input, Selector } from '@infra/ui';
 import { PropItemCompAccessSpec } from '@engine/visual-editor/data-structure';
 
 export const TitleColorHelperSpec: PropItemCompAccessSpec = {
-  id: 'title_color_helper',
+  id: 'prop_style_title_color',
 
   label: '标题颜色',
 
