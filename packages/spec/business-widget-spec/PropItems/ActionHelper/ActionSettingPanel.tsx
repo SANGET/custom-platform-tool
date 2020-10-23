@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import {
-  Input, Radio, Switch, ShowModal, Button
+  Input, Radio, Switch, ShowModal, Button, PopModelSelector
 } from '@infra/ui';
 import { FormLayout } from '@deer-ui/core/form-layout';
 import update from 'immutability-helper';
@@ -74,73 +74,90 @@ const ActionConfigItem: React.FC<ActionConfigItemProps> = ({
             render: (changeCusForm, ctx) => {
               const { value: actionVal } = ctx;
               return (
-                <div
-                  onClick={(e) => {
-                    ShowModal({
-                      title: '动作配置',
-                      children: ({ close }) => {
-                        return (
-                          <FormLayout
-                            defaultValues={{ ...config.action } || {}}
-                            formBtns={[
-                              {
-                                actingRef: 'submitting',
-                                action: (formRef) => {
-                                  const { value } = formRef;
-                                  // config.action = value;
-                                  changeCusForm(value);
-                                  close();
-                                },
-                                text: '确定'
+                <PopModelSelector
+                  modelSetting={{
+                    title: '动作配置',
+                    width: 800,
+                    children: ({ close }) => {
+                      return (
+                        <FormLayout
+                          defaultValues={{ ...config.action } || {}}
+                          formBtns={[
+                            {
+                              actingRef: 'submitting',
+                              action: (formRef) => {
+                                const { value } = formRef;
+                                // config.action = value;
+                                changeCusForm(value);
+                                close();
+                              },
+                              text: '确定'
+                            }
+                          ]}
+                          formOptions={[
+                            {
+                              ref: 'actionName',
+                              type: 'input',
+                              title: '动作名称'
+                            },
+                            {
+                              ref: 'forEntrieTable',
+                              type: 'switch',
+                              title: '整表回写',
+                              hints: ['是', '否']
+                            },
+                            {
+                              ref: 'actionType',
+                              type: 'radio',
+                              title: '操作类型',
+                              defaultValue: 'create',
+                              values: {
+                                create: '新增',
+                                update: '修改',
+                                del: '删除',
                               }
-                            ]}
-                            formOptions={[
-                              {
-                                ref: 'actionName',
-                                type: 'input',
-                                title: '动作名称'
-                              },
-                              {
-                                ref: 'forEntrieTable',
-                                type: 'switch',
-                                title: '整表回写',
-                                hints: ['是', '否']
-                              },
-                              {
-                                ref: 'actionType',
-                                type: 'radio',
-                                title: '操作类型',
-                                defaultValue: 'create',
-                                values: {
-                                  create: '新增',
-                                  update: '修改',
-                                  del: '删除',
-                                }
-                              },
-                              {
-                                ref: 'targetTable',
-                                type: 'radio',
-                                title: '目标数据表',
-                                values: convertDatasource2RadioValues(interDatasources)
-                              },
-                              {
-                                ref: 'firld',
-                                type: 'radio',
-                                title: '字段值',
-                                values: {}
+                            },
+                            {
+                              ref: 'targetTable',
+                              type: 'radio',
+                              title: '目标数据表',
+                              values: convertDatasource2RadioValues(interDatasources)
+                            },
+                            {
+                              ref: 'firld',
+                              type: 'customForm',
+                              title: '字段值',
+                              render: () => {
+                                return (
+                                  <PopModelSelector
+                                    modelSetting={{
+                                      title: '设置字段值',
+                                      width: 700,
+                                      children: ({ close: closeS }) => {
+                                        return (
+                                          <div>
+                                            设置字段
+                                          </div>
+                                        );
+                                      }
+                                    }}
+                                  >
+                                    设置字段值
+                                  </PopModelSelector>
+                                );
                               }
-                              // {
-                              //   ref: ''
-                              // }
-                            ]}
-                          />
-                        );
-                      }
-                    });
+                            }
+                            // {
+                            //   ref: ''
+                            // }
+                          ]}
+                        />
+                      );
+                    }
                   }}
                 >
                   {!actionVal ? '配置动作' : '已设置动作'}
-                </div>
+                </PopModelSelector>
               );
             }
           },
