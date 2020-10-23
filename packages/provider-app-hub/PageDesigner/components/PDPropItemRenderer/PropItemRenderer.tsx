@@ -29,7 +29,9 @@ export const PropItemRenderer: React.FC<PDPropItemRendererProps> = ({
     genMetaRefID: (metaAttr) => {
       if (!metaAttr) throw Error('请传入 metaAttr，否则逻辑无法进行');
       const meta = pageMetadata[metaAttr];
-      return meta ? String(Object.keys(pageMetadata[metaAttr]).length + 1) : '1';
+      const metaID = meta ? String(Object.keys(pageMetadata[metaAttr]).length + 1) : '1';
+      const prefix = metaAttr;
+      return `${prefix}_${metaID}`;
     },
     changePageMeta: ChangeMetadata,
     interDatasources,

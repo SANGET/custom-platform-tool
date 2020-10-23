@@ -34,7 +34,6 @@ const ActionConfigItem: React.FC<ActionConfigItemProps> = ({
   config
 }) => {
   const { action } = config;
-  console.log('action :>> ', action);
   const [formOptions, setFormOptions] = useState();
   return (
     <div className="card-item p-4">
