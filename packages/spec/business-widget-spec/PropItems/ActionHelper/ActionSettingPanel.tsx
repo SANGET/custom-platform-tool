@@ -1,9 +1,10 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
-  Input, Radio, Switch, ShowModal
+  Input, Radio, Switch, ShowModal, Button, PopModelSelector
 } from '@infra/ui';
 import { FormLayout } from '@deer-ui/core/form-layout';
 import update from 'immutability-helper';
+import { actionConfigForm, createActionForm } from './FormOptions';
 
 interface ActionConfigItem {
   event: 'onClick'
@@ -16,18 +17,8 @@ interface ActionConfigItem {
 interface ActionConfigItemProps {
   config: ActionConfigItem
   onChange
+  interDatasources: PD.Datasources
 }
-
-const actionTypes = [
-  {
-    value: 'submit',
-    text: '库表操作(数据提交)'
-  },
-  {
-    value: 'openLink',
-    text: '打开连接'
-  },
-];
 
 const DefaultActionSetting = {
   event: 'onClick',
@@ -39,78 +30,33 @@ const DefaultActionSetting = {
 
 const ActionConfigItem: React.FC<ActionConfigItemProps> = ({
   onChange,
+  interDatasources,
   config
 }) => {
+  const { action } = config;
+  const [formOptions, setFormOptions] = useState();
   return (
     <div className="card-item p-4">
-      <Radio
-        values={actionTypes}
-        onChange={(val) => {
-          config.triggerAction = val;
-          onChange(config);
+      <FormLayout
+        defaultValues={{ ...config }}
+        formBtns={[]}
+        onChange={(formVal) => {
+          onChange(formVal);
         }}
+        formOptions={actionConfigForm({
+          config, interDatasources
+        })}
       />
-      <div
-        onClick={(e) => {
-          ShowModal({
-            title: '动作配置',
-            children: () => {
-              return (
-                <FormLayout
-                  formBtns={[
-                    {
-                      actingRef: 'submitting',
-                      action: (formRef) => {
-                        const { value } = formRef;
-                        console.log('value', value);
-                      },
-                      text: '提交'
-                    }
-                  ]}
-                  formOptions={[
-                    {
-                      ref: 'actionName',
-                      type: 'input',
-                      title: '动作名称'
-                    },
-                    {
-                      ref: 'forEntrieTable',
-                      type: 'switch',
-                      title: '整表回写',
-                      hints: ['是', '否']
-                    },
-                    // {
-                    //   ref: ''
-                    // }
-                  ]}
-                />
-                // <div className="horizontal-form form-container animate-input-title">
-                //   <div className="form-group">
-                //     <span className="control-label">动作名称</span>
-                //     <Input onChange={} />
-                //   </div>
-                //   <div className="form-group">
-                //     <span className="control-label">整表回写</span>
-                //     <Switch
-                //       checked={false}
-                //       hints={['是', '否']}
-                //       onChange={(e) => {
-
-              //       }}
-              //     />
-              //   </div>
-              // </div>
-              );
-            }
-          });
-        }}
-      >配置动作</div>
     </div>
   );
 };
 
-export const ActionSettingPanel: React.FC<{}> = (props) => {
-  const [actionSetting, setActionSetting] = React.useState([DefaultActionSetting]);
+export const ActionSettingPanel: React.FC<{}> = ({
+  interDatasources,
+  defaultConfig = [DefaultActionSetting],
+  onSubmit
+}) => {
+  const [actionSetting, setActionSetting] = React.useState(defaultConfig);
   const setActionItem = (config, idx) => {
     const addNextState = update(actionSetting, {
       $splice: [
@@ -119,23 +65,36 @@ export const ActionSettingPanel: React.FC<{}> = (props) => {
     });
     setActionSetting(addNextState);
   };
+
   return (
-    <div className="flex card-container p-2">
-      {
-        actionSetting.map((actionItem, idx) => {
-          return (
-            <ActionConfigItem
-              key={idx}
-              config={{ ...actionItem }}
-              onChange={(nextConfig) => {
-                setActionItem(nextConfig, idx);
-              }}
-            />
-          );
-        })
-      }
-      <div className="card-item p-4">
+    <div className="bg-gray-100 px-2">
+      <div className="flex card-container p-2">
+        {
+          actionSetting.map((actionItem, idx) => {
+            return (
+              <ActionConfigItem
+                key={idx}
+                interDatasources={interDatasources}
+                config={{ ...actionItem }}
+                onChange={(nextConfig) => {
+                  setActionItem(nextConfig, idx);
+                }}
+              />
+            );
+          })
+        }
+        {/* <div className="card-item p-4">
         <span>添加动作</span>
+      </div> */}
+      </div>
+      <div className="p-4">
+        <Button
+          onClick={() => {
+            onSubmit(actionSetting);
+          }}
+        >
+          确定
+        </Button>
       </div>
     </div>
   );

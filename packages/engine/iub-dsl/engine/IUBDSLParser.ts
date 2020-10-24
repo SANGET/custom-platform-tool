@@ -7,6 +7,7 @@ import { actionsCollectionParser } from "./actions-manage/actions-parser";
 import { flowParser } from './flow-engine';
 import { isPageState } from "./state-manage";
 import { eventPropsHandle } from "./event-manage";
+import { datasourceMetaHandle } from "./datasource-meta";
 
 const extralUpdateStateConfParser = (actionConf, actionConfParseRes, parseContext) => {
   const { changeTarget } = actionConf;
@@ -87,25 +88,24 @@ const IUBDSLParser = ({ dsl }) => {
     schemas
   };
 
+  /** TODO: 有问题 */
   const parseContext = genIUBDSLParserCtx(parseRes);
 
   const renderComponentKeys = Object.keys(componentsCollection);
 
+  /** 数据源元数据解析和实体 */
+  const datasourceMetaEntity = datasourceMetaHandle();
+
   /** 页面模型解析 */
   const schemasParseRes = SchemasParser(schemas);
   /** 每个动作解析成函数「流程将其连起来」 */
-  const parseActionResult = actionsCollectionParser(actionsCollection, parseContext);
+  const actionParseRes = actionsCollectionParser(actionsCollection, parseContext);
 
   parseRes = {
     ...parseRes,
     schemasParseRes,
-    getActionFn: (actionID: string) => {
-      actionID = actionID.replace(/@\(actions\)\./, '');
-      if (parseActionResult.actionIds.includes(actionID)) {
-        return parseActionResult.actionParseRes[actionID];
-      }
-      return () => { console.error('未获取Actions'); };
-    }
+    datasourceMetaEntity,
+    actionParseRes
   };
 
   /** 组件解析 TODO: propsMap有问题, 上下文没有对其进行干预 */

@@ -216,13 +216,14 @@ PropertiesEditorProps, PropertiesEditorState
 
   bindPropItems = this.getPropItemMetadatas()
 
-  propItemRenderer = (propItemID, groupType) => {
+  propItemRendererSelf = (propItemID, groupType) => {
     /** TODO: 优化性能 */
     const currPropItemConfig = this.bindPropItems.find((item) => {
       const propID = this.getPropItemID(item);
       return propID === propItemID;
     });
     if (!currPropItemConfig) return null;
+
     const {
       propItemRenderer, propItemData, widgetBindedPropItemsMeta, ChangeMetadata
     } = this.props;
@@ -233,11 +234,6 @@ PropertiesEditorProps, PropertiesEditorState
     if (!propItemMeta) return null;
 
     const editingAttr = this.getEditingAttr(propItemMeta, bindedPropConfig);
-    // if (typeof bindedPropConfig !== 'function') {
-    //   editingAttr = this.getEditingAttr(propItemMeta, bindedPropConfig);
-    // } else {
-    //   editingAttr = propItemMeta.whichAttr;
-    // }
 
     /** 将实例状态回填到属性项 */
     const activeState = this.getPropItemValue(this.state.entityState, editingAttr);
@@ -274,7 +270,7 @@ PropertiesEditorProps, PropertiesEditorState
       >
         <GroupPanel
           panelData={propItemGroupingData}
-          itemRenderer={this.propItemRenderer}
+          itemRenderer={this.propItemRendererSelf}
         />
       </div>
     );

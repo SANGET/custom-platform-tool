@@ -1,6 +1,6 @@
 import React from 'react';
 import { PropItemCompAccessSpec } from '@engine/visual-editor/data-structure';
-import { CloseModal, ShowModal } from '@infra/ui';
+import { CloseModal, PopModelSelector, ShowModal } from '@infra/ui';
 import { FieldSelector, SelectedField } from './comp';
 
 const takeBindColumnInfo = (selectedField: SelectedField) => {
@@ -18,7 +18,9 @@ export const FieldHelperSpec: PropItemCompAccessSpec = {
 
   whichAttr: ['field'],
 
-  useMeta: true,
+  useMeta: {
+    schema: true
+  },
 
   render({
     interDatasources,
@@ -28,46 +30,43 @@ export const FieldHelperSpec: PropItemCompAccessSpec = {
     takeMeta,
     genMetaRefID,
   }) {
-    const fieldMetaRedID = widgetEntityState.field || genMetaRefID('schema');
+    const metaRefID = widgetEntityState.field || genMetaRefID('schema');
     const selectedField = takeMeta({
       metaAttr: 'schema',
-      metaRefID: fieldMetaRedID
+      metaRefID
     }) as SelectedField;
 
     return (
-      <div
-        className="px-4 py-2 border"
-        onClick={(e) => {
-          const modalID = ShowModal({
-            title: '设置表达式',
-            width: 900,
-            children: () => {
-              return (
-                <div>
-                  <FieldSelector
-                    interDatasources={interDatasources}
-                    defaultSelected={selectedField}
-                    onSubmit={(val) => {
-                      changeEntityState({
-                        attr: 'field',
-                        value: fieldMetaRedID
-                      });
-                      changePageMeta({
-                        data: val,
-                        metaAttr: 'schema',
-                        dataRefID: fieldMetaRedID
-                      });
-                      CloseModal(modalID);
-                    }}
-                  />
-                </div>
-              );
-            }
-          });
+      <PopModelSelector
+        modelSetting={{
+          title: '设置表达式',
+          width: 900,
+          children: ({ close }) => {
+            return (
+              <div>
+                <FieldSelector
+                  interDatasources={interDatasources}
+                  defaultSelected={selectedField}
+                  onSubmit={(val) => {
+                    changeEntityState({
+                      attr: 'field',
+                      value: metaRefID
+                    });
+                    changePageMeta({
+                      data: val,
+                      metaAttr: 'schema',
+                      dataRefID: metaRefID
+                    });
+                    close();
+                  }}
+                />
+              </div>
+            );
+          }
         }}
       >
         {selectedField ? takeBindColumnInfo(selectedField) : '点击绑定字段'}
-      </div>
+      </PopModelSelector>
     );
   }
 };

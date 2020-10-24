@@ -2,6 +2,7 @@ import React from 'react';
 import { Button, ShowModal } from '@infra/ui';
 import { getPreviewUrl } from '@provider-app/config/getPreviewUrl';
 
+import { previewAppService } from '@provider-app/services';
 import { EditButton } from "./PDPageMetadataEditor/EditButton";
 
 const ReleaseBtn = ({
@@ -49,6 +50,8 @@ const ToolbarCustom: React.FC<ToolbarCustomProps> = ({
         color="default"
         className="mr10"
         onClick={(e) => {
+          // $R_P.get('/manage/v1/application/preview/')
+          previewAppService('1319181529431285760');
           ShowModal({
             title: `PC 预览 ${previewUrl}`,
             modalType: 'side',

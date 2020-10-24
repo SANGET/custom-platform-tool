@@ -3,6 +3,9 @@ import React, {
   useEffect, useMemo, useCallback, useContext, useRef, useState
 } from 'react';
 import { LayoutRenderer } from '@engine/layout-renderer';
+
+import { pageManage } from '@consumer-app/web-platform/src/page-manage';
+
 import { widgetRenderer, genCompRenderFC } from './component-manage/component-store/render-component';
 import { getWidget } from './component-manage/UI-factory/all-UI';
 import { FromWrapFactory } from './component-manage/UI-factory';
@@ -16,15 +19,41 @@ const IUBDSLRuntimeContainer = React.memo<{dslParseRes: any}>(({ dslParseRes }) 
     layoutContent, componentParseRes, getCompParseInfo,
     schemas, mappingEntity,
     renderComponentKeys,
-    schemasParseRes,
+    schemasParseRes, pageID: pageId
   } = dslParseRes;
+
+  /** 获取单例的页面管理 */
+  const pageManageInstance = pageManage();
+
   const useIUBStore = useMemo(() => createIUBStore(schemasParseRes), [schemasParseRes]);
   const IUBStoreEntity = useIUBStore();
   const {
     getPageState, updatePageState, IUBPageStore
   } = IUBStoreEntity;
+
   const [runTimeLine, setRunTimeLine] = useState([]);
-  const runTimeCtxToBusiness = useRef(() => {});
+
+  const runTimeCtxToBusiness = useRef<any>(() => ({ pageMark: '' }));
+  /** 页面管理添加页面上下文 */
+  useEffect(() => {
+    const { pageMark, removeFn } = pageManageInstance.addPageCtx({
+      pageId,
+      pageType: 'IUBPage',
+      context: runTimeCtxToBusiness
+    });
+    runTimeCtxToBusiness.current.pageMark = pageMark;
+    /** 跨页面调用例子 */
+    // if (pageMark === "pageID_$_1") {
+    //   setInterval(() => {
+    //     const ctxx = pageManageInstance.getIUBPageCtx('pageID_$_0')[0];
+    //     console.log(ctxx.runtimeScheduler({}));
+    //   }, 1000);
+    // }
+
+    return () => {
+      removeFn();
+    };
+  }, []);
 
   // useTempCode(IUBStoreEntity);
 
@@ -61,10 +90,11 @@ const IUBDSLRuntimeContainer = React.memo<{dslParseRes: any}>(({ dslParseRes }) 
   });
 
   const ctx = useMemo(() => genRuntimeCtxFn(dslParseRes, {
+    pageManageInstance,
     IUBStoreEntity,
     runTimeLine,
     setRunTimeLine,
-    runTimeCtxToBusiness
+    runTimeCtxToBusiness,
   }), [IUBStoreEntity]);
 
   const extralProps = useMemo(() => ({ extral: '扩展props' }), []);

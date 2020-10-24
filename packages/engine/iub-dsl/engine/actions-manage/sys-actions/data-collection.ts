@@ -21,8 +21,8 @@ export const dataCollectionAction = (conf: DataCollection) => {
    * 2. 映射成元数据形式 field
    * 3. 固定映射 aliasField
    */
-  return async ({ action, asyncRuntimeScheduler }) => {
-    const newStruct = genGetPagetStateStruct(struct, asyncRuntimeScheduler);
+  return async ({ action, asyncRuntimeScheduler, runtimeScheduler }) => {
+    const newStruct = genGetPagetStateStruct(struct, runtimeScheduler);
     return await asyncRuntimeScheduler({
       actionName,
       type: RuntimeSchedulerFnName.getPageState,
@@ -31,7 +31,7 @@ export const dataCollectionAction = (conf: DataCollection) => {
   };
 };
 
-const genGetPagetStateStruct = (struct: (string | BaseCollectionStruct)[], asyncRuntimeScheduler) => {
+const genGetPagetStateStruct = (struct: (string | BaseCollectionStruct)[], runtimeScheduler) => {
   return struct.reduce(((result, sInfo: (string | BaseCollectionStruct)) => {
     if (typeof sInfo === 'string') {
       result[sInfo] = sInfo;
@@ -40,7 +40,16 @@ const genGetPagetStateStruct = (struct: (string | BaseCollectionStruct)[], async
       if (collectField !== undefined) {
         /** TODO: aliasField和field 的优先级问题 */
         if (field !== undefined) {
-
+          const fieldCode = runtimeScheduler({
+            type: 'getFiledCode',
+            params: [field]
+          });
+          if (fieldCode) {
+            result[fieldCode] = collectField;
+          } else {
+            console.error('数据源映射转换失败!!');
+            result[field] = collectField;
+          }
         } else if (aliasField !== undefined) {
           result[aliasField] = collectField;
         }

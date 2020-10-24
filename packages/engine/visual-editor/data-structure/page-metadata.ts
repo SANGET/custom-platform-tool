@@ -1,6 +1,10 @@
 import { LayoutInfoActionReducerState } from "./layout";
 import { WidgetBindPropItemsType } from "./widget";
 
+export interface MetaStorage {
+  [metaID: string]: any
+}
+
 /**
  * 页面的元数据
  */
@@ -12,17 +16,15 @@ export interface PageMetadata {
     [metaID: string]: PD.Datasources
   }
   /** 用于存储页面的表单的数据模型 */
-  schema: {
-    [metaID: string]: any
-  }
+  schema: MetaStorage
   /** 页面标准接口 */
-  pageInterface: {
-    [metaID: string]: any
-  }
-  /** 联动配置 */
-  linkpage: {
-    [metaID: string]: any
-  }
+  pageInterface: MetaStorage
+  /** 联动 meta */
+  linkpage: MetaStorage
+  /** 动作 meta */
+  actions: MetaStorage
+  /** 变量 meta */
+  variable: MetaStorage
 }
 
 /**

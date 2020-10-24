@@ -5,6 +5,7 @@ import { APBDSLrequest as originReq } from '../utils/apb-dsl';
 import { conditionEngine } from '../condition-engine/condition-engine';
 import { APBDSLCondControlResHandle, getAPBDSLCondOperatorHandle } from '../actions-manage/business-actions/APBDSL';
 import { transMarkValFromArr, validTransMarkValFromArr } from './utils/transform-mark-value';
+import { collectRelationshipFromScheduler } from '../relationship';
 
 export enum RuntimeSchedulerFnName {
   targetUpdateState = 'targetUpdateState',
@@ -36,6 +37,13 @@ const APBDSLrequest = async (reqParam) => {
   return action;
 };
 
+/**
+ * TODO: 分类
+ * 1. 异步/同步
+ * 2. 静态/动态 「运行时useMemo会改变的」
+ * TODO: 待修改问题
+ * 1. 类型、调用上下文规范
+ */
 export const genRuntimeCtxFn = (dslParseRes, runtimeCtx) => {
   const {
     layoutContent, componentParseRes, getCompParseInfo,
@@ -43,9 +51,11 @@ export const genRuntimeCtxFn = (dslParseRes, runtimeCtx) => {
     renderComponentKeys,
     schemasParseRes,
     getFlowItemInfo,
+    datasourceMetaEntity,
   } = dslParseRes;
   console.log('//___genRuntimeCtxFn___\\\\');
   const {
+    pageManageInstance,
     IUBStoreEntity, // IUB页面仓库实例
     runTimeCtxToBusiness // useRef
   } = runtimeCtx;
@@ -62,12 +72,17 @@ export const genRuntimeCtxFn = (dslParseRes, runtimeCtx) => {
     updatePageState,
     getPageState,
     getWatchDeps,
-    APBDSLrequest
+    APBDSLrequest,
+    ...datasourceMetaEntity
   };
   /** 异步运行时调度中心 */
-  const asyncRuntimeScheduler = async ({
-    action, type, params, actionName
-  }) => {
+  const asyncRuntimeScheduler = async (ctx) => {
+    const {
+      action, type, params, actionName
+    } = ctx;
+    /** 收集信息 */
+    const collectInfo = collectRelationshipFromScheduler(ctx);
+
     // if (Object.prototype.toString.call(action) === "[object Object]") {
     //   setRunTimeLine([...runTimeLine, action]);
     // }
@@ -87,10 +102,23 @@ export const genRuntimeCtxFn = (dslParseRes, runtimeCtx) => {
 
     const runRes = await asyncRuntimeContext[type](...params);
 
+    /** 修改运行时状态 */
+    collectInfo.isRunSuccess = true;
+
     return runRes;
   };
 
+  const runtimeContext = {
+    ...datasourceMetaEntity
+  };
   /** 同步运行时调度中心 */
+  const runtimeScheduler = (ctx) => {
+    const {
+      action, type, params, actionName
+    } = ctx;
+    console.log(ctx);
+    return getPageState();
+  };
 
   /**
    * @description 处理动态的props
@@ -135,7 +163,9 @@ export const genRuntimeCtxFn = (dslParseRes, runtimeCtx) => {
 
   /** 在事件运行中使用的上下文 */
   runTimeCtxToBusiness.current = {
-    asyncRuntimeScheduler
+    pageMark: runTimeCtxToBusiness.current.pageMark || '',
+    asyncRuntimeScheduler,
+    runtimeScheduler
   };
 
   /**
@@ -152,18 +182,8 @@ export const genRuntimeCtxFn = (dslParseRes, runtimeCtx) => {
     return eventProps;
   };
 
-  // 先放着
-  const conditionParamHandle = (originHandle, ctx) => {
-    return (param) => {
-      const { expsValue } = param;
-      param.expsValue = expsValue.map((val) => getPageState(val));
-      return originHandle(param);
-    };
-  };
-
   return {
     useDynamicPropHandle,
-    conditionParamHandle,
     useRunTimeEventProps,
     runTimeCtxToBusiness
   };
