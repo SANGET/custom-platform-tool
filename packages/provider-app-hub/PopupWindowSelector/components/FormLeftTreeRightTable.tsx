@@ -1,120 +1,225 @@
 /* eslint-disable no-nested-ternary */
 import React, { useState, useEffect } from 'react';
-import {
-  Button, Form, Input, Select, InputNumber, message, notification
-} from 'antd';
+import { Form } from 'antd';
 import { FormInstance } from 'antd/lib/form';
 import {
-  SHOW_TYPE_OPTIONS, SELECT_TYPE_OPTIONS, SHOW_TYPE, SPECIES, SELECT_TYPE, IPopupWindow, IModalData,
-  IEditPopupWindowProps
+  IEditPopupWindowProps,
+  NOTIFICATION_TYPE, API_ERROR_MSG, COLUMNS_KEY, FIELDTYPE
 } from '../constant';
 import './index.less';
 import CreateModal from './CreateModal';
 import { PopupWindowTable } from './PopupWindowTable';
 import { PopupWindowField } from './PopupWindowField';
- 
-const FormLeftTreeRightTable: React.FC<IEditPopupWindowProps> = (props: IEditPopupWindowProps) => {
+import {
+  queryTablesList,
+  openNotification, getTableInfo
+} from '../service';
+import {
+  ISELECTSMENU, IPopupWindowShowKey, ITableColumn, ITableColumnFromApi
+} from '../interface';
+
+export const translatePopupWindowTablesToSelectMenus = (tables:ITable[]): ISELECTSMENU[] => {
+  if (!Array.isArray(tables)) return [];
+  return tables.map((item) => {
+    return {
+      key: item?.id,
+      value: item?.id,
+      label: item?.name
+
+    };
+  });
+};
+
+export const translateRefFieldsToSelectMenus = (fields: ITableColumnFromApi[]):ISELECTSMENU[] => {
+  if (!Array.isArray(fields)) return [];
+  return fields
+    // .filter((item) => item.fieldType !== FIELDTYPE.TEXT)
+    .map((item) => {
+      return {
+        key: item?.id,
+        value: item?.id,
+        label: item?.name
+      };
+    });
+};
+
+const FormTreePopupWindow: React.FC<IEditPopupWindowProps> = (props: IEditPopupWindowProps) => {
   const {
     form,
     editData: {
-      id, name, selectType, showType,treeTablePopupWindowDetail{tableDatasource, tableDatasourceType, treeDatasource,
-        treeDatasourceType}
+      id, name, selectType, showType, treeTablePopupWindowDetail: {
+        treeDatasource, treeDatasourceType, treeReturnText, treeReturnValue, treeSortInfo, treeShowColumn, treeSuperiorColumn,
+        treeRelatedSuperiorColumn,
+        tableDatasource, tableDatasourceType, tableReturnText, tableReturnValue, tableShowColumn, tableSortInfo, tableTreeRelatedColumn
+
+      }
     }
   } = props;
-  const [visibleModal, setVisibleModal] = useState<boolean>(false);
-  const handleFinish = async (values) => {
+  const [datasourceOptions, setDatasourceOptions] = useState<ISELECTSMENU[]>([]);
+  const [fieldOptionsForTree, setFieldOptionsForTree] = useState<ISELECTSMENU[]>([]);
+  const [fieldOptionsForTable, setFieldOptionsForTable] = useState<ISELECTSMENU[]>([]);
+
+  const [tableIdForTree, setTableIdForTree] = useState(treeDatasource);
+  const [tableIdForTable, setTableIdForTable] = useState(tableDatasource);
+
+  const handleTableChangeForTable = () => {
+    setTableIdForTable(form?.getFieldValue(['tableDatasource']));
+  };
+  const handleTableChangeForTree = () => {
+    setTableIdForTree(form?.getFieldValue(['treeDatasource']));
+  };
+
+  const getFieldDataForTree = (dtsTableId) => {
+    if (!dtsTableId) {
+      setFieldOptionsForTree([]);
+      return;
+    }
+    getTableInfo(dtsTableId).then((res) => {
+    /** 如果接口没有提供提示信息 */
+      if (!res?.msg) {
+        openNotification(NOTIFICATION_TYPE?.ERROR, API_ERROR_MSG?.ALLOWDELETE);
+        return;
+      }
+      const fieldSelectOptions = translateRefFieldsToSelectMenus(res?.result?.columns);
+      setFieldOptionsForTree(fieldSelectOptions);
+    });
+  };
+  const getFieldDataForTable = (dtsTableId) => {
+    if (!dtsTableId) {
+      setFieldOptionsForTable([]);
+      return;
+    }
+    getTableInfo(dtsTableId).then((res) => {
+    /** 如果接口没有提供提示信息 */
+      if (!res?.msg) {
+        openNotification(NOTIFICATION_TYPE?.ERROR, API_ERROR_MSG?.ALLOWDELETE);
+        return;
+      }
+      const fieldSelectOptions = translateRefFieldsToSelectMenus(res?.result?.columns);
+      setFieldOptionsForTable(fieldSelectOptions);
+    });
   };
 
   useEffect(() => {
-    form.setFieldsValue({ name, showType, selectType });
+    queryTablesList().then((res) => {
+      /** 如果接口没有提供提示信息 */
+      setDatasourceOptions(translatePopupWindowTablesToSelectMenus(res?.result?.data));
+    });
   }, []);
+  useEffect(() => {
+    getFieldDataForTree(tableIdForTree);
+  }, [tableIdForTree]);
+  useEffect(() => {
+    getFieldDataForTable(tableIdForTable);
+  }, [tableIdForTable]);
 
   return (
     <>
-
       <PopupWindowTable
-        editData = {props.editData}
+        {...props}
+        options = {datasourceOptions}
+        selectedValue = {treeDatasource}
         form={form}
-        label="数据源"
+        label="树形数据源"
         name = 'treeDatasource'
-        code='treeDatasource'
         text = 'treeDatasource'
+        onTableChange = {handleTableChangeForTree}
       />
       <PopupWindowField
         {...props}
-        label = "显示字段"
-        code='treeShowColumn'
+        options = {fieldOptionsForTree}
+        selectedValue = {treeReturnValue}
+        label = "树形返回值"
+        form={form}
+        name="treeReturnValue"
+
+      />
+      <PopupWindowField
+        {...props}
+        options = {fieldOptionsForTree}
+        selectedValue = {treeReturnText}
+        label = "树形返回文本"
+        form={form}
+        name="treeReturnText"
+      />
+      <PopupWindowField
+        {...props}
+        options = {fieldOptionsForTree}
+        selectedValue = {treeSortInfo}
+        label = "树形排序字段"
+        form={form}
+        name="treeSortInfo"
+      />
+      <PopupWindowField
+        {...props}
+        options = {fieldOptionsForTree}
+        selectedValue = {treeShowColumn}
+        label = "树形显示字段"
         form={form}
         name="treeShowColumn"
-        text = 'treeShowColumn'
       />
       <PopupWindowField
         {...props}
-        label = "上级字段"
-        code='treeSuperiorColumn'
+        options = {fieldOptionsForTree}
+        selectedValue = {treeSuperiorColumn}
+        label = "树形上级字段"
         form={form}
         name="treeSuperiorColumn"
-        text = 'treeSuperiorColumn'
       />
       <PopupWindowField
         {...props}
-        label = "关联上级字段"
-        code='treeRelatedSuperiorColumn'
+        options = {fieldOptionsForTree}
+        selectedValue = {treeRelatedSuperiorColumn}
+        label = "树形上级字段"
         form={form}
         name="treeRelatedSuperiorColumn"
-        text = 'treeRelatedSuperiorColumn'
-      />
-      <PopupWindowField
-        {...props}
-        label = "排序字段"
-        code='treeSortColumnInfo'
-        form={form}
-        name="treeSortColumnInfo"
-        text = 'treeSortColumnInfo'
       />
 
       <PopupWindowTable
-        editData = {props.editData}
+        {...props}
+        options = {datasourceOptions}
+        selectedValue = {tableDatasource}
         form={form}
         label="数据源"
         name = 'tableDatasource'
-        code='tableDatasource'
         text = 'tableDatasource'
+        onTableChange = {handleTableChangeForTable}
       />
       <PopupWindowField
         {...props}
+        options = {fieldOptionsForTable}
+        selectedValue = {tableReturnValue}
         label = "返回值"
-        code='tableReturnValue'
         form={form}
         name="tableReturnValue"
-        text = 'tableReturnValue'
 
       />
       <PopupWindowField
         {...props}
+        options = {fieldOptionsForTable}
+        selectedValue = {tableReturnText}
         label = "返回文本"
-        code='tableReturnText'
         form={form}
         name="tableReturnText"
-        text = 'tableReturnText'
       />
       <PopupWindowField
         {...props}
+        options = {fieldOptionsForTable}
+        selectedValue = {tableSortInfo}
         label = "排序字段"
-        code='tableSortColumnInfo'
         form={form}
-        name="tableSortColumnInfo"
-        text = 'tableSortColumnInfo'
+        name="tableSortInfo"
       />
       <PopupWindowField
         {...props}
+        options = {fieldOptionsForTable}
+        selectedValue = {tableShowColumn}
         label = "显示字段"
-        code='tableShowColumn'
         form={form}
         name="tableShowColumn"
-        text = 'tableShowColumn'
       />
+
     </>
   );
 };
-export default React.memo(FormLeftTreeRightTable);
+export default React.memo(FormTreePopupWindow);

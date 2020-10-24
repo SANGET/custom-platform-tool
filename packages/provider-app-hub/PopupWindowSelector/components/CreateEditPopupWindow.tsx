@@ -22,6 +22,7 @@ import { PopupWindowTable } from './PopupWindowTable';
 import { PopupWindowField } from './PopupWindowField';
 import FormTablePopupWindow from './FormTablePopupWindow';
 import FormTreePopupWindow from './FormTreePopupWindow';
+import FormLeftTreeRightTable from './FormLeftTreeRightTable';
 
 const { Option } = Select;
 const { TextArea } = Input;
@@ -52,11 +53,13 @@ const CreateEditPopupWindow: React.FC<IEditPopupWindowProps> = (props: IEditPopu
     }, editModalData: { okText }
   } = props;
 
-  console.log(props.editData);
+  // console.log(props.editData);
   const [form] = Form.useForm();
   const [visibleModal, setVisibleModal] = useState<boolean>(false);
 
   const handleFinish = async (values) => {
+    console.log('handleFinish');
+    // console.log('formvalue', values);
     if (!id) {
     // const params = assemblyParams(values);
       const params = assemblyPopupParams(values);
@@ -87,8 +90,28 @@ const CreateEditPopupWindow: React.FC<IEditPopupWindowProps> = (props: IEditPopu
   };
 
   const assemblyPopupParams = (values) => {
+    console.log('assemblyPopupParams');
     const {
-      name, title, showType, selectType, datasource, datasourceType, returnValue, returnText
+      name, title, showType, selectType, datasourceType,
+      datasourceForTable, returnValueForTable, returnTextForTable, showColumnForTable, sortColumnInfoForTable,
+      datasourceForTree, returnValueForTree, returnTextForTree, showColumnForTree, sortColumnInfoForTree,
+      relatedSuperiorColumnForTree, showSearchForTree, superiorColumnForTree,
+      tableDatasource,
+      tableDatasourceType,
+      tableReturnText,
+      tableReturnValue,
+      tableShowColumn,
+      tableSortInfo,
+      tableTreeRelatedColumn,
+      treeDatasource,
+      treeDatasourceType,
+      treeRelatedSuperiorColumn,
+      treeReturnText,
+      treeReturnValue,
+      treeShowColumn,
+      treeSortInfo,
+      treeSuperiorColumn
+
     } = values;
 
     const params = {
@@ -104,17 +127,17 @@ const CreateEditPopupWindow: React.FC<IEditPopupWindowProps> = (props: IEditPopu
       Object.assign(params, {
         tablePopupWindowDetail: {
           createdBy: 0,
-          datasource,
+          datasource: datasourceForTable,
           datasourceType: 'TABLE',
           deleteFlag: 0,
           gmtCreate: "",
           gmtModified: "",
           id: 0,
           modifiedBy: 0,
-          returnText: 0,
-          returnValue: 0,
-          showColumn: "",
-          sortColumnInfo: ""
+          returnText: returnTextForTable,
+          returnValue: returnValueForTable,
+          showColumn: showColumnForTable,
+          sortColumnInfo: sortColumnInfoForTable
         }
       });
     }
@@ -122,20 +145,20 @@ const CreateEditPopupWindow: React.FC<IEditPopupWindowProps> = (props: IEditPopu
       Object.assign(params, {
         treePopupWindowDetail: {
           createdBy: 0,
-          datasource,
+          datasource: datasourceForTree,
           datasourceType: 'TREE',
           deleteFlag: 0,
           gmtCreate: 0,
           gmtModified: 0,
           id: 0,
           modifiedBy: 0,
-          relatedSuperiorColumn: 0,
-          returnText: 0,
-          returnValue: 0,
-          showColumn: 0,
-          showSearch: 0,
-          sortColumnInfo: 0,
-          superiorColumn: 0
+          relatedSuperiorColumn: relatedSuperiorColumnForTree,
+          returnText: returnTextForTree,
+          returnValue: returnValueForTree,
+          showColumn: showColumnForTree,
+          showSearch: showSearchForTree,
+          sortColumnInfo: sortColumnInfoForTree,
+          superiorColumn: superiorColumnForTree
         }
       });
     }
@@ -151,21 +174,21 @@ const CreateEditPopupWindow: React.FC<IEditPopupWindowProps> = (props: IEditPopu
           modifiedBy: 0,
           popupWindowId: 0,
           showSearch: 0,
-          tableDatasource: 0,
-          tableDatasourceType: 0,
-          tableReturnText: 0,
-          tableReturnValue: 0,
-          tableShowColumn: 0,
-          tableSortInfo: 0,
-          tableTreeRelatedColumn: 0,
-          treeDatasource: 0,
-          treeDatasourceType: 0,
-          treeRelatedSuperiorColumn: 0,
-          treeReturnText: 0,
-          treeReturnValue: 0,
-          treeShowColumn: 0,
-          treeSortInfo: 0,
-          treeSuperiorColumn: 0,
+          tableDatasource,
+          tableDatasourceType: 'DB',
+          tableReturnText,
+          tableReturnValue,
+          tableShowColumn,
+          tableSortInfo,
+          tableTreeRelatedColumn,
+          treeDatasource,
+          treeDatasourceType: 'DB',
+          treeRelatedSuperiorColumn,
+          treeReturnText,
+          treeReturnValue,
+          treeShowColumn,
+          treeSortInfo,
+          treeSuperiorColumn,
           version: 0
         }
       });
@@ -185,7 +208,7 @@ const CreateEditPopupWindow: React.FC<IEditPopupWindowProps> = (props: IEditPopu
         }
       });
     }
-    console.log(params);
+    // console.log(params);
 
     return params;
   };
@@ -195,20 +218,50 @@ const CreateEditPopupWindow: React.FC<IEditPopupWindowProps> = (props: IEditPopu
   };
 
   const handleMenuOk = () => {
+    console.log('handleMenuOk');
     setVisibleModal(false);
     updatePopupWindow && updatePopupWindow();
   };
   const handleFormCancel = () => {
+    console.log('handleFormCancel');
     onCancel && onCancel();
   };
   useEffect(() => {
+    console.log('useEffect');
     form.setFieldsValue({
       name, code, title, selectType, showType
       // : getShowTypeTitleById(showType)
     });
   }, []);
-  const handleShowTypeSelectChange = (value) => {
+  // const handleShowTypeSelectChange = (value) => {
 
+  // };
+  const getShowAreaByShowType = (showTypeTmpl) => {
+    console.log('showTypeTmpl');
+    if (showTypeTmpl === SHOW_TYPE.TREE) {
+      return (
+        <FormTreePopupWindow
+          {...props}
+          form={form}
+        />
+      );
+    }
+    if (showTypeTmpl === SHOW_TYPE.TABLE) {
+      return (
+        <FormTablePopupWindow
+          {...props}
+          form={form}
+        />
+      );
+    }
+    if (showTypeTmpl === SHOW_TYPE.LEFT_TREE_RIGHT_TABLE) {
+      return (
+        <FormLeftTreeRightTable
+          {...props}
+          form={form}
+        />
+      );
+    }
   };
   return (
     <>
@@ -224,7 +277,7 @@ const CreateEditPopupWindow: React.FC<IEditPopupWindowProps> = (props: IEditPopu
         >
           <Select
             placeholder="请选择显示类型"
-            onChange={handleShowTypeSelectChange}
+            // onChange={handleShowTypeSelectChange}
             options = {SHOW_TYPE_OPTIONS}
           >
             {/* {
@@ -243,7 +296,7 @@ const CreateEditPopupWindow: React.FC<IEditPopupWindowProps> = (props: IEditPopu
           }]}
         >
           <Select
-            placeholder="请选择选择类型"
+            placeholder="请选择类型"
             value={selectType}
           >
             {
@@ -258,20 +311,8 @@ const CreateEditPopupWindow: React.FC<IEditPopupWindowProps> = (props: IEditPopu
           shouldUpdate={(prevValues, currentValues) => prevValues.showType !== currentValues.showType}
         >
           {({ getFieldValue }) => {
-            return getFieldValue('showType') === SHOW_TYPE.TREE
-              ? (
-                <FormTreePopupWindow
-                  {...props}
-                  form={form}
-                ></FormTreePopupWindow>
-              ) : getFieldValue('showType') === SHOW_TYPE.TABLE ? (
-                // <PrimaryTreeItem />
-                <FormTablePopupWindow
-                  {...props}
-                  form={form}
-                ></FormTablePopupWindow>
-
-              ) : null;
+            console.log(getFieldValue('showType'));
+            return getShowAreaByShowType(getFieldValue('showType'));
           }}
         </Form.Item>
 

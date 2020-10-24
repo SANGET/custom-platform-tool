@@ -45,9 +45,9 @@ export const translateRefFieldsToSelectMenus = (fields: ITableColumnFromApi[]):I
 
 export const PopupWindowField: React.FC<IProps> = (props: IProps) => {
   const {
-    form, text, code, name, handleChange, label, editData, tableId, selectedValue
+    form, text, code, name, handleChange, label, editData, tableId, selectedValue, options
   } = props;
-  const [options, setOptions] = useState<ISELECTSMENU[]>([]);
+  // const [options, setOptions] = useState<ISELECTSMENU[]>([]);
   const [fieldOptions, setFieldOptions] = useState<ITableColumn[]>([]);
 
   // const getTableIdByTableCode = (datasource) => {
@@ -55,30 +55,27 @@ export const PopupWindowField: React.FC<IProps> = (props: IProps) => {
   //   return options.filter((item) => item.value === datasource)?.[0]?.key || '';
   // };
 
-  const getFieldData = () => {
-    // const id = form.getFieldValue(datasourceString);
+  // const getFieldData = () => {
+  //   // const id = form.getFieldValue(datasourceString);
 
-    if (!tableId) {
-      setOptions([]);
-      return;
-    }
-    console.log(tableId);
-    getTableInfo(tableId).then((res) => {
-    /** 如果接口没有提供提示信息 */
-      if (!res?.msg) {
-        openNotification(NOTIFICATION_TYPE?.ERROR, API_ERROR_MSG?.ALLOWDELETE);
-        return;
-      }
-      setFieldOptions(res?.result?.columns);
-      const fieldSelectOptions = translateRefFieldsToSelectMenus(res?.result?.columns);
-      setOptions(fieldSelectOptions);
-    });
-  };
+  //   if (!tableId) {
+  //     setOptions([]);
+  //     return;
+  //   }
+  //   getTableInfo(tableId).then((res) => {
+  //   /** 如果接口没有提供提示信息 */
+  //     if (!res?.msg) {
+  //       openNotification(NOTIFICATION_TYPE?.ERROR, API_ERROR_MSG?.ALLOWDELETE);
+  //       return;
+  //     }
+  //     setFieldOptions(res?.result?.columns);
+  //     const fieldSelectOptions = translateRefFieldsToSelectMenus(res?.result?.columns);
+  //     setOptions(fieldSelectOptions);
+  //   });
+  // };
   useEffect(() => {
-    getFieldData();
-    console.log(name);
-    console.log(selectedValue);
-    form.setFieldsValue({ name: selectedValue });
+    // getFieldData();
+    form.setFieldsValue({ [name]: selectedValue });
   }, []);
   const handleValueChange = (value) => {
     /*
@@ -91,11 +88,11 @@ export const PopupWindowField: React.FC<IProps> = (props: IProps) => {
     */
   };
   const handleDropdown = (oepn:boolean) => {
-    oepn && getFieldData();
+    // oepn && getFieldData();
   };
   return (
     <Form.Item
-      name={code}
+      name={name}
       label = {label}
       rules={[
         { required: true, message: `${name}必填` },

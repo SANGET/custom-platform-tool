@@ -17,17 +17,15 @@ interface IProps {
   label?: string
 
   editData: IPopupWindow
+  onTableChange: () => void;
 }
 export const PopupWindowTable: React.FC<IProps> = (props: IProps) => {
-  const [datasource, setDataSource] = useState();
   const {
-    label, name, form, options, selectedValue: datasource
+    label, name, form, options, selectedValue, onTableChange
   } = props;
 
   useEffect(() => {
-    form.setFieldsValue({ datasource });
-    console.log(datasource);
-    console.log(options);
+    form.setFieldsValue({ [name]: selectedValue });
   }, []);
 
   // const getTableIdByTableCode = (code) => {
@@ -39,6 +37,8 @@ export const PopupWindowTable: React.FC<IProps> = (props: IProps) => {
    * @param value
    */
   const handleChange = (value) => {
+    onTableChange && onTableChange();
+
     // form.setFieldsValue({
     //   datasource: selectedValue,
     // datasourceKey: getTableIdByTableCode(value)

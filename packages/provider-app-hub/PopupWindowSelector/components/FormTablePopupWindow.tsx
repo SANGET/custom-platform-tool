@@ -2,15 +2,21 @@
 import React, { useState, useEffect } from 'react';
 import { Form } from 'antd';
 import { FormInstance } from 'antd/lib/form';
-import { IEditPopupWindowProps } from '../constant';
+import {
+  IEditPopupWindowProps,
+  NOTIFICATION_TYPE, API_ERROR_MSG, COLUMNS_KEY, FIELDTYPE
+} from '../constant';
 import './index.less';
 import CreateModal from './CreateModal';
 import { PopupWindowTable } from './PopupWindowTable';
 import { PopupWindowField } from './PopupWindowField';
 import {
-  queryTablesList
+  queryTablesList,
+  openNotification, getTableInfo
 } from '../service';
-import { ISELECTSMENU } from '../interface';
+import {
+  ISELECTSMENU, IPopupWindowShowKey, ITableColumn, ITableColumnFromApi
+} from '../interface';
 
 export const translatePopupWindowTablesToSelectMenus = (tables:ITable[]): ISELECTSMENU[] => {
   if (!Array.isArray(tables)) return [];
@@ -24,18 +30,53 @@ export const translatePopupWindowTablesToSelectMenus = (tables:ITable[]): ISELEC
   });
 };
 
+export const translateRefFieldsToSelectMenus = (fields: ITableColumnFromApi[]):ISELECTSMENU[] => {
+  if (!Array.isArray(fields)) return [];
+  return fields
+    // .filter((item) => item.fieldType !== FIELDTYPE.TEXT)
+    .map((item) => {
+      return {
+        key: item?.id,
+        value: item?.id,
+        label: item?.name
+      };
+    });
+};
+
 const FormTablePopupWindow: React.FC<IEditPopupWindowProps> = (props: IEditPopupWindowProps) => {
   const {
     form,
     editData: {
       id, name, selectType, showType, tablePopupWindowDetail: {
-        datasource, datasourceType, returnText, returnValue
+        datasource, datasourceType, returnText, returnValue, sortColumnInfo, showColumn
       }
     }
   } = props;
   const [datasourceOptions, setDatasourceOptions] = useState<ISELECTSMENU[]>([]);
-  const [returnValueOptions, setReturnValueOptions] = useState<ISELECTSMENU[]>([]);
-  const [returnTextOptions, setReturnTextOptions] = useState<ISELECTSMENU[]>([]);
+  const [fieldOptions, setFieldOptions] = useState<ISELECTSMENU[]>([]);
+  const [tableId, setTableId] = useState(datasource);
+  const handleTableChange = () => {
+    setTableId(form?.getFieldValue(['datasourceForTable']));
+  };
+  const getFieldData = () => {
+    // const id = form.getFieldValue(datasourceString);
+    console.log(tableId);
+    if (!tableId) {
+      setFieldOptions([]);
+      return;
+    }
+    getTableInfo(tableId).then((res) => {
+    /** 如果接口没有提供提示信息 */
+      if (!res?.msg) {
+        openNotification(NOTIFICATION_TYPE?.ERROR, API_ERROR_MSG?.ALLOWDELETE);
+        return;
+      }
+      // setFieldOptions(res?.result?.columns);
+      const fieldSelectOptions = translateRefFieldsToSelectMenus(res?.result?.columns);
+      console.log(fieldSelectOptions);
+      setFieldOptions(fieldSelectOptions);
+    });
+  };
 
   useEffect(() => {
     queryTablesList().then((res) => {
@@ -43,6 +84,9 @@ const FormTablePopupWindow: React.FC<IEditPopupWindowProps> = (props: IEditPopup
       setDatasourceOptions(translatePopupWindowTablesToSelectMenus(res?.result?.data));
     });
   }, []);
+  useEffect(() => {
+    getFieldData();
+  }, [tableId]);
 
   return (
     <>
@@ -52,46 +96,45 @@ const FormTablePopupWindow: React.FC<IEditPopupWindowProps> = (props: IEditPopup
         selectedValue = {datasource}
         form={form}
         label="数据源"
-        name = 'datasource'
-        code='datasource'
+        name = 'datasourceForTable'
         text = 'datasource'
+        onTableChange = {handleTableChange}
       />
       <PopupWindowField
         {...props}
-        options = {returnValueOptions}
+        options = {fieldOptions}
         selectedValue = {returnValue}
         label = "返回值"
-        code='returnValue'
         form={form}
-        name="returnValue"
+        name="returnValueForTable"
         tableId = {datasource}
 
       />
       <PopupWindowField
         {...props}
-        options = {returnTextOptions}
+        options = {fieldOptions}
+        selectedValue = {returnText}
         label = "返回文本"
-        code='returnText'
         form={form}
-        name="returnText"
+        name="returnTextForTable"
         tableId = {datasource}
       />
       <PopupWindowField
         {...props}
-        options = {datasourceOptions}
+        options = {fieldOptions}
+        selectedValue = {sortColumnInfo}
         label = "排序字段"
-        code='sortColumnInfo'
         form={form}
-        name="sortColumnInfo"
+        name="sortColumnInfoForTable"
         tableId = {datasource}
       />
       <PopupWindowField
         {...props}
-        options = {datasourceOptions}
+        options = {fieldOptions}
+        selectedValue = {showColumn}
         label = "显示字段"
-        code='showColumn'
         form={form}
-        name="showColumn"
+        name="showColumnForTable"
         tableId = {datasource}
       />
     </>
