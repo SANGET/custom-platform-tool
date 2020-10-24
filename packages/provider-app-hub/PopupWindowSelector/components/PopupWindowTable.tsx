@@ -19,14 +19,15 @@ interface IProps {
   editData: IPopupWindow
 }
 export const PopupWindowTable: React.FC<IProps> = (props: IProps) => {
-  const [datasource, setDataSource] = useState(0);
+  const [datasource, setDataSource] = useState();
   const {
-    label, form, options, datasource
+    label, name, form, options, selectedValue: datasource
   } = props;
 
   useEffect(() => {
     form.setFieldsValue({ datasource });
-    console.log(props);
+    console.log(datasource);
+    console.log(options);
   }, []);
 
   // const getTableIdByTableCode = (code) => {
@@ -38,14 +39,14 @@ export const PopupWindowTable: React.FC<IProps> = (props: IProps) => {
    * @param value
    */
   const handleChange = (value) => {
-    form.setFieldsValue({
-      datasource: value,
-      datasourceKey: getTableIdByTableCode(value)
-    });
+    // form.setFieldsValue({
+    //   datasource: selectedValue,
+    // datasourceKey: getTableIdByTableCode(value)
+    // });
   };
   return (
     <Form.Item
-      name="datasource"
+      name={name}
       label = {label}
       rules={[
         { required: true, message: '必填' },

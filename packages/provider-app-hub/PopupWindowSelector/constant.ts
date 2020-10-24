@@ -1,6 +1,7 @@
 import { ProColumns } from '@hy/pro-table';
+import { FormInstance } from 'antd/lib/form';
 import {
-  IOperationalMenuItem, IValueEnum, ITableType, IPopupShowType, IPopupSelectType
+  IOperationalMenuItem, IValueEnum, ITableType, IPopupShowType, IPopupSelectType, IOperationalMenuItemKeys
 } from './interface';
 
 export enum API_ERROR_MSG {
@@ -98,23 +99,23 @@ export const DEFAULT_PAGE_SISE = 10;
 /** 表结构管理 table 表 操作选项 */
 export const OPERATIONALMENU: IOperationalMenuItem[] = [
   {
-    operate: "edit",
-    title: "编辑",
-    behavior: "link"
+    [IOperationalMenuItemKeys.operate]: "edit",
+    [IOperationalMenuItemKeys.title]: "编辑",
+    [IOperationalMenuItemKeys.behavior]: "link"
   },
   {
-    operate: "delete",
-    title: "删除",
-    behavior: "popconfirm"
+    [IOperationalMenuItemKeys.operate]: "delete",
+    [IOperationalMenuItemKeys.title]: "删除",
+    [IOperationalMenuItemKeys.behavior]: "popconfirm"
   }, {
-    operate: "preview",
-    title: "预览",
-    behavior: "onClick",
+    [IOperationalMenuItemKeys.operate]: "preview",
+    [IOperationalMenuItemKeys.title]: "预览",
+    [IOperationalMenuItemKeys.behavior]: "onClick"
   },
   {
-    operate: "relation",
-    title: "表关系图",
-    behavior: "onClick"
+    [IOperationalMenuItemKeys.operate]: "relation",
+    [IOperationalMenuItemKeys.title]: "表关系图",
+    [IOperationalMenuItemKeys.behavior]: "onClick"
   }
 ];
 
@@ -191,8 +192,14 @@ export const COLUMNS: ProColumns[] = [
     hideInSearch: true,
   },
   {
-    title: '弹窗选择标题',
+    title: '弹窗选择名称',
     dataIndex: 'name',
+    width: 140,
+    ellipsis: true,
+  },
+  {
+    title: '弹窗选择标题',
+    dataIndex: 'title',
     width: 140,
     ellipsis: true,
   },
@@ -290,6 +297,7 @@ export interface IPopupWindow{
   id: string
   code: string
   name : string
+  title : string
   showType: string
   selectType: string
   selectCount: string
@@ -365,10 +373,11 @@ export interface IPopupWindow{
 }
 
 export interface IEditPopupWindowProps {
-  onOk: () => void;
-  onCancel: () => void;
+  form?: FormInstance;
+  onOk?: () => void;
+  onCancel?: () => void;
 
-  upDataMenus: () => void;
+  updatePopupWindow?: () => void;
 
   editData:IPopupWindow
   editModalData: IModalData

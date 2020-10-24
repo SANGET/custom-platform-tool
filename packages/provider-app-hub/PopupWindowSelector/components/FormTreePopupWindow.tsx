@@ -14,17 +14,18 @@ import { PopupWindowField } from './PopupWindowField';
 
 const FormTreePopupWindow: React.FC<IEditPopupWindowProps> = (props: IEditPopupWindowProps) => {
   const {
+    form,
     editData: {
-      id, name, selectType, showType
+      id, name, selectType, showType, treePopupWindowDetail: { datasource, datasourceType }
     }
   } = props;
-  const [form] = Form.useForm();
   const [visibleModal, setVisibleModal] = useState<boolean>(false);
+  const [datasourceOptions, setDatasourceOptions] = useState<ISELECTSMENU[]>([]);
   const handleFinish = async (values) => {
   };
 
   useEffect(() => {
-    form.setFieldsValue({ name, showType, selectType });
+    form?.setFieldsValue({ name, showType, selectType });
   }, []);
 
   return (
@@ -32,10 +33,9 @@ const FormTreePopupWindow: React.FC<IEditPopupWindowProps> = (props: IEditPopupW
       <PopupWindowTable
         {...props}
         form={form}
+        options = {datasourceOptions}
         label="数据源"
         name = 'datasource'
-        code='datasource'
-        text = 'datasource'
       />
       <PopupWindowField
         {...props}

@@ -49,7 +49,20 @@ export const NameCodeItem: React.FC<IProps> = React.memo((props: IProps): ReactE
   return (
     <>
       <Form.Item
-        name="name" label="弹窗标题"
+        name="name" label="弹窗名称"
+        rules={[
+          { required: true, message: '弹窗名称不能为空' },
+          { pattern: RE.CENUSB, message: '输入字段可以为中文、英文、数字、下划线、括号' },
+          { max: 30, message: '最多只能输入30个字符' },
+        ]}
+      >
+        <Input
+          onChange={handleNameChange}
+          placeholder='最多可输入30个字符，名称唯一。输入字段可以为中文、英文、数字、下划线、括号'
+        />
+      </Form.Item>
+      <Form.Item
+        name="title" label="弹窗标题"
         rules={[
           { required: true, message: '弹窗标题不能为空' },
           { pattern: RE.CENUSB, message: '输入字段可以为中文、英文、数字、下划线、括号' },
@@ -57,7 +70,7 @@ export const NameCodeItem: React.FC<IProps> = React.memo((props: IProps): ReactE
         ]}
       >
         <Input
-          onChange={handleNameChange}
+
           placeholder='最多可输入30个字符，名称唯一。输入字段可以为中文、英文、数字、下划线、括号'
         />
       </Form.Item>

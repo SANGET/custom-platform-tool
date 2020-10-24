@@ -45,23 +45,25 @@ export const translateRefFieldsToSelectMenus = (fields: ITableColumnFromApi[]):I
 
 export const PopupWindowField: React.FC<IProps> = (props: IProps) => {
   const {
-    form, text, code, name, handleChange, label, editData
+    form, text, code, name, handleChange, label, editData, tableId, selectedValue
   } = props;
   const [options, setOptions] = useState<ISELECTSMENU[]>([]);
   const [fieldOptions, setFieldOptions] = useState<ITableColumn[]>([]);
 
-  const getTableIdByTableCode = (datasource) => {
-    if (!code && !Array.isArray(options)) return '';
-    return options.filter((item) => item.value === datasource)?.[0]?.key || '';
-  };
+  // const getTableIdByTableCode = (datasource) => {
+  //   if (!code && !Array.isArray(options)) return '';
+  //   return options.filter((item) => item.value === datasource)?.[0]?.key || '';
+  // };
 
-  const getMenusData = () => {
-    const id = form.getFieldValue('datasourceKey');
-    if (!id) {
+  const getFieldData = () => {
+    // const id = form.getFieldValue(datasourceString);
+
+    if (!tableId) {
       setOptions([]);
       return;
     }
-    getTableInfo(id).then((res) => {
+    console.log(tableId);
+    getTableInfo(tableId).then((res) => {
     /** 如果接口没有提供提示信息 */
       if (!res?.msg) {
         openNotification(NOTIFICATION_TYPE?.ERROR, API_ERROR_MSG?.ALLOWDELETE);
@@ -73,7 +75,10 @@ export const PopupWindowField: React.FC<IProps> = (props: IProps) => {
     });
   };
   useEffect(() => {
-    getMenusData();
+    getFieldData();
+    console.log(name);
+    console.log(selectedValue);
+    form.setFieldsValue({ name: selectedValue });
   }, []);
   const handleValueChange = (value) => {
     /*
@@ -84,10 +89,9 @@ export const PopupWindowField: React.FC<IProps> = (props: IProps) => {
     } = fieldOptions.filter((item) => item.code === value)?.[0];
     handleChange && handleChange({ fieldSize, fieldType, name: fieldName });
     */
-    console.log(value);
   };
   const handleDropdown = (oepn:boolean) => {
-    oepn && getMenusData();
+    oepn && getFieldData();
   };
   return (
     <Form.Item

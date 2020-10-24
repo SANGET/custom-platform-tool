@@ -1,6 +1,6 @@
 import React, { ReactElement } from 'react';
 import { Button, Popconfirm } from 'antd';
-import { IOperationalMenuItem } from '../interface';
+import { IOperationalMenuItem, IOperationalMenuItemKeys, OperationalBehavior } from '../interface';
 import { OPERATIONALMENU, SPECIES } from '../constant';
 import './index.less';
 
@@ -18,7 +18,7 @@ const Operational: React.FC<IProps> = (props: IProps): ReactElement => {
     <div className="table-operational">
       {
         OPERATIONALMENU.map((item, index) => {
-          if (item.behavior === "popconfirm") {
+          if (item[IOperationalMenuItemKeys.behavior] === OperationalBehavior.popconfirm) {
             return 1 === 1 ? (<Popconfirm
               key={index}
               placement="topLeft"
@@ -28,15 +28,16 @@ const Operational: React.FC<IProps> = (props: IProps): ReactElement => {
               cancelText="取消"
             >
               <Button type="link" >
-                {item.title}
+                {item[IOperationalMenuItemKeys.title]}
               </Button>
             </Popconfirm>) : (<Button type="link" disabled>
-              {item.title}
+              {item[IOperationalMenuItemKeys.title]}
             </Button>);
           }
+
           return (
-            <Button key={index} type="link" onClick={() => onClick && onClick(Object.assign(item, data))}>
-              {item.title}
+            <Button key={index} type="link" onClick={() => onClick?.(Object.assign({}, data, item))}>
+              {item[IOperationalMenuItemKeys.title]}
             </Button>);
         })
       }

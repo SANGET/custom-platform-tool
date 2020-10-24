@@ -26,17 +26,21 @@ export const translatePopupWindowTablesToSelectMenus = (tables:ITable[]): ISELEC
 
 const FormTablePopupWindow: React.FC<IEditPopupWindowProps> = (props: IEditPopupWindowProps) => {
   const {
+    form,
     editData: {
-      id, name, selectType, showType, tablePopupWindowDetail: { datasource, datasourceType }
+      id, name, selectType, showType, tablePopupWindowDetail: {
+        datasource, datasourceType, returnText, returnValue
+      }
     }
   } = props;
-  const [options, setOptions] = useState<ISELECTSMENU[]>([]);
-  const [form] = Form.useForm();
-  const [datasource, setDataSource] = useState(0);
+  const [datasourceOptions, setDatasourceOptions] = useState<ISELECTSMENU[]>([]);
+  const [returnValueOptions, setReturnValueOptions] = useState<ISELECTSMENU[]>([]);
+  const [returnTextOptions, setReturnTextOptions] = useState<ISELECTSMENU[]>([]);
+
   useEffect(() => {
     queryTablesList().then((res) => {
       /** 如果接口没有提供提示信息 */
-      setOptions(translatePopupWindowTablesToSelectMenus(res?.result?.data));
+      setDatasourceOptions(translatePopupWindowTablesToSelectMenus(res?.result?.data));
     });
   }, []);
 
@@ -44,8 +48,8 @@ const FormTablePopupWindow: React.FC<IEditPopupWindowProps> = (props: IEditPopup
     <>
       <PopupWindowTable
         {...props}
-        options = {options}
-        datasource = {datasource}
+        options = {datasourceOptions}
+        selectedValue = {datasource}
         form={form}
         label="数据源"
         name = 'datasource'
@@ -54,36 +58,41 @@ const FormTablePopupWindow: React.FC<IEditPopupWindowProps> = (props: IEditPopup
       />
       <PopupWindowField
         {...props}
+        options = {returnValueOptions}
+        selectedValue = {returnValue}
         label = "返回值"
         code='returnValue'
         form={form}
         name="returnValue"
-        text = 'returnValue'
+        tableId = {datasource}
 
       />
       <PopupWindowField
         {...props}
+        options = {returnTextOptions}
         label = "返回文本"
         code='returnText'
         form={form}
         name="returnText"
-        text = 'returnText'
+        tableId = {datasource}
       />
       <PopupWindowField
         {...props}
+        options = {datasourceOptions}
         label = "排序字段"
         code='sortColumnInfo'
         form={form}
         name="sortColumnInfo"
-        text = 'sortColumnInfo'
+        tableId = {datasource}
       />
       <PopupWindowField
         {...props}
+        options = {datasourceOptions}
         label = "显示字段"
         code='showColumn'
         form={form}
         name="showColumn"
-        text = 'showColumn'
+        tableId = {datasource}
       />
     </>
   );

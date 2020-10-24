@@ -15,13 +15,12 @@ import { PopupWindowField } from './PopupWindowField';
  
 const FormLeftTreeRightTable: React.FC<IEditPopupWindowProps> = (props: IEditPopupWindowProps) => {
   const {
+    form,
     editData: {
       id, name, selectType, showType,treeTablePopupWindowDetail{tableDatasource, tableDatasourceType, treeDatasource,
-        treeDatasourceType
-      }
+        treeDatasourceType}
     }
   } = props;
-  const [form] = Form.useForm();
   const [visibleModal, setVisibleModal] = useState<boolean>(false);
   const handleFinish = async (values) => {
   };

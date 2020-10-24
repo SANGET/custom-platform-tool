@@ -26,24 +26,24 @@ import FormTreePopupWindow from './FormTreePopupWindow';
 const { Option } = Select;
 const { TextArea } = Input;
 
-interface IProps {
-  onOk: () => void;
-  onCancel: () => void;
+// interface IProps {
+//   onOk: () => void;
+//   onCancel: () => void;
 
-  upDataMenus: () => void;
+//   upDataMenus: () => void;
 
-  editData:IPopupWindow
-  editModalData: IModalData
+//   editData:IPopupWindow
+//   editModalData: IModalData
 
-}
+// }
 const layout = {
   labelCol: { span: 5 },
   wrapperCol: { span: 19 },
 };
-const CreatePopupWindow: React.FC<IEditPopupWindowProps> = (props: IEditPopupWindowProps) => {
+const CreateEditPopupWindow: React.FC<IEditPopupWindowProps> = (props: IEditPopupWindowProps) => {
   const {
-    onCancel, onOk, upDataMenus, editData: {
-      id, code, name, selectType, showType,
+    onCancel, onOk, updatePopupWindow, editData: {
+      id, code, name, title, selectType, showType,
       tablePopupWindowDetail: { datasource, datasourceType },
       treePopupWindowDetail: { datasource, datasourceType },
       treeTablePopupWindowDetail: {
@@ -88,11 +88,12 @@ const CreatePopupWindow: React.FC<IEditPopupWindowProps> = (props: IEditPopupWin
 
   const assemblyPopupParams = (values) => {
     const {
-      name, showType, selectType, datasource, datasourceType, returnValue, returnText
+      name, title, showType, selectType, datasource, datasourceType, returnValue, returnText
     } = values;
 
     const params = {
       name,
+      title,
       showType,
       selectType,
       selectCount: 0,
@@ -195,21 +196,20 @@ const CreatePopupWindow: React.FC<IEditPopupWindowProps> = (props: IEditPopupWin
 
   const handleMenuOk = () => {
     setVisibleModal(false);
-    upDataMenus && upDataMenus();
+    updatePopupWindow && updatePopupWindow();
   };
   const handleFormCancel = () => {
     onCancel && onCancel();
   };
   useEffect(() => {
     form.setFieldsValue({
-      name, code, selectType, showType
+      name, code, title, selectType, showType
       // : getShowTypeTitleById(showType)
     });
   }, []);
   const handleShowTypeSelectChange = (value) => {
 
   };
-  console.log(form.getFieldValue('showType'));
   return (
     <>
       <Form {...layout} form={form} name="control-hooks" onFinish={handleFinish}>
@@ -260,24 +260,15 @@ const CreatePopupWindow: React.FC<IEditPopupWindowProps> = (props: IEditPopupWin
           {({ getFieldValue }) => {
             return getFieldValue('showType') === SHOW_TYPE.TREE
               ? (
-                // <Form.Item
-                //   name="maxLevel"
-                //   label="最大层级数1"
-                //   rules={[{
-                //     required: true,
-                //     message: "请填写最大层级数1"
-                //   }]}
-                //   initialValue={15}
-                // >
-                //   <InputNumber placeholder="须为正整数,最大层级不超过15级" min={2} max={15} />
-                // </Form.Item>
                 <FormTreePopupWindow
                   {...props}
+                  form={form}
                 ></FormTreePopupWindow>
               ) : getFieldValue('showType') === SHOW_TYPE.TABLE ? (
                 // <PrimaryTreeItem />
                 <FormTablePopupWindow
                   {...props}
+                  form={form}
                 ></FormTablePopupWindow>
 
               ) : null;
@@ -302,4 +293,4 @@ const CreatePopupWindow: React.FC<IEditPopupWindowProps> = (props: IEditPopupWin
     </>
   );
 };
-export default React.memo(CreatePopupWindow);
+export default React.memo(CreateEditPopupWindow);
