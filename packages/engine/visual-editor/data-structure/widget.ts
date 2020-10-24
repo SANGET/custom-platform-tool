@@ -69,8 +69,6 @@ export interface WidgetEditableProps {
  */
 export interface WidgetMetadata<C = BasicWidgetType> extends BasicWidgetClassType<C> {
   id: string
-  /** 可以指定组件类被实例化时的 id */
-  entityID?: string
   /** 可编辑的属性 */
   editableProps: WidgetEditableProps
 }
