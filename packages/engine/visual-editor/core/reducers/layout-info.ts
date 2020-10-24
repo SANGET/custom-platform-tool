@@ -28,13 +28,6 @@ export type LayoutInfoActionReducerAction =
   InitEntityStateAction |
   InitAppAction
 
-// /**
-//  * state 的数据结构
-//  */
-// export interface LayoutInfoActionReducerState {
-//   [entityID: string]: WidgetEntity
-// }
-
 /**
  * 用于处理布局信息的 reducer
  */

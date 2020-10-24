@@ -39,44 +39,11 @@ export function selectedInfoReducer(
       const { entity, idx, nestingInfo } = action;
       const entityID = entity.id;
       return {
-        // selectedList: {
-        //   [entityID]: entity
-        // },
         nestingInfo: nestingInfo || [idx],
         index: idx,
         id: entityID,
-        // activeEntity: entity
       };
     default:
       return state;
   }
 }
-
-/**
- * 弃用
- *
- * 用于存储组件实例的状态集合
- */
-// export function entitiesStateStoreReducer(
-//   state: EntitiesStateStore = {},
-//   action: InitEntityStateAction | UpdateEntityStateAction
-// ): EntitiesStateStore {
-//   switch (action.type) {
-//     // case UPDATE_ENTITY_STATE:
-//     //   const { entityID, formState } = action;
-//     //   return {
-//     //     ...state,
-//     //     [entityID]: {
-//     //       ...formState
-//     //     }
-//     //   };
-//     // case INIT_ENTITY_STATE:
-//     //   const { entity, defaultEntityState } = action;
-//     //   return {
-//     //     ...state,
-//     //     [entity.id]: defaultEntityState
-//     //   };
-//     default:
-//       return state;
-//   }
-// }

@@ -278,7 +278,6 @@ PropertiesEditorProps, PropertiesEditorState
 
   render() {
     const { propItemGroupingData } = this.props;
-    console.log('this.props :>> ', this.props);
 
     return (
       <div

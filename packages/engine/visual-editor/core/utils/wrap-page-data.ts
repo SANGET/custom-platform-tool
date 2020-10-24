@@ -1,19 +1,6 @@
 import produce from 'immer';
 import { BasePageData } from "../../data-structure";
 
-const mergeStateToContent = (layoutData, entityState) => {
-  const res = produce(layoutData, (darftData) => {
-    for (const item of darftData) {
-      const entityID = item.id;
-      item.props = {};
-      Object.assign(item.props, entityState[entityID]);
-    }
-    return darftData;
-  });
-
-  return res;
-};
-
 export const wrapPageData = ({
   id,
   name = '测试',

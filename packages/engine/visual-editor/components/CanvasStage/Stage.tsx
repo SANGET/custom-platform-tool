@@ -64,7 +64,6 @@ class CanvasStage extends React.Component<CanvasStageProps> {
 
   /**
    * 查看组件实例是否被选中
-   * @param entityID entityID
    */
   getSelectedState = ({ id }: GetStateContext) => {
     return this.props.selectedInfo.id === id;
