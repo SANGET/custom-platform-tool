@@ -1,11 +1,12 @@
-import { APBDSLtestUrl } from "@/utils/gen-url";
-
+import { originGenUrl } from "@/utils/gen-url";
+import { getPageQuery } from '@/utils/utils';
 /**
  * 获取用户菜单
  * @param params
  */
 export async function queryMenuList(params: API.IMeunParams) {
-  return $A_R(APBDSLtestUrl, {
+  const { app, lessee } = getPageQuery();
+  return $A_R(originGenUrl(lessee, app, "queryPerson"), {
     method: 'POST',
     data: {
       steps: [

@@ -1,3 +1,5 @@
+import HOSTENV from '@/utils/env';
+
 export enum CLIENT_TYPE {
   "WEB" = 4
 }
@@ -5,7 +7,8 @@ export enum CLIENT_TYPE {
  * 用户登录
  */
 export async function accountLogin(params: API.ILoginParams) {
-  return $A_R('/auth/token', {
+  const pageUrl = HOSTENV.get();
+  return $A_R(`${pageUrl.AUTH}/auth/token`, {
     method: 'POST',
     data: params,
   });

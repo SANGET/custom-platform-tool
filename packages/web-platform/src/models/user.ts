@@ -91,7 +91,7 @@ const UserModel: IUserModel = {
       const response = yield call(queryUserInfo);
       yield put({
         type: 'setCurrentUser',
-        payload: response.result,
+        payload: response?.data?.result || {},
       });
     },
   },
