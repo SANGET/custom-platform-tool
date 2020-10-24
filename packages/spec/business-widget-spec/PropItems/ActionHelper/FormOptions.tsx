@@ -36,19 +36,21 @@ export const actionConfigForm = ({
       let formOptionsForActionSetting;
       let tip;
       let actionConfigPanelDefaultValue;
+      let isSet;
       switch (triggerAction) {
         case 'submit':
           formOptionsForActionSetting = createActionForm(interDatasources);
           tip = '配置动作';
           actionConfigPanelDefaultValue = omit(actionVal, ['pageID', 'pageType']);
+          isSet = !!actionConfigPanelDefaultValue.actionType;
           break;
         case 'openPage':
           formOptionsForActionSetting = openPageForm();
           tip = '配置页面';
           actionConfigPanelDefaultValue = pick(actionVal, ['pageID', 'pageType']);
+          isSet = !!actionConfigPanelDefaultValue.pageID;
           break;
       }
-      const isSet = !!actionConfigPanelDefaultValue;
       return (
         <PopModelSelector
           modelSetting={{
@@ -117,7 +119,7 @@ export const openPageForm = (): FormOptions => [
  * 将内部的数据源转换成 radio 的 values
  * @param interDatasources
  */
-export const convertDatasource2RadioValues = (interDatasources: PD.Datasources) => {
+export const convertDatasource2RadioValues = (interDatasources: PD.Datasources = []) => {
   const res = {};
   interDatasources.forEach((ds) => {
     const { id, name } = ds;
