@@ -8,6 +8,9 @@ const takeBindColumnInfo = (selectedField: SelectedField) => {
   return `${tableInfo?.name}_${column?.name}`;
 };
 
+/** 属性项编辑的组件属性 */
+const whichAttr = 'field';
+
 /**
  * 绑定数据列
  */
@@ -16,7 +19,7 @@ export const FieldHelperSpec: PropItemCompAccessSpec = {
 
   label: '列',
 
-  whichAttr: ['field'],
+  whichAttr,
 
   useMeta: {
     schema: true
@@ -30,7 +33,7 @@ export const FieldHelperSpec: PropItemCompAccessSpec = {
     takeMeta,
     genMetaRefID,
   }) {
-    const metaRefID = widgetEntityState.field || genMetaRefID('schema');
+    const metaRefID = widgetEntityState[whichAttr] || genMetaRefID('schema');
     const selectedField = takeMeta({
       metaAttr: 'schema',
       metaRefID
@@ -49,7 +52,7 @@ export const FieldHelperSpec: PropItemCompAccessSpec = {
                   defaultSelected={selectedField}
                   onSubmit={(val) => {
                     changeEntityState({
-                      attr: 'field',
+                      attr: whichAttr,
                       value: metaRefID
                     });
                     changePageMeta({
