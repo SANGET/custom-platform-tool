@@ -2,7 +2,8 @@
  * TODO: 引用 redux
  */
 
-import React from 'react';
+import React, { Suspense } from 'react';
+import { LoadingTip } from '@provider-ui/loading-tip';
 import { AppLocationType } from '../../app';
 import { ProviderAppContext } from '../../types';
 
@@ -43,7 +44,9 @@ const loadChild = (
       return C;
     }
   }
-  return <C {...props} />;
+  return (
+    <C {...props} />
+  );
 };
 
 /**
@@ -66,6 +69,10 @@ export const PageContainer = (props: PageContainerProps) => {
     <div
       {...otherProps}
     >
+
+      {/* <Suspense fallback={(<LoadingTip />)}>
+        <ChildComp pageChildProps={pageChildProps} />
+      </Suspense> */}
       {
         loadChild(ChildComp, pageChildProps)
       }

@@ -3,16 +3,20 @@ import { Input, Selector } from '@infra/ui';
 import { PropItemCompAccessSpec } from '@engine/visual-editor/data-structure';
 
 /** 属性项编辑的组件属性 */
-const whichAttr = 'labelColor';
+const whichAttr = 'widgetCode';
 
-export const TitleColorHelperSpec: PropItemCompAccessSpec = {
-  id: 'prop_style_title_color',
+/**
+ * 组件的编码
+ */
+export const WidgetCodingHelperSpec: PropItemCompAccessSpec = {
+  id: 'prop_widget_coding',
 
-  label: '标题颜色',
+  label: '组件编码',
 
   whichAttr,
 
   render: (ctx) => {
+    console.log('ctx :>> ', ctx);
     const { changeEntityState, widgetEntityState } = ctx;
     /** 取自身定义的 whichAttr */
     const _value = widgetEntityState[whichAttr];
