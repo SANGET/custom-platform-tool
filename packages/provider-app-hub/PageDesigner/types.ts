@@ -28,6 +28,11 @@ export interface DatasourceItem {
   columns: ColumnItem[]
 }
 
+export interface PDPropItemRendererBusinessPayload {
+  /** 内部的已绑定的数据源 */
+  interDatasources: PD.Datasources
+}
+
 export type DatasourceGroup = DatasourceItem[]
 
 declare global {
@@ -37,6 +42,8 @@ declare global {
     type Column = ColumnItem
     type Datasource = DatasourceItem
     type Datasources = DatasourceGroup
+    /** 属性项的业务承载 */
+    type PropItemRendererBusinessPayload = PDPropItemRendererBusinessPayload
   }
   /** 页面设计器的类型定义 */
 }
