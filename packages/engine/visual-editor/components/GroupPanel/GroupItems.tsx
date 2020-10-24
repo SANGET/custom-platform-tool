@@ -1,7 +1,7 @@
 import React from 'react';
 import { GroupPanelItem, PanelItemsGroup } from '.';
 
-export type ItemRendererType = (item: GroupPanelItem, groupType: string) => JSX.Element
+export type ItemRendererType = (item: GroupPanelItem, groupType: string) => JSX.Element | null
 
 export interface GroupItemsRenderProps {
   itemsGroups?: PanelItemsGroup[]

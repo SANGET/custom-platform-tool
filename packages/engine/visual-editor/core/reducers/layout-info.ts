@@ -1,5 +1,6 @@
 import update from 'immutability-helper';
 import produce from 'immer';
+import flattenDeep from 'lodash/flattenDeep';
 import { LayoutInfoActionReducerState, FlatLayoutItems } from "../../data-structure";
 import {
   ADD_ENTITY, SET_LAYOUT_STATE, DEL_ENTITY,
@@ -102,7 +103,7 @@ export const layoutInfoReducer = (
  * 将嵌套的数组转为 nodeTree 结构
  */
 const flatArrayToNode = (items: any[], idKey = 'id') => {
-  const array = items.flat();
+  const array = flattenDeep(items);
   const resTree = {};
   for (const item of array) {
     resTree[item[idKey]] = item;

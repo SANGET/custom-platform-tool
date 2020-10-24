@@ -61,7 +61,7 @@ export interface PropItemMeta {
    * 2. 如果指定的是数组，则传入到属性项的 widgetEntityState 为包含所有定义的对象结构；
    * 3. 可以被组件元数据的 editAttr 定义覆盖；
    */
-  readonly whichAttr: string[]
+  readonly whichAttr: string | string[]
   /** 是否使用 meta */
   readonly useMeta?: {
     [metaAttr: string]: boolean
