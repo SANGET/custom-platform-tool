@@ -6,7 +6,8 @@
   "scripts": {
     "set:version": "vh gen",
     "start": "cross-env PORT=6679 minictl start",
-    "build": "npm run set:version && minictl build"
+    "build": "npm run set:version && minictl build",
+    "analyz": "minictl analyz"
   },
   "peerDependencies": {
     "react": "^16.14.0",
