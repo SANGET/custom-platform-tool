@@ -1,6 +1,7 @@
 /// //////////////// 属性项 ///////////////////
 
 import { ChangeMetadata } from "../core";
+import { WidgetEntity } from "./widget";
 
 export type PropItemCompRender = ({
   /** 属性的值 */
@@ -34,14 +35,16 @@ export type TakeMeta = (options: TakeMetaOptions) => unknown
 export type GenMetaRefID = (metaAttr: string) => string
 
 export interface PropItemRenderContext {
-  /** 内部的已绑定的数据源 */
-  interDatasources: PD.Datasources
+  /** 业务数据 */
+  businessPayload: PD.PropItemRendererBusinessPayload
+  /** 编辑中的组件实例 */
+  readonly widgetEntity: WidgetEntity
   /** 组件实例状态 */
-  widgetEntityState: any
+  readonly editingWidgetState: any
   /** 更改组件实例状态的接口 */
   changeEntityState: ChangeEntityState
   /** 更改页面的 meta 数据 */
-  changePageMeta: typeof ChangeMetadata
+  changeMetadata: typeof ChangeMetadata
   takeMeta: TakeMeta
   /** 生成 meta 引用的 ID */
   genMetaRefID: GenMetaRefID

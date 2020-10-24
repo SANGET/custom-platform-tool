@@ -16,10 +16,11 @@ export const ActionHelperSpec: PropItemCompAccessSpec = {
 
   render(ctx) {
     const {
-      takeMeta, genMetaRefID, changeEntityState, changePageMeta,
-      widgetEntityState, interDatasources
+      takeMeta, genMetaRefID, changeEntityState, changeMetadata,
+      editingWidgetState, businessPayload
     } = ctx;
-    const metaRefID = widgetEntityState.actionRef || genMetaRefID('actions');
+    const { interDatasources } = businessPayload;
+    const metaRefID = editingWidgetState.actionRef || genMetaRefID('actions');
     const actionConfig = takeMeta({
       metaAttr: 'actions',
       metaRefID
@@ -42,7 +43,7 @@ export const ActionHelperSpec: PropItemCompAccessSpec = {
                       attr: 'actionRef',
                       value: metaRefID
                     });
-                    changePageMeta({
+                    changeMetadata({
                       data: actionSetting,
                       metaAttr: 'actions',
                       dataRefID: metaRefID

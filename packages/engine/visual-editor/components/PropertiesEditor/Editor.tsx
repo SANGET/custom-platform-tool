@@ -14,9 +14,10 @@ import {
   NextEntityStateType,
   NextEntityState,
   PageMetadata,
+  PropItemRenderContext,
+  ChangeEntityState,
 } from '../../data-structure';
 import { entityStateMergeRule } from './entityStateMergeRule';
-import { PropItemRendererProps } from './types';
 import { GroupPanel, GroupPanelData } from '../GroupPanel';
 import { VEAppDispatcher } from '../../core';
 
@@ -34,6 +35,14 @@ export type PropPanelData = GroupPanelData[]
 
 export type UpdateEntityStateOfEditor = (entityState: WidgetEntityState) => void
 export type InitEntityStateOfEditor = (entityState: WidgetEntityState) => void
+
+/**
+ * 属性项的渲染器标准接口
+ */
+export interface PropItemRendererProps {
+  propItemMeta: PropItemMeta
+  renderCtx: PropItemRenderContext
+}
 
 export interface PropertiesEditorProps {
   pageMetadata: PageMetadata
@@ -197,19 +206,48 @@ PropertiesEditorProps, PropertiesEditorState
     return res;
   }
 
+  changeEntityState: ChangeEntityState = (nextValue) => {
+    /** 更新自身的数据 */
+    this.updateEntityStateForSelf(nextValue);
+
+    /** 延后更新整个应用的数据 */
+    debounce.exec(() => {
+      this.props.updateEntityState(this.state.entityState);
+    }, 100);
+  }
+
+  genMetaRefID = (metaAttr: string) => {
+    const { pageMetadata } = this.props;
+    if (!metaAttr) throw Error('请传入 metaAttr，否则逻辑无法进行');
+    const meta = pageMetadata[metaAttr];
+    const metaID = meta ? String(Object.keys(pageMetadata[metaAttr]).length + 1) : '1';
+    const prefix = metaAttr;
+    return `${prefix}_${metaID}`;
+  }
+
+  /**
+   * 获取 meta
+   */
+  takeMeta = (options) => {
+    const { pageMetadata } = this.props;
+    const { metaAttr, metaRefID } = options;
+    return metaRefID ? pageMetadata[metaAttr]?.[metaRefID] : pageMetadata[metaAttr];
+  }
+
   /**
    * prop item 渲染器
    * @param propItemID
    * @param groupType
    */
   propItemRendererSelf = (propItemID, groupType) => {
+    const { selectedEntity } = this.props;
     const propItemMeta = this.bindPropItemsMap[propItemID];
 
     /** 如果组件没有绑定该属性项，则直接返回 */
     if (!propItemMeta) return null;
 
     const {
-      propItemRenderer, ChangeMetadata
+      propItemRenderer, ChangeMetadata: changeMetadata
     } = this.props;
 
     const editingAttr = propItemMeta.whichAttr;
@@ -222,18 +260,16 @@ PropertiesEditorProps, PropertiesEditorState
       >
         {
           propItemRenderer({
-            propItemValue: activeState,
-            ChangeMetadata,
-            changeEntityState: (nextValue) => {
-              /** 更新自身的数据 */
-              this.updateEntityStateForSelf(nextValue);
-
-              /** 延后更新整个应用的数据 */
-              debounce.exec(() => {
-                this.props.updateEntityState(this.state.entityState);
-              }, 100);
-            },
-            propItemMeta
+            propItemMeta,
+            renderCtx: {
+              businessPayload: {},
+              editingWidgetState: activeState,
+              widgetEntity: selectedEntity,
+              genMetaRefID: this.genMetaRefID,
+              takeMeta: this.takeMeta,
+              changeMetadata,
+              changeEntityState: this.changeEntityState,
+            }
           })
         }
       </div>
@@ -242,6 +278,7 @@ PropertiesEditorProps, PropertiesEditorState
 
   render() {
     const { propItemGroupingData } = this.props;
+    console.log('this.props :>> ', this.props);
 
     return (
       <div

@@ -1,6 +1,26 @@
-import React from 'react';
-import { Input, Selector } from '@infra/ui';
+import React, { useEffect } from 'react';
+import { Label } from '@deer-ui/core/label';
 import { PropItemCompAccessSpec } from '@engine/visual-editor/data-structure';
+
+const WidgetCodeComp = ({ ctx }) => {
+  const { changeEntityState, editingWidgetState, widgetEntity } = ctx;
+  // console.log('ctx :>> ', ctx);
+  const { id } = widgetEntity;
+  /** 取自身定义的 whichAttr */
+  const _value = editingWidgetState[whichAttr];
+  useEffect(() => {
+    if (_value) return;
+    changeEntityState({
+      attr: whichAttr,
+      value: id
+    });
+  }, []);
+  return (
+    <div>
+      <Label>{_value}</Label>
+    </div>
+  );
+};
 
 /** 属性项编辑的组件属性 */
 const whichAttr = 'widgetCode';
@@ -16,20 +36,6 @@ export const WidgetCodingHelperSpec: PropItemCompAccessSpec = {
   whichAttr,
 
   render: (ctx) => {
-    console.log('ctx :>> ', ctx);
-    const { changeEntityState, widgetEntityState } = ctx;
-    /** 取自身定义的 whichAttr */
-    const _value = widgetEntityState[whichAttr];
-    return (
-      <div>
-        <Input
-          value={_value || ''}
-          onChange={(value) => changeEntityState({
-            attr: whichAttr,
-            value
-          })}
-        />
-      </div>
-    );
+    return <WidgetCodeComp ctx={ctx} />;
   }
 };

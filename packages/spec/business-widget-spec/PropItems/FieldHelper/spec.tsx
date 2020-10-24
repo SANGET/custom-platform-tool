@@ -26,14 +26,15 @@ export const FieldHelperSpec: PropItemCompAccessSpec = {
   },
 
   render({
-    interDatasources,
-    widgetEntityState,
+    businessPayload,
+    editingWidgetState,
     changeEntityState,
-    changePageMeta,
+    changeMetadata,
     takeMeta,
     genMetaRefID,
   }) {
-    const metaRefID = widgetEntityState[whichAttr] || genMetaRefID('schema');
+    const { interDatasources } = businessPayload;
+    const metaRefID = editingWidgetState[whichAttr] || genMetaRefID('schema');
     const selectedField = takeMeta({
       metaAttr: 'schema',
       metaRefID
@@ -55,7 +56,7 @@ export const FieldHelperSpec: PropItemCompAccessSpec = {
                       attr: whichAttr,
                       value: metaRefID
                     });
-                    changePageMeta({
+                    changeMetadata({
                       data: val,
                       metaAttr: 'schema',
                       dataRefID: metaRefID

@@ -18,7 +18,7 @@ const selectTypes = {
  * ValueHelperProps
  */
 interface ValueHelperProps {
-  widgetEntityState
+  editingWidgetState
   onChange: ChangeEntityState
 }
 
@@ -27,11 +27,11 @@ interface ValueHelperProps {
  * @param param0
  */
 export const ValueHelper: React.FC<ValueHelperProps> = ({
-  widgetEntityState,
+  editingWidgetState,
   onChange,
 }) => {
   const [selectedItem, setSelectedItem] = React.useState('costomValue');
-  const { exp, defValue, variable } = widgetEntityState;
+  const { exp, defValue, variable } = editingWidgetState;
   let Comp;
   switch (selectedItem) {
     case 'costomValue':
