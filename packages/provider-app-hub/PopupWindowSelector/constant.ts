@@ -296,8 +296,8 @@ export interface IPopupWindow{
   enable: string
   tablePopupWindowDetail?: {
     createdBy: string
-    datasource: string
-    datasourceType: string
+    datasource: number
+    datasourceType: number
     deleteFlag: string
     gmtCreate: string
     gmtModified: string
@@ -308,8 +308,73 @@ export interface IPopupWindow{
     showColumn: string
     sortColumnInfo: string
   },
+  treePopupWindowDetail?: {
+    createdBy: string,
+    datasource: number,
+    datasourceType: number,
+    deleteFlag: string,
+    gmtCreate: string,
+    gmtModified: string,
+    id: string,
+    modifiedBy: string,
+    relatedSuperiorColumn: string,
+    returnText: string,
+    returnValue: string,
+    showColumn: string,
+    showSearch: string,
+    sortColumnInfo: string,
+    superiorColumn: string
+  },
+
+  treeTablePopupWindowDetail: {
+    createdBy: string,
+    deleteFlag: string,
+    gmtCreate: string,
+    gmtModified: string,
+    id: string,
+    modifiedBy: string,
+    popupWindowId: string,
+    showSearch: string,
+    tableDatasource: string,
+    tableDatasourceType: string,
+    tableReturnText: string,
+    tableReturnValue: string,
+    tableShowColumn: string,
+    tableSortInfo: string,
+    tableTreeRelatedColumn: string,
+    treeDatasource: string,
+    treeDatasourceType: string,
+    treeRelatedSuperiorColumn: string,
+    treeReturnText: string,
+    treeReturnValue: string,
+    treeShowColumn: string,
+    treeSortInfo: string,
+    treeSuperiorColumn: string,
+    version: string
+  },
+  customPopupWindowDetail: {
+    createdBy: string,
+    deleteFlag: string,
+    gmtCreate: string,
+    gmtModified: string,
+    id: string,
+    modifiedBy: string,
+    popupWindowId: string
+
+  }
+}
+
+export interface IEditPopupWindowProps {
+  onOk: () => void;
+  onCancel: () => void;
+
+  upDataMenus: () => void;
+
+  editData:IPopupWindow
+  editModalData: IModalData
 
 }
+
 export interface IModalData{
   okText : string
   modalTitle: string

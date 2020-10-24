@@ -45,7 +45,7 @@ export const translateRefFieldsToSelectMenus = (fields: ITableColumnFromApi[]):I
 
 export const PopupWindowField: React.FC<IProps> = (props: IProps) => {
   const {
-    form, text, code, name, handleChange, label
+    form, text, code, name, handleChange, label, editData
   } = props;
   const [options, setOptions] = useState<ISELECTSMENU[]>([]);
   const [fieldOptions, setFieldOptions] = useState<ITableColumn[]>([]);

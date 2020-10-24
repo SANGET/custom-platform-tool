@@ -5,7 +5,7 @@ import {
 } from 'antd';
 import { FormInstance } from 'antd/lib/form';
 import {
-  SHOW_TYPE_OPTIONS, SELECT_TYPE_OPTIONS, SHOW_TYPE, SPECIES, SELECT_TYPE, IPopupWindow, IModalData
+  SHOW_TYPE_OPTIONS, SELECT_TYPE_OPTIONS, SHOW_TYPE, SPECIES, SELECT_TYPE, IPopupWindow, IModalData, IEditPopupWindowProps
 } from '../constant';
 
 import {
@@ -20,6 +20,8 @@ import './index.less';
 import CreateModal from './CreateModal';
 import { PopupWindowTable } from './PopupWindowTable';
 import { PopupWindowField } from './PopupWindowField';
+import FormTablePopupWindow from './FormTablePopupWindow';
+import FormTreePopupWindow from './FormTreePopupWindow';
 
 const { Option } = Select;
 const { TextArea } = Input;
@@ -38,10 +40,15 @@ const layout = {
   labelCol: { span: 5 },
   wrapperCol: { span: 19 },
 };
-const CreatePopupWindow: React.FC<IProps> = (props: IProps) => {
+const CreatePopupWindow: React.FC<IEditPopupWindowProps> = (props: IEditPopupWindowProps) => {
   const {
     onCancel, onOk, upDataMenus, editData: {
-      id, code, name, selectType, showType
+      id, code, name, selectType, showType,
+      tablePopupWindowDetail: { datasource, datasourceType },
+      treePopupWindowDetail: { datasource, datasourceType },
+      treeTablePopupWindowDetail: {
+        tableDatasource, tableDatasourceType, treeDatasource, treeDatasourceType
+      }
     }, editModalData: { okText }
   } = props;
 
@@ -77,30 +84,6 @@ const CreatePopupWindow: React.FC<IProps> = (props: IProps) => {
         message.error(res.msg);
       }
     }
-  };
-  /**
-   * 创建表接口参数拼装
-   * @param values
-   */
-  const assemblyParams = (values) => {
-    const {
-      name, code, type, moduleId, description, mainTableCode, maxLevel
-    } = values;
-    const params = {
-      name,
-      code,
-      type,
-      moduleId,
-      description,
-      species: SPECIES.BIS,
-    };
-    if (type === SHOW_TYPE.TABLE) {
-      Object.assign(params, { auxTable: { mainTableCode } });
-    }
-    if (type === SHOW_TYPE.TREE) {
-      Object.assign(params, { treeTable: { maxLevel } });
-    }
-    return params;
   };
 
   const assemblyPopupParams = (values) => {
@@ -186,6 +169,21 @@ const CreatePopupWindow: React.FC<IProps> = (props: IProps) => {
         }
       });
     }
+
+    if (showType === SHOW_TYPE.CUSTOMIZATION) {
+      Object.assign(params, {
+        customPopupWindowDetail: {
+          createdBy: 0,
+          deleteFlag: 0,
+          gmtCreate: "",
+          gmtModified: "",
+          id: 0,
+          modifiedBy: 0,
+          popupWindowId: 0
+
+        }
+      });
+    }
     console.log(params);
 
     return params;
@@ -207,7 +205,6 @@ const CreatePopupWindow: React.FC<IProps> = (props: IProps) => {
       name, code, selectType, showType
       // : getShowTypeTitleById(showType)
     });
-    console.log(showType);
   }, []);
   const handleShowTypeSelectChange = (value) => {
 
@@ -263,56 +260,30 @@ const CreatePopupWindow: React.FC<IProps> = (props: IProps) => {
           {({ getFieldValue }) => {
             return getFieldValue('showType') === SHOW_TYPE.TREE
               ? (
-                <Form.Item
-                  name="maxLevel"
-                  label="最大层级数1"
-                  rules={[{
-                    required: true,
-                    message: "请填写最大层级数1"
-                  }]}
-                  initialValue={15}
-                >
-                  <InputNumber placeholder="须为正整数,最大层级不超过15级" min={2} max={15} />
-                </Form.Item>
+                // <Form.Item
+                //   name="maxLevel"
+                //   label="最大层级数1"
+                //   rules={[{
+                //     required: true,
+                //     message: "请填写最大层级数1"
+                //   }]}
+                //   initialValue={15}
+                // >
+                //   <InputNumber placeholder="须为正整数,最大层级不超过15级" min={2} max={15} />
+                // </Form.Item>
+                <FormTreePopupWindow
+                  {...props}
+                ></FormTreePopupWindow>
               ) : getFieldValue('showType') === SHOW_TYPE.TABLE ? (
-                <PrimaryTreeItem />
+                // <PrimaryTreeItem />
+                <FormTablePopupWindow
+                  {...props}
+                ></FormTablePopupWindow>
+
               ) : null;
           }}
         </Form.Item>
-        <PopupWindowTable
-          editData = {props.editData}
-          form={form}
-          label="数据源"
-          name = 'datasource'
-          code='datasource'
-          text = 'datasource'
-        />
-        <PopupWindowField
-          {...props}
-          label = "返回值"
-          code='returnValue'
-          form={form}
-          name="returnValue"
-          text = 'returnValue'
 
-        />
-        <PopupWindowField
-          {...props}
-          label = "返回文本"
-          code='returnText'
-          form={form}
-          name="returnText"
-          text = 'returnText'
-        />
-        <ModuleTreeItem />
-        <Button
-          type="link"
-          className="create-link"
-          onClick={createModule}
-        >新建模块</Button>
-        <Form.Item name="description" label="备注" >
-          <TextArea rows={4} maxLength={100} />
-        </Form.Item>
         <FromFooterBtn
           onCancel={handleFormCancel}
           okText={okText}

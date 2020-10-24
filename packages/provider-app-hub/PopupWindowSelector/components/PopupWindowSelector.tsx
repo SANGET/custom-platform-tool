@@ -12,7 +12,7 @@ import {
   queryPopupWindowListService, allowDeletePopupWindowService, deletePopupWindowService, queryPopupWindowService
 } from '../service';
 import {
-  COLUMNS, OPERATIONALMENU, SELECT_ALL, MORE_MENU, PAGE_SIZE_OPTIONS, IPopupWindow, IModalData, SHOW_TYPE_OPTIONS, SELECT_TYPE_OPTIONS
+  COLUMNS, OPERATIONALMENU, SELECT_ALL, MORE_MENU, PAGE_SIZE_OPTIONS, IPopupWindow, IModalData, SHOW_TYPE_OPTIONS, SELECT_TYPE_OPTIONS, IEditPopupWindowProps
 } from '../constant';
 import Operational from './Operational';
 import { IStatus } from '../interface';
@@ -141,6 +141,86 @@ const PopupWindowSelector: React.FC<IProps> = (props: IProps, ref) => {
       total: total || 0
     });
   };
+  const getInitEditPopupWinndow: IPopupWindow = () => {
+    const ret: IPopupWindow = {
+      id: '',
+      code: '',
+      name: '',
+      showType: '',
+      selectType: '',
+      selectCount: '',
+      enable: '',
+      tablePopupWindowDetail: {
+        createdBy: '',
+        datasource: 0,
+        datasourceType: 0,
+        deleteFlag: '',
+        gmtCreate: '',
+        gmtModified: '',
+        id: '',
+        modifiedBy: '',
+        returnText: '',
+        returnValue: '',
+        showColumn: '',
+        sortColumnInfo: '',
+      },
+      treePopupWindowDetail: {
+        createdBy: '',
+        datasource: 0,
+        datasourceType: 0,
+        deleteFlag: '',
+        gmtCreate: '',
+        gmtModified: '',
+        id: '',
+        modifiedBy: '',
+        relatedSuperiorColumn: '',
+        returnText: '',
+        returnValue: '',
+        showColumn: '',
+        showSearch: '',
+        sortColumnInfo: '',
+        superiorColumn: '',
+      },
+
+      treeTablePopupWindowDetail: {
+        createdBy: '',
+        deleteFlag: '',
+        gmtCreate: '',
+        gmtModified: '',
+        id: '',
+        modifiedBy: '',
+        popupWindowId: '',
+        showSearch: '',
+        tableDatasource: '',
+        tableDatasourceType: '',
+        tableReturnText: '',
+        tableReturnValue: '',
+        tableShowColumn: '',
+        tableSortInfo: '',
+        tableTreeRelatedColumn: '',
+        treeDatasource: '',
+        treeDatasourceType: '',
+        treeRelatedSuperiorColumn: '',
+        treeReturnText: '',
+        treeReturnValue: '',
+        treeShowColumn: '',
+        treeSortInfo: '',
+        treeSuperiorColumn: '',
+        version: '',
+      },
+      customPopupWindowDetail: {
+        createdBy: '',
+        deleteFlag: '',
+        gmtCreate: '',
+        gmtModified: '',
+        id: '',
+        modifiedBy: '',
+        popupWindowId: '',
+
+      }
+    };
+    return ret;
+  };
   const handlePopupWindowOperational = async (item) => {
     const {
       operate, id, name, code
@@ -156,22 +236,25 @@ const PopupWindowSelector: React.FC<IProps> = (props: IProps, ref) => {
         }
         console.log(res);
         setEditModalData({ modalTitle: '编辑弹窗', okText: '保存', });
-        setEditData(res?.result);
+        const initEditData = getInitEditPopupWinndow();
+        const retEditData = res?.result;
+
+        if (!res?.result.tablePopupWindowDetail) {
+          retEditData.tablePopupWindowDetail = initEditData.tablePopupWindowDetail;
+        }
+        if (!res?.result.treePopupWindowDetail) {
+          retEditData.treePopupWindowDetail = initEditData.treePopupWindowDetail;
+        }
+        if (!res?.result.treeTablePopupWindowDetail) {
+          retEditData.treeTablePopupWindowDetail = initEditData.treeTablePopupWindowDetail;
+        }
+
+        console.log(retEditData);
+        // temp = Object.assign(temp, res?.result);
+        setEditData(retEditData);
+        // setEditData(res?.result);
         setvisibleCreateEditModal(true);
       });
-
-      // setModalConfig({
-      //   title: '编辑字典', visible: true, isSub: false, isAddEditRow: false
-      // });
-
-      /*
-      onNavigate({
-        type: "PUSH",
-        path: `/table-info`,
-        pathExtend: id,
-        params: { id, title: `编辑表_${name}` }
-      });
-      */
     } else if (operate === "delete") {
       // checkBeforeDelete(id);
       deleteTableSingleLine(id);
@@ -254,6 +337,7 @@ const PopupWindowSelector: React.FC<IProps> = (props: IProps, ref) => {
     <Button
       key="3" type="primary" onClick={() => {
         setEditModalData({ modalTitle: '新建弹窗', okText: '开始创建弹窗' });
+        setEditData(getInitEditPopupWinndow());
         setvisibleCreateEditModal(true);
       }}
     >
