@@ -4,155 +4,141 @@ import {
 } from 'antd';
 import { ModalFooter } from '@provider-app/table-editor/components/ChooseDict';
 import { SketchPicker } from 'react-color';
+import { FormInstance } from 'antd/lib/form';
 import CreateModal from './CreateModal';
 
 const getColumns = ({
-  saveRow, setChildren, setEditingKey, children, editingKey, setColorPicker, form
+  handleAdd, setColorPicker, form
 }) => {
-  return [{
-    title: '编码',
-    key: 'code',
-    width: 242,
-    ellipsis: { showTitle: true },
-    dataIndex: 'code',
-    render: (text, record) => {
-      return record.editable ? (
-        <Form.Item
-          name="code"
-          rules={[
-            { pattern: /^[\u4e00-\u9fa5a-zA-Z()][\u4e00-\u9fa5_a-zA-Z0-9()]{0,31}$/, message: '限制32位字符，输入字段包括中文、英文大小写、数字、下划线、英文小括号(_)，不能以数字或下划线_开头' },
-            { required: true, message: '编码必填' },
-          ]}
-        >
-          <Input onClick={(e) => e.stopPropagation()} />
-        </Form.Item>
-      ) : (
-        text
-      );
-    }
-  }, {
-    title: '名称',
-    key: 'name',
-    width: '242px',
-    dataIndex: 'name',
-    ellipsis: { showTitle: true },
-    render: (text, record) => {
-      return record.editable ? (
-        <Form.Item
-          name="name"
-          rules={[
-            { pattern: /^[\u4e00-\u9fa5a-zA-Z()][\u4e00-\u9fa5_a-zA-Z0-9()]{0,31}$/, message: '限制32位字符，输入字段包括中文、英文大小写、数字、下划线、英文小括号(_)，不能以数字或下划线_开头' },
-            { required: true, message: '名称必填' },
-          ]}
-        >
-          <Input onClick={(e) => e.stopPropagation()} />
-        </Form.Item>
-      )
-        : text;
-    }
-  }, {
-    title: '字体颜色',
-    key: 'renderFontColor',
-    dataIndex: 'renderFontColor',
-    width: 88,
-    render: (text, record, index) => {
-      return (
-        <div
-          className="color-render"
-          style={{ backgroundColor: text }}
-          onClick={(e) => {
-            e.stopPropagation();
-            setColorPicker({
-              modalVisible: true,
-              value: text || '#fff',
-              pickAft: ({ hex }) => {
-                setColorPicker({
-                  modalVisible: false
-                });
-                setChildren({
-                  type: 'update',
-                  name: {
-                    [index]: { ...record, renderFontColor: hex }
-                  }
-                });
-              }
-            });
-          }}
-        ></div>
-      );
-    }
-  }, {
-    title: '背景颜色',
-    key: 'renderBgColor',
-    width: 88,
-    dataIndex: 'renderBgColor',
-    render: (text, record, index) => {
-      return (
-        <div
-          className="color-render"
-          style={{ backgroundColor: text }}
-          onClick={(e) => {
-            e.stopPropagation();
-            setColorPicker({
-              modalVisible: true,
-              value: text || '#fff',
-              pickAft: ({ hex }) => {
-                setColorPicker({
-                  modalVisible: false
-                });
-                setChildren({
-                  type: 'update',
-                  name: {
-                    [index]: { ...record, renderBgColor: hex }
-                  }
-                });
-              }
-            });
-          }}
-        ></div>
-      );
-    }
-  }, {
-    title: '操作',
-    key: 'action',
-    width: '92px',
-    render: (text, record, index) => (
-      <>
-        <span
-          className="link-btn"
-          onClick={(e) => {
-            e.stopPropagation();
-            saveRow().then((canIAdd) => {
-              if (!canIAdd) return;
-              const id = `${new Date().valueOf()}`;
-              form.resetFields();
-              setChildren({
-                type: 'add',
-                name: {
-                  [index + 1]: {
-                    id, editable: true, renderBgColor: '#fff', renderFontColor: '#000'
-                  }
+  return [
+    {
+      title: '编码',
+      key: 'code',
+      width: 242,
+      ellipsis: { showTitle: true },
+      dataIndex: 'code',
+      render: (text, record) => {
+        return record.editable ? (
+          <Form.Item
+            name="code"
+            rules={[
+              { pattern: /^[\u4e00-\u9fa5a-zA-Z()][\u4e00-\u9fa5_a-zA-Z0-9()]{0,31}$/, message: '32位字符内的中文、英文大小写、数字、下划线、英文小括号(_)，不能以数字或下划线_开头' },
+              { required: true, message: '编码必填' },
+            ]}
+          >
+            <Input onClick={(e) => e.stopPropagation()} />
+          </Form.Item>
+        ) : (
+          text
+        );
+      }
+    }, {
+      title: '名称',
+      key: 'name',
+      width: '242px',
+      dataIndex: 'name',
+      ellipsis: { showTitle: true },
+      render: (text, record) => {
+        return record.editable ? (
+          <Form.Item
+            name="name"
+            rules={[
+              { pattern: /^[\u4e00-\u9fa5a-zA-Z()][\u4e00-\u9fa5_a-zA-Z0-9()]{0,31}$/, message: '32位字符内的中文、英文大小写、数字、下划线、英文小括号(_)，不能以数字或下划线_开头' },
+              { required: true, message: '名称必填' },
+            ]}
+          >
+            <Input onClick={(e) => e.stopPropagation()} />
+          </Form.Item>
+        )
+          : text;
+      }
+    }, {
+      title: '字体颜色',
+      key: 'renderFontColor',
+      dataIndex: 'renderFontColor',
+      width: 88,
+      render: (text, record, index) => {
+        return (
+          <div
+            className="color-render"
+            style={{ backgroundColor: text }}
+            onClick={(e) => {
+              e.stopPropagation();
+              setColorPicker({
+                modalVisible: true,
+                value: text || '#fff',
+                pickAft: ({ hex }) => {
+                  setColorPicker({
+                    modalVisible: false
+                  });
+                  setChildren({
+                    type: 'update',
+                    name: {
+                      [index]: { ...record, renderFontColor: hex }
+                    }
+                  });
                 }
               });
-              setEditingKey(id);
-            });
-          }}
-        >新增</span>
-        {children.length > 1
-          ? <span
-            className="link-btn ml-1"
-            onClick={(e) => {
-              editingKey === record.id && setEditingKey('');
-              setChildren({
-                type: 'delete',
-                name: index
-              });
-              e.stopPropagation();
             }}
-          >删除</span> : null}
-      </>
-    )
-  }];
+          ></div>
+        );
+      }
+    }, {
+      title: '背景颜色',
+      key: 'renderBgColor',
+      width: 88,
+      dataIndex: 'renderBgColor',
+      render: (text, record, index) => {
+        return (
+          <div
+            className="color-render"
+            style={{ backgroundColor: text }}
+            onClick={(e) => {
+              e.stopPropagation();
+              setColorPicker({
+                modalVisible: true,
+                value: text || '#fff',
+                pickAft: ({ hex }) => {
+                  setColorPicker({
+                    modalVisible: false
+                  });
+                  setChildren({
+                    type: 'update',
+                    name: {
+                      [index]: { ...record, renderBgColor: hex }
+                    }
+                  });
+                }
+              });
+            }}
+          ></div>
+        );
+      }
+    }, {
+      title: '操作',
+      key: 'action',
+      width: '92px',
+      render: (text, record, index) => (
+        <>
+          <span
+            className="link-btn"
+            onClick={handleAdd}
+          >新增</span>
+          {children.length > 1
+            ? <span
+              className="link-btn ml-1"
+              onClick={(e) => {
+                editingKey === record.id && setEditingKey('');
+                setChildren({
+                  type: 'delete',
+                  name: index
+                });
+                e.stopPropagation();
+              }}
+            >删除</span> : null}
+        </>
+      )
+    }];
 };
 interface IOperateParam {
   dictName?:string
@@ -172,6 +158,229 @@ interface IProps {
   config: {
     showDictionaryConfig,
     operateParam: IOperateParam
+  }
+}
+
+class CreateDictionary extends React.Component {
+  state = {
+    editingKey: '',
+    list: [],
+    map: {}
+  }
+
+  dictForm = React.createRef<FormInstance>();
+
+  childForm = React.createRef<FormInstance>();
+
+  getMap = (list) => {
+    const map = {};
+    list.forEach((item) => {
+      map[item.id] = item;
+    });
+    return map;
+  }
+
+  componentDidMount() {
+    const {
+      name, desc, list, editingKey
+    } = this.props.config;
+    this.dictForm.current?.setFieldsValue({ name, desc });
+    this.setState({
+      list, editingKey, map: this.getMap(list)
+    }, () => {
+      if (editingKey) {
+        const index = this.getIndexByEditingKey();
+        const record = list[index];
+        this.childForm.current?.setFieldsValue({
+          name: record.name,
+          code: record.code,
+          renderBgColor: record.renderBgColor,
+          renderFontColor: record.renderFontColor
+        });
+      }
+    });
+  }
+
+  getIndexByEditingKey = ():number => {
+    const { list, editingKey } = this.state;
+    let index = -1;
+    Array.isArray(list) && list.some((item, i) => {
+      if (item.id === editingKey) {
+        index = i;
+        return true;
+      }
+      return false;
+    });
+    return index;
+  };
+
+  saveRow = async () => {
+    const { editingKey } = this.state;
+    if (editingKey === '') return true;
+    try {
+      await this.childForm.current?.validateFields();
+      const record = this.childForm.current?.getFieldsValue(['name', 'code']);
+      this.setState({
+        editingKey: '',
+        list: this.updateRecordByKey(editingKey, { ...record, editable: true })
+      });
+      return true;
+    } catch (e) {
+      return false;
+    }
+  };
+
+  handleOk = () => {
+    const { onOk } = this.props;
+    try {
+      this.dictForm.current?.validateFields().then(() => {
+        const data = this.dictForm?.getFieldsValue(['dictName', 'dictDescription']);
+        this.saveRow().then((canISave) => {
+          if (!canISave) return;
+          onOk && onOk({ ...data, children: canISave });
+        });
+      });
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
+  handleCancel = () => {
+    const { onCancel } = this.props;
+    onCancel && onCancel();
+  };
+
+  updateRecordByKey = (id, updateRecord) => {
+    const record = this.state.map[id];
+    for (const key in updateRecord) {
+      record[key] = updateRecord[key];
+    }
+    return this.state.list.slice();
+  }
+
+  doubleClick = (record) => {
+    const { editingKey } = this.state;
+    if (record.id === editingKey) return;
+    this.saveRow().then((canIEdit) => {
+      if (!canIEdit) return;
+      this.setState({
+        editingKey: record.id,
+        list: this.updateRecordByKey(record.id, { editable: true })
+      });
+      const { name, code } = record;
+      this.childForm.current?.setFieldsValue({ name, code });
+    });
+  }
+
+  createItem = () => {
+    const id = `${new Date().valueOf()}`;
+    const record = {
+      id, editable: true, renderBgColor: '#fff', renderFontColor: '#000'
+    };
+    return record;
+  }
+
+  handleAdd = (e, index) => {
+    e.stopPropagation();
+    this.saveRow().then((canIAdd) => {
+      if (!canIAdd) return;
+      this.childForm.current?.resetFields();
+      const record = this.createItem();
+      const { map, list } = this.state;
+      list.splice(index, 0, record);
+      map[record.id] = record;
+      this.setState({
+        list: list.slice(),
+        map,
+        editingKey: record.id
+      });
+    });
+  }
+
+  render() {
+    const { nameVisible, descVisible } = this.props.config;
+    const columns = getColumns({
+      handleAdd: this.handleAdd,
+      form: this.childForm.current,
+    });
+    return (
+      <div
+        className="create-dictionary"
+      >
+        <Form form={this.dictForm} layout = "inline">
+          { nameVisible ? (
+            <Form.Item
+              className="w-2/4"
+              style={{ margin: 0 }}
+              label="字典名称"
+              name="dictName"
+              rules={[
+                { required: true, message: '字典名称必填' },
+                { pattern: /^[\u4e00-\u9fa5a-zA-Z()][\u4e00-\u9fa5_a-zA-Z0-9()]{0,31}$/, message: '限制32位字符，输入字段包括中文、英文大小写、数字、下划线、英文小括号(_)，不能以数字或下划线_开头' }
+              ]}
+            >
+              <Input />
+            </Form.Item>
+          ) : null}
+          { descVisible ? (
+            <Form.Item
+              style={{ margin: 0, paddingLeft: '5px' }}
+              className="w-2/4"
+              label="字典描述"
+              name="dictDescription"
+            >
+              <Input />
+            </Form.Item>
+          ) : null }
+        </Form>
+        <Form form={this.childForm} className="create-dict-child-list">
+          <Table
+            columns={columns}
+            dataSource = {children}
+            rowKey={'id'}
+            pagination={false}
+            onRow={(record, index) => {
+              return {
+                onDoubleClick: (event) => {
+                  if (record.id === editingKey) return;
+                  saveRow().then((canIEdit) => {
+                    if (!canIEdit) return;
+                    setEditingKey(record.id);
+                    setChildren({
+                      type: 'update',
+                      name: {
+                        [index]: { ...record, editable: true }
+                      }
+                    });
+                    const { name, code } = record;
+                    childForm.setFieldsValue({ name, code });
+                  });
+                },
+                onClick: (event) => { saveRow(); }
+              };
+            }}
+          />
+        </Form>
+        <CreateModal
+          width = '266px'
+          modalVisible={colorPicker.modalVisible}
+          title="更改颜色"
+          onCancel={() => setColorPicker({ modalVisible: false, value: '#000', pickAft: (param) => {} })}
+        >
+          <SketchPicker
+            className="color-picker"
+            modalVisible={colorPicker.modalVisible}
+            color={colorPicker.value} onChangeComplete ={({ hex }) => {
+              typeof colorPicker.pickAft === 'function' && colorPicker.pickAft({ hex });
+            }}
+          />
+        </CreateModal>
+        <ModalFooter
+          onOk={() => { handleOk(); }}
+          onCancel={() => { handleCancel(); }}
+        />
+      </div>
+    );
   }
 }
 const CreateDictionary: React.FC<IProps> = (props: IProps) => {
@@ -285,7 +494,7 @@ const CreateDictionary: React.FC<IProps> = (props: IProps) => {
           className="w-2/4"
           style={{ margin: 0 }}
           label="字典名称"
-          name="dictName"
+          name="name"
           rules={[
             { required: true, message: '字典名称必填' },
             { pattern: /^[\u4e00-\u9fa5a-zA-Z()][\u4e00-\u9fa5_a-zA-Z0-9()]{0,31}$/, message: '限制32位字符，输入字段包括中文、英文大小写、数字、下划线、英文小括号(_)，不能以数字或下划线_开头' }
@@ -297,7 +506,7 @@ const CreateDictionary: React.FC<IProps> = (props: IProps) => {
           style={{ margin: 0, paddingLeft: '5px' }}
           className="w-2/4"
           label="字典描述"
-          name="dictDescription"
+          name="desc"
         >
           <Input />
         </Form.Item>

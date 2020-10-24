@@ -9,3 +9,32 @@ export const MESSAGE = {
   DELETEDICTIONARY_FAILED: '删除字典失败，请联系技术人员',
   EDITCHILDOFDICTIONARY_FAILED: '配置子项失败，请联系技术人员'
 };
+export enum MODAL_TITLE {
+  ADD = '新增字典',
+  EDIT = '编辑字典',
+  EDIT_CHILD = '配置子项'
+}
+export enum DEF_VALUE {
+  RENDERBGCOLOR = '#fff',
+  RENDERFONTCOLOR = '#000'
+}
+export enum DICTIONARY_KEY {
+  ID = 'id',
+  NAME = 'name',
+  DESC = 'description',
+  CHILD = 'children',
+}
+export enum DICTIONARY_CHILD_KEY {
+  ID = 'id',
+  NAME = 'name',
+  CHILD = 'children',
+  CODE = 'code',
+  RENDERBGCOLOR = 'renderBgColor',
+  RENDERFONTCOLOR = 'renderFontColor',
+  PID = 'pid',
+  DICTIONARYID = 'dictionaryId'
+}
+
+export enum BUTTON_TYPE {
+  PRIMARY = 'primary'
+}
