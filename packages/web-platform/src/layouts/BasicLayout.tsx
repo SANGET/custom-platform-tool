@@ -3,13 +3,13 @@ import ProLayout, {
   BasicLayoutProps as ProLayoutProps,
   Settings
 } from '@ant-design/pro-layout';
-
+import * as IconMap from "react-icons/all";
 import React from 'react';
 import {
   Link, connect, Dispatch, history
 } from 'umi';
 import {
-  Spin
+  Spin, Layout, Menu
 } from 'antd';
 import RightContent from '@/components/RightContent';
 import { ConnectState } from '@/models/connect';
@@ -20,7 +20,11 @@ import { getQueryByParams } from '@/utils/utils';
 import { ITabsItem } from "@/models/tabs";
 import { IMenuItem } from "@/models/menu";
 import { MODE_PREVIEW } from '@/constant';
+import Icon, { UserOutlined, LaptopOutlined, NotificationOutlined } from '@ant-design/icons';
 import styles from './styles.less';
+
+const { SubMenu } = Menu;
+const { Header, Content, Sider } = Layout;
 
 export interface IBasicLayoutProps extends ProLayoutProps {
   settings: Settings;
@@ -28,25 +32,27 @@ export interface IBasicLayoutProps extends ProLayoutProps {
 
   loadingMenu?: boolean;
 
-  menuData: IMenuItem[];
-  originalMeunData?: IMenuItem[];
+  menuData: MenuDataItem[];
+  originalMeunData?: MenuDataItem[];
   tabsData?: ITabsItem[];
   activeKey?: string;
 }
 interface IBaseLayoutState {
   openKeys: string[];
+  collapsed: boolean;
 }
 
 class BasicLayout extends React.PureComponent<IBasicLayoutProps, IBaseLayoutState> {
   state: IBaseLayoutState = {
-    openKeys: []
+    openKeys: [],
+    collapsed: false,
   }
 
   async componentDidMount() {
     this.setPreviewMenuAndTabs();
     const res = await this.getMenu();
     this.setDefaultTabs(res.result || []);
-    this.setDefaultopenKeys();
+    this.setDefaultOpenKeys();
   }
 
   componentWillUnmount() {
@@ -96,23 +102,23 @@ class BasicLayout extends React.PureComponent<IBasicLayoutProps, IBaseLayoutStat
    * 根据url query path 参数设置 初始 展开的 SubMenu 菜单项 key 数组
    *
    */
-  setDefaultopenKeys() {
+  setDefaultOpenKeys() {
     const menuId = this.getHistoryQueryValue("menuId");
     if (!menuId) return;
     const selectKeys = [];
-    this.getMenuPidsByPath(menuId, selectKeys);
+    this.getMenuPidByPath(menuId, selectKeys);
     const openKeys = selectKeys.reverse();
     this.setState({
       openKeys
     });
   }
 
-  getMenuPidsByPath(menuId, pids) {
+  getMenuPidByPath(menuId, pids) {
     const { originalMeunData } = this.props;
     const find = originalMeunData?.find((item) => item.id === menuId);
     if (find) {
       find.pid && pids.push(find.pid);
-      this.getMenuPidsByPath(find.pid, pids);
+      this.getMenuPidByPath(find.pid, pids);
     }
   }
 
@@ -199,7 +205,6 @@ class BasicLayout extends React.PureComponent<IBasicLayoutProps, IBaseLayoutStat
     const { dispatch, activeKey } = this.props;
     const { query } = history.location;
     const { mode, app, lessee } = query;
-    console.dir(info);
     const queryLink = getQueryByParams(["mode", "app", "lessee"]);
     const link = page ? `${page}?menuId=${id}&${queryLink}&pageId=${pageId}` : `${path}?${queryLink}`;
     if (id !== activeKey) {
@@ -237,50 +242,87 @@ class BasicLayout extends React.PureComponent<IBasicLayoutProps, IBaseLayoutStat
     });
   }
 
+  IconAppointed = (props) => {
+    const { iconType } = props;
+    if (typeof iconType === "string") {
+      const RIcon = IconMap[iconType];
+      return (
+        RIcon ? <Icon component={() => <RIcon className={styles.menuIcon}/>} /> : null
+      );
+    }
+    return iconType;
+  };
+
+  loopMenuItemRender = (menus: MenuDataItem[]): React.ReactNode => menus.map((menuItemProps) => {
+    const {
+      id, key, path, name, icon, children
+    } = menuItemProps;
+    const MenuIcon = icon ? this.IconAppointed({ iconType: icon }) : null;
+    if (Array.isArray(children)) {
+      return <SubMenu key={key || id || path} icon={MenuIcon} title={name}>
+        {this.loopMenuItemRender(children)}
+      </SubMenu>;
+    }
+    return <Menu.Item key={key || id || path} icon={MenuIcon} onClick={() => this.handleMenuSelect(menuItemProps)}>{name}</Menu.Item>;
+  });
+
+  mergeMenu=(menuData) => {
+    const { route } = this.props;
+    if (route && Array.isArray(route.routes)) {
+      return [...route?.routes.filter((child) => child.name), ...menuData];
+    }
+    return menuData;
+  }
+
+  loopMenuItem = (menus: MenuDataItem[]): MenuDataItem[] => menus.map(({ icon, children, ...item }) => {
+    return {
+      ...item,
+      key: item.id,
+      icon: typeof icon === "string" ? this.IconAppointed({ iconType: icon }) : icon,
+      children: children && this.loopMenuItem(children),
+    };
+  });
+
+  onCollapse = (collapsed: boolean) => {
+    this.setState({ collapsed });
+  };
+
   render() {
     const {
-      menuData, settings, activeKey
+      settings, menuData, activeKey
     } = this.props;
-    const { openKeys } = this.state;
+    const { openKeys, collapsed } = this.state;
+    console.log(this.props);
     return (
-      <ProLayout
-        menuHeaderRender={false}
-        disableContentMargin={true}
-        onCollapse={this.handleMenuCollapse}
-        onMenuHeaderClick={() => history.push('/')}
-        // menuExtraRender={({ collapsed }) => <MenuExtra
-        //   collapsed={collapsed || false}
-        //   onCollapseChange={this.handleCollapseChange}
-        // />}
-        selectedKeys={[activeKey || ""]}
-        openKeys={openKeys}
-        menuItemRender={(menuItemProps, defaultDom) => {
-          if (menuItemProps.isUrl || !menuItemProps.path) {
-            return defaultDom;
-          }
-          const {
-            id, path
-          } = menuItemProps;
-          return <div key={id || path} onClick={() => this.handleMenuSelect(menuItemProps)}>{defaultDom}</div>;
-        }}
-        // collapsedButtonRender={false}
-        // siderWidth={300}
-        postMenuData={(menus) => [...menus, ...menuData]}
-        menuContentRender={this.renderMenuContent}
-        rightContentRender={() => <RightContent />}
-        {...this.props}
-        {...settings}
-        // onPageChange={this.handlePageChange}
-        menuProps={{
-          onOpenChange: this.handleOpenChange,
-        }}
-      >
-        <TabsContainer children={this.props.children} />
-        <div className={styles.container} >
-          {this.props.children}
-        </div>
-      </ProLayout >
-
+      <Layout style={{ minHeight: "100%" }}>
+        <Header className="header">
+          <div className={styles.logo} >{settings.title || ""}</div>
+        </Header>
+        <Layout>
+          <Sider width={200} className="site-layout-background" collapsed={collapsed} onCollapse={this.onCollapse} collapsible >
+            <Menu
+              mode="inline"
+              selectedKeys={activeKey ? [activeKey] : []}
+              openKeys={openKeys || []}
+              onOpenChange={this.handleOpenChange}
+              style={{ height: '100%', borderRight: 0 }}
+            >
+              {this.loopMenuItemRender(this.mergeMenu(menuData))}
+            </Menu>
+          </Sider>
+          <Layout>
+            <Content
+              className="site-layout-background"
+              style={{ margin: 0 }}
+            >
+              <TabsContainer children={this.props.children} />
+              <div className={styles.container} >
+                {this.props.children}
+              </div>
+            </Content>
+          </Layout>
+        </Layout>
+      </Layout>
     );
   }
 }
