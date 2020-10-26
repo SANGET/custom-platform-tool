@@ -5,7 +5,6 @@ import { APBDSLrequest as originReq } from '../utils/apb-dsl';
 import { conditionEngine } from '../condition-engine/condition-engine';
 import { APBDSLCondControlResHandle, getAPBDSLCondOperatorHandle } from '../actions-manage/business-actions/APBDSL';
 import { transMarkValFromArr, validTransMarkValFromArr } from './utils/transform-mark-value';
-import { collectRelationshipFromScheduler } from '../relationship';
 
 export enum RuntimeSchedulerFnName {
   targetUpdateState = 'targetUpdateState',
@@ -52,12 +51,15 @@ export const genRuntimeCtxFn = (dslParseRes, runtimeCtx) => {
     schemasParseRes,
     getFlowItemInfo,
     datasourceMetaEntity,
+    findEquMetadata,
+    flowsRun,
   } = dslParseRes;
   console.log('//___genRuntimeCtxFn___\\\\');
   const {
     pageManageInstance,
     IUBStoreEntity, // IUB页面仓库实例
-    runTimeCtxToBusiness // useRef
+    runTimeCtxToBusiness, // useRef
+    effectRelationship, // 副作用关系的实例
   } = runtimeCtx;
   const {
     getPageState,
@@ -66,6 +68,8 @@ export const genRuntimeCtxFn = (dslParseRes, runtimeCtx) => {
     IUBPageStore, pickPageStateKeyWord
   } = IUBStoreEntity;
 
+  const { effectAnalysis, effectReceiver } = effectRelationship;
+
   /** 事件运行调度中心的函数 */
   const asyncRuntimeContext = {
     targetUpdateState,
@@ -73,6 +77,9 @@ export const genRuntimeCtxFn = (dslParseRes, runtimeCtx) => {
     getPageState,
     getWatchDeps,
     APBDSLrequest,
+    effectReceiver,
+    findEquMetadata,
+    flowsRun,
     ...datasourceMetaEntity
   };
   /** 异步运行时调度中心 */
@@ -80,12 +87,17 @@ export const genRuntimeCtxFn = (dslParseRes, runtimeCtx) => {
     const {
       action, type, params, actionName
     } = ctx;
-    /** 收集信息 */
-    const collectInfo = collectRelationshipFromScheduler(ctx);
+    // console.log(ctx);
+    // console.count('-----asyncRuntimeScheduler----');
+
+    /** 生成副作用信息 */
+    const shouldUseEffect = effectAnalysis(ctx);
 
     // if (Object.prototype.toString.call(action) === "[object Object]") {
     //   setRunTimeLine([...runTimeLine, action]);
     // }
+
+    // shouldUseEffect();
 
     if (type === RuntimeSchedulerFnName.ConditionHandleOfAPBDSL) {
       const expsValueHandle = (expsValue) => {
@@ -102,13 +114,14 @@ export const genRuntimeCtxFn = (dslParseRes, runtimeCtx) => {
 
     const runRes = await asyncRuntimeContext[type](...params);
 
-    /** 修改运行时状态 */
-    collectInfo.isRunSuccess = true;
+    /** 确定副作用信息可以被使用 */
+    shouldUseEffect();
 
     return runRes;
   };
 
   const runtimeContext = {
+    findEquMetadata,
     ...datasourceMetaEntity
   };
   /** 同步运行时调度中心 */
@@ -116,8 +129,10 @@ export const genRuntimeCtxFn = (dslParseRes, runtimeCtx) => {
     const {
       action, type, params, actionName
     } = ctx;
-    console.log(ctx);
-    return getPageState();
+    // console.log(ctx);
+    // console.count('-----runtimeScheduler----');
+
+    return runtimeContext[type](...params);
   };
 
   /**
