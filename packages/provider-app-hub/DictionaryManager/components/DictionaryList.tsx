@@ -18,156 +18,150 @@ import {
   BUTTON_TYPE, DEF_VALUE, MODAL_TITLE, DICTIONARY_KEY, DICTIONARY_CHILD_KEY
 } from '../constants';
 
-const getChildOfDictionaryColumns = () => {
+const filterChildListOfDictionary = (list) => {
+  return list.map((item) => {
+    const {
+      name, code, id, renderBgColor, renderFontColor
+    } = item;
+    return {
+      name, code, id, renderBgColor, renderFontColor
+    };
+  });
+};
+const getDefChildListOfDictionaryInModal = () => {
+  const id = `${new Date().valueOf()}`;
   return [{
-    key: 'decorativeIndex',
-    dataIndex: 'decorativeIndex',
-    title: '序号',
-    width: 210,
-    ellipsis: { showTitle: true },
-  },
-  {
-    key: 'code',
-    dataIndex: 'code',
-    title: '编码',
-    ellipsis: { showTitle: true },
-    width: 200
-  },
-  {
-    key: 'name',
-    dataIndex: 'name',
-    title: '名称',
-    className: 'no-padding',
-    ellipsis: { showTitle: true },
-    render: (text, record) => {
-      return <div style={{ color: record.renderFontColor, backgroundColor: record.renderBgColor }}>{text}</div>;
-    }
-  },
-  {
-    key: 'sort',
-    dataIndex: 'sort',
-    title: '排序',
-    width: 80,
-    ellipsis: { showTitle: true },
-    render: (text) => text || '--'
-  },
-  {
-    key: 'action',
-    title: '操作',
-    width: 200,
-    render: (text, record, index) => {
-      const {
-        id, length, sort, decorativeIndex, decorativeId
-      } = record;
-      return (null
-      // <div className="child-operation">
-      //   {index !== 0 ? (<ArrowUpOutlined
-      //     style={{ color: '#488CF0', fontSize: '14px' }}
-      //     onClick={(e) => {
-      //       moveChildOfDictionary({
-      //         dictionaryId,
-      //         items: [{ id, sort: childList[index - 1].sort }, { id: childList[index - 1].id, sort }]
-      //       }).then((canIMove) => {
-      //         canIMove && refreshTable([decorativeId, childList[index - 1].decorativeId]);
-      //       });
-      //     }}
-      //     className="link-btn"
-      //   />) : null}
-      //   {index !== length - 1 ? (<ArrowDownOutlined
-      //     style={{ color: '#488CF0', fontSize: '14px' }}
-      //     className="link-btn"
-      //     onClick={(e) => {
-      //       moveChildOfDictionary({
-      //         dictionaryId,
-      //         items: [{ id, sort: childList[index + 1].sort }, { id: childList[index + 1].id, sort }]
-      //       }).then((canIMove) => {
-      //         canIMove && refreshTable([decorativeId, childList[index + 1].decorativeId]);
-      //       });
-      //     }}
-      //   />) : null}
-      //   {decorativeIndex.split('.').length < 6 ? (<span
-      //     className="link-btn"
-      //     onClick={(e) => {
-      //       /** 获取对应子项列表数据，传递给弹窗展示 */
-      //       getListOfDictionaryChildServices({ dictionaryId, pid: id }).then((childListOfChild) => {
-      //         const idTmpl = `${new Date().valueOf()}`;
-      //         setModalConfig({
-      //           type: 'changeSome',
-      //           name: {
-      //             modalVisible: true,
-      //             modalTitle: '配置子项',
-      //             /** 配置子项不需要展示字典名称和字典描述 */
-      //             showDictionaryConfig: false,
-      //             operateParam: {
-      //               childList: childListOfChild.length !== 0 ? childListOfChild
-      //                 : [{
-      //                   editable: true, id: idTmpl, renderBgColor: '#fff', renderFontColor: '#000'
-      //                 }],
-
-      //               editingKeyFirst: childListOfChild.length === 0 && idTmpl
-      //             },
-      //             handleAft: (paramFromModal) => {
-      //               const { items } = filterParamFromModal(paramFromModal);
-      //               /** 保存数据并刷新子项列表 */
-      //               editChildOfDictionary({ items, dictionaryId, pid: id }).then((canIEdit) => {
-      //                 if (!canIEdit) return;
-      //                 setModalConfig({ type: 'changeSome', name: { modalVisible: false } });
-      //                 refreshTable([decorativeId]);
-      //                 const previousChildList = childList.slice();
-      //                 previousChildList[index] = { ...previousChildList[index], children: [] };
-      //                 setChildList({
-      //                   type: 'setListOfDictionaryPure',
-      //                   name: previousChildList
-      //                 });
-      //               });
-      //             }
-      //           }
-      //         });
-      //       });
-      //     }}
-      //   >
-      //     配置子项
-      //   </span>) : null}
-      //   {decorativeIndex.split('.').length < 6 ? (<span
-      //     className="link-btn"
-      //     onClick={(e) => {
-      //       delChildOfDictionaryServices({ dictionaryId, pid: id }).then((canIDelete) => {
-      //         /** 删除成功后需要刷新子项列表 */
-      //         canIDelete && refreshTable([decorativeId]);
-      //       });
-      //     }}
-      //   >
-      //     删除子项
-      //   </span>) : null}
-      // </div>
-      );
+    editable: true, id, renderBgColor: DEF_VALUE.RENDERBGCOLOR, renderFontColor: DEF_VALUE.RENDERFONTCOLOR
+  }];
+};
+const getChildOfDictionaryColumns = ({
+  handleCreateChild, handleDeleteChild, getBrother, handleMove, dictionaryId
+}) => {
+  return [
+    {
+      key: 'decorativeIndex',
+      dataIndex: 'decorativeIndex',
+      title: '序号',
+      width: 210,
+      ellipsis: { showTitle: true },
     },
-  },
+    {
+      key: 'code',
+      dataIndex: 'code',
+      title: '编码',
+      ellipsis: { showTitle: true },
+      width: 200
+    },
+    {
+      key: 'name',
+      dataIndex: 'name',
+      title: '名称',
+      className: 'no-padding',
+      ellipsis: { showTitle: true },
+      render: (text, record) => {
+        return <div style={{ color: record.renderFontColor, backgroundColor: record.renderBgColor }}>{text}</div>;
+      }
+    },
+    {
+      key: 'sort',
+      dataIndex: 'sort',
+      title: '排序',
+      width: 80,
+      ellipsis: { showTitle: true },
+      render: (text) => text || '--'
+    },
+    {
+      key: 'action',
+      title: '操作',
+      width: 220,
+      render: (text, record, index) => {
+        const {
+          id, length, sort, level, pid
+        } = record;
+        return (
+          <div className="child-operation">
+            {level < 5 ? (<span
+              key="editChild"
+              className="link-btn"
+              onClick={(e) => {
+                /** 获取对应子项列表数据，传递给弹窗展示 */
+                handleCreateChild(record);
+              }}
+            >
+          配置子项
+            </span>) : null}
+            {level < 5 ? (<span
+              key="deleteChild"
+              className="link-btn"
+              onClick={(e) => {
+                delChildOfDictionaryServices({ dictionaryId, pid: id }).then((canIDelete) => {
+                  /** 删除成功后需要刷新子项列表 */
+                  handleDeleteChild(record);
+                });
+              }}
+            >
+          删除子项
+            </span>) : null}
+            {index !== 0 ? (<ArrowUpOutlined
+              className="link-btn sort-btn"
+              onClick={(e) => {
+                const prev = getBrother(pid, index - 1);
+                moveChildOfDictionary({
+                  dictionaryId,
+                  items: [{ id, sort: prev?.sort }, { id: prev?.id, sort }]
+                }).then((canIMove) => {
+                  canIMove && handleMove(record, [index - 1, index]);
+                });
+              }}
+            />) : null}
+            {index !== length - 1 ? (<ArrowDownOutlined
+              className="link-btn sort-btn"
+              onClick={(e) => {
+                const next = getBrother(pid, index + 1);
+                moveChildOfDictionary({
+                  dictionaryId,
+                  items: [{ id, sort: next?.sort }, { id: next?.id, sort }]
+                }).then((canIMove) => {
+                  canIMove && handleMove(record, [index, index + 1]);
+                });
+              }}
+            />) : null}
+          </div>
+        );
+      },
+    },
   ];
 };
 class ChildListOfDictionary extends React.Component {
   state = {
-    list: [],
-    map: {}
+    list: [{}],
+    map: {},
+    expandedRowKeys: []
   }
 
-  componentDidMount() {
+  componentWillMount() {
     this.initList(this.props.parentRecord?.id);
   }
 
   initMap = (list) => {
+    this.setState({ map: this.decorateMap(list) });
+  }
+
+  decorateMap = (list) => {
     const mapTmpl = {};
     list.forEach((item) => {
       mapTmpl[item[DICTIONARY_CHILD_KEY.ID]] = item;
     });
-    this.setState({ map: mapTmpl });
+    return mapTmpl;
   }
 
-  decorateList = (list) => {
-    const { parentDecorativeIndex } = this.props;
+  decorateList = (list, parentDecorativeIndex, parentId) => {
     return list.map((item, index) => {
       return {
+        pid: parentId,
         decorativeIndex: `${parentDecorativeIndex}.${index + 1}`,
+        length: list.length,
+        children: item.hasChild ? [] : null,
         ...item
       };
     });
@@ -175,28 +169,153 @@ class ChildListOfDictionary extends React.Component {
 
   initList = (id) => {
     getListOfDictionaryServices({ id }).then((res) => {
-      const list = this.decorateList(res);
+      const list = this.decorateList(res, this.props.parentDecorativeIndex, null);
       this.setState({ list });
       this.initMap(list);
     });
   }
 
+  getModalConfigOfEditChildListOfDictionary = async (record) => {
+    const {
+      [DICTIONARY_CHILD_KEY.ID]: dictionaryId,
+    } = this.props.parentRecord;
+    const {
+      [DICTIONARY_CHILD_KEY.ID]: id,
+    } = record;
+    const list = await getListOfDictionaryChildServices({ dictionaryId, pid: id });
+    const listInModal = list.length > 0 ? filterChildListOfDictionary(list) : getDefChildListOfDictionaryInModal();
+    return {
+      modalTitle: MODAL_TITLE.EDIT_CHILD,
+      nameVisible: false,
+      descVisible: false,
+      list: listInModal,
+      name: '',
+      desc: '',
+      editingKey: listInModal[0].id,
+      successCallback: (res) => {
+        const items = filterChildListOfDictionary(res?.list);
+        editChildOfDictionary({ items, dictionaryId, pid: id }).then((canIEditChildList) => {
+          if (!canIEditChildList) return;
+          this.props.handleCloseModal();
+          this.setState({
+            expandedRowKeys: lodash.without(this.state.expandedRowKeys, id)
+          });
+          this.updateRecordByRowKey(record[DICTIONARY_CHILD_KEY.ID], { children: [] });
+        });
+      }
+    };
+  }
+
+  handleCreateChild = async (record) => {
+    const modalConfig = await this.getModalConfigOfEditChildListOfDictionary(record);
+    this.props.handleOperateChildListOfDict(modalConfig);
+  }
+
+  handleDeleteChild = (record) => {
+    /** 删除子项成功后要更新前置标识 */
+    this.updateRecordByRowKey(record[DICTIONARY_CHILD_KEY.ID], { children: null });
+  }
+
+  handleMove = (record, [prevIndex, nextIndex]) => {
+    const { [DICTIONARY_CHILD_KEY.PID]: pid } = record;
+    let { list, expandedRowKeys } = this.state;
+    if (pid) {
+      list = this.getRecordByRowKey(pid).children;
+    }
+    const {
+      sort: prevSort, decorativeIndex: prevDecorativeIndex, id: idPrev, ...prev
+    } = list[prevIndex];
+    const {
+      sort: nextSort, decorativeIndex: nextDecorativeIndex, id: idNext, ...next
+    } = list[nextIndex];
+    list[prevIndex] = {
+      ...next, sort: prevSort, decorativeIndex: prevDecorativeIndex, id: idPrev
+    };
+    list[nextIndex] = {
+      ...prev, sort: nextSort, decorativeIndex: nextDecorativeIndex, id: idNext
+    };
+    this.setState({
+      list: this.state.list.slice(),
+      expandedRowKeys: lodash.without(expandedRowKeys, idPrev, idNext)
+    });
+  }
+
+  getRecordByRowKey=(id) => {
+    return this.state.map[id];
+  }
+
+  getBrother = (pid, index) => {
+    if (pid) {
+      const record = this.getRecordByRowKey(pid);
+      return record.children?.[index];
+    }
+    console.log(this.state.list[index]);
+    return this.state.list[index];
+  }
+
+  updateRecordByRowKey = (id, recordNeedUpdate) => {
+    const record = this.getRecordByRowKey(id);
+    for (const key in recordNeedUpdate) {
+      record[key] = recordNeedUpdate[key];
+    }
+    this.setState({
+      list: this.state.list.slice()
+    });
+  }
+
+  handleExpandChild = (expanded, record) => {
+    const { [DICTIONARY_CHILD_KEY.ID]: id } = record;
+    const { expandedRowKeys } = this.state;
+    if (!expanded) {
+      this.setState({ expandedRowKeys: lodash.without(expandedRowKeys, id) });
+      return;
+    }
+    this.setState({ expandedRowKeys: [...expandedRowKeys, id] });
+  }
+
   render() {
-    const { list } = this.state;
-    const columns = getChildOfDictionaryColumns();
+    const { list, expandedRowKeys } = this.state;
+    const {
+      parentRecord: { id: dictionaryId }
+    } = this.props;
+    const columns = getChildOfDictionaryColumns({
+      handleCreateChild: this.handleCreateChild,
+      handleDeleteChild: this.handleDeleteChild,
+      handleMove: this.handleMove,
+      getBrother: this.getBrother,
+      dictionaryId
+    });
     return (
       <Table
+        className="dictionary-child-list"
         rowKey={DICTIONARY_CHILD_KEY.ID}
         columns = {columns}
         dataSource = {list}
         pagination={false}
+        expandable = {{
+          expandedRowKeys,
+          indentSize: 10,
+          onExpand: (expanded, record) => {
+            const { [DICTIONARY_CHILD_KEY.ID]: id, decorativeIndex } = record;
+            this.handleExpandChild(expanded, record);
+            getListOfDictionaryChildServices({ dictionaryId, pid: id }).then((res) => {
+              const listTmpl = this.decorateList(res, decorativeIndex, id);
+              this.updateRecordByRowKey(id, { children: listTmpl });
+              this.setState({
+                map: { ...this.state.map, ...this.decorateMap(listTmpl) },
+                list: this.state.list.slice()
+              });
+            });
+          }
+        }}
+
       />
     );
   }
 }
 /** 字典列表的字段配置 */
 const getDictionaryColumns = ({
-  getModalConfigOfEditDictionary, afterDel
+  getModalConfigOfEditDictionary, handleDelete
 }): ColumnsType => [
   {
     key: 'index',
@@ -258,7 +377,7 @@ const getDictionaryColumns = ({
             className="link-btn ml10"
             onClick={(e) => {
               delDictionaryServices(id).then((canIDelete) => {
-                canIDelete && afterDel(dictionaryConfig);
+                canIDelete && handleDelete(record);
               });
             }}
           >
@@ -325,7 +444,10 @@ class DictionaryList extends React.Component {
       searchArea: { name, description },
       page: { offset, size }
     } = this.state;
-    const requestParam = { offset, size };
+    const requestParam = {
+      offset: offset * size || 0,
+      size
+    };
     name && Object.assign(requestParam, { name });
     description && Object.assign(requestParam, { description });
     getDictionaryListServices(requestParam).then((res) => {
@@ -339,51 +461,37 @@ class DictionaryList extends React.Component {
   }
 
   getDictionaryFromModal = (resFromModal) => {
-    const { name, desc, list } = resFromModal;
-    return {
-      name,
+    const {
+      [DICTIONARY_KEY.NAME]: name,
       [DICTIONARY_KEY.DESC]: desc,
-      items: this.filterChildListOfDictionary(list)
+      list
+    } = resFromModal;
+    return {
+      [DICTIONARY_KEY.NAME]: name,
+      [DICTIONARY_KEY.DESC]: desc,
+      items: filterChildListOfDictionary(list)
     };
   }
 
-  filterChildListOfDictionary = (list) => {
-    return list.map((item) => {
-      const {
-        name, code, id, renderBgColor, renderFontColor
-      } = item;
-      return {
-        name, code, id, renderBgColor, renderFontColor
-      };
-    });
-  }
-
-  getDefChildListOfDictionaryInModal = () => {
-    const id = `${new Date().valueOf()}`;
-    return [{
-      editable: true, id, renderBgColor: DEF_VALUE.RENDERBGCOLOR, renderFontColor: DEF_VALUE.RENDERFONTCOLOR
-    }];
-  }
-
   getModalConfigOfCreateDictionary = () => {
-    const list = this.getDefChildListOfDictionaryInModal();
+    const list = getDefChildListOfDictionaryInModal();
     return {
-      modalVisible: true,
-      modalConfig:
-      {
-        modalTitle: MODAL_TITLE.ADD,
-        nameVisible: true,
-        descVisible: true,
-        list,
-        name: '',
-        desc: '',
-        editingKey: list[0].id,
-        successCallback: (res) => {
-          const paramAddDictionary = this.getDictionaryFromModal(res);
-          addDictionary(paramAddDictionary).then((canIAdd) => {
-            if (!canIAdd) return;
+      modalTitle: MODAL_TITLE.ADD,
+      nameVisible: true,
+      descVisible: true,
+      list,
+      name: '',
+      desc: '',
+      editingKey: list[0].id,
+      successCallback: (res) => {
+        const paramAddDictionary = this.getDictionaryFromModal(res);
+        addDictionary(paramAddDictionary).then((canIAdd) => {
+          if (!canIAdd) return;
+          this.setState({
+            modalVisible: false
           });
-        }
+          this.getDictionaryList();
+        });
       }
     };
   }
@@ -394,57 +502,35 @@ class DictionaryList extends React.Component {
       [DICTIONARY_KEY.DESC]: desc,
       [DICTIONARY_KEY.ID]: id
     } = record;
-    const list = getListOfDictionaryServices(id);
+    const list = await getListOfDictionaryServices({ id });
     return {
-      modalVisible: true,
-      modalConfig: {
-        modalTitle: MODAL_TITLE.EDIT,
-        nameVisible: true,
-        descVisible: true,
-        list: this.filterChildListOfDictionary(list),
-        name,
-        desc,
-        editingKey: id,
-        successCallback: (res) => {
-          const paramEditDictionary = this.getDictionaryFromModal(res);
-          editDictionary({ ...paramEditDictionary, id }).then((canIEdit) => {
-            if (!canIEdit) return;
+      modalTitle: MODAL_TITLE.EDIT,
+      nameVisible: true,
+      descVisible: true,
+      list: filterChildListOfDictionary(list),
+      [DICTIONARY_KEY.NAME]: name,
+      [DICTIONARY_KEY.DESC]: desc,
+      editingKey: list[0]?.[DICTIONARY_CHILD_KEY.ID],
+      successCallback: (res) => {
+        const paramEditDictionary = this.getDictionaryFromModal(res);
+        editDictionary({ ...paramEditDictionary, id }).then((canIEdit) => {
+          if (!canIEdit) return;
+          this.setState({
+            modalVisible: false,
+            expandedRowKeys: lodash.without(this.state.expandedRowKeys, id)
           });
-        }
-      }
-    };
-  }
-
-  getModalConfigOfEditChildListOfDictionary = (record) => {
-    const {
-      [DICTIONARY_CHILD_KEY.CHILD]: list,
-      [DICTIONARY_CHILD_KEY.DICTIONARYID]: dictionaryId,
-      [DICTIONARY_CHILD_KEY.ID]: id,
-    } = record;
-    const listInModal = list.length > 0 ? this.filterChildListOfDictionary(list) : this.getDefChildListOfDictionaryInModal();
-    return {
-      modalVisible: true,
-      modalConfig:
-      {
-        modalTitle: MODAL_TITLE.EDIT,
-        nameVisible: false,
-        descVisible: false,
-        list: listInModal,
-        name: '',
-        desc: '',
-        editingKey: listInModal[0].id,
-        successCallback: (res) => {
-          const paramEditChildOfDictionary = this.getDictionaryFromModal(res);
-          editChildOfDictionary({ ...paramEditChildOfDictionary, dictionaryId, pid: id }).then((canIEditChildList) => {
-            if (!canIEditChildList) return;
-          });
-        }
+          this.getDictionaryList();
+        });
       }
     };
   }
 
   getRecordByRowKey=(id) => {
     return this.state.map[id];
+  }
+
+  getIndexByRowKey = (id) => {
+    return lodash.findIndex(this.state.list, { [DICTIONARY_KEY.ID]: id });
   }
 
   updateRecordByRowKey = (id, recordNeedUpdate) => {
@@ -480,9 +566,42 @@ class DictionaryList extends React.Component {
     });
   };
 
-  handleCreateDict = () => {
-    const modalConfig = this.getModalConfigOfCreateDictionary();
-    this.setState({ ...modalConfig });
+  handleOperateDict = async (createConfigFn, record) => {
+    const modalConfig = typeof createConfigFn === 'function' && await createConfigFn(record);
+    this.setState({
+      modalVisible: true,
+      modalConfig
+    });
+  }
+
+  handleOperateChildListOfDict = (modalConfig) => {
+    this.setState({
+      modalVisible: true,
+      modalConfig
+    });
+  }
+
+  handleCloseModal = () => {
+    this.setState({
+      modalVisible: false,
+    });
+  }
+
+  handleExpandChild = (expanded, record) => {
+    const { [DICTIONARY_KEY.ID]: id } = record;
+    const { expandedRowKeys } = this.state;
+    if (!expanded) {
+      this.setState({ expandedRowKeys: lodash.without(expandedRowKeys, id) });
+      return;
+    }
+    this.setState({ expandedRowKeys: [...expandedRowKeys, id] });
+  }
+
+  handleDelete = ({ id }) => {
+    const index = this.getIndexByRowKey({ id });
+    const list = this.state.list.slice();
+    list.splice(index, 1);
+    this.setState({ list });
   }
 
   render() {
@@ -490,8 +609,8 @@ class DictionaryList extends React.Component {
       list, expandedRowKeys, modalConfig, modalVisible, total, page
     } = this.state;
     const columns = getDictionaryColumns({
-      getModalConfigOfEditDictionary: this.getModalConfigOfEditDictionary,
-      afterDel: () => {}
+      getModalConfigOfEditDictionary: this.handleOperateDict.bind(this, this.getModalConfigOfEditDictionary),
+      handleDelete: this.handleDelete
     });
     return (
       <>
@@ -533,7 +652,7 @@ class DictionaryList extends React.Component {
         <div style={{ height: 32 }}>
           <Button
             className="float-right"
-            onClick={this.handleCreateDict}
+            onClick={() => { this.handleOperateDict(this.getModalConfigOfCreateDictionary); }}
             type={BUTTON_TYPE.PRIMARY}
           >
             新建
@@ -546,19 +665,17 @@ class DictionaryList extends React.Component {
           columns={columns}
           expandable={{
             expandedRowKeys,
-            onExpand: (expanded, record) => {
-              const { [DICTIONARY_KEY.ID]: id } = record;
-              if (!expanded) {
-                this.setState({ expandedRowKeys: lodash.without(expandedRowKeys, id) });
-                return;
-              }
-              this.setState({ expandedRowKeys: [...expandedRowKeys, id] });
-            },
-            expandedRowRender: (record, index) => (
-              <ChildListOfDictionary
-                parentRecord = {record}
-                parentDecorativeIndex = {index + 1}
-              />)
+            onExpand: this.handleExpandChild,
+            expandedRowRender: (record, index) => {
+              return expandedRowKeys.includes(record.id) ? (
+                <ChildListOfDictionary
+                  handleExpandChild = {this.handleExpandChild}
+                  handleCloseModal = {this.handleCloseModal}
+                  handleOperateChildListOfDict = {this.handleOperateChildListOfDict}
+                  parentRecord = {record}
+                  parentDecorativeIndex = {index + 1}
+                />) : null;
+            }
           }}
           pagination={{
             pageSizeOptions: ['10', '20', '30', '40', '50', '100'],

@@ -84,8 +84,6 @@ class ChooseDict extends React.Component<IProps> {
     const { searchName: name, offset, size } = this.state;
     /** 接口对应的offset是指记录偏移位置，不是页偏移量 */
     const res = await getDictionaryList({ name, offset: (offset - 1) * size, size });
-    console.log(res.data);
-    console.log(typeof (res.total - 0));
     /** 设置数据 */
     this.setState({
       menu: res?.data,

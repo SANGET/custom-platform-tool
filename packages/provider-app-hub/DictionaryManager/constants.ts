@@ -32,7 +32,7 @@ export enum DICTIONARY_CHILD_KEY {
   RENDERBGCOLOR = 'renderBgColor',
   RENDERFONTCOLOR = 'renderFontColor',
   PID = 'pid',
-  DICTIONARYID = 'dictionaryId'
+  EDITABLE = 'editable'
 }
 
 export enum BUTTON_TYPE {

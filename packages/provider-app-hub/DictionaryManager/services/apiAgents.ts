@@ -44,7 +44,7 @@ export const delChildOfDictionaryServices = (param) => {
       onOk: async () => {
         const res = await delChildOfDictionaryServicesApi(param);
         if (res?.code !== API_CODE.SUCCESS) {
-          // openNotification(NOTIFICATION_TYPE.ERROR, res?.msg || '删除字典子项失败，请联系技术人员');
+          openNotification(NOTIFICATION_TYPE.ERROR, res?.msg || '删除字典子项失败，请联系技术人员');
           resolve(false);
           return;
         }
@@ -90,7 +90,7 @@ export async function editDictionary(data) {
   const res = await editDictionaryApi(data);
 
   if (res?.code !== API_CODE.SUCCESS) {
-    // openNotification(NOTIFICATION_TYPE.ERROR, res?.msg || '字典修改失败');
+    openNotification(NOTIFICATION_TYPE.ERROR, res?.msg || '字典修改失败');
     return false;
   }
   return true;
