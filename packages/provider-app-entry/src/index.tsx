@@ -5,7 +5,7 @@ import { setAppConfig } from '@provider-app/config/config-manager';
 import App from './main';
 import { setPlatformApiUrl } from './services';
 
-fetch('/config.json').then((res) => res.json()).then((config) => {
+fetch(`/config.json?${Date.now()}`).then((res) => res.json()).then((config) => {
   // console.log(config);
   /**
    * 准备应用的配置数据
