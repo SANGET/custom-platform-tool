@@ -1,91 +1,47 @@
-import { ApbFunction } from "@iub-dsl/definition";
-
 /**
  * TODO: 这是个大难题, 需要多尝试多思考
  */
 
 /**
- * 关系处理模块
- * 主要职责:
- * 1. 处理数据的副作用「如: 对表的增、改、删需要收集记录」, 并对应处理其副作用
+ * @changePageState 改变页面数据 仅能通过动作改变
+ * 动作触发情况:
+ * 1. 主动触发 --> 动作 --> changeData
+ * 2. 条件触发 --> 动作 --> changeData
+ *  1. table[set、update、del] --> 依赖该table的动作 --> 满足触发条件「动作的上层依赖、满足apbdsl触发条件、输出的下层影响、动作上下文影响?」 --> 触发table[get]
+ *  2. 跨页面影响「有导出和使用才有」/页面数据实际更新  --> 触发的影响
+ *
+ * @getPageState 获取页面数据
+ *
+ * 1. props中使用
+ * 2. 动作执行过程中获取 「注意: 流程执行不能获取数据」
+ * 3. 跨页面穿值
+ *
+ * 收集 / 能被使用 /使用
+ * 问题:
+ * 1. 收集: 格式、储存位置
+ *  1.1. 收集思路 一种结构, 一个函数, 但仅有一个提取规则 「props、action」
+ *  1.2 Symbol标示/ path标示/ id标示「actionid」 问题: props怎么办? 根据comp的mark
+ * 2. 能被使用: 触发动作, 导致能被使用
+ *  2.1. 在动作触发的前后进行标示
+ * 3. 使用: 本页面使用、跨页面
+ *  3.1. 根据不同的类型, 确定如何使用
+ *
+ * depend「依赖」: 描述在json中哪里使用了什么
+ * e.g: 在APBDSL的动作中, 在table 中使用了 test_user_k表 的元数据, 在struct[0].collectField 使用了@(schemas).entity_25
+ * effectCollect「副作用收集/分析」: 动作的执行,会对XX数据造成XX影响
+ * e.g: 在APBDSL的动作中, 对test_user_k表执行了insert操作, 导致了将会触发XXX副作用
+ * effectAction 「副作用执行」
+ * e.g: test_user_k执行了insert操作, 会对test_user_k的select操作造成影响
+ *
+ * 所以是不是有个动作行为分析? 或者说, 一个动作有着固定的行为, 需要对行为进行分析?
+ * 行为是什么?
+ * 数据: get/set
+ * // 用户行为: click
+ * CURDXXX表
+ * 所以action本身就是一个行为的描述
+ * 如果这样, 依赖和行为的关系又是什么
+ * 找到哪个动作使用了test_user_k依赖, 并分析 动作是select操作则满足该动作能够触发的条件
+ *
  */
 
-/**
-  * 处理表副作用的研讨:
-  * 1. 收集影响是在哪个时机收集呢? 每条APBDSL转换时? CUD动作完成时? 在调度中心收集?
-  * 2. 应该触发什么动作呢?
-  *   1. 更新有关联的数据「表格、表单」 --> 自动触发流程?
-  *   2. 其他什么副作用????
-  */
-
-/**
- * 运行记录收集/副作用处理?
- * 收集什么信息才是最有用的?
- * 1. 期望在每项流程运行前和后收集. 「但是仅能拿到处理结果和交互信息, 并不符合当前需求」
- * 2. 每个动作运行信息? 「侵入动作本身逻辑入侵太大, 有污染嫌疑」
- * 3. 都在调度中心耦合会好维护 「但是不能保证不臃肿」
- */
-
-/**
- * 收集有可能产生影响的信息, 「如表格」
- * 使用?: 需要依赖收集才可以用啊??? 表依赖收集?? 数据使用的依赖收集??
- */
-const collectEffectInfoFromAPBDSL = (APBDSLCURDParam) => {
-  const { businesscode, steps } = APBDSLCURDParam;
-  const effectInfo: any[] = [];
-  steps.forEach(({ function: { code, params } }) => {
-    const { table } = params;
-    switch (code) {
-      case ApbFunction.DEL:
-      case ApbFunction.UPD:
-      case ApbFunction.SET:
-        effectInfo.push({
-          table,
-          fnCode: code
-        });
-        break;
-      default:
-        break;
-    }
-  });
-  return {
-    type: 'effectTable',
-    businesscode,
-    effectInfo,
-  };
-};
-
-const vaildCollect: any[] = [];
-
-const pickVaildCollect = () => {
-  return vaildCollect.filter((v) => v.isRunSuccess);
-};
-
-export const collectRelationshipFromScheduler = (schedulerCtx) => {
-  const {
-    action, type, params, actionName
-  } = schedulerCtx;
-  const actionType = action?.type;
-
-  let collectInfo = {
-    type: 'emptyCollect',
-    isRunSuccess: false
-  };
-  switch (actionType) {
-    case 'APBDSLCURDAction':
-      collectInfo = {
-        ...collectInfo,
-        ...collectEffectInfoFromAPBDSL(params[0])
-      };
-      break;
-    default:
-      break;
-  }
-
-  if (collectInfo.type !== 'emptyCollect') {
-    vaildCollect.push(collectInfo);
-  }
-  console.log(vaildCollect);
-
-  return collectInfo;
-};
+export * from './effect';

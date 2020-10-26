@@ -1,33 +1,29 @@
-/** 动作的枚举类型 */
-enum TriggerType {
-  update = 'update',
-  set = 'set',
-  delete = 'delete',
+import { DependInfo } from './depend';
+
+/** TODO: 改善这些描述, 使其使用的时候可以知道, 如何写 */
+
+/** 动作的触发类型 */
+export enum TriggerType {
+  tableUpdate = 'tableUpdate',
+  tableSet = 'tableSet',
+  tableDelete = 'tableDelete',
   userBehavior = 'userBehavior'
 }
 
-/**
- * 元数据影响的描述
- */
-interface MetadataEffectInfo {
-  /** 引用位置 */
-  metadataRef?: string;
-  /** 触发的动作 */
-  metadataTriggerType?: TriggerType;
+/** 动作的影响类型 */
+export enum EffectType {
+  tableSelect = 'tableSelect'
 }
 
-/**
- * 页面状态影响的描述
- */
-interface SchemasEffectInfo {
-  /** 引用位置 */
-  schemasRef?: string;
-  /** 触发的动作 */
-  schemasTriggerType?: TriggerType;
-}
-
+/** 影响的描述 */
 /** 影响信息描述, 可以有多影响 */
-type EffectInfo = (MetadataEffectInfo & SchemasEffectInfo)[]
+interface EffectBaseInfo {
+  /** 系统触发的XX动作而引起的副作用 */
+  triggerType?: TriggerType;
+  triggerInfo?: any;
+  effectType?: EffectType;
+  effectInfo?: any;
+}
 
 /**
  * 动作造成的影响的描述信息
@@ -36,17 +32,31 @@ type EffectInfo = (MetadataEffectInfo & SchemasEffectInfo)[]
  *  2. 每个动作的描述信息都不一样
  *  3. 一个动作可以包含多个影响信息
  */
-export interface ActionEffect extends EffectInfo {
-  actionType: string;
+export interface ActionEffect extends EffectBaseInfo {
+  actionId: string;
+  actionType?: string;
+}
+
+interface EffectTypeOfTableSelect extends EffectBaseInfo {
+  effectType: EffectType.tableSelect;
+  /** 待完善 */
+  effectInfo: {
+    table: string;
+  }
 }
 
 /**
- * apbdslCURD动作的影响
+ * apbdslCURD
  */
-export interface APBDSLActionEffect extends ActionEffect {
-  actionType: string;
-  businessCode: string;
-}
+export type APBDSLActionEffect =
+  ActionEffect & // 基础动作影响的描述
+  EffectTypeOfTableSelect & // 触发表格选择影响的描述
+  // APBDSL动作信息特有得描述
+  {
+    triggerInfo: {
+      businesscode: string;
+    }
+  }
 
 /**
  * 动作影响收集后的格式
