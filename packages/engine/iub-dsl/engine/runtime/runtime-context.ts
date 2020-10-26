@@ -102,7 +102,6 @@ export const genRuntimeCtxFn = (dslParseRes, runtimeCtx) => {
     if (type === RuntimeSchedulerFnName.ConditionHandleOfAPBDSL) {
       const expsValueHandle = (expsValue) => {
         expsValue = transMarkValFromArr(expsValue, asyncRuntimeContext);
-
         return validTransMarkValFromArr(expsValue);
       };
       return await conditionEngine(params[0], {
