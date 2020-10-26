@@ -6,21 +6,22 @@ import { ModalFooter } from '@provider-app/table-editor/components/ChooseDict';
 import { SketchPicker } from 'react-color';
 import { FormInstance } from 'antd/lib/form';
 import CreateModal from './CreateModal';
+import { DEF_VALUE, DICTIONARY_CHILD_KEY, DICTIONARY_KEY } from '../constants';
 
 const getColumns = ({
-  handleAdd, setColorPicker, form
+  handleAdd, handleClickColor, list, handleDelete
 }) => {
   return [
     {
       title: '编码',
-      key: 'code',
+      key: DICTIONARY_CHILD_KEY.CODE,
       width: 242,
       ellipsis: { showTitle: true },
-      dataIndex: 'code',
+      dataIndex: DICTIONARY_CHILD_KEY.CODE,
       render: (text, record) => {
         return record.editable ? (
           <Form.Item
-            name="code"
+            name={DICTIONARY_CHILD_KEY.CODE}
             rules={[
               { pattern: /^[\u4e00-\u9fa5a-zA-Z()][\u4e00-\u9fa5_a-zA-Z0-9()]{0,31}$/, message: '32位字符内的中文、英文大小写、数字、下划线、英文小括号(_)，不能以数字或下划线_开头' },
               { required: true, message: '编码必填' },
@@ -34,9 +35,9 @@ const getColumns = ({
       }
     }, {
       title: '名称',
-      key: 'name',
+      key: DICTIONARY_CHILD_KEY.NAME,
       width: '242px',
-      dataIndex: 'name',
+      dataIndex: DICTIONARY_CHILD_KEY.NAME,
       ellipsis: { showTitle: true },
       render: (text, record) => {
         return record.editable ? (
@@ -64,20 +65,11 @@ const getColumns = ({
             style={{ backgroundColor: text }}
             onClick={(e) => {
               e.stopPropagation();
-              setColorPicker({
-                modalVisible: true,
-                value: text || '#fff',
-                pickAft: ({ hex }) => {
-                  setColorPicker({
-                    modalVisible: false
-                  });
-                  setChildren({
-                    type: 'update',
-                    name: {
-                      [index]: { ...record, renderFontColor: hex }
-                    }
-                  });
-                }
+              console.log(record[DICTIONARY_CHILD_KEY.ID]);
+              handleClickColor({
+                color: text || DEF_VALUE.RENDERFONTCOLOR,
+                type: DICTIONARY_CHILD_KEY.RENDERFONTCOLOR,
+                id: record[DICTIONARY_CHILD_KEY.ID]
               });
             }}
           ></div>
@@ -95,20 +87,10 @@ const getColumns = ({
             style={{ backgroundColor: text }}
             onClick={(e) => {
               e.stopPropagation();
-              setColorPicker({
-                modalVisible: true,
-                value: text || '#fff',
-                pickAft: ({ hex }) => {
-                  setColorPicker({
-                    modalVisible: false
-                  });
-                  setChildren({
-                    type: 'update',
-                    name: {
-                      [index]: { ...record, renderBgColor: hex }
-                    }
-                  });
-                }
+              handleClickColor({
+                color: text || DEF_VALUE.RENDERBGCOLOR,
+                type: DICTIONARY_CHILD_KEY.RENDERBGCOLOR,
+                id: record[DICTIONARY_CHILD_KEY.ID]
               });
             }}
           ></div>
@@ -122,18 +104,17 @@ const getColumns = ({
         <>
           <span
             className="link-btn"
-            onClick={handleAdd}
+            onClick={(e) => {
+              e.stopPropagation();
+              handleAdd(index);
+            }}
           >新增</span>
-          {children.length > 1
+          {list.length > 1
             ? <span
               className="link-btn ml-1"
               onClick={(e) => {
-                editingKey === record.id && setEditingKey('');
-                setChildren({
-                  type: 'delete',
-                  name: index
-                });
                 e.stopPropagation();
+                handleDelete(record.id);
               }}
             >删除</span> : null}
         </>
@@ -165,7 +146,13 @@ class CreateDictionary extends React.Component {
   state = {
     editingKey: '',
     list: [],
-    map: {}
+    map: {},
+    modalVisibleColorPicker: false,
+    colorPicker: {
+      color: DEF_VALUE.RENDERBGCOLOR,
+      successCallback: () => {}
+    },
+    keyOfColorPicker: ''
   }
 
   dictForm = React.createRef<FormInstance>();
@@ -175,71 +162,154 @@ class CreateDictionary extends React.Component {
   getMap = (list) => {
     const map = {};
     list.forEach((item) => {
-      map[item.id] = item;
+      map[item[DICTIONARY_CHILD_KEY.ID]] = item;
     });
     return map;
   }
 
   componentDidMount() {
     const {
-      name, desc, list, editingKey
+      [DICTIONARY_KEY.NAME]: name,
+      [DICTIONARY_KEY.DESC]: desc,
+      list, editingKey
     } = this.props.config;
-    this.dictForm.current?.setFieldsValue({ name, desc });
+    this.dictForm.current?.setFieldsValue({
+      [DICTIONARY_KEY.NAME]: name,
+      [DICTIONARY_KEY.DESC]: desc,
+    });
     this.setState({
-      list, editingKey, map: this.getMap(list)
+      list, map: this.getMap(list), editingKey: editingKey || ''
     }, () => {
       if (editingKey) {
-        const index = this.getIndexByEditingKey();
-        const record = list[index];
+        const record = list[this.getIndexByEditingKey()];
         this.childForm.current?.setFieldsValue({
-          name: record.name,
-          code: record.code,
-          renderBgColor: record.renderBgColor,
-          renderFontColor: record.renderFontColor
+          [DICTIONARY_CHILD_KEY.NAME]: record[DICTIONARY_CHILD_KEY.NAME],
+          [DICTIONARY_CHILD_KEY.CODE]: record[DICTIONARY_CHILD_KEY.CODE],
+          [DICTIONARY_CHILD_KEY.RENDERBGCOLOR]: record[DICTIONARY_CHILD_KEY.RENDERBGCOLOR],
+          [DICTIONARY_CHILD_KEY.RENDERFONTCOLOR]: record[DICTIONARY_CHILD_KEY.RENDERFONTCOLOR]
         });
       }
     });
   }
 
+  getColorPickerConfig = ({ id, color, type }) => {
+    return {
+      color,
+      successCallback: ({ hex }) => {
+        this.setState({
+          modalVisibleColorPicker: false,
+          list: this.updateRecordByKey(id, { [type]: hex })
+        });
+      }
+    };
+  }
+
   getIndexByEditingKey = ():number => {
-    const { list, editingKey } = this.state;
+    const { editingKey } = this.state;
+    return this.getIndexByKey(editingKey);
+  };
+
+  getIndexByKey = (key) => {
+    const { list } = this.state;
     let index = -1;
     Array.isArray(list) && list.some((item, i) => {
-      if (item.id === editingKey) {
+      if (item[DICTIONARY_CHILD_KEY.ID] === key) {
         index = i;
         return true;
       }
       return false;
     });
     return index;
-  };
+  }
 
-  saveRow = async () => {
+  updateRecordByEditingKey = (updateRecord) => {
     const { editingKey } = this.state;
-    if (editingKey === '') return true;
-    try {
-      await this.childForm.current?.validateFields();
-      const record = this.childForm.current?.getFieldsValue(['name', 'code']);
-      this.setState({
-        editingKey: '',
-        list: this.updateRecordByKey(editingKey, { ...record, editable: true })
-      });
-      return true;
-    } catch (e) {
-      return false;
+    return this.updateRecordByKey(editingKey, updateRecord);
+  }
+
+  updateRecordByKey = (id, updateRecord) => {
+    const record = this.state.map[id];
+    for (const key in updateRecord) {
+      record[key] = updateRecord[key];
     }
+    return this.state.list.slice();
+  }
+
+  createItem = () => {
+    const id = `${new Date().valueOf()}`;
+    const record = {
+      [DICTIONARY_CHILD_KEY.ID]: id,
+      [DICTIONARY_CHILD_KEY.EDITABLE]: true,
+      [DICTIONARY_CHILD_KEY.RENDERBGCOLOR]: '#fff',
+      [DICTIONARY_CHILD_KEY.RENDERFONTCOLOR]: '#000'
+    };
+    return record;
+  }
+
+  handleAdd = (index) => {
+    this.handleClick().then((canIAdd) => {
+      if (!canIAdd) return;
+      this.childForm.current?.resetFields();
+      const record = this.createItem();
+      const { map, list } = this.state;
+      list.splice(index + 1, 0, record);
+      map[record[DICTIONARY_CHILD_KEY.ID]] = record;
+      this.setState({
+        list: list.slice(),
+        map,
+        editingKey: record.id
+      });
+    });
+  }
+
+  handleClick = () => {
+    return new Promise((resolve, reject) => {
+      const { editingKey } = this.state;
+      if (editingKey === '') {
+        resolve(true);
+        return;
+      }
+      try {
+        this.childForm.current?.validateFields().then(() => {
+          const record = this.childForm.current?.getFieldsValue([DICTIONARY_CHILD_KEY.NAME, DICTIONARY_CHILD_KEY.CODE]);
+          this.childForm.current?.resetFields();
+          this.setState({
+            editingKey: '',
+            list: this.updateRecordByEditingKey({ ...record, [DICTIONARY_CHILD_KEY.EDITABLE]: false })
+          }, () => {
+            resolve(true);
+          });
+        });
+      } catch (e) {
+        resolve(false);
+      }
+    });
   };
 
-  handleOk = () => {
+  handleDoubleClick = (record) => {
+    const { editingKey } = this.state;
+    const { [DICTIONARY_CHILD_KEY.ID]: id } = record;
+    if (id === editingKey) return;
+    this.handleClick().then((canIEdit) => {
+      if (!canIEdit) return;
+      this.setState({
+        editingKey: id,
+        list: this.updateRecordByKey(id, { [DICTIONARY_CHILD_KEY.EDITABLE]: true })
+      });
+      const { [DICTIONARY_CHILD_KEY.NAME]: name, [DICTIONARY_CHILD_KEY.CODE]: code } = record;
+      this.childForm.current?.setFieldsValue({ [DICTIONARY_CHILD_KEY.NAME]: name, [DICTIONARY_CHILD_KEY.CODE]: code });
+    });
+  }
+
+  handleOk = async () => {
     const { onOk } = this.props;
     try {
-      this.dictForm.current?.validateFields().then(() => {
-        const data = this.dictForm?.getFieldsValue(['dictName', 'dictDescription']);
-        this.saveRow().then((canISave) => {
-          if (!canISave) return;
-          onOk && onOk({ ...data, children: canISave });
-        });
-      });
+      await this.dictForm.current?.validateFields();
+      const data = this.dictForm.current?.getFieldsValue([DICTIONARY_KEY.NAME, DICTIONARY_KEY.DESC]);
+      const canISave = await this.handleClick();
+      if (!canISave) return;
+      const { list } = this.state;
+      onOk && onOk({ ...data, list });
     } catch (e) {
       console.log(e);
     }
@@ -250,70 +320,49 @@ class CreateDictionary extends React.Component {
     onCancel && onCancel();
   };
 
-  updateRecordByKey = (id, updateRecord) => {
-    const record = this.state.map[id];
-    for (const key in updateRecord) {
-      record[key] = updateRecord[key];
-    }
-    return this.state.list.slice();
-  }
-
-  doubleClick = (record) => {
-    const { editingKey } = this.state;
-    if (record.id === editingKey) return;
-    this.saveRow().then((canIEdit) => {
-      if (!canIEdit) return;
-      this.setState({
-        editingKey: record.id,
-        list: this.updateRecordByKey(record.id, { editable: true })
-      });
-      const { name, code } = record;
-      this.childForm.current?.setFieldsValue({ name, code });
+  handleClickColor = ({ color, type, id }) => {
+    const colorPicker = this.getColorPickerConfig({ id, color, type });
+    this.setState({
+      colorPicker,
+      modalVisibleColorPicker: true
     });
   }
 
-  createItem = () => {
-    const id = `${new Date().valueOf()}`;
-    const record = {
-      id, editable: true, renderBgColor: '#fff', renderFontColor: '#000'
-    };
-    return record;
-  }
-
-  handleAdd = (e, index) => {
-    e.stopPropagation();
-    this.saveRow().then((canIAdd) => {
-      if (!canIAdd) return;
-      this.childForm.current?.resetFields();
-      const record = this.createItem();
-      const { map, list } = this.state;
-      list.splice(index, 0, record);
-      map[record.id] = record;
-      this.setState({
-        list: list.slice(),
-        map,
-        editingKey: record.id
-      });
+  handleDelete = (id) => {
+    const { editingKey, list } = this.state;
+    const index = this.getIndexByKey(id);
+    list.splice(index, 1);
+    this.setState({
+      list: list.slice(),
+      editingKey: editingKey === id ? '' : editingKey
     });
   }
 
   render() {
     const { nameVisible, descVisible } = this.props.config;
+    const {
+      list, modalVisibleColorPicker, colorPicker
+    } = this.state;
+    const {
+      handleClickColor, handleAdd, handleDoubleClick, handleClick: onClick, handleDelete, handleOk, handleCancel
+    } = this;
     const columns = getColumns({
-      handleAdd: this.handleAdd,
-      form: this.childForm.current,
+      handleDelete,
+      handleClickColor,
+      list,
+      handleAdd
     });
     return (
       <div
         className="create-dictionary"
       >
-        <Form form={this.dictForm} layout = "inline">
+        <Form ref={this.dictForm} layout = "inline">
           { nameVisible ? (
             <Form.Item
               className="w-2/4"
               style={{ margin: 0 }}
               label="字典名称"
-              name="dictName"
+              name={DICTIONARY_KEY.NAME}
               rules={[
                 { required: true, message: '字典名称必填' },
                 { pattern: /^[\u4e00-\u9fa5a-zA-Z()][\u4e00-\u9fa5_a-zA-Z0-9()]{0,31}$/, message: '限制32位字符，输入字段包括中文、英文大小写、数字、下划线、英文小括号(_)，不能以数字或下划线_开头' }
@@ -327,238 +376,47 @@ class CreateDictionary extends React.Component {
               style={{ margin: 0, paddingLeft: '5px' }}
               className="w-2/4"
               label="字典描述"
-              name="dictDescription"
+              name={DICTIONARY_KEY.DESC}
             >
               <Input />
             </Form.Item>
           ) : null }
         </Form>
-        <Form form={this.childForm} className="create-dict-child-list">
+        <Form ref={this.childForm} className="create-dict-child-list">
           <Table
             columns={columns}
-            dataSource = {children}
+            dataSource = {list}
             rowKey={'id'}
             pagination={false}
             onRow={(record, index) => {
               return {
-                onDoubleClick: (event) => {
-                  if (record.id === editingKey) return;
-                  saveRow().then((canIEdit) => {
-                    if (!canIEdit) return;
-                    setEditingKey(record.id);
-                    setChildren({
-                      type: 'update',
-                      name: {
-                        [index]: { ...record, editable: true }
-                      }
-                    });
-                    const { name, code } = record;
-                    childForm.setFieldsValue({ name, code });
-                  });
-                },
-                onClick: (event) => { saveRow(); }
+                onDoubleClick: () => { handleDoubleClick(record); },
+                onClick
               };
             }}
           />
         </Form>
         <CreateModal
           width = '266px'
-          modalVisible={colorPicker.modalVisible}
+          modalVisible={modalVisibleColorPicker}
           title="更改颜色"
-          onCancel={() => setColorPicker({ modalVisible: false, value: '#000', pickAft: (param) => {} })}
+          onCancel={() => this.setState({ modalVisibleColorPicker: false })}
         >
           <SketchPicker
             className="color-picker"
-            modalVisible={colorPicker.modalVisible}
-            color={colorPicker.value} onChangeComplete ={({ hex }) => {
-              typeof colorPicker.pickAft === 'function' && colorPicker.pickAft({ hex });
+            modalVisible={modalVisibleColorPicker}
+            color={colorPicker.color} onChangeComplete ={({ hex }) => {
+              typeof colorPicker.successCallback === 'function' && colorPicker.successCallback({ hex });
             }}
           />
         </CreateModal>
         <ModalFooter
-          onOk={() => { handleOk(); }}
-          onCancel={() => { handleCancel(); }}
+          onOk={handleOk}
+          onCancel={handleCancel}
         />
       </div>
     );
   }
 }
-const CreateDictionary: React.FC<IProps> = (props: IProps) => {
-  const {
-    onOk, onCancel, config: {
-      showDictionaryConfig, operateParam: {
-        dictName, dictDescription, childList, editingKeyFirst
-      }
-    }
-  } = props;
-  const [colorPicker, setColorPicker] = useState({
-    modalVisible: false,
-    value: '#000',
-    pickAft: (param) => {}
-  });
-  const [children, setChildren] = useReducer((state, action) => {
-    let newState;
-    switch (action.type) {
-      case 'add':
-        newState = [];
-        for (const index in action.name) {
-          newState = state.slice(0, index).concat(action.name[index], state.slice(index)); break;
-        }
-        return newState;
-      case 'delete':
-        newState = state.slice();
-        newState.splice(action.name, 1);
-        return newState;
-      case 'update':
-        newState = state.slice();
-        for (const index in action.name) {
-          newState[index] = action.name[index];
-        }
-        return newState;
-    }
-    return state;
-  }, childList);
-  const [editingKey, setEditingKey] = useState(editingKeyFirst || '');
-  const [dictForm] = Form.useForm();
-  const [childForm] = Form.useForm();
-  const getIndexByEditingKey = ():number => {
-    let index = -1;
-    Array.isArray(children) && children.some((item, i) => {
-      if (item.id === editingKey) {
-        index = i;
-        return true;
-      }
-      return false;
-    });
-    return index;
-  };
-  const saveRow = async () => {
-    if (editingKey === '') return children;
-    const index = getIndexByEditingKey();
-    try {
-      await childForm.validateFields();
-      const record = childForm.getFieldsValue(['name', 'code']);
-      setChildren({
-        type: 'update',
-        name: {
-          [index]: {
-            ...children[index], ...record, editable: false
-          }
-        }
-      });
-      children[index] = { ...children[index], ...record, editable: false };
-      setEditingKey('');
-      return children;
-    } catch (e) {
-      return false;
-    }
-  };
-  const handleOk = async () => {
-    try {
-      await dictForm.validateFields();
-      const data = dictForm.getFieldsValue(['dictName', 'dictDescription']);
-      saveRow().then((canISave) => {
-        if (!canISave) return;
-        onOk && onOk({ ...data, children: canISave });
-      });
-    } catch (e) {
-      console.log(e);
-    }
-  };
-  const handleCancel = () => {
-    onCancel && onCancel();
-  };
-  const columns = getColumns({
-    saveRow, setChildren, setEditingKey, children, editingKey, setColorPicker, form: childForm
-  });
-  useEffect(() => {
-    dictForm.setFieldsValue({ dictName, dictDescription });
-    if (editingKey) {
-      const index = getIndexByEditingKey();
-      const record = children[index];
-      childForm.setFieldsValue({
-        name: record.name,
-        code: record.code,
-        renderBgColor: record.renderBgColor,
-        renderFontColor: record.renderFontColor
-      });
-    }
-  }, []);
-
-  return (
-    <div
-      className="create-dictionary"
-    >
-      {showDictionaryConfig ? <Form form={dictForm} layout = "inline">
-        <Form.Item
-          className="w-2/4"
-          style={{ margin: 0 }}
-          label="字典名称"
-          name="name"
-          rules={[
-            { required: true, message: '字典名称必填' },
-            { pattern: /^[\u4e00-\u9fa5a-zA-Z()][\u4e00-\u9fa5_a-zA-Z0-9()]{0,31}$/, message: '限制32位字符，输入字段包括中文、英文大小写、数字、下划线、英文小括号(_)，不能以数字或下划线_开头' }
-          ]}
-        >
-          <Input />
-        </Form.Item>
-        <Form.Item
-          style={{ margin: 0, paddingLeft: '5px' }}
-          className="w-2/4"
-          label="字典描述"
-          name="desc"
-        >
-          <Input />
-        </Form.Item>
-      </Form> : null}
-      <Form form={childForm} className="create-dict-child-list">
-        <Table
-          columns={columns}
-          dataSource = {children}
-          rowKey={'id'}
-          pagination={false}
-          onRow={(record, index) => {
-            return {
-              onDoubleClick: (event) => {
-                if (record.id === editingKey) return;
-                saveRow().then((canIEdit) => {
-                  if (!canIEdit) return;
-                  setEditingKey(record.id);
-                  setChildren({
-                    type: 'update',
-                    name: {
-                      [index]: { ...record, editable: true }
-                    }
-                  });
-                  const { name, code } = record;
-                  childForm.setFieldsValue({ name, code });
-                });
-              },
-              onClick: (event) => { saveRow(); }
-            };
-          }}
-        />
-      </Form>
-      <CreateModal
-        width = '266px'
-        modalVisible={colorPicker.modalVisible}
-        title="更改颜色"
-        onCancel={() => setColorPicker({ modalVisible: false, value: '#000', pickAft: (param) => {} })}
-      >
-        <SketchPicker
-          className="color-picker"
-          modalVisible={colorPicker.modalVisible}
-          color={colorPicker.value} onChangeComplete ={({ hex }) => {
-            typeof colorPicker.pickAft === 'function' && colorPicker.pickAft({ hex });
-          }}
-        />
-      </CreateModal>
-      <ModalFooter
-        onOk={() => { handleOk(); }}
-        onCancel={() => { handleCancel(); }}
-      />
-    </div>
-  );
-};
 
 export default React.memo(CreateDictionary);
