@@ -25,7 +25,19 @@ const parseColumn = (column: ColumnItem) => {
   return column;
 };
 
-const parseColumns = (columns: ColumnItem[], ctx: ParseMetaDataCtx) => {
+const parseColumns = (c: ColumnItem[], ctx: ParseMetaDataCtx) => {
+  /** TODO: 还没统一先做兼容处理 */
+  let columns;
+  if (!Array.isArray(c)) {
+    if (typeof c === 'object') {
+      columns = Object.values(c) as any;
+    } else {
+      columns = [];
+    }
+  } else {
+    columns = c;
+  }
+
   const { baseMark } = ctx;
 
   const columnsIdMarks: string[] = [];

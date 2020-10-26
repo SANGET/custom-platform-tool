@@ -4,16 +4,32 @@ import { isPageDatasoruceMeta, pickDatasoruceMetaKeyWord } from ".";
 
 export const createMetadataStore = (parseRes: MetaDateParseRes) => {
   const { tableList, allColumnsList, allColumnsIdMarks } = parseRes;
+
+  const getTable = (tableMark: string) => {
+    if (isPageDatasoruceMeta(tableMark)) {
+      tableMark = pickDatasoruceMetaKeyWord(tableMark);
+    } else {
+      return tableMark;
+    }
+    const table = tableList[tableMark];
+    // console.log(table);
+    return table.name;
+    // return table.id
+  };
+
   /** 获取某个filedMark的fieldCode */
   const getFiledCode = (filedMark: string) => {
-    if (
-      isPageDatasoruceMeta(filedMark)
-      && allColumnsIdMarks.includes(filedMark)
-    ) {
-      const columnsInfo = allColumnsList[pickDatasoruceMetaKeyWord(filedMark)];
+    if (isPageDatasoruceMeta(filedMark)) {
+      filedMark = pickDatasoruceMetaKeyWord(filedMark);
+    } else {
+      console.error('非法数据源元数据唯一标示!~~', filedMark);
+      return false;
+    }
+    if (allColumnsIdMarks.includes(filedMark)) {
+      const columnsInfo = allColumnsList[(filedMark)];
       return columnsInfo.fieldCode;
     }
-    console.error('非法数据源元数据唯一标示');
+    console.error('未找到数据源元数据唯一标示!~~', filedMark);
     return false;
   };
 
@@ -32,6 +48,7 @@ export const createMetadataStore = (parseRes: MetaDateParseRes) => {
   };
 
   return {
+    getTable,
     getFiledCode,
     getFiledsCodeFromTable
   };
