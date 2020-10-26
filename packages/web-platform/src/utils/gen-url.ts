@@ -4,8 +4,8 @@ import { curry } from 'lodash';
 const baseUrl = '';
 // const baseUrl = '/apbdsl';
 export const originGenUrl = (lesseeCode, appCode, businessCode) => {
-  return `${baseUrl}/${lesseeCode}/${appCode}/business/${businessCode}`;
+  return `${baseUrl}/${lesseeCode || "hy"}/${appCode || "iot"}/business/${businessCode}`;
 };
 export const genUrl = curry(originGenUrl)('hy', 'iot');
 
-export const APBDSLtestUrl = genUrl('UserInfo');
+export const APBDSLtestUrl = genUrl('queryPerson');
