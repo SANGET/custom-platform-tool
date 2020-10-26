@@ -85,7 +85,13 @@ const CreateTable: React.FC<IProps> = (props: IProps) => {
   };
   return (
     <>
-      <Form {...layout} form={form} name="control-hooks" onFinish={handleFinish}>
+      <Form
+        className="create-table"
+        {...layout}
+        form={form}
+        name="control-hooks"
+        onFinish={handleFinish}
+      >
         <NameCodeItem form={form} />
         <Form.Item
           name="type"
