@@ -100,10 +100,8 @@ const IUBDSLParser = ({ dsl }) => {
 
   const renderComponentKeys = Object.keys(componentsCollection);
 
-  const dataSource = Object.values(metadataCollection?.dataSource || {});
-
   /** 数据源元数据解析和实体 */
-  const datasourceMetaEntity = datasourceMetaHandle(dataSource as any);
+  const datasourceMetaEntity = datasourceMetaHandle(metadataCollection as any);
 
   /** 页面模型解析 */
   const schemasParseRes = SchemasParser(schemas);

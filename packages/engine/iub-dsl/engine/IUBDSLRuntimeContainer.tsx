@@ -15,7 +15,7 @@ import { renderStructInfoListRenderer } from './component-manage/component-store
 import { DefaultCtx, genRuntimeCtxFn } from './runtime';
 import { effectRelationship as genEffectRelationship } from './relationship';
 
-const IUBDSLRuntimeContainer = React.memo<{dslParseRes: any}>(({ dslParseRes }) => {
+const IUBDSLRuntimeContainer = ({ dslParseRes }) => {
   const {
     layoutContent, componentParseRes, getCompParseInfo,
     schemas, mappingEntity,
@@ -129,10 +129,6 @@ const IUBDSLRuntimeContainer = React.memo<{dslParseRes: any}>(({ dslParseRes }) 
       </pre>
     </DefaultCtx.Provider>
   );
-}, (prev, next) => {
-  // console.log(prev?.dslParseRes?.pageID === next?.dslParseRes?.pageID);
-
-  return prev?.dslParseRes?.pageID === next?.dslParseRes?.pageID;
-});
+};
 
 export default IUBDSLRuntimeContainer;
