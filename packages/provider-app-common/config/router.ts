@@ -12,6 +12,17 @@ import PopupWindowSelector from "@provider-app/popup-window-selector/app";
 /// //////// 数据设计结束
 import { resolvePagePath } from "multiple-page-routing/utils";
 
+// const PageManager = React.lazy(() => import("@provider-app/page-manager/app"));
+// const MenuManager = React.lazy(() => import("@provider-app/menu-manager/app"));
+// const PageDesignerApp = React.lazy(() => import("@provider-app/page-designer/main"));
+// /// //////// 数据设计
+// const TableInfo = React.lazy(() => import("@provider-app/table-info/app"));
+// const TableEditor = React.lazy(() => import("@provider-app/table-editor/app"));
+// const DictionaryManager = React.lazy(() => import("@provider-app/dictionary-manager/app"));
+// const TableStructure = React.lazy(() => import("@provider-app/table-structure/app"));
+
+// const PopupWindowSelector = React.lazy(() => import("@provider-app/popup-window-selector/app"));
+
 // interface RouterType {
 //   [routeName: string]: HY.SubApp | HY.SubAppHOC
 // }

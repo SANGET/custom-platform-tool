@@ -22,6 +22,7 @@ export const FormInputMeta: WidgetMetadata = {
   },
   bindPropItems: {
     propItemRefs: [
+      { propID: 'prop_widget_coding', editAttr: ['widgetCode'] },
       { propID: 'prop_style_title_color', editAttr: ['labelColor'] },
       {
         propID: 'prop_title_value',

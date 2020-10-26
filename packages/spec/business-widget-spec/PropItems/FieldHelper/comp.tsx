@@ -40,7 +40,7 @@ export const FieldSelector: React.FC<FieldSelectorProps> = ({
     <div className="field-selector p-5">
       <div className="flex flex-wrap justify-between">
         {
-          interDatasources.map((datasourceItem) => {
+          interDatasources && interDatasources.map((datasourceItem) => {
             const {
               id,
               name, type,

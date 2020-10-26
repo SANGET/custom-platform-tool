@@ -49,9 +49,9 @@ export const NameCodeItem: React.FC<IProps> = React.memo((props: IProps): ReactE
   return (
     <>
       <Form.Item
-        name="name" label="弹窗标题"
+        name="name" label="弹窗名称"
         rules={[
-          { required: true, message: '弹窗标题不能为空' },
+          { required: true, message: '弹窗名称不能为空' },
           { pattern: RE.CENUSB, message: '输入字段可以为中文、英文、数字、下划线、括号' },
           { max: 30, message: '最多只能输入30个字符' },
         ]}
@@ -62,10 +62,23 @@ export const NameCodeItem: React.FC<IProps> = React.memo((props: IProps): ReactE
         />
       </Form.Item>
       <Form.Item
+        name="title" label="弹窗标题"
+        rules={[
+          { required: true, message: '弹窗标题不能为空' },
+          { pattern: RE.CENUSB, message: '输入字段可以为中文、英文、数字、下划线、括号' },
+          { max: 30, message: '最多只能输入30个字符' },
+        ]}
+      >
+        <Input
+
+          placeholder='最多可输入30个字符，名称唯一。输入字段可以为中文、英文、数字、下划线、括号'
+        />
+      </Form.Item>
+      <Form.Item
         name="code" label="弹窗编码" rules={[
-          { required: true, message: '弹窗编码不能为空' },
-          { pattern: RE.ENUS, message: "输入字段仅为英文小写、数字、下划线, 不能以数字和下划线开头" },
-          { max: 44, message: '最多只能输入44个字符' },
+          { required: false, message: '弹窗编码可以为空' },
+          // { pattern: RE.ENUS, message: "输入字段仅为英文小写、数字、下划线, 不能以数字和下划线开头" },
+          // { max: 44, message: '最多只能输入44个字符' },
         ]}
       >
         <Input placeholder='会自动将中文转为首字母大写英文,可手动修改' />

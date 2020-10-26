@@ -1,33 +1,46 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Table } from 'antd';
-
-const useTableSelection = (defaultValue: string[] = []): [any, (selection) => void] => {
-  const [selection, setSelection] = useState(defaultValue);
-  return [selection, setSelection];
-};
+import { getPageListServices } from '@provider-app/page-manager/services/apis';
 
 export const PageSelectorLite = ({
+  defaultSelectItem,
   onSelect
 }) => {
-  const [selectedRowKeys, onSelectChange] = useTableSelection(
-    getDefaultDataSourceData(bindedDataSources)
-  );
+  const [selectedRowKeys, setSelectedRowKeys] = React.useState([defaultSelectItem]);
   const rowSelection = {
     selectedRowKeys,
-    onChange: onSelectChange,
+    type: 'radio',
+    onChange: (keys) => {
+      onSelect(keys);
+      setSelectedRowKeys(keys);
+    },
   };
+
+  const [pageList, setPageList] = useState([]);
+
+  useEffect(() => {
+    getPageListServices({
+      offset: 0,
+      size: 10,
+      totalSize: true,
+    }).then((pageListRes) => {
+      setPageList(pageListRes.result?.data);
+    });
+  }, []);
   return (
     <div>
       <Table
-        rowSelection={rowSelection}
         columns={[
           {
             title: '页面名称',
             dataIndex: 'name',
             width: 200,
             ellipsis: true
-          },
+          }
         ]}
+        rowKey="id"
+        rowSelection={rowSelection}
+        dataSource={pageList}
       />
     </div>
   );

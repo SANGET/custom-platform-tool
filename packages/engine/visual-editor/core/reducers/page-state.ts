@@ -13,6 +13,7 @@ const DefaultPageMeta: PageMetadata = {
   linkpage: {},
   schema: {},
   actions: {},
+  variable: {},
 };
 
 /**

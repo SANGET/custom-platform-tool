@@ -1,8 +1,26 @@
 export type IStatus = "success" | "info" | "warning" | "error"
+
+export enum IOperationalMenuItemKeys {
+  operate = '_operate',
+  title = '_title',
+  behavior = '_behavior',
+
+}
+export enum OperationalOperate {
+  edit = 'edit',
+  delete = 'delete',
+  preview = 'preview'
+
+}
+
+export enum OperationalBehavior {
+  popconfirm = 'popconfirm'
+
+}
 export interface IOperationalMenuItem {
-  operate: string;
-  title: string;
-  behavior: string;
+  [IOperationalMenuItemKeys.operate]: string;
+  [IOperationalMenuItemKeys.behavior]: string; // TODO: enum
+  [IOperationalMenuItemKeys.title]: string;
 }
 
 export interface IValueEnum {
@@ -13,12 +31,12 @@ export interface IValueEnum {
 }
 
 export interface IPopupShowType {
-  id: string;
+  id: number;
   title: string;
 }
 
 export interface IPopupSelectType {
-  id: string;
+  id: number;
   title: string;
 }
 

@@ -1,10 +1,10 @@
 import React from 'react';
-import { PropItemRendererProps } from '@engine/visual-editor/components/PropertiesEditor/types';
+import { PropItemRendererProps } from '@engine/visual-editor/components/PropertiesEditor';
 import { PropItemRenderContext } from '@engine/visual-editor/data-structure';
 import { Unexpect } from '../WidgetRenderer';
 
 interface PDPropItemRendererProps extends PropItemRendererProps {
-  interDatasources
+  interDatasources: PD.Datasources
   pageMetadata
 }
 
@@ -13,41 +13,25 @@ interface PDPropItemRendererProps extends PropItemRendererProps {
  * 根据属性项的 type 选择对应的组件进行渲染
  */
 export const PropItemRenderer: React.FC<PDPropItemRendererProps> = ({
-  interDatasources,
   propItemMeta,
-  propItemValue,
-  pageMetadata,
-  changeEntityState,
-  ChangeMetadata,
-  ...other
+  interDatasources,
+  renderCtx
 }) => {
-  const propItemRenderCtx: PropItemRenderContext = {
-    takeMeta: (options) => {
-      const { metaAttr, metaRefID } = options;
-      return metaRefID ? pageMetadata[metaAttr]?.[metaRefID] : pageMetadata[metaAttr];
-    },
-    genMetaRefID: (metaAttr) => {
-      if (!metaAttr) throw Error('请传入 metaAttr，否则逻辑无法进行');
-      const meta = pageMetadata[metaAttr];
-      return meta ? String(Object.keys(pageMetadata[metaAttr]).length + 1) : '1';
-    },
-    changePageMeta: ChangeMetadata,
-    interDatasources,
-    changeEntityState,
-    widgetEntityState: propItemValue,
-  };
-
   const {
     label,
   } = propItemMeta;
-
-  // const propItemCompConfig = getPropItem(propItemCompType);
 
   let Com;
   if (!propItemMeta.render) {
     Com = <Unexpect />;
   } else {
-    Com = propItemMeta.render(propItemRenderCtx);
+    const propItemRenderContext = {
+      ...renderCtx,
+      businessPayload: {
+        interDatasources
+      }
+    };
+    Com = propItemMeta.render(propItemRenderContext);
   }
   return (
     <div className="mb10">

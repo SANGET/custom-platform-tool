@@ -1,12 +1,17 @@
 import React from 'react';
 import { PropItemCompAccessSpec } from '@engine/visual-editor/data-structure';
-import { CloseModal, PopModelSelector, ShowModal } from '@infra/ui';
+import { PopModelSelector } from '@infra/ui';
 import { FieldSelector, SelectedField } from './comp';
 
 const takeBindColumnInfo = (selectedField: SelectedField) => {
   const { column, tableInfo } = selectedField;
   return `${tableInfo?.name}_${column?.name}`;
 };
+
+/** 属性项编辑的组件属性 */
+const whichAttr = 'field';
+
+const metaAttr = 'schema';
 
 /**
  * 绑定数据列
@@ -16,23 +21,22 @@ export const FieldHelperSpec: PropItemCompAccessSpec = {
 
   label: '列',
 
-  whichAttr: ['field'],
+  whichAttr,
 
-  useMeta: {
-    schema: true
-  },
+  useMeta: metaAttr,
 
   render({
-    interDatasources,
-    widgetEntityState,
+    businessPayload,
+    editingWidgetState,
     changeEntityState,
-    changePageMeta,
+    changeMetadata,
     takeMeta,
     genMetaRefID,
   }) {
-    const metaRefID = widgetEntityState.field || genMetaRefID('schema');
+    const { interDatasources } = businessPayload;
+    const metaRefID = editingWidgetState[whichAttr] || genMetaRefID(metaAttr);
     const selectedField = takeMeta({
-      metaAttr: 'schema',
+      metaAttr,
       metaRefID
     }) as SelectedField;
 
@@ -49,12 +53,12 @@ export const FieldHelperSpec: PropItemCompAccessSpec = {
                   defaultSelected={selectedField}
                   onSubmit={(val) => {
                     changeEntityState({
-                      attr: 'field',
+                      attr: whichAttr,
                       value: metaRefID
                     });
-                    changePageMeta({
+                    changeMetadata({
                       data: val,
-                      metaAttr: 'schema',
+                      metaAttr,
                       dataRefID: metaRefID
                     });
                     close();

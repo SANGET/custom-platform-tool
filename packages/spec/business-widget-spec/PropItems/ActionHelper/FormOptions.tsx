@@ -2,6 +2,8 @@ import React from 'react';
 import { FormLayout } from '@deer-ui/core/form-layout';
 import { FormOptions } from '@deer-ui/core/form-generator/form-generator';
 import { PopModelSelector } from '@infra/ui';
+import pick from 'lodash/pick';
+import omit from 'lodash/omit';
 import { PageSelectorLite } from './PageSelectorLite';
 
 const actionTypes = [
@@ -30,15 +32,23 @@ export const actionConfigForm = ({
     title: '配置动作',
     render: (changeCusForm, ctx) => {
       const { value: actionVal, values } = ctx;
-      // console.log('values :>> ', values);
       const { triggerAction } = values;
       let formOptionsForActionSetting;
+      let tip;
+      let actionConfigPanelDefaultValue;
+      let isSet;
       switch (triggerAction) {
         case 'submit':
           formOptionsForActionSetting = createActionForm(interDatasources);
+          tip = '配置动作';
+          actionConfigPanelDefaultValue = omit(actionVal, ['pageID', 'pageType']);
+          isSet = !!actionConfigPanelDefaultValue.actionType;
           break;
         case 'openPage':
-          formOptionsForActionSetting = openPageForm(interDatasources);
+          formOptionsForActionSetting = openPageForm();
+          tip = '配置页面';
+          actionConfigPanelDefaultValue = pick(actionVal, ['pageID', 'pageType']);
+          isSet = !!actionConfigPanelDefaultValue.pageID;
           break;
       }
       return (
@@ -49,7 +59,8 @@ export const actionConfigForm = ({
             children: ({ close }) => {
               return (
                 <FormLayout
-                  defaultValues={{ ...config.action } || {}}
+                  defaultValues={actionConfigPanelDefaultValue}
+                  formOptions={formOptionsForActionSetting}
                   formBtns={[
                     {
                       actingRef: 'submitting',
@@ -62,13 +73,12 @@ export const actionConfigForm = ({
                       text: '确定'
                     }
                   ]}
-                  formOptions={formOptionsForActionSetting}
                 />
               );
             }
           }}
         >
-          {!actionVal ? '配置动作' : '已设置动作'}
+          {(isSet ? '已' : '') + tip}
         </PopModelSelector>
       );
     }
@@ -90,11 +100,14 @@ export const openPageForm = (): FormOptions => [
     ref: 'pageID',
     type: 'customForm',
     title: '选择页面',
-    render: () => {
+    render: (onChange, ctx) => {
+      const { value } = ctx;
       return (
         <PageSelectorLite
+          defaultSelectItem={value}
           onSelect={(selectRow) => {
-            console.log('selectRow', selectRow);
+            onChange(selectRow[0]);
+            // console.log('selectRow', selectRow);
           }}
         />
       );
@@ -106,7 +119,7 @@ export const openPageForm = (): FormOptions => [
  * 将内部的数据源转换成 radio 的 values
  * @param interDatasources
  */
-export const convertDatasource2RadioValues = (interDatasources: PD.Datasources) => {
+export const convertDatasource2RadioValues = (interDatasources: PD.Datasources = []) => {
   const res = {};
   interDatasources.forEach((ds) => {
     const { id, name } = ds;
@@ -169,7 +182,4 @@ export const createActionForm = (interDatasources): FormOptions => [
       );
     }
   }
-  // {
-  //   ref: ''
-  // }
 ];

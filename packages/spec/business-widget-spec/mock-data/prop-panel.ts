@@ -8,6 +8,7 @@ export const propItemGroupingData: GroupPanelData[] = [
       {
         title: '基本属性',
         items: [
+          'prop_widget_coding',
           'prop_title_value',
           'prop_field',
           'prop_real_value',

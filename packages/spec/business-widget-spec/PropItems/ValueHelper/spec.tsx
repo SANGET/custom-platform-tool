@@ -10,12 +10,12 @@ export const ValueHelperSpec: PropItemCompAccessSpec = {
   whichAttr: ['defValue', 'exp', 'variable'],
 
   render(ctx) {
-    const { changeEntityState, widgetEntityState } = ctx;
+    const { changeEntityState, editingWidgetState } = ctx;
 
     return (
       <ValueHelper
         onChange={changeEntityState}
-        widgetEntityState={widgetEntityState}
+        editingWidgetState={editingWidgetState}
       />
     );
   }
