@@ -1,6 +1,7 @@
 import { ProColumns } from '@hy/pro-table';
+import { FormInstance } from 'antd/lib/form';
 import {
-  IOperationalMenuItem, IValueEnum, ITableType, IPopupShowType, IPopupSelectType
+  IOperationalMenuItem, IValueEnum, ITableType, IPopupShowType, IPopupSelectType, IOperationalMenuItemKeys
 } from './interface';
 
 export enum API_ERROR_MSG {
@@ -98,68 +99,72 @@ export const DEFAULT_PAGE_SISE = 10;
 /** 表结构管理 table 表 操作选项 */
 export const OPERATIONALMENU: IOperationalMenuItem[] = [
   {
-    operate: "edit",
-    title: "编辑",
-    behavior: "link"
+    [IOperationalMenuItemKeys.operate]: "edit",
+    [IOperationalMenuItemKeys.title]: "编辑",
+    [IOperationalMenuItemKeys.behavior]: "link"
   },
   {
-    operate: "delete",
-    title: "删除",
-    behavior: "popconfirm"
+    [IOperationalMenuItemKeys.operate]: "delete",
+    [IOperationalMenuItemKeys.title]: "删除",
+    [IOperationalMenuItemKeys.behavior]: "popconfirm"
   }, {
-    operate: "preview",
-    title: "预览",
-    behavior: "onClick",
+    [IOperationalMenuItemKeys.operate]: "preview",
+    [IOperationalMenuItemKeys.title]: "预览",
+    [IOperationalMenuItemKeys.behavior]: "onClick"
   },
   {
-    operate: "relation",
-    title: "表关系图",
-    behavior: "onClick"
+    [IOperationalMenuItemKeys.operate]: "relation",
+    [IOperationalMenuItemKeys.title]: "表关系图",
+    [IOperationalMenuItemKeys.behavior]: "onClick"
   }
 ];
 
 export enum SHOW_TYPE {
   /** 表 */
-  "TABLE" = "1",
+  "TABLE" = 1,
   /** 树 */
-  "TREE" = "2",
+  "TREE" = 2,
   /** 左树右表 */
-  "LEFT_TREE_RIGHT_TABLE" = "3",
+  "LEFT_TREE_RIGHT_TABLE" = 3,
 
   /** 自定义 */
-  "CUSTOMIZATION" = "4",
+  "CUSTOMIZATION" = 4,
 
 }
 
 export enum SELECT_TYPE {
   /** 单选 */
-  "SINGLE" = "1",
+  "SINGLE" = 1,
   /** 多选 */
-  "MULTIPLE" = "2",
+  "MULTIPLE" = 2,
 
 }
 
 export const SHOW_TYPE_OPTIONS: IPopupShowType[] = [
   {
-    id: "1",
-    title: "表格"
+    key: 1,
+    value: 1,
+    label: "表格"
   }, {
-    id: "2",
-    title: "树形"
+    key: 2,
+    value: 2,
+    label: "树形"
   }, {
-    id: "3",
-    title: "左树右表"
+    key: 3,
+    value: 3,
+    label: "左树右表"
   }, {
-    id: "4",
-    title: "自定义"
+    key: 4,
+    value: 4,
+    label: "自定义"
   }
 ];
 export const SELECT_TYPE_OPTIONS: IPopupSelectType[] = [
   {
-    id: "2",
+    id: 2,
     title: "多选"
   }, {
-    id: "1",
+    id: 1,
     title: "单选"
   }
 ];
@@ -187,8 +192,14 @@ export const COLUMNS: ProColumns[] = [
     hideInSearch: true,
   },
   {
-    title: '弹窗选择标题',
+    title: '弹窗选择名称',
     dataIndex: 'name',
+    width: 140,
+    ellipsis: true,
+  },
+  {
+    title: '弹窗选择标题',
+    dataIndex: 'title',
     width: 140,
     ellipsis: true,
   },
@@ -286,14 +297,15 @@ export interface IPopupWindow{
   id: string
   code: string
   name : string
+  title : string
   showType: string
   selectType: string
   selectCount: string
   enable: string
   tablePopupWindowDetail?: {
     createdBy: string
-    datasource: string
-    datasourceType: string
+    datasource: number
+    datasourceType: number
     deleteFlag: string
     gmtCreate: string
     gmtModified: string
@@ -304,8 +316,74 @@ export interface IPopupWindow{
     showColumn: string
     sortColumnInfo: string
   },
+  treePopupWindowDetail?: {
+    createdBy: string,
+    datasource: number,
+    datasourceType: number,
+    deleteFlag: string,
+    gmtCreate: string,
+    gmtModified: string,
+    id: string,
+    modifiedBy: string,
+    relatedSuperiorColumn: string,
+    returnText: string,
+    returnValue: string,
+    showColumn: string,
+    showSearch: string,
+    sortColumnInfo: string,
+    superiorColumn: string
+  },
+
+  treeTablePopupWindowDetail: {
+    createdBy: string,
+    deleteFlag: string,
+    gmtCreate: string,
+    gmtModified: string,
+    id: string,
+    modifiedBy: string,
+    popupWindowId: string,
+    showSearch: string,
+    tableDatasource: string,
+    tableDatasourceType: string,
+    tableReturnText: string,
+    tableReturnValue: string,
+    tableShowColumn: string,
+    tableSortInfo: string,
+    tableTreeRelatedColumn: string,
+    treeDatasource: string,
+    treeDatasourceType: string,
+    treeRelatedSuperiorColumn: string,
+    treeReturnText: string,
+    treeReturnValue: string,
+    treeShowColumn: string,
+    treeSortInfo: string,
+    treeSuperiorColumn: string,
+    version: string
+  },
+  customPopupWindowDetail: {
+    createdBy: string,
+    deleteFlag: string,
+    gmtCreate: string,
+    gmtModified: string,
+    id: string,
+    modifiedBy: string,
+    popupWindowId: string
+
+  }
+}
+
+export interface IEditPopupWindowProps {
+  form?: FormInstance;
+  onOk?: () => void;
+  onCancel?: () => void;
+
+  updatePopupWindow?: () => void;
+
+  editData:IPopupWindow
+  editModalData: IModalData
 
 }
+
 export interface IModalData{
   okText : string
   modalTitle: string
