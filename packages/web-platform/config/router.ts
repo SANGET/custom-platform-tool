@@ -27,7 +27,7 @@ export default [{
         {
           path: '/dashboard',
           name: 'Dashboard',
-          icon: 'smile',
+          icon: 'DashboardOutlined',
           component: './Welcome',
         },
         {

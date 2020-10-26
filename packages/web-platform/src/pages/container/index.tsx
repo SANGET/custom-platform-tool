@@ -20,11 +20,12 @@ const Container: React.FC<IContainerProps> = (props) => {
   }, [query]);
   const getPageData = async () => {
     if (pageId) {
+      // TODO 模式，租户，app 参数来源
       const res = await queryPageData({
         id: pageId,
-        mode,
-        lessee,
-        app
+        mode: mode || "prod",
+        lessee: lessee || "hy",
+        app: app || "iot"
       });
       setData(res.data?.result || {});
     }
