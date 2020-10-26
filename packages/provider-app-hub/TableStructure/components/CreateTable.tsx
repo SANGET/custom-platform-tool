@@ -53,7 +53,7 @@ const CreateTable: React.FC<IProps> = (props: IProps) => {
    */
   const assemblyParams = (values) => {
     const {
-      name, code, type, moduleId, description, mainTableCode, maxLevel
+      name, code, type, moduleId, description, mainTableCode, maxLevel, relationType
     } = values;
     const params = {
       name,
@@ -64,7 +64,7 @@ const CreateTable: React.FC<IProps> = (props: IProps) => {
       species: SPECIES.BIS,
     };
     if (type === TABLE_TYPE.AUX_TABLE) {
-      Object.assign(params, { auxTable: { mainTableCode } });
+      Object.assign(params, { auxTable: { mainTableCode, relationType } });
     }
     if (type === TABLE_TYPE.TREE) {
       Object.assign(params, { treeTable: { maxLevel } });
