@@ -1,6 +1,8 @@
 import { CommonCondition, ComplexType } from "..";
 import {
-  UpdateState, FeedBack, DataCollection, DataCollectionActionType, UpdateStateActionType
+  UpdateState, UpdateStateActionType,
+  DataCollection, DataCollectionActionType,
+  OpenModalActionType, OpenModal
 } from "./sys-actions";
 import { APBDSLCURD, APBDSLCURDActionType } from './business-actions';
 
@@ -22,20 +24,14 @@ export interface BasicActionConf extends CommonCondition {
 
 type SysActionType =
   DataCollectionActionType |
-  UpdateStateActionType;
+  UpdateStateActionType |
+  OpenModalActionType;
 
 type BusinessActionType =
   APBDSLCURDActionType
 
-type AllActionType = SysActionType | BusinessActionType
-export type ActionsDefinition = UpdateState | DataCollection | APBDSLCURD | {
-  actionType: 'showMoadl';
-  actionOptions?: any;
-  actionName: string
-  actionOutput?: any;
-  actionId: string;
-}
-
+export type AllActionType = SysActionType | BusinessActionType
+export type ActionsDefinition = UpdateState | DataCollection | APBDSLCURD | OpenModal
 export type ActionOutput = 'string' | 'boolean' | 'undefined' | 'number' | FlowOutputOfObj;
 
 export interface FlowOutputOfObj {
