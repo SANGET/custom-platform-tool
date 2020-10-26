@@ -1,6 +1,7 @@
 import { Modal, Form, Input } from 'antd';
-import React, { useContext } from 'react';
-import { DefaultCtx } from '../../runtime';
+import React from 'react';
+import { OpenModal } from '@iub-dsl/definition';
+import { IUBDSLRenderer } from '@iub-dsl/platform/react';
 
 enum ModalType {
   info = 'info',
@@ -11,17 +12,21 @@ enum ModalType {
   confirm = 'confirm'
 }
 
-export const showMoadl = (conf) => {
+export const openModal = (conf: OpenModal) => {
   const {
     actionOptions: {
+      type,
+      pageUrl
     },
     actionName, actionOutput, actionId
   } = conf;
   return async ({ action, asyncRuntimeScheduler }) => {
+    const { userForm } = await import('@iub-dsl/demo/base-reference/user/userfrom');
+    console.log(userForm);
+
     Modal.confirm({
       icon: false,
-      content: <Input />
-
+      content: <IUBDSLRenderer dsl={userForm} />
     });
     // Modal[ModalType.confirm]({
     //   title: '测试弹窗',
