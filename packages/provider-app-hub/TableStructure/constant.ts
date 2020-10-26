@@ -179,3 +179,10 @@ export const RE = {
 
   CEN: /^[\u4E00-\u9FA5A-Za-z0-9]+$/
 };
+
+export const MESSAGE = {
+  DELETE_FAILED: '无法删除数据，请联系技术人员',
+  MAY_I_DELETE: '是否确认删除？',
+  DELETE_FAILED_ITEM: '，不允许删除',
+  MAY_I_DELETE_ITEM: '，请确认是否删除？',
+};
