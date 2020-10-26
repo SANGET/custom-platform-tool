@@ -59,6 +59,20 @@ export const componentsCollection = {
       }
     }
   },
+  entity_03: {
+    id: "entity_03",
+    label: "新增",
+    type: "componentRef",
+    compType: "Button",
+    title: "新增",
+    text: '新增',
+    actions: {
+      onClick: {
+        type: 'actionRef',
+        actionID: `@(flow).f_entity_03`
+      }
+    }
+  },
   entity_27: {
     id: "entity_27",
     label: "表格",

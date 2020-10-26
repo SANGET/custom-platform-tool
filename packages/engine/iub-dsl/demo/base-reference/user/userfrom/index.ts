@@ -1,10 +1,10 @@
-import { actionsCollection, demoActionFlow } from './action-collection';
+import { actionsCollection, demoActionFlow, metadata } from './action-collection';
 import { schemas } from './scheams';
 import { componentsCollection } from './components';
 
 export const userForm = {
   schemas,
-  metadataCollection: {} as any,
+  metadataCollection: metadata,
   relationshipsCollection: {},
   componentsCollection,
   actionsCollection: Object.assign({}, actionsCollection),

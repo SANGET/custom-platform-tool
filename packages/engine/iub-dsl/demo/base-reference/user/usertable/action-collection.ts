@@ -41,12 +41,22 @@ export const actionsCollection: ActionCollection = {
     },
     actionOutput: 'string', // TODO
   },
-  entity_03: {
+  entity_02_01: {
     actionId: 'entity_02_action2',
     actionName: 'updateState',
     actionType: 'updateState',
     actionOptions: {
       changeTarget: '@(schemas).entity_27'
+    },
+    actionOutput: 'undefined'
+  },
+  entity_03: {
+    actionId: 'entity_03_action3',
+    actionName: 'openModalName',
+    actionType: 'openModal',
+    actionOptions: {
+      type: 'iub-dsl',
+      pageUrl: ''
     },
     actionOutput: 'undefined'
   },
@@ -84,7 +94,13 @@ export const demoActionFlow: FlowCollection = {
     id: 'f_entity_02',
     actionId: '@(actions).entity_02',
     flowOutCondition: [],
-    flowOut: [['f_entity_03']]
+    flowOut: [['f_entity_02_01']]
+  },
+  f_entity_02_01: {
+    id: 'f_entity_02_01',
+    actionId: '@(actions).entity_02_01',
+    flowOutCondition: [],
+    flowOut: []
   },
   f_entity_03: {
     id: 'f_entity_03',
