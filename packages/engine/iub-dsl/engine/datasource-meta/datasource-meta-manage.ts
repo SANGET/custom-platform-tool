@@ -12,9 +12,9 @@ export const createMetadataStore = (parseRes: MetaDateParseRes) => {
       return tableMark;
     }
     const table = tableList[tableMark];
-    // console.log(table);
-    return table.name;
-    // return table.id
+    // return table.name;
+    // return table.id;
+    return table?.code;
   };
 
   /** 获取某个filedMark的fieldCode */
