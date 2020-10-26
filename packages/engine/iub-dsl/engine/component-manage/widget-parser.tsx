@@ -22,7 +22,7 @@ const widgetParseScheduler = (id: string, confItem, options): {
   switch (compType) {
     case AllComponentType.FormInput:
       return normalInputCompParser(id, confItem, options);
-    case AllComponentType.Button:
+    case AllComponentType.NormalButton:
       return normalButtonParser(id, confItem, options);
     case AllComponentType.NormalTable:
       return normalTableParser(id, confItem, options);

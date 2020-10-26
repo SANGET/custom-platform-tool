@@ -46,15 +46,16 @@ export const NormalButtonFactory: React.FC<NormalButtonProps> = React.memo(
     assertPropsKey(id || 'NormalButtonFactory', allPropsKey, canUsePropsKey);
 
     return (
-      <Button
-        type="primary"
-        size='middle'
-        onClick={(e) => onClick?.(e)}
-        {...actualProps}
-      >
-        {text}
-      </Button>
-
+      <div style={{ margin: 5 }}>
+        <Button
+          type="primary"
+          size='middle'
+          onClick={(e) => onClick?.(e)}
+          {...actualProps}
+        >
+          {text}
+        </Button>
+      </div>
     );
   }
 );
