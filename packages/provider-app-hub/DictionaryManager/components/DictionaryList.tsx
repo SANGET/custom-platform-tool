@@ -224,17 +224,17 @@ class ChildListOfDictionary extends React.Component {
       list = this.getRecordByRowKey(pid).children;
     }
     const {
-      sort: prevSort, decorativeIndex: prevDecorativeIndex, id: idPrev, ...prev
+      sort: prevSort, decorativeIndex: prevDecorativeIndex, id: idPrev, children: childrenPrev, ...prev
     } = list[prevIndex];
     const {
-      sort: nextSort, decorativeIndex: nextDecorativeIndex, id: idNext, ...next
+      sort: nextSort, decorativeIndex: nextDecorativeIndex, id: idNext, children: childrenNext, ...next
     } = list[nextIndex];
     list[prevIndex] = {
-      ...next, sort: prevSort, decorativeIndex: prevDecorativeIndex, id: idNext
+      ...next, sort: prevSort, decorativeIndex: prevDecorativeIndex, id: idNext, children: Array.isArray(childrenNext) ? [] : childrenNext
     };
     map[idNext] = list[prevIndex];
     list[nextIndex] = {
-      ...prev, sort: nextSort, decorativeIndex: nextDecorativeIndex, id: idPrev
+      ...prev, sort: nextSort, decorativeIndex: nextDecorativeIndex, id: idPrev, children: Array.isArray(childrenPrev) ? [] : childrenPrev
     };
     map[idPrev] = list[nextIndex];
     this.setState({
