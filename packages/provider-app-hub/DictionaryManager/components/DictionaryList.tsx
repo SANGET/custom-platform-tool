@@ -273,6 +273,13 @@ class ChildListOfDictionary extends React.Component {
     this.setState({ expandedRowKeys: [...expandedRowKeys, id] });
   }
 
+  handleExpandChildList = (expended, records) => {
+    records.map((item) => {
+      this.handleExpandChild(expended, item);
+      return item;
+    });
+  }
+
   render() {
     const { list, expandedRowKeys } = this.state;
     const {
@@ -305,6 +312,7 @@ class ChildListOfDictionary extends React.Component {
                 map: { ...this.state.map, ...this.decorateMap(listTmpl) },
                 list: this.state.list.slice()
               });
+              this.handleExpandChildList(false, listTmpl);
             });
           }
         }}
