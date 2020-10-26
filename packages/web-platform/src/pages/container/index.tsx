@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { history } from 'umi';
 import { Skeleton, Result } from 'antd';
 import { queryPageData } from "@/services/page";
@@ -23,13 +23,14 @@ const Container: React.FC<IContainerProps> = (props) => {
       // TODO 模式，租户，app 参数来源
       const res = await queryPageData({
         id: pageId,
-        mode: mode || "prod",
-        lessee: lessee || "hy",
-        app: app || "iot"
+        mode,
+        lessee,
+        app
       });
-      setData(res.data?.result || {});
+      setData(res);
     }
   };
+
   if (!pageId) {
     return (
       <Result
@@ -39,12 +40,13 @@ const Container: React.FC<IContainerProps> = (props) => {
         extra={null}
       />
     );
-  } if (data?.pageID) {
+  }
+  if (data?.pageID) {
     return (
-      <IUBDSLRenderer dsl={data} />
+      <IUBDSLRenderer dsl={data}/>
     );
   }
   return <Skeleton active />;
 };
 
-export default React.memo(Container);
+export default Container;

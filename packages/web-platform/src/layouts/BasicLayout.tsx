@@ -292,7 +292,6 @@ class BasicLayout extends React.PureComponent<IBasicLayoutProps, IBaseLayoutStat
       settings, menuData, activeKey
     } = this.props;
     const { openKeys, collapsed } = this.state;
-    console.log(this.props);
     return (
       <Layout style={{ minHeight: "100%" }}>
         <Header className="header">
