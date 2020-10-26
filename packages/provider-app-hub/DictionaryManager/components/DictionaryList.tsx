@@ -218,7 +218,8 @@ class ChildListOfDictionary extends React.Component {
 
   handleMove = (record, [prevIndex, nextIndex]) => {
     const { [DICTIONARY_CHILD_KEY.PID]: pid } = record;
-    let { list, expandedRowKeys } = this.state;
+    let { list } = this.state;
+    const { expandedRowKeys, map } = this.state;
     if (pid) {
       list = this.getRecordByRowKey(pid).children;
     }
@@ -231,9 +232,11 @@ class ChildListOfDictionary extends React.Component {
     list[prevIndex] = {
       ...next, sort: prevSort, decorativeIndex: prevDecorativeIndex, id: idNext
     };
+    map[idNext] = list[prevIndex];
     list[nextIndex] = {
       ...prev, sort: nextSort, decorativeIndex: nextDecorativeIndex, id: idPrev
     };
+    map[idPrev] = list[nextIndex];
     this.setState({
       list: this.state.list.slice(),
       expandedRowKeys: lodash.without(expandedRowKeys, idPrev, idNext)
@@ -316,7 +319,7 @@ class ChildListOfDictionary extends React.Component {
               this.handleExpandChildList(false, listTmpl);
               this.updateRecordByRowKey(id, { children: listTmpl });
               this.setState({
-                map: { ...this.state.map, ...this.decorateMap(listTmpl) },
+                map: Object.assign(this.state.map, this.decorateMap(listTmpl)),
                 list: this.state.list.slice()
               });
             });
