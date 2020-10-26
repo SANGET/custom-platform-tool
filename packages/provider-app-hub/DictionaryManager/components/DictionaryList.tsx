@@ -229,10 +229,10 @@ class ChildListOfDictionary extends React.Component {
       sort: nextSort, decorativeIndex: nextDecorativeIndex, id: idNext, ...next
     } = list[nextIndex];
     list[prevIndex] = {
-      ...next, sort: prevSort, decorativeIndex: prevDecorativeIndex, id: idPrev
+      ...next, sort: prevSort, decorativeIndex: prevDecorativeIndex, id: idNext
     };
     list[nextIndex] = {
-      ...prev, sort: nextSort, decorativeIndex: nextDecorativeIndex, id: idNext
+      ...prev, sort: nextSort, decorativeIndex: nextDecorativeIndex, id: idPrev
     };
     this.setState({
       list: this.state.list.slice(),
@@ -267,17 +267,22 @@ class ChildListOfDictionary extends React.Component {
     const { [DICTIONARY_CHILD_KEY.ID]: id } = record;
     const { expandedRowKeys } = this.state;
     if (!expanded) {
-      this.setState({ expandedRowKeys: lodash.without(expandedRowKeys, id) });
+      const keysOfChildList = record.children?.map((item) => item.id) || [];
+      this.setState({ expandedRowKeys: lodash.without.apply(lodash, [expandedRowKeys, id, ...keysOfChildList]) });
+      // this.handleExpandChildList(false, record.children || []);
       return;
     }
     this.setState({ expandedRowKeys: [...expandedRowKeys, id] });
   }
 
-  handleExpandChildList = (expended, records) => {
-    records.map((item) => {
-      this.handleExpandChild(expended, item);
-      return item;
-    });
+  handleExpandChildList = (expanded, records) => {
+    const keysOfChildList = records.map((item) => item.id);
+    const { expandedRowKeys } = this.state;
+    if (!expanded) {
+      this.setState({ expandedRowKeys: lodash.without.apply(lodash, [expandedRowKeys, ...keysOfChildList]) });
+      return;
+    }
+    this.setState({ expandedRowKeys: [...expandedRowKeys, ...keysOfChildList] });
   }
 
   render() {
@@ -305,14 +310,15 @@ class ChildListOfDictionary extends React.Component {
           onExpand: (expanded, record) => {
             const { [DICTIONARY_CHILD_KEY.ID]: id, decorativeIndex } = record;
             this.handleExpandChild(expanded, record);
+            if (!expanded) return;
             getListOfDictionaryChildServices({ dictionaryId, pid: id }).then((res) => {
               const listTmpl = this.decorateList(res, decorativeIndex, id);
+              this.handleExpandChildList(false, listTmpl);
               this.updateRecordByRowKey(id, { children: listTmpl });
               this.setState({
                 map: { ...this.state.map, ...this.decorateMap(listTmpl) },
                 list: this.state.list.slice()
               });
-              this.handleExpandChildList(false, listTmpl);
             });
           }
         }}
