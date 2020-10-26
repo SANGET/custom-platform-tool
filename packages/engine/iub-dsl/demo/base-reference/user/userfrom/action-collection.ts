@@ -31,55 +31,53 @@ interface DatasourceItem {
   /** columns */
   columns: ColumnItem[]
 }
-export const metadata = {
-  dataSource: {
-    tableId1: {
-      /** 该条记录的 id */
-      id: 'tableId1',
-      /** 该条记录关联的表的 id */
-      moduleId: 'string',
-      /** 名字 */
-      name: 'test_user_k',
-      /** 类型 */
-      // type: 'string',
-      type: 'general',
-      /** columns */
-      columns: {
-        fieldId1: {
-          id: 'fieldId1',
-          name: 'string',
-          /** 数据类型 */
-          colDataType: 'string',
-          /** 字段 size */
-          fieldSize: 16,
-          /** 字段类型 */
-          fieldType: 'string',
-          /** 字段的名字 */
-          fieldCode: 'id',
-          type: FoundationType.string,
-        },
-        fieldId2: {
-          id: 'fieldId2',
-          type: FoundationType.string,
-          fieldCode: 'username',
-          fieldSize: 64,
-        },
-        fieldId3: {
-          id: 'fieldId3',
-          type: FoundationType.string,
-          fieldCode: 'address',
-          fieldSize: 64,
-        },
-        fieldId4: {
-          id: 'fieldId4',
-          type: FoundationType.string,
-          fieldCode: 'age',
-          fieldSize: 64,
-        },
-      }
+export const metadata = [
+  {
+    /** 该条记录的 id */
+    id: 'tableId1',
+    /** 该条记录关联的表的 id */
+    moduleId: 'string',
+    /** 名字 */
+    name: 'test_user_k',
+    /** 类型 */
+    // type: 'string',
+    type: 'general',
+    /** columns */
+    columns: {
+      fieldId1: {
+        id: 'fieldId1',
+        name: 'string',
+        /** 数据类型 */
+        colDataType: 'string',
+        /** 字段 size */
+        fieldSize: 16,
+        /** 字段类型 */
+        fieldType: 'string',
+        /** 字段的名字 */
+        fieldCode: 'id',
+        type: FoundationType.string,
+      },
+      fieldId2: {
+        id: 'fieldId2',
+        type: FoundationType.string,
+        fieldCode: 'username',
+        fieldSize: 64,
+      },
+      fieldId3: {
+        id: 'fieldId3',
+        type: FoundationType.string,
+        fieldCode: 'address',
+        fieldSize: 64,
+      },
+      fieldId4: {
+        id: 'fieldId4',
+        type: FoundationType.string,
+        fieldCode: 'age',
+        fieldSize: 64,
+      },
     }
   }
-};
+];
 
 export const actionsCollection: ActionCollection = {
   entity_25: {
