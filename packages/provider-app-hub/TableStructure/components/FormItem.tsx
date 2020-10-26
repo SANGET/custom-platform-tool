@@ -4,7 +4,7 @@ import React, {
 import {
   Button, Form, Input, TreeSelect, Row, Col
 } from 'antd';
-import { FormInstance } from 'antd/lib/form';
+import { FormInstance, Rule } from 'antd/lib/form';
 import { construct } from '@infra/utils/tools';
 import pinyin4js from 'pinyin4js';
 import { RE, MENUS_TYPE } from '../constant';
@@ -22,6 +22,7 @@ interface IProps {
   okText?: string;
   cancelText?: string;
   defaultValue?: string
+  rules?: Rule[]
 }
 /**  数据表名称 和  数据表编码 模块 */
 export const NameCodeItem: React.FC<IProps> = React.memo((props: IProps): ReactElement => {
@@ -77,7 +78,7 @@ export const NameCodeItem: React.FC<IProps> = React.memo((props: IProps): ReactE
 /**  主表模块 */
 export const PrimaryTreeItem: React.FC<IProps> = React.memo((props: IProps): ReactElement => {
   const [tree, setTree] = useState<any[]>([]);
-  const { label = "主表", placeholder = "请选择主表" } = props;
+  const { label = "主表", placeholder = "请选择主表", rules } = props;
   useEffect(() => {
     getPrimaryTable();
   }, []);
@@ -111,7 +112,11 @@ export const PrimaryTreeItem: React.FC<IProps> = React.memo((props: IProps): Rea
     open && getPrimaryTable();
   };
   return (
-    <Form.Item name="mainTableCode" label={label} >
+    <Form.Item
+      name="mainTableCode"
+      label={label}
+      rules={rules}
+    >
       <TreeSelect
         showSearch
         style={{ width: '100%' }}

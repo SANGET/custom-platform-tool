@@ -19,18 +19,20 @@ const Operational: React.FC<IProps> = (props: IProps): ReactElement => {
       {
         OPERATIONALMENU.map((item, index) => {
           if (item.behavior === "popconfirm") {
-            return data.species === SPECIES.BIS ? (<Popconfirm
-              key={index}
-              placement="topLeft"
-              title={'你确定要删除这条记录吗?'}
-              onConfirm={() => onClick && onClick(Object.assign(item, data))}
-              okText="确定"
-              cancelText="取消"
-            >
-              <Button type="link" >
+            return data.species === SPECIES.BIS ? (
+              // <Popconfirm
+              //   key={index}
+              //   placement="topLeft"
+              //   title={'你确定要删除这条记录吗?'}
+              //   onConfirm={() => onClick && onClick(Object.assign(item, data))}
+              //   okText="确定"
+              //   cancelText="取消"
+              // >
+              <Button type="link" onClick = {() => onClick && onClick(Object.assign(item, data))}>
                 {item.title}
               </Button>
-            </Popconfirm>) : (<Button type="link" disabled>
+              // </Popconfirm>
+            ) : (<Button type="link" disabled>
               {item.title}
             </Button>);
           }

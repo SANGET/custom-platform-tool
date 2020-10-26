@@ -8,7 +8,7 @@ import { ExclamationCircleOutlined, DownOutlined } from '@ant-design/icons';
 import { onNavigate } from 'multiple-page-routing';
 import { queryTableListService, allowDeleteTableService, deleteTableService } from '../service';
 import {
-  COLUMNS, OPERATIONALMENU, SELECT_ALL, MORE_MENU, PAGE_SIZE_OPTIONS
+  COLUMNS, OPERATIONALMENU, SELECT_ALL, MORE_MENU, PAGE_SIZE_OPTIONS, MESSAGE
 } from '../constant';
 import Operational from './Operational';
 import { IStatus } from '../interface';
@@ -103,23 +103,30 @@ const Table: React.FC<IProps> = (props: IProps, ref) => {
   };
   const checkBeforeDelete = async (id: string) => {
     const res = await allowDeleteTableService(id);
-    if (res.code === "00000") {
-      if (res.result) {
-        confirm({
-          title: res.result,
-          icon: <ExclamationCircleOutlined />,
-          okText: '确定',
-          cancelText: '取消',
-          onOk: () => { deleteTableSingleLine(id); }
-        });
-      } else {
+    /** 接口有问题 */
+    if (res.code !== "00000") {
+      openNotification("error", res.msg || MESSAGE.DELETE_FAILED);
+      return;
+    }
+    const title = res.result?.errorMsg?.map((item) => item.msg).join('，');
+    /** 不允许删除 */
+    if (!res.result?.allowedDeleted) {
+      openNotification("error", title ? `${title}${MESSAGE.DELETE_FAILED_ITEM}` : MESSAGE.DELETE_FAILED);
+      return;
+    }
+    /** 允许删除 */
+    confirm({
+      title: title ? `${title}${MESSAGE.MAY_I_DELETE_ITEM}` : MESSAGE.MAY_I_DELETE,
+      icon: <ExclamationCircleOutlined />,
+      okText: '确定',
+      cancelText: '取消',
+      onOk: () => {
         deleteTableSingleLine(id);
       }
-    } else {
-      openNotification("error", res.msg);
-    }
+    });
   };
   const deleteTableSingleLine = async (id: string) => {
+    debugger;
     const res = await deleteTableService(id);
     if (res.code === "00000") {
       openNotification("success", "删除成功");

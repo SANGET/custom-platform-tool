@@ -18,7 +18,7 @@ const CreateModal: React.FC<IProps> = (props) => {
   return (
     <Modal
       width={width}
-      className="create-table-modal"
+      className="create-dictionary-modal"
       destroyOnClose
       title={title}
       visible={modalVisible}

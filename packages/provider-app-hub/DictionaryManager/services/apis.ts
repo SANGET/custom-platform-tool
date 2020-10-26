@@ -26,7 +26,7 @@ export async function delDictionaryServices(dictionaryId) {
   });
 }
 
-export async function postDictionary(data) {
+export async function addDictionary(data) {
   return await $R_P.post('/data/v1/dictionary/', data);
 }
 export async function editDictionary(data) {

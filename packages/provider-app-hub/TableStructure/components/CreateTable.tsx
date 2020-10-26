@@ -3,7 +3,9 @@ import React, { useState } from 'react';
 import {
   Button, Form, Input, Select, InputNumber, message, notification
 } from 'antd';
-import { TABLE_OPTIONS, TABLE_TYPE, SPECIES } from '../constant';
+import {
+  TABLE_OPTIONS, TABLE_TYPE, SPECIES, RELATION_OPTIONS, RELATION_TYPE
+} from '../constant';
 import {
   NameCodeItem, ModuleTreeItem, PrimaryTreeItem, FromFooterBtn
 } from "./FormItem";
@@ -51,7 +53,7 @@ const CreateTable: React.FC<IProps> = (props: IProps) => {
    */
   const assemblyParams = (values) => {
     const {
-      name, code, type, moduleId, description, mainTableCode, maxLevel
+      name, code, type, moduleId, description, mainTableCode, maxLevel, relationType
     } = values;
     const params = {
       name,
@@ -62,7 +64,7 @@ const CreateTable: React.FC<IProps> = (props: IProps) => {
       species: SPECIES.BIS,
     };
     if (type === TABLE_TYPE.AUX_TABLE) {
-      Object.assign(params, { auxTable: { mainTableCode } });
+      Object.assign(params, { auxTable: { mainTableCode, relationType } });
     }
     if (type === TABLE_TYPE.TREE) {
       Object.assign(params, { treeTable: { maxLevel } });
@@ -83,7 +85,13 @@ const CreateTable: React.FC<IProps> = (props: IProps) => {
   };
   return (
     <>
-      <Form {...layout} form={form} name="control-hooks" onFinish={handleFinish}>
+      <Form
+        className="create-table"
+        {...layout}
+        form={form}
+        name="control-hooks"
+        onFinish={handleFinish}
+      >
         <NameCodeItem form={form} />
         <Form.Item
           name="type"
@@ -123,7 +131,33 @@ const CreateTable: React.FC<IProps> = (props: IProps) => {
                   <InputNumber />
                 </Form.Item>
               ) : getFieldValue('type') === TABLE_TYPE.AUX_TABLE ? (
-                <PrimaryTreeItem />
+                <>
+                  <PrimaryTreeItem
+                    rules={[{
+                      required: true,
+                      message: "请选择主表"
+                    }]}
+                  />
+                  <Form.Item
+                    name="relationType"
+                    label="关联关系"
+                    rules={[{
+                      required: true,
+                      message: "请选择关联关系"
+                    }]}
+                    initialValue={RELATION_TYPE.ONE_TO_ONE}
+                  >
+                    <Select
+                      placeholder="请选择关联关系"
+                    >
+                      {
+                        RELATION_OPTIONS.map((item, index) => <Option
+                          key={index} value={item.value}
+                        >{item.title}</Option>)
+                      }
+                    </Select>
+                  </Form.Item>
+                </>
               ) : null;
           }}
         </Form.Item>

@@ -82,6 +82,23 @@ export const TABLE_OPTIONS: ITableType[] = [
     title: "附属表"
   }
 ];
+
+export enum RELATION_TYPE {
+  /** 一对一 */
+  "ONE_TO_ONE" = "ONE_TO_ONE",
+  /** 一对多 */
+  "MANY_TO_ONE" = "MANY_TO_ONE"
+
+}
+export const RELATION_OPTIONS: ITableType[] = [
+  {
+    value: "ONE_TO_ONE",
+    title: "一对一"
+  }, {
+    value: "MANY_TO_ONE",
+    title: "一对多"
+  }
+];
 export const TABLE_VALUE_ENUM: IValueEnum = {
   TABLE: { text: "普通表" },
   TREE: { text: "树形表" },
@@ -161,4 +178,11 @@ export const RE = {
   /** 中文、英文、数字，不支持特殊字符 */
 
   CEN: /^[\u4E00-\u9FA5A-Za-z0-9]+$/
+};
+
+export const MESSAGE = {
+  DELETE_FAILED: '无法删除数据，请联系技术人员',
+  MAY_I_DELETE: '是否确认删除？',
+  DELETE_FAILED_ITEM: '，不允许删除',
+  MAY_I_DELETE_ITEM: '，请确认是否删除？',
 };

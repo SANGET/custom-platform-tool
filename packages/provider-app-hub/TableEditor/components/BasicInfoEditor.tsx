@@ -4,7 +4,9 @@ import {
 } from 'antd';
 import { FormInstance } from 'antd/lib/form';
 import { contructTree } from '../service';
-import { TABLE_TYPE_OPTIONS, TABLE_TYPE, MENUS_TYPE } from '../constants';
+import {
+  TABLE_TYPE_OPTIONS, TABLE_TYPE, MENUS_TYPE, RELATION_OPTIONS
+} from '../constants';
 import { getMenuListService } from '../apiAgents';
 
 /** 归属模块 */
@@ -142,13 +144,24 @@ class BasicInfoEditor extends React.Component<BasicInfoEditorProps> {
         }
         {
           basicInfo.tableType === TABLE_TYPE.AUX_TABLE ? (
-            <Form.Item
-              className = {this.getClassName()}
-              name="mainTableName"
-              label="主表名称"
-            >
-              <Input disabled />
-            </Form.Item>
+            <>
+              <Form.Item
+                className = {this.getClassName()}
+                name="mainTableName"
+                label="主表名称"
+              >
+                <Input disabled />
+              </Form.Item>
+              <Form.Item
+                className = {this.getClassName()}
+                name="relationType"
+                label="关联关系"
+              >
+                <Select
+                  options={RELATION_OPTIONS}
+                />
+              </Form.Item>
+            </>
           ) : null
         }
 
