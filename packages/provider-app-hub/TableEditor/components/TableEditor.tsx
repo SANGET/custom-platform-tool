@@ -137,6 +137,7 @@ class TableEditor extends React.Component {
     } = param || {};
     const mainTableName = auxTable?.parentTable?.name;
     const mainTableCode = auxTable?.parentTable?.code;
+    const relationType = auxTable?.relationType;
     const maxLevel = treeTable?.maxLevel;
     const newState = {
       basicInfo: {
@@ -148,7 +149,8 @@ class TableEditor extends React.Component {
         mainTableCode,
         mainTableName,
         maxLevel,
-        species
+        species,
+        relationType
       },
       relatedPages,
       fieldList: this.constructFieldListFromRequest(columns),

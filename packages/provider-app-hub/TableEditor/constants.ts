@@ -21,6 +21,18 @@ export const TABLE_TYPE_OPTIONS = [
   { label: '附属表', value: 'AUX_TABLE', key: 'AUX_TABLE' },
   { label: '树形表', value: 'TREE', key: 'TREE' }
 ];
+
+export const RELATION_OPTIONS = [
+  {
+    key: "ONE_TO_ONE",
+    value: "ONE_TO_ONE",
+    label: "一对一"
+  }, {
+    key: "MANY_TO_ONE",
+    value: "MANY_TO_ONE",
+    label: "一对多"
+  }
+];
 export enum TABLE_TYPE {
   /** 普通表 */
   "TABLE" = "TABLE",
