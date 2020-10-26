@@ -1,6 +1,6 @@
 import React from 'react';
 import { PropItemCompAccessSpec } from '@engine/visual-editor/data-structure';
-import { CloseModal, PopModelSelector, ShowModal } from '@infra/ui';
+import { PopModelSelector } from '@infra/ui';
 import { FieldSelector, SelectedField } from './comp';
 
 const takeBindColumnInfo = (selectedField: SelectedField) => {
@@ -10,6 +10,8 @@ const takeBindColumnInfo = (selectedField: SelectedField) => {
 
 /** 属性项编辑的组件属性 */
 const whichAttr = 'field';
+
+const metaAttr = 'schema';
 
 /**
  * 绑定数据列
@@ -21,9 +23,7 @@ export const FieldHelperSpec: PropItemCompAccessSpec = {
 
   whichAttr,
 
-  useMeta: {
-    schema: true
-  },
+  useMeta: metaAttr,
 
   render({
     businessPayload,
@@ -34,9 +34,9 @@ export const FieldHelperSpec: PropItemCompAccessSpec = {
     genMetaRefID,
   }) {
     const { interDatasources } = businessPayload;
-    const metaRefID = editingWidgetState[whichAttr] || genMetaRefID('schema');
+    const metaRefID = editingWidgetState[whichAttr] || genMetaRefID(metaAttr);
     const selectedField = takeMeta({
-      metaAttr: 'schema',
+      metaAttr,
       metaRefID
     }) as SelectedField;
 
@@ -58,7 +58,7 @@ export const FieldHelperSpec: PropItemCompAccessSpec = {
                     });
                     changeMetadata({
                       data: val,
-                      metaAttr: 'schema',
+                      metaAttr,
                       dataRefID: metaRefID
                     });
                     close();

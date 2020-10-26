@@ -66,9 +66,7 @@ export interface PropItemMeta {
    */
   readonly whichAttr: string | string[]
   /** 是否使用 meta */
-  readonly useMeta?: {
-    [metaAttr: string]: boolean
-  }
+  readonly useMeta?: string | string[]
   /**
    * 1. 属性项给予组件实例的默认值
    * 2. 会被组件元数据的 defaultValues 中覆盖

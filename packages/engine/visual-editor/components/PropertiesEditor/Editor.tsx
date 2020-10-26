@@ -3,6 +3,7 @@
  */
 import React from 'react';
 import produce from 'immer';
+import { nanoid } from 'nanoid';
 import { Debounce } from '@mini-code/base-func';
 import {
   WidgetEntity, WidgetEntityState, PropItemMeta,
@@ -216,11 +217,9 @@ PropertiesEditorProps, PropertiesEditorState
     }, 100);
   }
 
-  genMetaRefID = (metaAttr: string) => {
-    const { pageMetadata } = this.props;
+  genMetaRefID = (metaAttr: string, len = 8) => {
     if (!metaAttr) throw Error('请传入 metaAttr，否则逻辑无法进行');
-    const meta = pageMetadata[metaAttr];
-    const metaID = meta ? String(Object.keys(pageMetadata[metaAttr]).length + 1) : '1';
+    const metaID = nanoid(len);
     const prefix = metaAttr;
     return `${prefix}_${metaID}`;
   }
