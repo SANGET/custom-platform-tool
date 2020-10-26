@@ -17,7 +17,8 @@ interface FlowItemListParseRes {
 interface FlowParseRes {
   flowIds: string[];
   flowItemListParseRes: FlowItemListParseRes;
-  getFlowItemInfo: GetFlowItemInfo
+  getFlowItemInfo: GetFlowItemInfo;
+  flowsRun: any;
 }
 
 interface FlowRunOptions {
@@ -68,10 +69,25 @@ export const flowParser = (flows: FlowCollection, { parseContext, parseRes }): F
     // temp.flowItemRun = aop(temp.flowItemRun);
   });
   tempArr.length = 0;
+
+  const flowsRun = (runFlowIds: string[], ctx) => {
+    runFlowIds.forEach((id) => {
+      if (flowIds.includes(id)) {
+        const { flowItemRun } = getFlowItemInfo(id);
+        const contextToUse = {
+          ...ctx
+        };
+        // 触发标准的事件, 传入上下文, 需要create不然第一次动作将丢失
+        flowItemRun(Object.create(contextToUse));
+      }
+    });
+  };
+
   return {
     flowIds,
     flowItemListParseRes,
-    getFlowItemInfo
+    getFlowItemInfo,
+    flowsRun
   };
 };
 
@@ -229,9 +245,13 @@ const flowItemParser = (flowItem: FlowItemInfo, { parseContext, parseRes }): Flo
   const {
     id, flowOut, flowOutCondition, actionId, when, condition
   } = flowItem;
+  /** TODO: 待修改 */
   const { actionParseRes: { getActionParseRes } } = parseRes;
+  const { flowToUseCollect } = parseContext;
   const actionInfo = getActionParseRes(actionId);
   const { actionHandle, changeStateToUse, getStateToUse } = actionInfo;
+
+  flowToUseCollect({ flowId: id, actionId });
 
   const flowOutRun = flowOutRunWrap({ flowOutCondition, flowOut });
   const flowItemRun = flowItemRunWrap({
