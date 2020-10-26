@@ -3,9 +3,11 @@
  */
 
 import { isPageState } from "../../state-manage";
+import { isPageDatasoruceMeta } from "../../datasource-meta";
 
 interface TransformCtx {
-  getPageState: any
+  getPageState: any;
+  getFiledCode: any
 }
 
 /**
@@ -15,10 +17,11 @@ interface TransformCtx {
  * @param ctx 上下文
  */
 const transformMarkValue = (value: string, ctx: TransformCtx) => {
-  const { getPageState } = ctx;
+  const { getPageState, getFiledCode } = ctx;
   if (isPageState(value)) {
     return getPageState(value);
   }
+  if (isPageDatasoruceMeta(value)) { return getFiledCode(value); }
   return value;
 };
 

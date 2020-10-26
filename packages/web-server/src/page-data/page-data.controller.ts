@@ -47,7 +47,6 @@ export class PageDataController {
   @Get(`:lessee/:app/page/:id`)
   @Roles('admin')
   async getPageRest(@Param() params, @Query() queryString) {
-    console.log('aasdsad');
     const { id, lessee, app } = params;
     const { mode } = queryString;
     const { err, data } = await this.getPageData({ id, lessee, app });

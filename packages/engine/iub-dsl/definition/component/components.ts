@@ -8,7 +8,7 @@ export enum AllComponentType {
   Selector = "Selector",
   TreeSelector = "TreeSelector",
   NormalTable = "NormalTable",
-  Button = "Button",
+  NormalButton = "NormalButton",
   WidgetError = "WidgetError"
 }
 
@@ -51,6 +51,6 @@ export interface Table {
 
 export interface Button {
   key: string;
-  type: AllComponentType.Button;
+  type: AllComponentType.NormalButton;
   text: string;
 }

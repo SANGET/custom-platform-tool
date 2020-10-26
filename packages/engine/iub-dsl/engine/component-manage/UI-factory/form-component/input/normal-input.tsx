@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useRef, useEffect } from 'react';
 import { Input } from 'antd';
 import { NormalInputProps, InputProps } from './i-base-input';
 import { assertPropsKey, basePickPropsCstr, basePropsMapCstr } from '../../utils';
@@ -15,7 +15,8 @@ export const normalInputPropsMapList = {
   unit: 'suffix',
   placeholder: 'placeholder',
   value: 'value',
-  actions: 'actions'
+  actions: 'actions',
+  defValue: 'defValue'
 };
 export const normalInputPropsKeys = Object.keys(normalInputPropsMapList);
 
@@ -32,7 +33,7 @@ export const normalInputCompName = AllUI.NormalInput;
  */
 export const NormalInputFactory: React.FC<NormalInputProps> = React.memo(
   ({
-    value, onChange, id = '', ...ohterProps
+    value, onChange, id = '', defValue, ...ohterProps
   }) => {
     /** 下面三步确保props全部正确可用 */
     const allPropsKey = Object.keys(ohterProps);
@@ -47,10 +48,18 @@ export const NormalInputFactory: React.FC<NormalInputProps> = React.memo(
     //   setnormalInputVal(value);
     // }, [value]);
 
+    useEffect(() => {
+      onChange?.({
+        target: {
+          value: defValue
+        }
+      });
+    }, []);
+
     return (
       <Input
         style={{ width: 300 }}
-        // defaultValue={value}
+        // defaultValue={defValue}
         value={value}
         // value={normalInputVal}
         key={id}

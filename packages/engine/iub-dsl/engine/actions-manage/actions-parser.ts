@@ -1,6 +1,6 @@
 import { ActionsDefinition, ActionCollection } from "@iub-dsl/definition/actions/action";
 
-import { updateStateAction, dataCollectionAction, showMoadl } from "./sys-actions";
+import { updateStateAction, dataCollectionAction, openModal } from "./sys-actions";
 import { APBDSLCURDAction } from "./business-actions";
 
 interface ExtralActionParseRes {
@@ -27,13 +27,20 @@ interface ActionParserRes {
 const getExtralActionParserRes = (): ExtralActionParseRes => ({ changeStateToUse: [], getStateToUse: [] });
 const actionRegExp = /^@\(actions\)\./;
 
+export const pickActionId = (str: string) => str.replace(actionRegExp, '');
 export const actionsCollectionParser = (
   actionCollection: ActionCollection,
   parsrContext
 ): ActionParserRes => {
   const actionParseRes = {};
   const actionIds = Object.keys(actionCollection);
+  const { actionDependCollect } = parsrContext;
   actionIds.forEach((key) => {
+    /** TODO: 待修改 */
+    if (actionDependCollect) {
+      actionDependCollect(key, actionCollection[key]);
+    }
+
     actionParseRes[key] = {
       /** 原始逻辑必要的 */
       actionHandle: getActionFn(actionCollection[key]),
@@ -48,7 +55,7 @@ export const actionsCollectionParser = (
 
   /** 对外暴露获取的函数 */
   const getActionParseRes = (actionID: string): ActionInfoParseRes => {
-    actionID = actionID.replace(actionRegExp, '');
+    actionID = pickActionId(actionID);
     if (actionIds.includes(actionID)) {
       return actionParseRes[actionID];
     }
@@ -66,12 +73,14 @@ export const actionsCollectionParser = (
   };
 };
 
+/** TODO: 待修改 */
 const commonActionConfParser = (
   actionConf,
   actionConfParseRes: ExtralActionParseRes,
   parsrContext
 ): ExtralActionParseRes => {
   const { actionConfParser } = parsrContext;
+
   if (actionConfParser) {
     return actionConfParser(actionConf, actionConfParseRes, parsrContext);
   }
@@ -87,8 +96,8 @@ const getActionFn = (actionConf: ActionsDefinition) => {
       return dataCollectionAction(actionConf);
     case 'APBDSLCURD':
       return APBDSLCURDAction(actionConf);
-    case 'showMoadl':
-      return showMoadl(actionConf);
+    case 'openModal':
+      return openModal(actionConf);
     default:
       if (typeof actionConf === 'function') {
         return actionConf;

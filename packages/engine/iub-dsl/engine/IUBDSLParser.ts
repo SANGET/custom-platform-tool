@@ -8,6 +8,7 @@ import { flowParser } from './flow-engine';
 import { isPageState } from "./state-manage";
 import { eventPropsHandle } from "./event-manage";
 import { datasourceMetaHandle } from "./datasource-meta";
+import { actionsCollectConstor } from "./relationship/depend-collet/action-depend";
 
 const extralUpdateStateConfParser = (actionConf, actionConfParseRes, parseContext) => {
   const { changeTarget } = actionConf;
@@ -52,7 +53,6 @@ const genIUBDSLParserCtx = (parseRes) => {
   };
 
   const actionConfParser = (actionConf, actionConfParseRes, parseContext) => {
-    // isPageState
     switch (actionConf.actionType) {
       case 'updateState':
         return extralUpdateStateConfParser(actionConf, actionConfParseRes, parseContext);
@@ -62,9 +62,17 @@ const genIUBDSLParserCtx = (parseRes) => {
         return actionConfParseRes;
     }
   };
+  const {
+    actionDependCollect,
+    flowToUseCollect,
+    findEquMetadata
+  } = actionsCollectConstor();
   return {
     propsParser,
     actionConfParser,
+    actionDependCollect,
+    flowToUseCollect,
+    findEquMetadata,
   };
 };
 
@@ -78,7 +86,6 @@ const IUBDSLParser = ({ dsl }) => {
   } = dsl as TypeOfIUBDSL;
 
   let parseRes: any = {
-    metadataCollection,
     sysRtCxtInterface,
     relationshipsCollection,
     layoutContent,
@@ -94,7 +101,7 @@ const IUBDSLParser = ({ dsl }) => {
   const renderComponentKeys = Object.keys(componentsCollection);
 
   /** 数据源元数据解析和实体 */
-  const datasourceMetaEntity = datasourceMetaHandle();
+  const datasourceMetaEntity = datasourceMetaHandle(metadataCollection as any);
 
   /** 页面模型解析 */
   const schemasParseRes = SchemasParser(schemas);
@@ -103,6 +110,7 @@ const IUBDSLParser = ({ dsl }) => {
 
   parseRes = {
     ...parseRes,
+    findEquMetadata: parseContext.findEquMetadata,
     schemasParseRes,
     datasourceMetaEntity,
     actionParseRes

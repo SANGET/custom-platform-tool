@@ -7,10 +7,19 @@ import { getGenAPBDSLFunctionTransform, SelectParamOfAPBDSL } from "./APBDSL";
 import { RuntimeSchedulerFnName } from "../../runtime";
 import { arrayAsyncHandle } from "../../utils";
 
+const tempField = {
+  create_user_id: 996, // '随便填个数字'
+  last_update_user_id: 996, // '随便填个数字'
+  sequence: Math.floor(Math.random() * 10000000), // '随便填个数字'
+  last_update_time: '1996-06-09', // '随便填个年月日'
+  create_time: '1996-06-09', // '随便填个年月日'
+  data_version: '1', // '随便填个字符串'
+  last_update_user_name: '996', // 非必填'
+  create_user_name: '996', // 非必填'
+};
+
 const normalCURDActionParseScheduler = (action: NormalCURD) => {
   const { type: CURDType, table } = action;
-  console.log(action);
-
   switch (action.type) {
     case EnumCURD.TableInsert:
       return genTableInsertFn(action);
@@ -35,7 +44,12 @@ const genTableInsertFn = (actionConf: TableInsert) => {
     /** 获取set转换函数 */
     const getSetOfAPBDSL = getGenAPBDSLFunctionTransform(ApbFunction.SET);
     /** 转换 */
-    const APBDSLItem = getSetOfAPBDSL({ set, table });
+    const actualTable = runtimeScheduler({
+      type: 'getTable',
+      params: [table]
+    });
+    const tempSet = Array.isArray(set) ? set.map((_) => ({ ..._, ...tempField })) : [{ ...set, ...tempField }];
+    const APBDSLItem = getSetOfAPBDSL({ set: tempSet, table: actualTable });
     return APBDSLItem;
   };
 };
@@ -49,18 +63,26 @@ const genTableUpdatetFn = (actionConf: TableUpdate) => {
     /** 获取upd转换函数 */
     const getUpdOfAPBDSL = getGenAPBDSLFunctionTransform(ApbFunction.UPD);
     /** 转换 */
-    const APBDSLItem = getUpdOfAPBDSL({ set, table, condition: {} });
+    const actualTable = runtimeScheduler({
+      type: 'getTable',
+      params: [table]
+    });
+    const APBDSLItem = getUpdOfAPBDSL({ set, table: actualTable, condition: {} });
     return APBDSLItem;
   };
 };
 
 const genTableSelectFn = (actionConf: TableSelect) => {
   const { table, condition } = actionConf;
-  return async ({ action, asyncRuntimeScheduler }) => {
+  return async ({ action, asyncRuntimeScheduler, runtimeScheduler }) => {
     /** 获取set转换函数 */
     const getSelectOfAPBDSL = getGenAPBDSLFunctionTransform(ApbFunction.SELECT);
+    const actualTable = runtimeScheduler({
+      type: 'getTable',
+      params: [table]
+    });
     const selectParam: SelectParamOfAPBDSL = {
-      table
+      table: actualTable
     };
     if (condition) {
       selectParam.condition = await asyncRuntimeScheduler({
@@ -76,11 +98,15 @@ const genTableSelectFn = (actionConf: TableSelect) => {
 
 const genTableDeleteFn = (actionConf: TableDelete) => {
   const { table } = actionConf;
-  return async ({ action, asyncRuntimeScheduler }) => {
+  return async ({ action, asyncRuntimeScheduler, runtimeScheduler }) => {
     /** 获取set转换函数 */
     const getDelOfAPBDSL = getGenAPBDSLFunctionTransform(ApbFunction.DEL);
     /** 转换 */
-    const APBDSLItem = getDelOfAPBDSL({ table, condition: {} });
+    const actualTable = runtimeScheduler({
+      type: 'getTable',
+      params: [table]
+    });
+    const APBDSLItem = getDelOfAPBDSL({ table: actualTable, condition: {} });
     return APBDSLItem;
   };
 };
@@ -114,10 +140,12 @@ export const APBDSLCURDAction = (conf: APBDSLCURD) => {
     const fn = normalCURDActionParseScheduler(actionList[id]);
     steps.push(fn);
   });
+
   return async (runtimeCtx) => {
     const action = {
       type: 'APBDSLCURDAction',
-      businesscode
+      businesscode,
+      actionId
     };
     /** 生成很多函数? */
     APBDSL.steps = await APBDSLStepsFnRun(steps, runtimeCtx);

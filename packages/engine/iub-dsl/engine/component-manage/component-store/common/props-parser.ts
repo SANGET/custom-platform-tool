@@ -8,7 +8,7 @@ const pickCanUseCompPropsKey = (
 };
 
 const dynamicType = ['dynamicProps', 'widgetEvent'];
-/** props处理的结果约定 */
+/** props处理的结果约定 TODO: 耦合 */
 export const propContextHandle = (result, context) => {
   const { type, result: actralResult = {} } = result;
 

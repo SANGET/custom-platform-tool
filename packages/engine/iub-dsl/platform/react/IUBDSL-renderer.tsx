@@ -8,7 +8,7 @@ const resolvedDsl: {
 };
 
 /** IUB-DSL引擎对外暴露的组件 */
-const IUBDSLRenderer = React.memo<{dsl: any}>(({ dsl }) => {
+const IUBDSLRenderer = ({ dsl }) => {
   const { pageID } = dsl;
   if (typeof pageID !== 'string') {
     return <ErrorRenderer msg='IUB-DSL Data Error'/>;
@@ -32,15 +32,7 @@ const IUBDSLRenderer = React.memo<{dsl: any}>(({ dsl }) => {
   }
 
   return ActualRender;
-},
-// () => {
-  // // TODO: 记得删除
-  // if (process.env.NODE_ENV === 'development') {
-  //   return true;
-  // }
-  // return false;
-// }
-);
+};
 
 const ErrorRenderer = ({ msg = '未知' }) => (<div>渲染错误; 错误信息: {msg}</div>);
 

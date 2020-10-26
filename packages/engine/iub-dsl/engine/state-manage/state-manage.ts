@@ -38,6 +38,7 @@ export const createIUBStore = (analysisData: SchemasAnalysisRes) => {
   const { levelRelation, pathMapInfo, baseStruct } = analysisData;
 
   const fullStruct = getFullInitStruct({ baseStruct, pathMapInfo });
+
   return () => {
     const [IUBPageStore, setIUBPageStore] = useCacheState(fullStruct);
 
