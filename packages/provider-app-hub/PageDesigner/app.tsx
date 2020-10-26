@@ -16,7 +16,7 @@ import {
 import './style';
 // import { VisualEditorStore } from "@engine/visual-editor/core/store";
 /** 是否离线模式，用于在家办公调试 */
-const offlineMode = true;
+const offlineMode = false;
 
 interface VisualEditorAppProps extends VisualEditorState {
   dispatcher: VEDispatcher
