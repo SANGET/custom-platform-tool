@@ -4,6 +4,7 @@ import produce from 'immer';
 import { VEDispatcher, VisualEditorState } from "@engine/visual-editor/core";
 import { updatePageService } from "@provider-app/services";
 import { LoadingTip } from "@provider-ui/loading-tip";
+import pick from "lodash/pick";
 import ToolBar from './components/PDToolbar';
 import WidgetPanel from './components/PDWidgetPanel';
 import CanvasStage from './components/PDCanvasStage';
@@ -95,15 +96,17 @@ class PageDesignerApp extends React.Component<VisualEditorAppProps & HY.Provider
    * 获取页面信息
    */
   getPageInfo = () => {
-    const {
-      appLocation, appContext
-    } = this.props;
+    // const {
+    //   appLocation, appContext
+    // } = this.props;
     const pageDataFormRemote = this.getCurrPageDataDetail();
-    const { pageID, title } = appLocation;
+    // const { pageID, title } = appLocation;
+    console.log('pageDataFormRemote :>> ', pageDataFormRemote);
+    const submitData = pick(pageDataFormRemote, [
+      'id', 'type', 'moduleID', 'name', 'belongMenus'
+    ]);
     return {
-      id: pageID,
-      name: title,
-      type: pageDataFormRemote.type,
+      ...submitData,
     };
   }
 

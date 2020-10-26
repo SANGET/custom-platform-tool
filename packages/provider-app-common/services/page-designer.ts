@@ -1,27 +1,16 @@
-export interface PageInfo {
-  id: string
-  name: string
-  type: number
-}
-
 /**
  * 更新页面
  */
-export async function updatePageService(pageInfo: PageInfo, pageContent, extendData?) {
+export async function updatePageService(pageInfo, pageContent, extendData?) {
   if (!pageInfo) {
     return console.error('请传入 pageInfo');
   }
-  const { id, name, type = 2 } = pageInfo;
-  const updatePageData = Object.assign({}, extendData, {
-    name,
-    type,
-    /** TODO: 字段需要更改 */
+  const updatePageData = Object.assign({}, pageInfo, extendData, {
     pageContent: JSON.stringify(pageContent),
   });
-  // console.log('updatePageData', updatePageData);
   console.log('pageContent', pageContent);
   return await $R_P.put({
-    url: `/page/v1/pages/${id}`,
+    url: `/page/v1/pages/${pageInfo.id}`,
     data: updatePageData
   });
 }
