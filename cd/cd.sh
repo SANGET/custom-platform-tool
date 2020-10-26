@@ -4,6 +4,10 @@ echo -e "\033[34m stoping app: $app_alias \033[0m"
 
 docker stop $app_alias
 
+echo -e "\033[34m removing app: $app_alias \033[0m"
+
+docker rm $app_alias
+
 echo -e "\033[34m pulling app: $app_name:$release_tag \033[0m"
 echo -e "\033[34m deploying app: $app_name:$release_tag \033[0m"
 

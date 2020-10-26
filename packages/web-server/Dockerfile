@@ -1,9 +1,9 @@
 FROM reg.hydevops.com/base_images/node:14.4-alpine3.12
 
-WORKDIR  /app
+WORKDIR  /var/node-web-server
 
-COPY ./dist ./
-COPY ./node_modules ./node_modules
+COPY ./dist /var/node-web-server
+COPY ./node_modules /var/node-web-server/node_modules
 
 ENV HOST 0.0.0.0
 
@@ -13,4 +13,4 @@ ENV HOST 0.0.0.0
 
 EXPOSE 3000
 
-CMD ["node", "dist/main.js"]
+CMD ["node", "/var/node-web-server/main.js"]
