@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { Tabs, notification } from 'antd';
 import { ModalFooter } from '@provider-app/table-editor/components/ChooseDict';
+import { useIcon } from '@infra/utils/useIcon';
 import { MESSAGE } from '../constants';
-import { useIcon } from './useIcon';
 
 const { TabPane } = Tabs;
 
