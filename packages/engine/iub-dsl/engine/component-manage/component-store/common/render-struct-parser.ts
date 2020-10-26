@@ -78,7 +78,7 @@ const genBaseRenderStruct = (
     });
   }
 
-  const mark = `${baseMark}-${compTag}${index}`;
+  const mark = `${baseMark}_${compTag}_${index}`;
   const usePropsKeys = pickCanUseCompPropsKey(canUseProps)(allConfKey);
 
   const propsParseRes = {

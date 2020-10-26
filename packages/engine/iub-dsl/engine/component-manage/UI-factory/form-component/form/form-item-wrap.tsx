@@ -17,7 +17,7 @@ const pickFromItemPropsKey = basePickPropsCstr(fromItemKes);
 
 const baseFromItemPropsMap = basePropsMapCstr<FormItemProps>(fromItemMapList);
 
-const fromItemCompName = AllUI.BaseInput;
+const fromItemCompName = AllUI.FormItem;
 
 interface ExtralFromItemProps {
   id: string;
