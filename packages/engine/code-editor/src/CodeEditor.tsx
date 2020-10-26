@@ -103,7 +103,7 @@ class CodeEditor extends PureComponent<ICodeEditorProps, IICodeEditorState> {
   public static defaultProps: ICodeEditorProps = {
     readOnly: false,
     mode: "javascript",
-    theme: "3024-day",
+    theme: "dracula",
     lint: true,
     hint: true,
     search: false,

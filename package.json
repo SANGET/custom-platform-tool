@@ -33,6 +33,7 @@
     "build:web-platform": "sh ./scripts/build-web-platform.sh",
     "build:web-server": "sh ./scripts/build-web-server.sh",
     "build:visual-editor-app": "cd ./packages/engine/visual-editor && npm run build",
+    "analyz:provider-app-entry": "cd ./packages/provider-app-entry && npm run analyz",
     "serve:provider-app": "cd ./packages/provider-app-entry/app && serve -s build",
     "prettier:base": "prettier --parser typescript",
     "format": "npm run prettier:base -- --write \"packages/**/*.{ts,tsx}\"",
