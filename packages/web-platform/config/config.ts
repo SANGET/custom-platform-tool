@@ -12,6 +12,7 @@ export default defineConfig({
     hmr: true,
     immer: true,
   },
+  history: { type: 'hash' },
   // layout: {
   //   name: '自定义平台基础数据管理服务',
   //   locale: false,

@@ -101,7 +101,6 @@ class PageDesignerApp extends React.Component<VisualEditorAppProps & HY.Provider
     // } = this.props;
     const pageDataFormRemote = this.getCurrPageDataDetail();
     // const { pageID, title } = appLocation;
-    console.log('pageDataFormRemote :>> ', pageDataFormRemote);
     const submitData = pick(pageDataFormRemote, [
       'id', 'type', 'moduleID', 'name', 'belongMenus'
     ]);

@@ -30,7 +30,7 @@ const AppTile = ({
 }: AppTileProps) => {
   return (
     <div
-      className="m-4"
+      className=""
     >
       <Link
         to={to}
@@ -38,7 +38,7 @@ const AppTile = ({
         params={params}
         className="text-gray-700 text-center block px-24 py-6 bg-white shadow-md cursor-pointer"
       >
-        <div className="app-icon text-6xl">
+        <div className="app-icon text-6xl" style={{ height: 90, width: 100 }}>
           {icon}
         </div>
         <div className="app-title py-2">
@@ -47,12 +47,6 @@ const AppTile = ({
       </Link>
     </div>
   );
-};
-
-const mockData = {
-  id: '123',
-  appCode: '31',
-  appShortNameEn: '测试应用'
 };
 
 export interface DashboardProps {
@@ -84,7 +78,7 @@ export const Dashboard: React.FC<DashboardProps> = (props) => {
   return (
     <div className="container mx-auto mt20">
       <div className="text-3xl px-2 py-10 font-bold">我的应用</div>
-      <div className="flex flex-row">
+      <div className="grid grid-rows-2 grid-flow-col gap-4">
         {
           appData && appData.map(((data, idx) => {
             const {

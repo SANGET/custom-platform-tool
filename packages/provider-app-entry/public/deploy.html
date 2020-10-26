@@ -1,17 +1,74 @@
 <!DOCTYPE html>
 <html>
 
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=DEVICE-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
-    <meta keyword="React App Seed"/>
-    <link rel="shortcut icon" type="image/png" href="./favicon.png"/>
-    <title>React App Seed</title>
-  </head>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport"
+    content="width=DEVICE-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta keyword="React App Seed" />
+  <link rel="shortcut icon" type="image/png" href="./favicon.png" />
+  <title>React App Seed</title>
+</head>
 
-  <body>
-    <div id="Main">
-      <!-- React 容器 -->
-    </div>
-  </body>
+<body>
+  <div id="Main">
+    <!-- React 容器 -->
+  </div>
+  <div class="__preloader" id="loadingBg">
+    <div class="__loader"></div>
+  </div>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.11.1/css/all.min.css" />
+  <script id="processScript">
+    (function (window) {
+      window.onloadBundle = function onloadBundle() {
+        setTimeout(function () {
+          document.body.removeChild(document.querySelector('#processScript'));
+        }, 800);
+      }
+
+      function loadScript(srcouce, callback) {
+        var times = 0;
+
+        function load() {
+          if (times > 2) return 0;
+          times++;
+          var script = document.createElement('script');
+          script.type = 'text/javascript';
+          document.body.appendChild(script);
+          script.src = (!!window.SCRIPT_CND_URL ? window.SCRIPT_CND_URL : '') + srcouce;
+          script.onload = function () {
+            if (typeof callback === 'function') callback();
+          };
+          script.onerror = load;
+        }
+        load();
+      }
+
+      function loadLink(srcouce) {
+        var times = 0;
+
+        function load() {
+          if (times > 2) return 0;
+          times++;
+          var link = document.createElement('link');
+          link.rel = 'stylesheet';
+          document.body.appendChild(link);
+          link.href = srcouce;
+          link.onerror = load;
+        }
+        load();
+      }
+      onloadBundle();
+      window.OnLuanched = function () {
+        var loaderDOM = document.querySelector('#loadingBg');
+        if (!loaderDOM) return;
+        loaderDOM.classList.add('loaded');
+        setTimeout(function () {
+          loaderDOM.parentNode.removeChild(loaderDOM);
+        }, 100);
+      }
+    })(window);
+  </script>
+</body>
+
 </html>

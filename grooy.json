@@ -1,0 +1,9 @@
+{
+  "pipeline": [
+    {
+      "name": "provider_app",
+      "path": "./xx",
+      ""
+    }
+  ]
+}
