@@ -211,10 +211,10 @@ class TableEditor extends React.Component {
   constructForeignKeyListForSave = (foreignKeyList) => {
     return foreignKeyList?.map((item, index) => {
       const {
-        id, fieldCode, refTableCode, refFieldCode, refDisplayCode, deleteStrategy, updateStrategy
+        id, fieldCode, refTableCode, refFieldCode, refDisplayFieldCode, deleteStrategy, updateStrategy
       } = item;
       return {
-        id, fieldCode, refTableCode, refFieldCode, refDisplayCode, sequence: index + 1, deleteStrategy, updateStrategy
+        id, fieldCode, refTableCode, refFieldCode, refDisplayFieldCode, sequence: index + 1, deleteStrategy, updateStrategy
       };
     }) || [];
   }
