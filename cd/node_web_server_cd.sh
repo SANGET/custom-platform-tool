@@ -1,6 +1,9 @@
 # 应用的名称
 app_name=reg.hydevops.com/custom-platform-v3-frontend/web-server
 
+# 应用的别名
+app_alias=node_web_server
+
 # 发布的分支
 release_tag=release-main-flow
 

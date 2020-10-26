@@ -1,6 +1,9 @@
 # 应用的名称
 app_name=reg.hydevops.com/custom-platform-v3-frontend/web-platform
 
+# 应用的别名
+app_alias=consumer_app
+
 # 发布的分支
 release_tag=release-main-flow
 
